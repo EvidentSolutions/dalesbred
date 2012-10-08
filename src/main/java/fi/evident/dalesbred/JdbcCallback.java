@@ -2,6 +2,9 @@ package fi.evident.dalesbred;
 
 import java.sql.SQLException;
 
-public interface JdbcCallback<I,O> {
-    O execute(I i) throws SQLException;
+/**
+ * Callback for executing JDBC-operations in given context.
+ */
+public interface JdbcCallback<C,T> {
+    T execute(C context) throws SQLException;
 }
