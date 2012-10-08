@@ -17,7 +17,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -304,6 +306,36 @@ public final class Database {
         return findUniqueInt(query(sql, args));
     }
 
+    @NotNull
+    public <K,V> Map<K, V> findMap(@NotNull final Class<K> keyType,
+                                   @NotNull final Class<V> valueType,
+                                   @NotNull SqlQuery query) {
+
+        ResultSetProcessor<Map<K,V>> processor = new ResultSetProcessor<Map<K, V>>() {
+            @Override
+            public Map<K,V> process(@NotNull ResultSet resultSet) throws SQLException {
+                final Map<K,V> result = new LinkedHashMap<K,V>();
+                Coercions coercions = getCoercions();
+
+                while (resultSet.next()) {
+                    Object key = resultSet.getObject(1);
+                    Object value = resultSet.getObject(2);
+                    result.put(coercions.coerceFromDB(keyType, key), coercions.coerceFromDB(valueType, value));
+                }
+                return result;
+            }
+        };
+        return executeQuery(processor, query);
+    }
+
+    @NotNull
+    public <K,V> Map<K, V> findMap(@NotNull Class<K> keyType,
+                                   @NotNull Class<V> valueType,
+                                   @NotNull @SQL String query,
+                                   Object... args) {
+        return findMap(keyType, valueType, query(query, args));
+    }
+
     /**
      * Executes an update against the database and returns the amount of affected rows.
      */
@@ -375,13 +407,27 @@ public final class Database {
      * Executes an update against the database and returns the generated ids of given type.
      */
     @NotNull
-    public <T> List<T> updateAndReturnGeneratedKeys(@NotNull final Class<T> keyType, @NotNull final SqlQuery query) {
+    public <T> List<T> updateAndReturnGeneratedKeys(@NotNull Class<T> keyType, @NotNull SqlQuery query) {
         return updateAndReturnGeneratedKeys(resultProcessorForClass(keyType), query);
     }
 
     @NotNull
-    public <T> List<T> updateAndReturnGeneratedKeys(@NotNull final Class<T> keyType, @NotNull @SQL String sql, Object... args) {
+    public <T> List<T> updateAndReturnGeneratedKeys(@NotNull Class<T> keyType, @NotNull @SQL String sql, Object... args) {
         return updateAndReturnGeneratedKeys(keyType, query(sql, args));
+    }
+
+    @NotNull
+    public <T> T updateAndReturnGeneratedKey(@NotNull Class<T> keyType, @NotNull SqlQuery query) {
+        T key = unique(updateAndReturnGeneratedKeys(keyType, query));
+        if (key != null)
+            return key;
+        else
+            throw new DatabaseException("null key was generated");
+    }
+
+    @NotNull
+    public <T> T updateAndReturnGeneratedKey(@NotNull Class<T> keyType, @NotNull @SQL String sql, Object... args) {
+        return updateAndReturnGeneratedKey(keyType, query(sql, args));
     }
 
     private void logQuery(SqlQuery query) {

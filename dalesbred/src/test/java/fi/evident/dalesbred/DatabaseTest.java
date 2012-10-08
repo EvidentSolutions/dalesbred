@@ -4,6 +4,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static fi.evident.dalesbred.SqlQuery.query;
 import static org.hamcrest.CoreMatchers.is;
@@ -46,6 +47,21 @@ public class DatabaseTest {
         assertThat(departments.size(), is(2));
         assertThat(departments.get(0).name, is("foo"));
         assertThat(departments.get(1).name, is("bar"));
+    }
+
+    @Test
+    public void map() {
+        db.update("drop table if exists department");
+
+        db.update("create table department (id serial primary key, name varchar(64) not null)");
+        int id1 = db.updateAndReturnGeneratedKey(Integer.class, "insert into department (name) values ('foo')");
+        int id2 = db.updateAndReturnGeneratedKey(Integer.class, "insert into department (name) values ('bar')");
+
+        Map<Integer, String> map = db.findMap(Integer.class, String.class, "select id, name from department");
+
+        assertThat(map.size(), is(2));
+        assertThat(map.get(id1), is("foo"));
+        assertThat(map.get(id2), is("bar"));
     }
 
     @Test
