@@ -2,9 +2,9 @@ package fi.evident.dalesbred;
 
 import fi.evident.dalesbred.connection.DataSourceConnectionProvider;
 import fi.evident.dalesbred.connection.DriverManagerConnectionProvider;
-import fi.evident.dalesbred.utils.StringUtils;
+import fi.evident.dalesbred.dialects.Dialect;
 import org.jetbrains.annotations.NotNull;
-import org.postgresql.util.PGobject;
+import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -42,6 +42,9 @@ public final class Database {
 
     /** Do we want to create a new transaction if non-transactional calls are made */
     private boolean allowImplicitTransactions = false;
+
+    @Nullable
+    private Dialect dialect;
 
     /**
      * Returns a new Database that uses given {@link DataSource} to retrieve connections.
@@ -284,34 +287,22 @@ public final class Database {
     }
 
     private void bindArguments(PreparedStatement ps, List<Object> args) throws SQLException {
+        Dialect provider = getDialect(ps.getConnection());
         int i = 1;
 
         for (Object arg : args)
-            ps.setObject(i++, valueToDatabase(arg));
-    }
-    
-    private static Object valueToDatabase(Object value) {
-        if (value instanceof Enum<?>) {
-            return createPGEnum((Enum<?>) value);
-        }
-        return value;
+            ps.setObject(i++, provider.valueToDatabase(arg));
     }
 
     @NotNull
-    private static Object createPGEnum(@NotNull Enum<?> value) {
-        try {
-            PGobject object = new PGobject();
-            object.setType(databaseNameForEnumClass(value.getClass()));
-            object.setValue(value.name());
-            return object;
-        } catch (SQLException e) {
-            throw new JdbcException(e);
-        }
+    private Dialect getDialect(Connection connection) throws SQLException {
+        if (dialect == null)
+            dialect = Dialect.detect(connection);
+        return dialect;
     }
 
-    @NotNull
-    private static String databaseNameForEnumClass(@NotNull Class<?> cl) {
-        return StringUtils.upperCamelToLowerUnderscore(cl.getSimpleName());
+    public void setDialect(@NotNull Dialect dialect) {
+        this.dialect = requireNonNull(dialect);
     }
 
     public int getTransactionIsolation() {
