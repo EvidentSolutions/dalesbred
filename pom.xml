@@ -16,10 +16,17 @@
 
     <modules>
         <module>dalesbred</module>
+        <module>example</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>fi.evident.dalesbred</groupId>
+                <artifactId>dalesbred</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>javax.inject</groupId>
                 <artifactId>javax.inject</artifactId>
@@ -36,7 +43,6 @@
                 <groupId>postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <version>9.1-901.jdbc4</version>
-                <scope>provided</scope>
             </dependency>
 
             <dependency>
