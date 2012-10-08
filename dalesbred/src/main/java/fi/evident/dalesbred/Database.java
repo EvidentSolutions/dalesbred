@@ -148,8 +148,8 @@ public final class Database {
         return connection;
     }
 
-    public <T> List<T> list(SqlQuery query, final JdbcCallback<ResultSet, T> rowMapper) {
-        return find(query, new JdbcCallback<ResultSet, List<T>>() {
+    public <T> List<T> list(SqlQuery query, final ResultSetCallback<T> rowMapper) {
+        return find(query, new ResultSetCallback<List<T>>() {
             @Override
             public List<T> execute(ResultSet rs) throws SQLException {
                 List<T> result = new ArrayList<T>();
@@ -174,7 +174,7 @@ public final class Database {
             throw new JdbcException("Expected unique result but got " + items.size() + " rows.");
     }
 
-    public <T> T find(final SqlQuery query, final JdbcCallback<ResultSet, T> callback) {
+    public <T> T find(final SqlQuery query, final ResultSetCallback<T> callback) {
         return withCurrentTransaction(new ConnectionCallback<T>() {
             @Override
             public T execute(Connection connection) throws SQLException {
@@ -199,7 +199,7 @@ public final class Database {
     }
 
     public String queryForString(SqlQuery query) {
-        return find(query, new JdbcCallback<ResultSet, String>() {
+        return find(query, new ResultSetCallback<String>() {
             @Override
             public String execute(ResultSet resultSet) throws SQLException {
                 if (resultSet.next())
@@ -211,7 +211,7 @@ public final class Database {
     }
 
     public String queryForStringOrNull(SqlQuery query) {
-        return find(query, new JdbcCallback<ResultSet, String>() {
+        return find(query, new ResultSetCallback<String>() {
             @Override
             public String execute(ResultSet resultSet) throws SQLException {
                 if (resultSet.next())
@@ -223,7 +223,7 @@ public final class Database {
     }
 
     public int queryForInt(SqlQuery query) {
-        return find(query, new JdbcCallback<ResultSet, Integer>() {
+        return find(query, new ResultSetCallback<Integer>() {
             @Override
             public Integer execute(ResultSet resultSet) throws SQLException {
                 if (resultSet.next())
@@ -235,7 +235,7 @@ public final class Database {
     }
 
     public Integer queryForIntOrNull(SqlQuery query) {
-        return find(query, new JdbcCallback<ResultSet, Integer>() {
+        return find(query, new ResultSetCallback<Integer>() {
             @Override
             public Integer execute(ResultSet resultSet) throws SQLException {
                 if (resultSet.next())

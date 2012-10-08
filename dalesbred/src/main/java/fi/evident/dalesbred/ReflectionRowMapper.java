@@ -12,7 +12,7 @@ import java.util.List;
 
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
-final class ReflectionRowMapper<T> implements JdbcCallback<ResultSet, List<T>> {
+final class ReflectionRowMapper<T> implements ResultSetCallback<List<T>> {
 
     private final Class<T> cl;
     private static final InstantiatorRegistry instantiatorRegistry = new InstantiatorRegistry();
