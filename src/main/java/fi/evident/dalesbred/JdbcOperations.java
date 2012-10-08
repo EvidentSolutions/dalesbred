@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
@@ -79,7 +80,8 @@ public final class JdbcOperations {
         return withConnection(new JdbcCallback<Connection, T>() {
             @Override
             public T execute(Connection connection) throws SQLException {
-                log.fine(query.sql);
+                if (log.isLoggable(Level.FINE))
+                    log.fine("executing query " + query);
 
                 PreparedStatement ps = connection.prepareStatement(query.sql);
                 try {
