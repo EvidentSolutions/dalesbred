@@ -1,6 +1,7 @@
 package fi.evident.dalesbred;
 
 import fi.evident.dalesbred.utils.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.postgresql.util.PGobject;
 
 import javax.inject.Inject;
@@ -10,7 +11,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,11 +25,11 @@ public final class JdbcOperations {
     private final Logger log = Logger.getLogger(getClass().getName());
     
     @Inject
-    public JdbcOperations(Provider<Connection> connectionProvider) {
+    public JdbcOperations(@NotNull Provider<Connection> connectionProvider) {
         this.connectionProvider = requireNonNull(connectionProvider);
     }
 
-    public <T> T withConnection(JdbcCallback<Connection, T> callback) {
+    public <T> T withConnection(@NotNull JdbcCallback<Connection, T> callback) {
         try {
             Connection connection = threadConnection.get();
 
@@ -193,25 +193,8 @@ public final class JdbcOperations {
     private void bindArguments(PreparedStatement ps, List<Object> args) throws SQLException {
         int i = 1;
 
-        for (Object arg : args) {
-            if(arg instanceof Collection) { // this is useful because of in clause needs dynamically sized collection
-                Collection<?> collection = (Collection<?>)arg;
-
-                for(Object o: collection) {
-                    if(o instanceof JdbcTuple) {
-                        JdbcTuple tuple = (JdbcTuple)o;
-
-                        for (Object tupleChild : tuple.getObjectsInOrder()) {
-                            ps.setObject(i++, valueToDatabase(tupleChild));
-                        }
-                    } else {
-                        ps.setObject(i++, valueToDatabase(o));
-                    }
-                }
-            }
-            else
-                ps.setObject(i++, valueToDatabase(arg));
-        }
+        for (Object arg : args)
+            ps.setObject(i++, valueToDatabase(arg));
     }
     
     private static Object valueToDatabase(Object value) {
@@ -221,7 +204,8 @@ public final class JdbcOperations {
         return value;
     }
 
-    private static Object createPGEnum(Enum<?> value) {
+    @NotNull
+    private static Object createPGEnum(@NotNull Enum<?> value) {
         try {
             PGobject object = new PGobject();
             object.setType(databaseNameForEnumClass(value.getClass()));
@@ -232,7 +216,8 @@ public final class JdbcOperations {
         }
     }
 
-    private static String databaseNameForEnumClass(Class<?> cl) {
+    @NotNull
+    private static String databaseNameForEnumClass(@NotNull Class<?> cl) {
         return StringUtils.upperCamelToLowerUnderscore(cl.getSimpleName());
     }
 }
