@@ -27,12 +27,38 @@ For _javax.inject_-compatible dependency injection container (e.g. Guice), you
 can just make sure that there's a _Provider\<DataSource\>_ around and then just @Inject
 Database where you need it.
 
-Making queries
---------------
+Finding stuff
+-------------
 
-    List<Integer> ids = db.findAll(query("select id from department"), Integer.class);
+Finding simple results consisting of just basic types is simple:
 
-    List<Department> departments = db.findAll(
-        query("select id, name from department where manager_id=?", managerId), Department.class);
+    List<Integer> newIds = db.findAll(Integer.class, "select id from department where created_date > ?", date);
 
-See the example project for full examples.
+To fetch results with multiple columns, you need a class with matching constructor:
+
+    List<Department> departments = db.findAll(Department.class, "select id, name from department);
+
+    ...
+
+    public final class Department {
+        private final int id;
+        private final String name;
+
+        public Department(int id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        ...
+    }
+
+Alternatively, you can supply your own RowMapper or ResultSetProcessor-implementations in place
+of the class and handle the result sets manually, but usually this should be unnecessary.
+
+See the example project and test cases for more examples.
+
+TODO
+----
+
+- optional support for JodaTime
+- JUnit test case support

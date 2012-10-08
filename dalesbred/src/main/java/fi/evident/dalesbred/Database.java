@@ -172,7 +172,7 @@ public final class Database {
      * Executes a query and processes the results with given {@link ResultSetProcessor}.
      * All other findXXX-methods are just convenience methods for this one.
      */
-    public <T> T executeQuery(@NotNull final SqlQuery query, @NotNull final ResultSetProcessor<T> processor) {
+    public <T> T executeQuery(@NotNull final ResultSetProcessor<T> processor, @NotNull final SqlQuery query) {
         return withCurrentTransaction(new ConnectionCallback<T>() {
             @Override
             public T execute(Connection connection) throws SQLException {
@@ -190,21 +190,38 @@ public final class Database {
         });
     }
 
+    public <T> T executeQuery(@NotNull ResultSetProcessor<T> processor, @NotNull @SQL String sql, Object... args) {
+        return executeQuery(processor, query(sql, args));
+    }
+
     /**
      * Executes a query and processes each row of the result with given {@link RowMapper}
      * to produce a list of results.
      */
     @NotNull
-    public <T> List<T> findAll(@NotNull SqlQuery query, @NotNull RowMapper<T> rowMapper) {
-        return executeQuery(query, new ListWithRowMapperResultSetProcessor<T>(rowMapper));
+    public <T> List<T> findAll(@NotNull RowMapper<T> rowMapper, @NotNull SqlQuery query) {
+        return executeQuery(new ListWithRowMapperResultSetProcessor<T>(rowMapper), query);
+    }
+
+    @NotNull
+    public <T> List<T> findAll(@NotNull RowMapper<T> rowMapper, @NotNull @SQL String sql, Object... args) {
+        return findAll(rowMapper, query(sql, args));
     }
 
     /**
      * Executes a query and converts the results to instances of given class using default mechanisms.
      */
     @NotNull
-    public <T> List<T> findAll(@NotNull SqlQuery query, @NotNull Class<T> cl) {
-        return executeQuery(query, resultProcessorForClass(cl));
+    public <T> List<T> findAll(@NotNull Class<T> cl, @NotNull SqlQuery query) {
+        return executeQuery(resultProcessorForClass(cl), query);
+    }
+
+    /**
+     * Executes a query and converts the results to instances of given class using default mechanisms.
+     */
+    @NotNull
+    public <T> List<T> findAll(@NotNull Class<T> cl, @NotNull @SQL String sql, Object... args) {
+        return findAll(cl, query(sql, args));
     }
 
     /**
@@ -213,8 +230,13 @@ public final class Database {
      * @throws NonUniqueResultException if there are no rows or multiple rows
      */
     @Nullable
-    public <T> T findUnique(SqlQuery query, RowMapper<T> mapper) {
-        return unique(findAll(query, mapper));
+    public <T> T findUnique(RowMapper<T> mapper, SqlQuery query) {
+        return unique(findAll(mapper, query));
+    }
+
+    @Nullable
+    public <T> T findUnique(RowMapper<T> mapper, @NotNull @SQL String sql, Object... args) {
+        return findUnique(mapper, query(sql, args));
     }
 
     /**
@@ -223,8 +245,13 @@ public final class Database {
      * @throws NonUniqueResultException if there are no rows or multiple rows
      */
     @Nullable
-    public <T> T findUnique(SqlQuery query, Class<T> cl) {
-        return unique(findAll(query, cl));
+    public <T> T findUnique(Class<T> cl, SqlQuery query) {
+        return unique(findAll(cl, query));
+    }
+
+    @Nullable
+    public <T> T findUnique(Class<T> cl, @NotNull @SQL String sql, Object... args) {
+        return findUnique(cl, query(sql, args));
     }
 
     /**
@@ -234,8 +261,13 @@ public final class Database {
      * @throws NonUniqueResultException if there are multiple result rows
      */
     @Nullable
-    public <T> T findUniqueOrNull(SqlQuery query, RowMapper<T> rowMapper) {
-        return uniqueOrNull(findAll(query, rowMapper));
+    public <T> T findUniqueOrNull(RowMapper<T> rowMapper, SqlQuery query) {
+        return uniqueOrNull(findAll(rowMapper, query));
+    }
+
+    @Nullable
+    public <T> T findUniqueOrNull(RowMapper<T> rowMapper, @NotNull @SQL String sql, Object... args) {
+        return findUniqueOrNull(rowMapper, query(sql, args));
     }
 
     /**
@@ -245,19 +277,30 @@ public final class Database {
      * @throws NonUniqueResultException if there are multiple result rows
      */
     @Nullable
-    public <T> T findUniqueOrNull(SqlQuery query, Class<T> cl) {
-        return uniqueOrNull(findAll(query, cl));
+    public <T> T findUniqueOrNull(Class<T> cl, SqlQuery query) {
+        return uniqueOrNull(findAll(cl, query));
+    }
+
+    public <T> T findUniqueOrNull(Class<T> cl, @NotNull @SQL String sql, Object... args) {
+        return findUniqueOrNull(cl, query(sql, args));
     }
 
     /**
      * A convenience method for retrieving a single non-null integer.
      */
     public int findUniqueInt(SqlQuery query) {
-        Integer value = findUnique(query, Integer.class);
+        Integer value = findUnique(Integer.class, query);
         if (value != null)
             return value;
         else
             throw new DatabaseException("database returned null instead of int");
+    }
+
+    /**
+     * A convenience method for retrieving a single non-null integer.
+     */
+    public int findUniqueInt(@NotNull @SQL String sql, Object... args) {
+        return findUniqueInt(query(sql, args));
     }
 
     /**
@@ -283,14 +326,14 @@ public final class Database {
     /**
      * Executes an update against the database and returns the amount of affected rows.
      */
-    public int update(@NotNull @SQL final String sql, @NotNull final Object... args) {
+    public int update(@NotNull @SQL String sql, Object... args) {
         return update(query(sql, args));
     }
 
     /**
      * Executes an update against the database and processes the generated ids with given processor.
      */
-    public <T> T updateAndReturnGeneratedKeys(@NotNull final SqlQuery query, @NotNull final ResultSetProcessor<T> resultSetProcessor) {
+    public <T> T updateAndReturnGeneratedKeys(@NotNull final ResultSetProcessor<T> resultSetProcessor, @NotNull final SqlQuery query) {
         return withCurrentTransaction(new ConnectionCallback<T>() {
             @Override
             public T execute(Connection connection) throws SQLException {
@@ -310,18 +353,34 @@ public final class Database {
         });
     }
 
+    public <T> T updateAndReturnGeneratedKeys(@NotNull final ResultSetProcessor<T> resultSetProcessor, @NotNull @SQL String sql, Object... args) {
+        return updateAndReturnGeneratedKeys(resultSetProcessor, query(sql, args));
+    }
+
     /**
      * Executes an update against the database and returns the generated ids as given by row-mapper.
      */
-    public <T> List<T> updateAndReturnGeneratedKeys(@NotNull final SqlQuery query, @NotNull final RowMapper<T> rowMapper) {
-        return updateAndReturnGeneratedKeys(query, new ListWithRowMapperResultSetProcessor<T>(rowMapper));
+    @NotNull
+    public <T> List<T> updateAndReturnGeneratedKeys(@NotNull final RowMapper<T> rowMapper, @NotNull final SqlQuery query) {
+        return updateAndReturnGeneratedKeys(new ListWithRowMapperResultSetProcessor<T>(rowMapper), query);
+    }
+
+    @NotNull
+    public <T> List<T> updateAndReturnGeneratedKeys(@NotNull final RowMapper<T> rowMapper, @NotNull @SQL String sql, Object... args) {
+        return updateAndReturnGeneratedKeys(rowMapper, query(sql, args));
     }
 
     /**
      * Executes an update against the database and returns the generated ids of given type.
      */
-    public <T> List<T> updateAndReturnGeneratedKeys(@NotNull final SqlQuery query, @NotNull final Class<T> keyType) {
-        return updateAndReturnGeneratedKeys(query, resultProcessorForClass(keyType));
+    @NotNull
+    public <T> List<T> updateAndReturnGeneratedKeys(@NotNull final Class<T> keyType, @NotNull final SqlQuery query) {
+        return updateAndReturnGeneratedKeys(resultProcessorForClass(keyType), query);
+    }
+
+    @NotNull
+    public <T> List<T> updateAndReturnGeneratedKeys(@NotNull final Class<T> keyType, @NotNull @SQL String sql, Object... args) {
+        return updateAndReturnGeneratedKeys(keyType, query(sql, args));
     }
 
     private void logQuery(SqlQuery query) {

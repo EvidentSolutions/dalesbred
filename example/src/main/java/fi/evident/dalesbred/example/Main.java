@@ -8,8 +8,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import static fi.evident.dalesbred.SqlQuery.query;
-
 public class Main {
 
     @NotNull
@@ -20,8 +18,8 @@ public class Main {
         db.update("insert into department (name) values ('foo')");
         db.update("insert into department (name) values ('bar')");
 
-        int count = db.findUniqueInt(query("select count(*) from department"));
-        List<Department> departments = db.findAll(query("select id, name from department"), Department.class);
+        int count = db.findUniqueInt("select count(*) from department");
+        List<Department> departments = db.findAll(Department.class, "select id, name from department");
 
         System.out.println("department count: " + count);
         System.out.println("departments: " + departments);
