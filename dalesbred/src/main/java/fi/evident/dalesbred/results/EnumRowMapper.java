@@ -22,10 +22,6 @@ public final class EnumRowMapper<T extends Enum<T>> implements RowMapper<T> {
         if (value == null)
             return null;
 
-        try {
-            return Enum.valueOf(enumType, value);
-        } catch (IllegalArgumentException e) {
-            return Enum.valueOf(enumType, value.toUpperCase());
-        }
+        return Enum.valueOf(enumType, value);
     }
 }

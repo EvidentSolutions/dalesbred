@@ -229,12 +229,10 @@ public final class Database {
      *
      * @throws NonUniqueResultException if there are no rows or multiple rows
      */
-    @Nullable
     public <T> T findUnique(RowMapper<T> mapper, SqlQuery query) {
         return unique(findAll(mapper, query));
     }
 
-    @Nullable
     public <T> T findUnique(RowMapper<T> mapper, @NotNull @SQL String sql, Object... args) {
         return findUnique(mapper, query(sql, args));
     }
@@ -244,12 +242,10 @@ public final class Database {
      *
      * @throws NonUniqueResultException if there are no rows or multiple rows
      */
-    @Nullable
     public <T> T findUnique(Class<T> cl, SqlQuery query) {
         return unique(findAll(cl, query));
     }
 
-    @Nullable
     public <T> T findUnique(Class<T> cl, @NotNull @SQL String sql, Object... args) {
         return findUnique(cl, query(sql, args));
     }

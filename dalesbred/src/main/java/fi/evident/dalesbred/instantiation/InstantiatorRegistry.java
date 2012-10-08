@@ -15,6 +15,7 @@ public final class InstantiatorRegistry {
     private static final int SUBTYPE_COST = 1;
     private static final int BOXING_COST = 100;
     private static final int UNBOXING_COST = 101;
+    private static final int ENUM_COST = 200;
     private static final int NO_MATCH_COST = Integer.MAX_VALUE;
 
     /**
@@ -67,10 +68,11 @@ public final class InstantiatorRegistry {
     }
 
     private static int assignmentCost(Class<?> target, Class<?> source) {
-        return target == source                        ? SAME_COST
-             : target.isAssignableFrom(source)         ? SUBTYPE_COST
-             : target.isAssignableFrom(wrap(source))   ? BOXING_COST
-             : target.isAssignableFrom(unwrap(source)) ? UNBOXING_COST
+        return target == source                          ? SAME_COST
+             : target.isAssignableFrom(source)           ? SUBTYPE_COST
+             : target.isAssignableFrom(wrap(source))     ? BOXING_COST
+             : target.isAssignableFrom(unwrap(source))   ? UNBOXING_COST
+             : target.isEnum()                           ? ENUM_COST
              : NO_MATCH_COST;
     }
 

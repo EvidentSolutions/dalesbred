@@ -1,14 +1,18 @@
 <component name="ProjectDictionaryState">
   <dictionary name="komu">
     <words>
+      <w>amélie</w>
+      <w>buildnumber</w>
       <w>charsets</w>
       <w>dalesbred</w>
       <w>endian</w>
       <w>fixme</w>
       <w>hamcrest</w>
+      <w>instantiator</w>
       <w>jndi</w>
       <w>jsse</w>
       <w>komu</w>
+      <w>mockito</w>
       <w>postgresql</w>
       <w>scpexe</w>
       <w>sunrsasign</w>

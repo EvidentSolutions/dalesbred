@@ -49,14 +49,30 @@ public class DatabaseTest {
     }
 
     @Test
-    public void enums() {
-        db.update("drop type if exists mood");
-        db.update("create type mood as enum ('sad', 'ok', 'happy')");
+    public void enumsAsPrimitives() {
+        db.update("drop type if exists mood cascade");
+        db.update("create type mood as enum ('SAD', 'OK', 'HAPPY')");
 
-        assertThat(db.findUnique(Mood.class, "select 'sad'::mood"), is(Mood.SAD));
+        assertThat(db.findUnique(Mood.class, "select 'SAD'::mood"), is(Mood.SAD));
+        assertThat(db.findUnique(Mood.class, "select null::mood"), is(nullValue()));
     }
 
-    public enum Mood {
+    @Test
+    public void enumsAsConstructorParameters() {
+        db.update("drop type if exists mood cascade");
+        db.update("create type mood as enum ('SAD', 'OK', 'HAPPY')");
+
+        db.update("drop table if exists movie");
+        db.update("create table movie (name varchar(64) primary key, mood mood not null)");
+
+        db.update("insert into movie (name, mood) values (?, ?)", "Amélie", Mood.HAPPY);
+
+        Movie movie = db.findUnique(Movie.class, "select name, mood from movie");
+        assertThat(movie.name, is("Amélie"));
+        assertThat(movie.mood, is(Mood.HAPPY));
+    }
+
+    enum Mood {
         SAD, OK, HAPPY
     }
 
@@ -67,6 +83,16 @@ public class DatabaseTest {
         public Department(int id, String name) {
             this.id = id;
             this.name = name;
+        }
+    }
+
+    public static class Movie {
+        final String name;
+        final Mood mood;
+
+        public Movie(String name, Mood mood) {
+            this.name = name;
+            this.mood = mood;
         }
     }
 }
