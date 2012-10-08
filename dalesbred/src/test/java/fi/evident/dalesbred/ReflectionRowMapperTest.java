@@ -1,5 +1,7 @@
 package fi.evident.dalesbred;
 
+import fi.evident.dalesbred.dialects.DefaultDialect;
+import fi.evident.dalesbred.instantiation.Coercions;
 import fi.evident.dalesbred.results.ReflectionResultSetProcessor;
 import org.junit.Test;
 import org.mockito.stubbing.OngoingStubbing;
@@ -17,9 +19,11 @@ import static org.mockito.Mockito.when;
 
 public class ReflectionRowMapperTest {
 
+    private final Coercions coercions = new Coercions(new DefaultDialect());
+
     @Test
     public void instantiatingWithSimpleConstructor() throws SQLException {
-        ReflectionResultSetProcessor<SingleConstructor> mapper = ReflectionResultSetProcessor.forClass(SingleConstructor.class);
+        ReflectionResultSetProcessor<SingleConstructor> mapper = ReflectionResultSetProcessor.forClass(SingleConstructor.class, coercions);
 
         ResultSet resultSet = resultSet(new Object[][] {
             { 1, "foo" },
@@ -37,14 +41,14 @@ public class ReflectionRowMapperTest {
 
     @Test
     public void emptyResultSetProducesNoResults() throws SQLException {
-        ReflectionResultSetProcessor<SingleConstructor> mapper = ReflectionResultSetProcessor.forClass(SingleConstructor.class);
+        ReflectionResultSetProcessor<SingleConstructor> mapper = ReflectionResultSetProcessor.forClass(SingleConstructor.class, coercions);
 
         assertThat(mapper.process(emptyResultSet(Integer.class, String.class)).isEmpty(), is(true));
     }
 
     @Test
     public void correctConstructorIsPickedBasedOnTypes() throws SQLException {
-        ReflectionResultSetProcessor<TwoConstructors> mapper = ReflectionResultSetProcessor.forClass(TwoConstructors.class);
+        ReflectionResultSetProcessor<TwoConstructors> mapper = ReflectionResultSetProcessor.forClass(TwoConstructors.class, coercions);
 
         List<TwoConstructors> list = mapper.process(singletonResultSet(1, "foo"));
         assertThat(list.size(), is(1));

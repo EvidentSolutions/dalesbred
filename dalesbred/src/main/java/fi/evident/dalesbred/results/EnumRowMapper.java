@@ -11,14 +11,15 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
 public final class EnumRowMapper<T extends Enum<T>> implements RowMapper<T> {
 
     private final Class<T> enumType;
-    private static final Coercions coercions = new Coercions();
+    private final Coercions coercions;
 
-    public EnumRowMapper(@NotNull Class<T> enumType) {
+    public EnumRowMapper(@NotNull Class<T> enumType, @NotNull Coercions coercions) {
         this.enumType = requireNonNull(enumType);
+        this.coercions = requireNonNull(coercions);
     }
 
     @Override
     public T mapRow(ResultSet resultSet) throws SQLException {
-        return coercions.coerce(enumType, resultSet.getObject(1));
+        return coercions.coerceFromDB(enumType, resultSet.getObject(1));
     }
 }

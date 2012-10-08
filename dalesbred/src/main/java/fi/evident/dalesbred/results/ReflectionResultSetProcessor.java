@@ -5,6 +5,7 @@ import fi.evident.dalesbred.instantiation.Coercions;
 import fi.evident.dalesbred.instantiation.Instantiator;
 import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
 import fi.evident.dalesbred.instantiation.NamedTypeList;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -20,15 +21,16 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
 public final class ReflectionResultSetProcessor<T> implements ResultSetProcessor<List<T>> {
 
     private final Class<T> cl;
+    private final Coercions coercions;
     private static final InstantiatorRegistry instantiatorRegistry = new InstantiatorRegistry();
-    private static final Coercions coercions = new Coercions();
 
-    private ReflectionResultSetProcessor(Class<T> cl) {
+    private ReflectionResultSetProcessor(@NotNull Class<T> cl, @NotNull Coercions coercions) {
         this.cl = requireNonNull(cl);
+        this.coercions = requireNonNull(coercions);
     }
     
-    public static <T> ReflectionResultSetProcessor<T> forClass(Class<T> cl) {
-        return new ReflectionResultSetProcessor<T>(cl);
+    public static <T> ReflectionResultSetProcessor<T> forClass(@NotNull Class<T> cl, @NotNull Coercions coercions) {
+        return new ReflectionResultSetProcessor<T>(cl, coercions);
     }
 
     @Override

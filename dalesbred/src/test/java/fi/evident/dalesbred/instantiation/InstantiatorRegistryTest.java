@@ -1,5 +1,6 @@
 package fi.evident.dalesbred.instantiation;
 
+import fi.evident.dalesbred.dialects.DefaultDialect;
 import org.junit.Test;
 
 import static fi.evident.dalesbred.utils.Primitives.isAssignableByBoxing;
@@ -9,7 +10,7 @@ import static org.junit.Assert.assertThat;
 public class InstantiatorRegistryTest {
 
     private final InstantiatorRegistry instantiatorRegistry = new InstantiatorRegistry();
-    private final Coercions coercions = new Coercions();
+    private final Coercions coercions = new Coercions(new DefaultDialect());
 
     @Test
     public void everyClassIsAssignableFromItself() {

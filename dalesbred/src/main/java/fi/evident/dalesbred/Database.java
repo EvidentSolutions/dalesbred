@@ -3,6 +3,7 @@ package fi.evident.dalesbred;
 import fi.evident.dalesbred.connection.DataSourceConnectionProvider;
 import fi.evident.dalesbred.connection.DriverManagerConnectionProvider;
 import fi.evident.dalesbred.dialects.Dialect;
+import fi.evident.dalesbred.instantiation.Coercions;
 import fi.evident.dalesbred.results.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,6 +48,10 @@ public final class Database {
 
     @Nullable
     private Dialect dialect;
+
+    /** Coercions to user for data-conversions */
+    @Nullable
+    private Coercions coercions;
 
     /**
      * Returns a new Database that uses given {@link DataSource} to retrieve connections.
@@ -410,20 +415,33 @@ public final class Database {
     }
 
     @NotNull
-    private static <T> ResultSetProcessor<List<T>> resultProcessorForClass(@NotNull Class<T> cl) {
+    private <T> ResultSetProcessor<List<T>> resultProcessorForClass(@NotNull Class<T> cl) {
         RowMapper<T> rowMapper = findRowMapperForType(cl);
 
         if (rowMapper != null)
             return new ListWithRowMapperResultSetProcessor<T>(rowMapper);
         else
-            return ReflectionResultSetProcessor.forClass(cl);
+            return ReflectionResultSetProcessor.forClass(cl, getCoercions());
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> RowMapper<T> findRowMapperForType(Class<T> cl) {
+    private <T> RowMapper<T> findRowMapperForType(Class<T> cl) {
         if (cl.isEnum())
-            return new EnumRowMapper(cl);
+            return new EnumRowMapper(cl, getCoercions());
         return SingleColumnMappers.findRowMapperForType(cl);
+    }
+
+    private Coercions getCoercions() {
+        if (coercions == null) {
+            coercions = withTransaction(new ConnectionCallback<Coercions>() {
+                @Override
+                public Coercions execute(@NotNull Connection connection) throws SQLException {
+                    return new Coercions(getDialect(connection));
+                }
+            });
+        }
+
+        return coercions;
     }
 
     @NotNull

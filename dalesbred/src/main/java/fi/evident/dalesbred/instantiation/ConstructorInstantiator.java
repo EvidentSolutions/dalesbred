@@ -18,7 +18,7 @@ final class ConstructorInstantiator<T> implements Instantiator<T> {
     @Override
     public T instantiate(Object[] arguments, Coercions coercions) {
         try {
-            Object[] coerced = coercions.coerceAll(constructor.getParameterTypes(), arguments);
+            Object[] coerced = coercions.coerceAllFromDB(constructor.getParameterTypes(), arguments);
             return constructor.newInstance(coerced);
         } catch (Exception e) {
             throw propagate(e);

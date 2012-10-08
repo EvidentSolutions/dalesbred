@@ -31,6 +31,11 @@ public abstract class Dialect {
     }
 
     @NotNull
+    public <T extends Enum<T>> T databaseValueToEnum(@NotNull Class<T> type, @NotNull Object value) {
+        return Enum.valueOf(type, value.toString());
+    }
+
+    @NotNull
     public static Dialect detect(@NotNull Connection connection) throws SQLException {
         String productName = connection.getMetaData().getDatabaseProductName();
 
