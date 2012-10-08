@@ -41,7 +41,7 @@ public final class Database {
     private int transactionIsolation = -1;
 
     /** Do we want to create a new transaction if non-transactional calls are made */
-    private boolean allowImplicitTransactions = false;
+    private boolean allowImplicitTransactions = true;
 
     @Nullable
     private Dialect dialect;
