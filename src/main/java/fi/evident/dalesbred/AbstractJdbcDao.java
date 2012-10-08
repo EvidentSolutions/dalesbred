@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import java.util.List;
 
 /**
- * Super-simple abstraction to make JDBC a bit simpler.
+ * Abstract base class for DAOs. Just provides more convenient access to associated {@link JdbcOperations}.
+ * <p>
+ * See {@link JdbcOperations} for description of operations.
  */
 public abstract class AbstractJdbcDao {
 
@@ -32,8 +34,8 @@ public abstract class AbstractJdbcDao {
         return jdbcOperations.unique(query, cl);
     }
 
-    protected final <T> T query(final SqlQuery query, final JdbcCallback<ResultSet, T> callback) {
-        return jdbcOperations.query(query, callback);
+    protected final <T> T find(final SqlQuery query, final JdbcCallback<ResultSet, T> callback) {
+        return jdbcOperations.find(query, callback);
     }
 
     protected final <T> T insertAndReturnGeneratedId(Class<T> keyType, @SQL String sql, Object... args) {
@@ -60,6 +62,4 @@ public abstract class AbstractJdbcDao {
     public void setJdbcOperations(JdbcOperations jdbcOperations) {
         this.jdbcOperations = jdbcOperations;
     }
-
-
 }

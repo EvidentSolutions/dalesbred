@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 import static java.util.Arrays.asList;
@@ -20,6 +21,7 @@ public final class JdbcOperations {
     
     private final Provider<Connection> connectionProvider;
     private static final ThreadLocal<Connection> threadConnection = new ThreadLocal<Connection>();
+    private final Logger log = Logger.getLogger(getClass().getName());
     
     @Inject
     public JdbcOperations(Provider<Connection> connectionProvider) {
@@ -48,7 +50,7 @@ public final class JdbcOperations {
     }
 
     public <T> List<T> list(SqlQuery query, final JdbcCallback<ResultSet, T> rowMapper) {
-        return query(query, new JdbcCallback<ResultSet, List<T>>() {
+        return find(query, new JdbcCallback<ResultSet, List<T>>() {
             @Override
             public List<T> execute(ResultSet rs) throws SQLException {
                 List<T> result = new ArrayList<T>();
@@ -62,7 +64,7 @@ public final class JdbcOperations {
     }
 
     public <T> List<T> list(SqlQuery query, Class<T> cl) {
-        return query(query, ReflectionRowMapper.forClass(cl));
+        return find(query, ReflectionRowMapper.forClass(cl));
     }
 
     public <T> T unique(SqlQuery query, Class<T> cl) {
@@ -73,12 +75,12 @@ public final class JdbcOperations {
             throw new JdbcException("Expected unique result but got " + items.size() + " rows.");
     }
 
-    public <T> T query(final SqlQuery query, final JdbcCallback<ResultSet, T> callback) {
-        System.out.println(query.sql);
-
+    public <T> T find(final SqlQuery query, final JdbcCallback<ResultSet, T> callback) {
         return withConnection(new JdbcCallback<Connection, T>() {
             @Override
             public T execute(Connection connection) throws SQLException {
+                log.fine(query.sql);
+
                 PreparedStatement ps = connection.prepareStatement(query.sql);
                 try {
                     bindArguments(ps, query.args);
@@ -97,7 +99,7 @@ public final class JdbcOperations {
     }
 
     public String queryForString(SqlQuery query) {
-        return query(query, new JdbcCallback<ResultSet, String>() {
+        return find(query, new JdbcCallback<ResultSet, String>() {
             @Override
             public String execute(ResultSet resultSet) throws SQLException {
                 if (resultSet.next())
@@ -109,7 +111,7 @@ public final class JdbcOperations {
     }
 
     public String queryForStringOrNull(SqlQuery query) {
-        return query(query, new JdbcCallback<ResultSet, String>() {
+        return find(query, new JdbcCallback<ResultSet, String>() {
             @Override
             public String execute(ResultSet resultSet) throws SQLException {
                 if (resultSet.next())
@@ -121,7 +123,7 @@ public final class JdbcOperations {
     }
 
     public int queryForInt(SqlQuery query) {
-        return query(query, new JdbcCallback<ResultSet, Integer>() {
+        return find(query, new JdbcCallback<ResultSet, Integer>() {
             @Override
             public Integer execute(ResultSet resultSet) throws SQLException {
                 if (resultSet.next())
@@ -133,7 +135,7 @@ public final class JdbcOperations {
     }
 
     public Integer queryForIntOrNull(SqlQuery query) {
-        return query(query, new JdbcCallback<ResultSet, Integer>() {
+        return find(query, new JdbcCallback<ResultSet, Integer>() {
             @Override
             public Integer execute(ResultSet resultSet) throws SQLException {
                 if (resultSet.next())
