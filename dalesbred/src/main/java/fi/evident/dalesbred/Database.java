@@ -9,6 +9,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -52,6 +54,23 @@ public final class Database {
     @NotNull
     public static Database forDataSource(@NotNull DataSource dataSource) {
         return new Database(new DataSourceConnectionProvider(dataSource));
+    }
+
+    /**
+     * Returns a new Database that uses {@link DataSource} with given JNDI-name.
+     */
+    @NotNull
+    public static Database forJndiDataSource(@NotNull String jndiName) {
+        try {
+            InitialContext ctx = new InitialContext();
+            DataSource dataSource = (DataSource) ctx.lookup(jndiName);
+            if (dataSource != null)
+                return forDataSource(dataSource);
+            else
+                throw new JdbcException("Could not find DataSource '" + jndiName + "'");
+        } catch (NamingException e) {
+            throw new JdbcException("Error when looking up DataSource '" + jndiName + "': " + e, e);
+        }
     }
 
     /**

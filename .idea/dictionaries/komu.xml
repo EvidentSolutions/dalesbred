@@ -6,8 +6,10 @@
       <w>endian</w>
       <w>fixme</w>
       <w>hamcrest</w>
+      <w>jndi</w>
       <w>jsse</w>
       <w>komu</w>
+      <w>postgresql</w>
       <w>scpexe</w>
       <w>sunrsasign</w>
       <w>throwables</w>
