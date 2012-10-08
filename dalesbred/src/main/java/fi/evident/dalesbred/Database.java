@@ -153,7 +153,7 @@ public final class Database {
      * Executes a query and processes the results with given {@link ResultSetProcessor}.
      * All other findXXX-methods are just convenience methods for this one.
      */
-    public <T> T find(@NotNull final SqlQuery query, @NotNull final ResultSetProcessor<T> processor) {
+    public <T> T executeQuery(@NotNull final SqlQuery query, @NotNull final ResultSetProcessor<T> processor) {
         return withCurrentTransaction(new ConnectionCallback<T>() {
             @Override
             public T execute(Connection connection) throws SQLException {
@@ -176,16 +176,16 @@ public final class Database {
      * to produce a list of results.
      */
     @NotNull
-    public <T> List<T> findList(@NotNull SqlQuery query, @NotNull RowMapper<T> rowMapper) {
-        return find(query, new ListWithRowMapperResultSetProcessor<T>(rowMapper));
+    public <T> List<T> findAll(@NotNull SqlQuery query, @NotNull RowMapper<T> rowMapper) {
+        return executeQuery(query, new ListWithRowMapperResultSetProcessor<T>(rowMapper));
     }
 
     /**
      * Executes a query and converts the results to instances of given class using default mechanisms.
      */
     @NotNull
-    public <T> List<T> findList(@NotNull SqlQuery query, @NotNull Class<T> cl) {
-        return find(query, resultProcessorForClass(cl));
+    public <T> List<T> findAll(@NotNull SqlQuery query, @NotNull Class<T> cl) {
+        return executeQuery(query, resultProcessorForClass(cl));
     }
 
     /**
@@ -224,7 +224,7 @@ public final class Database {
      */
     @Nullable
     public <T> T findUniqueOrNull(SqlQuery query, RowMapper<T> rowMapper) {
-        return uniqueOrNull(findList(query, rowMapper));
+        return uniqueOrNull(findAll(query, rowMapper));
     }
 
     /**
@@ -235,7 +235,7 @@ public final class Database {
      */
     @Nullable
     public <T> T findUniqueOrNull(SqlQuery query, Class<T> cl) {
-        return uniqueOrNull(findList(query, cl));
+        return uniqueOrNull(findAll(query, cl));
     }
 
     /**
