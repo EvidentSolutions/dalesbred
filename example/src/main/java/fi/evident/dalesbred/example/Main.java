@@ -17,14 +17,14 @@ public class Main {
     public void run() {
         db.withTransaction(new ConnectionCallback<Object>() {
             @Override
-            public Object execute(Connection context) throws SQLException {
+            public Object execute(Connection connection) throws SQLException {
                 db.update("create table foo (id serial primary key, name varchar(64) not null)");
                 db.update("insert into foo (name) values ('foo')");
                 db.update("insert into foo (name) values ('bar')");
 
-                System.out.println(db.queryForInt(query("select count(*) from foo")));
+                System.out.println(db.findUniqueInt(query("select count(*) from foo")));
 
-                context.rollback();
+                connection.rollback();
                 return null;
             }
         });

@@ -3,6 +3,7 @@ package fi.evident.dalesbred;
 import fi.evident.dalesbred.connection.DataSourceConnectionProvider;
 import fi.evident.dalesbred.connection.DriverManagerConnectionProvider;
 import fi.evident.dalesbred.dialects.Dialect;
+import fi.evident.dalesbred.results.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,14 +14,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static fi.evident.dalesbred.SqlQuery.query;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 import static fi.evident.dalesbred.utils.Throwables.propagate;
-import static java.util.Arrays.asList;
 
 /**
  * The main abstraction of the library: represents a connection to database and provides a way to
@@ -136,6 +136,7 @@ public final class Database {
         }
     }
 
+    @NotNull
     private Connection openConnection() throws SQLException {
         Connection connection = connectionProvider.get();
         if (connection == null)
@@ -148,49 +149,21 @@ public final class Database {
         return connection;
     }
 
-    public <T> List<T> list(SqlQuery query, final ResultSetCallback<T> rowMapper) {
-        return find(query, new ResultSetCallback<List<T>>() {
-            @Override
-            public List<T> execute(ResultSet rs) throws SQLException {
-                List<T> result = new ArrayList<T>();
-
-                while (rs.next())
-                    result.add(rowMapper.execute(rs));
-
-                return result;
-            }
-        });
-    }
-
-    public <T> List<T> list(SqlQuery query, Class<T> cl) {
-        return find(query, ReflectionRowMapper.forClass(cl));
-    }
-
-    public <T> T unique(SqlQuery query, Class<T> cl) {
-        List<T> items = list(query, cl);
-        if (items.size() == 1)
-            return items.get(0);
-        else
-            throw new JdbcException("Expected unique result but got " + items.size() + " rows.");
-    }
-
-    public <T> T find(final SqlQuery query, final ResultSetCallback<T> callback) {
+    /**
+     * Executes a query and processes the results with given {@link ResultSetProcessor}.
+     * All other findXXX-methods are just convenience methods for this one.
+     */
+    public <T> T find(@NotNull final SqlQuery query, @NotNull final ResultSetProcessor<T> processor) {
         return withCurrentTransaction(new ConnectionCallback<T>() {
             @Override
             public T execute(Connection connection) throws SQLException {
-                if (log.isLoggable(Level.FINE))
-                    log.fine("executing query " + query);
+                logQuery(query);
 
                 PreparedStatement ps = connection.prepareStatement(query.sql);
                 try {
                     bindArguments(ps, query.args);
 
-                    ResultSet rs = ps.executeQuery();
-                    try {
-                        return callback.execute(rs);
-                    } finally {
-                        rs.close();
-                    }
+                    return processResults(ps.executeQuery(), processor);
                 } finally {
                     ps.close();
                 }
@@ -198,61 +171,96 @@ public final class Database {
         });
     }
 
-    public String queryForString(SqlQuery query) {
-        return find(query, new ResultSetCallback<String>() {
-            @Override
-            public String execute(ResultSet resultSet) throws SQLException {
-                if (resultSet.next())
-                    return resultSet.getString(1);
-                else
-                    throw new JdbcException("Expected at least one row.");
-            }
-        });
+    /**
+     * Executes a query and processes each row of the result with given {@link RowMapper}
+     * to produce a list of results.
+     */
+    @NotNull
+    public <T> List<T> findList(@NotNull SqlQuery query, @NotNull RowMapper<T> rowMapper) {
+        return find(query, new ListWithRowMapperResultSetProcessor<T>(rowMapper));
     }
 
-    public String queryForStringOrNull(SqlQuery query) {
-        return find(query, new ResultSetCallback<String>() {
-            @Override
-            public String execute(ResultSet resultSet) throws SQLException {
-                if (resultSet.next())
-                    return resultSet.getString(1);
-                else
-                    return null;
-            }
-        });
+    /**
+     * Executes a query and converts the results to instances of given class using default mechanisms.
+     */
+    @NotNull
+    public <T> List<T> findList(@NotNull SqlQuery query, @NotNull Class<T> cl) {
+        return find(query, resultProcessorForClass(cl));
     }
 
-    public int queryForInt(SqlQuery query) {
-        return find(query, new ResultSetCallback<Integer>() {
-            @Override
-            public Integer execute(ResultSet resultSet) throws SQLException {
-                if (resultSet.next())
-                    return resultSet.getInt(1);
-                else
-                    throw new JdbcException("Expected at least one row.");
-            }
-        });
+    /**
+     * Finds a unique result from database, using given {@link RowMapper} to convert the row.
+     *
+     * @throws NonUniqueResultException if there are no rows or multiple rows
+     */
+    @Nullable
+    public <T> T findUnique(SqlQuery query, RowMapper<T> cl) {
+        T result = findUniqueOrNull(query, cl);
+        if (result != null)
+            return result;
+        else
+            throw new NonUniqueResultException(0);
     }
 
-    public Integer queryForIntOrNull(SqlQuery query) {
-        return find(query, new ResultSetCallback<Integer>() {
-            @Override
-            public Integer execute(ResultSet resultSet) throws SQLException {
-                if (resultSet.next())
-                    return resultSet.getInt(1);
-                else
-                    return null;
-            }
-        });
+    /**
+     * Finds a unique result from database, converting the database row to given class using default mechanisms.
+     *
+     * @throws NonUniqueResultException if there are no rows or multiple rows
+     */
+    @Nullable
+    public <T> T findUnique(SqlQuery query, Class<T> cl) {
+        T result = findUniqueOrNull(query, cl);
+        if (result != null)
+            return result;
+        else
+            throw new NonUniqueResultException(0);
     }
 
-    public int update(@SQL final String sql, final Object... args) {
+    /**
+     * Find a unique result from database, using given {@link RowMapper} to convert row. Returns null if
+     * there are no results.
+     *
+     * @throws NonUniqueResultException if there are multiple result rows
+     */
+    @Nullable
+    public <T> T findUniqueOrNull(SqlQuery query, RowMapper<T> rowMapper) {
+        return uniqueOrNull(findList(query, rowMapper));
+    }
+
+    /**
+     * Finds a unique result from database, converting the database row to given class using default mechanisms.
+     * Returns null if there are no results.
+     *
+     * @throws NonUniqueResultException if there are multiple result rows
+     */
+    @Nullable
+    public <T> T findUniqueOrNull(SqlQuery query, Class<T> cl) {
+        return uniqueOrNull(findList(query, cl));
+    }
+
+    /**
+     * A convenience method for retrieving a single non-null integer.
+     */
+    public int findUniqueInt(SqlQuery query) {
+        Integer value = findUnique(query, Integer.class);
+        if (value != null)
+            return value;
+        else
+            throw new JdbcException("database returned null instead of int");
+    }
+
+    /**
+     * Executes an update against the database and returns the amount of affected rows.
+     */
+    public int update(@NotNull final SqlQuery query) {
         return withCurrentTransaction(new ConnectionCallback<Integer>() {
             @Override
             public Integer execute(Connection connection) throws SQLException {
-                PreparedStatement ps = connection.prepareStatement(sql);
+                logQuery(query);
+
+                PreparedStatement ps = connection.prepareStatement(query.sql);
                 try {
-                    bindArguments(ps, asList(args));
+                    bindArguments(ps, query.args);
                     return ps.executeUpdate();
                 } finally {
                     ps.close();
@@ -261,29 +269,53 @@ public final class Database {
         });
     }
 
-    public <T> T insertAndReturnGeneratedId(final Class<T> keyType, @SQL final String sql, final Object... args) {
+    /**
+     * Executes an update against the database and returns the amount of affected rows.
+     */
+    public int update(@NotNull @SQL final String sql, @NotNull final Object... args) {
+        return update(query(sql, args));
+    }
+
+    /**
+     * Executes an update against the database and processes the generated ids with given processor.
+     */
+    public <T> T updateAndReturnGeneratedKeys(@NotNull final SqlQuery query, @NotNull final ResultSetProcessor<T> resultSetProcessor) {
         return withCurrentTransaction(new ConnectionCallback<T>() {
             @Override
             public T execute(Connection connection) throws SQLException {
-                PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+                logQuery(query);
+
+                PreparedStatement ps = connection.prepareStatement(query.sql, PreparedStatement.RETURN_GENERATED_KEYS);
                 try {
-                    bindArguments(ps, asList(args));
+                    bindArguments(ps, query.args);
                     ps.executeUpdate();
 
-                    ResultSet keys = ps.getGeneratedKeys();
-                    try {
-                        if (keys.next())
-                            return keyType.cast(keys.getObject(1));
-                        else
-                            throw new JdbcException("Expected a generated key, but did not receive one.");
-                    } finally {
-                        keys.close();
-                    }
+                    return processResults(ps.getGeneratedKeys(), resultSetProcessor);
+
                 } finally {
                     ps.close();
                 }
             }
         });
+    }
+
+    /**
+     * Executes an update against the database and returns the generated ids as given by row-mapper.
+     */
+    public <T> List<T> updateAndReturnGeneratedKeys(@NotNull final SqlQuery query, @NotNull final RowMapper<T> rowMapper) {
+        return updateAndReturnGeneratedKeys(query, new ListWithRowMapperResultSetProcessor<T>(rowMapper));
+    }
+
+    /**
+     * Executes an update against the database and returns the generated ids of given type.
+     */
+    public <T> List<T> updateAndReturnGeneratedKeys(@NotNull final SqlQuery query, @NotNull final Class<T> keyType) {
+        return updateAndReturnGeneratedKeys(query, resultProcessorForClass(keyType));
+    }
+
+    private void logQuery(SqlQuery query) {
+        if (log.isLoggable(Level.FINE))
+            log.fine("executing query " + query);
     }
 
     private void bindArguments(PreparedStatement ps, List<Object> args) throws SQLException {
@@ -294,11 +326,38 @@ public final class Database {
             ps.setObject(i++, provider.valueToDatabase(arg));
     }
 
+    @Nullable
+    private static <T> T uniqueOrNull(@NotNull List<T> items) {
+        switch (items.size()) {
+            case 0:  return null;
+            case 1:  return items.get(0);
+            default: throw new NonUniqueResultException(items.size());
+        }
+    }
+
+    @NotNull
+    private static <T> ResultSetProcessor<List<T>> resultProcessorForClass(@NotNull Class<T> cl) {
+        RowMapper<T> rowMapper = SingleColumnMappers.findRowMapperForType(cl);
+
+        if (rowMapper != null)
+            return new ListWithRowMapperResultSetProcessor<T>(rowMapper);
+        else
+            return ReflectionResultSetProcessor.forClass(cl);
+    }
+
     @NotNull
     private Dialect getDialect(Connection connection) throws SQLException {
         if (dialect == null)
             dialect = Dialect.detect(connection);
         return dialect;
+    }
+
+    private static <T> T processResults(@NotNull ResultSet resultSet, @NotNull ResultSetProcessor<T> processor) throws SQLException {
+        try {
+            return processor.process(resultSet);
+        } finally {
+            resultSet.close();
+        }
     }
 
     public void setDialect(@NotNull Dialect dialect) {
@@ -309,6 +368,15 @@ public final class Database {
         return transactionIsolation;
     }
 
+    /**
+     * Sets the transaction-isolation level to use.
+     *
+     * @see Connection#TRANSACTION_NONE
+     * @see Connection#TRANSACTION_READ_UNCOMMITTED
+     * @see Connection#TRANSACTION_READ_COMMITTED
+     * @see Connection#TRANSACTION_REPEATABLE_READ
+     * @see Connection#TRANSACTION_SERIALIZABLE
+     */
     public void setTransactionIsolation(int level) {
         if (level != -1
                 && level != Connection.TRANSACTION_NONE
@@ -325,6 +393,10 @@ public final class Database {
         return allowImplicitTransactions;
     }
 
+    /**
+     * If flag is set to true (by default it's false) queries without active transaction will
+     * not throw exception but will start a fresh transaction.
+     */
     public void setAllowImplicitTransactions(boolean allowImplicitTransactions) {
         this.allowImplicitTransactions = allowImplicitTransactions;
     }

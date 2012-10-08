@@ -1,5 +1,6 @@
-package fi.evident.dalesbred;
+package fi.evident.dalesbred.results;
 
+import fi.evident.dalesbred.JdbcException;
 import fi.evident.dalesbred.instantiation.Instantiator;
 import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
 import fi.evident.dalesbred.instantiation.NamedTypeList;
@@ -12,21 +13,24 @@ import java.util.List;
 
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
-final class ReflectionRowMapper<T> implements ResultSetCallback<List<T>> {
+/**
+ * Builds a list of results from {@link ResultSet} using reflection to instantiate individual rows.
+ */
+public final class ReflectionResultSetProcessor<T> implements ResultSetProcessor<List<T>> {
 
     private final Class<T> cl;
     private static final InstantiatorRegistry instantiatorRegistry = new InstantiatorRegistry();
 
-    private ReflectionRowMapper(Class<T> cl) {
+    private ReflectionResultSetProcessor(Class<T> cl) {
         this.cl = requireNonNull(cl);
     }
     
-    public static <T> ReflectionRowMapper<T> forClass(Class<T> cl) {
-        return new ReflectionRowMapper<T>(cl);
+    public static <T> ReflectionResultSetProcessor<T> forClass(Class<T> cl) {
+        return new ReflectionResultSetProcessor<T>(cl);
     }
 
     @Override
-    public List<T> execute(ResultSet resultSet) throws SQLException {
+    public List<T> process(ResultSet resultSet) throws SQLException {
         Instantiator<T> ctor = findInstantiator(resultSet.getMetaData());
 
         ArrayList<T> result = new ArrayList<T>();

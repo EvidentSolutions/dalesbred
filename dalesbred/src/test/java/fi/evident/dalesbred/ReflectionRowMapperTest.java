@@ -1,5 +1,6 @@
 package fi.evident.dalesbred;
 
+import fi.evident.dalesbred.results.ReflectionResultSetProcessor;
 import org.junit.Test;
 import org.mockito.stubbing.OngoingStubbing;
 
@@ -18,14 +19,14 @@ public class ReflectionRowMapperTest {
 
     @Test
     public void instantiatingWithSimpleConstructor() throws SQLException {
-        ReflectionRowMapper<SingleConstructor> mapper = ReflectionRowMapper.forClass(SingleConstructor.class);
+        ReflectionResultSetProcessor<SingleConstructor> mapper = ReflectionResultSetProcessor.forClass(SingleConstructor.class);
 
         ResultSet resultSet = resultSet(new Object[][] {
             { 1, "foo" },
             { 3, "bar" }
         });
 
-        List<SingleConstructor> list = mapper.execute(resultSet);
+        List<SingleConstructor> list = mapper.process(resultSet);
         assertThat(list.size(), is(2));
 
         assertThat(list.get(0).num, is(1));
@@ -36,16 +37,16 @@ public class ReflectionRowMapperTest {
 
     @Test
     public void emptyResultSetProducesNoResults() throws SQLException {
-        ReflectionRowMapper<SingleConstructor> mapper = ReflectionRowMapper.forClass(SingleConstructor.class);
+        ReflectionResultSetProcessor<SingleConstructor> mapper = ReflectionResultSetProcessor.forClass(SingleConstructor.class);
 
-        assertThat(mapper.execute(emptyResultSet(Integer.class, String.class)).isEmpty(), is(true));
+        assertThat(mapper.process(emptyResultSet(Integer.class, String.class)).isEmpty(), is(true));
     }
 
     @Test
     public void correctConstructorIsPickedBasedOnTypes() throws SQLException {
-        ReflectionRowMapper<TwoConstructors> mapper = ReflectionRowMapper.forClass(TwoConstructors.class);
+        ReflectionResultSetProcessor<TwoConstructors> mapper = ReflectionResultSetProcessor.forClass(TwoConstructors.class);
 
-        List<TwoConstructors> list = mapper.execute(singletonResultSet(1, "foo"));
+        List<TwoConstructors> list = mapper.process(singletonResultSet(1, "foo"));
         assertThat(list.size(), is(1));
 
         assertThat(list.get(0).num, is(1));
