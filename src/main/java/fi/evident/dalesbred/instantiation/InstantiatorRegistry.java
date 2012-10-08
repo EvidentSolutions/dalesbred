@@ -1,12 +1,14 @@
 package fi.evident.dalesbred.instantiation;
 
 import java.lang.reflect.Constructor;
-import java.util.Arrays;
 
 import static fi.evident.dalesbred.utils.Primitives.unwrap;
 import static fi.evident.dalesbred.utils.Primitives.wrap;
 import static java.lang.reflect.Modifier.isPublic;
 
+/**
+ * Provides {@link Instantiator}s for classes.
+ */
 public final class InstantiatorRegistry {
 
     private static final int SAME_COST = 0;
@@ -21,7 +23,7 @@ public final class InstantiatorRegistry {
      * does not require strict match for types, but finds any constructor
      * that is assignable from given types.
      */
-    public <T> Instantiator<T> findInstantiator(Class<T> cl, Class<?>... types) throws NoSuchMethodException {
+    public <T> Instantiator<T> findInstantiator(Class<T> cl, NamedTypeList types) throws NoSuchMethodException {
         Instantiator<T> best = null;
 
         for (Constructor<T> constructor : constructorsFor(cl)) {
@@ -33,10 +35,10 @@ public final class InstantiatorRegistry {
         if (best != null)
             return best;
         else
-            throw new NoSuchMethodException(cl + " does not have constructor matching types "+ Arrays.toString(types));
+            throw new NoSuchMethodException(cl + " does not have constructor matching types " + types.toString());
     }
 
-    private <T> Instantiator<T> instantiatorFrom(Constructor<T> constructor, Class[] types) {
+    private <T> Instantiator<T> instantiatorFrom(Constructor<T> constructor, NamedTypeList types) {
         if (!isPublic(constructor.getModifiers())) return null;
         
         int cost = cost(constructor, types);
@@ -46,15 +48,15 @@ public final class InstantiatorRegistry {
             return null;
     }
 
-    private static int cost(Constructor<?> constructor, Class<?>[] columnTypes) {
+    private static int cost(Constructor<?> constructor, NamedTypeList columnTypes) {
         Class<?>[] parameterTypes = constructor.getParameterTypes();
 
-        if (parameterTypes.length != columnTypes.length)
+        if (parameterTypes.length != columnTypes.size())
             return NO_MATCH_COST;
 
         int totalCost = 0;
         for (int i = 0; i < parameterTypes.length; i++) {
-            int assignScore = assignmentCost(parameterTypes[i], columnTypes[i]);
+            int assignScore = assignmentCost(parameterTypes[i], columnTypes.getType(i));
             if (assignScore == NO_MATCH_COST)
                 return NO_MATCH_COST;
             else
@@ -75,9 +77,5 @@ public final class InstantiatorRegistry {
     @SuppressWarnings("unchecked")
     private static <T> Constructor<T>[] constructorsFor(Class<T> cl) {
         return (Constructor<T>[]) cl.getConstructors();
-    }
-
-    public static boolean isAssignable(Class<?> target, Class<?> source) {
-        return wrap(target).isAssignableFrom(wrap(source));
     }
 }

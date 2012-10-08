@@ -2,6 +2,7 @@ package fi.evident.dalesbred.instantiation;
 
 import org.junit.Test;
 
+import static fi.evident.dalesbred.utils.Primitives.isAssignableByBoxing;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -31,37 +32,37 @@ public class InstantiatorRegistryTest {
 
     @Test
     public void findDefaultConstructor() throws Exception {
-        Instantiator<TestClass> ctor = instantiatorRegistry.findInstantiator(TestClass.class);
+        Instantiator<TestClass> ctor = findInstantiator(TestClass.class);
         assertThat(ctor.instantiate(new Object[] { }).calledConstructor, is(1));
     }
 
     @Test
     public void findConstructedBasedOnType() throws Exception {
-        Instantiator<TestClass> ctor = instantiatorRegistry.findInstantiator(TestClass.class, String.class);
+        Instantiator<TestClass> ctor = findInstantiator(TestClass.class, String.class);
         assertThat(ctor.instantiate(new Object[] { "foo", }).calledConstructor, is(2));
     }
 
     @Test
     public void findBasedOnPrimitiveType() throws Exception {
-        Instantiator<TestClass> ctor = instantiatorRegistry.findInstantiator(TestClass.class, int.class);
+        Instantiator<TestClass> ctor = findInstantiator(TestClass.class, int.class);
         assertThat(ctor.instantiate(new Object[] { 3 }).calledConstructor, is(3));
     }
 
     @Test
     public void findPrimitiveTypedConstructorWithBoxedType() throws Exception {
-        Instantiator<TestClass> ctor = instantiatorRegistry.findInstantiator(TestClass.class, Integer.class);
+        Instantiator<TestClass> ctor = findInstantiator(TestClass.class, Integer.class);
         assertThat(ctor.instantiate(new Object[] { 3 }).calledConstructor, is(3));
     }
 
     @Test
     public void preferConstructorWithoutBoxing() throws Exception {
-        Instantiator<TestClass> ctor = instantiatorRegistry.findInstantiator(TestClass.class, long.class);
+        Instantiator<TestClass> ctor = findInstantiator(TestClass.class, long.class);
         assertThat(ctor.instantiate(new Object[] { 3L }).calledConstructor, is(4));
     }
 
     @Test
     public void preferConstructorWithoutUnboxing() throws Exception {
-        Instantiator<TestClass> ctor = instantiatorRegistry.findInstantiator(TestClass.class, Long.class);
+        Instantiator<TestClass> ctor = findInstantiator(TestClass.class, Long.class);
         assertThat(ctor.instantiate(new Object[] { 3L }).calledConstructor, is(5));
     }
 
@@ -75,7 +76,15 @@ public class InstantiatorRegistryTest {
         public TestClass(Long x) { calledConstructor = 5; }
     }
 
+    private <T> Instantiator<T> findInstantiator(Class<T> cl, Class<?>... types) throws NoSuchMethodException {
+        NamedTypeList.Builder list = NamedTypeList.builder(types.length);
+        for (int i = 0; i < types.length; i++)
+            list.add("name" + i, types[i]);
+
+        return instantiatorRegistry.findInstantiator(cl, list.build());
+    }
+
     private static void assertAssignable(Class<?> target, Class<?> source) {
-        assertThat(InstantiatorRegistry.isAssignable(target, source), is(true));
+        assertThat(isAssignableByBoxing(target, source), is(true));
     }
 }

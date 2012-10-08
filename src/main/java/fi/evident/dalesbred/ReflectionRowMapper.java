@@ -2,6 +2,7 @@ package fi.evident.dalesbred;
 
 import fi.evident.dalesbred.instantiation.Instantiator;
 import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
+import fi.evident.dalesbred.instantiation.NamedTypeList;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -26,7 +27,7 @@ final class ReflectionRowMapper<T> implements JdbcCallback<ResultSet, List<T>> {
 
     @Override
     public List<T> execute(ResultSet resultSet) throws SQLException {
-        Instantiator<T> ctor = findConstructor(resultSet.getMetaData());
+        Instantiator<T> ctor = findInstantiator(resultSet.getMetaData());
 
         ArrayList<T> result = new ArrayList<T>();
 
@@ -42,22 +43,24 @@ final class ReflectionRowMapper<T> implements JdbcCallback<ResultSet, List<T>> {
         return result;
     }
 
-    private Instantiator<T> findConstructor(ResultSetMetaData metaData) throws SQLException {
+    private Instantiator<T> findInstantiator(ResultSetMetaData metaData) throws SQLException {
         try {
-            Class<?>[] types = getTypes(metaData);
+            NamedTypeList types = getTypes(metaData);
             return instantiatorRegistry.findInstantiator(cl, types);
         } catch (NoSuchMethodException e) {
             throw new JdbcException(e);
         }
     }
 
-    private static Class<?>[] getTypes(ResultSetMetaData metaData) throws SQLException {
-        Class<?>[] types = new Class<?>[metaData.getColumnCount()];
+    private static NamedTypeList getTypes(ResultSetMetaData metaData) throws SQLException {
+        int columns = metaData.getColumnCount();
 
-        for (int i = 0; i < types.length; i++)
-            types[i] = getColumnType(metaData, i+1);
+        NamedTypeList.Builder result = NamedTypeList.builder(columns);
 
-        return types;
+        for (int i = 0; i < columns; i++)
+            result.add(metaData.getColumnName(i+1), getColumnType(metaData, i+1));
+
+        return result.build();
     }
 
     private static Class<?> getColumnType(ResultSetMetaData metaData, int column) throws SQLException {

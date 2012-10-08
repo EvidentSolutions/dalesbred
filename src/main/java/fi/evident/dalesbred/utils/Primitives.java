@@ -37,4 +37,8 @@ public final class Primitives {
              : (type == Double.class)    ? double.class
              : type;
     }
+
+    public static boolean isAssignableByBoxing(Class<?> target, Class<?> source) {
+        return wrap(target).isAssignableFrom(wrap(source));
+    }
 }

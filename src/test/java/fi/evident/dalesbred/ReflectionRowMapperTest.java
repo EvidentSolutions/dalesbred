@@ -81,8 +81,10 @@ public class ReflectionRowMapperTest {
         ResultSetMetaData metaData = mock(ResultSetMetaData.class);
         when(metaData.getColumnCount()).thenReturn(types.length);
 
-        for (int i = 0; i < types.length; i++)
+        for (int i = 0; i < types.length; i++) {
+            when(metaData.getColumnName(i + 1)).thenReturn("column" + i);
             when(metaData.getColumnClassName(i + 1)).thenReturn(types[i].getName());
+        }
 
         ResultSet resultSet = mock(ResultSet.class);
         when(resultSet.getMetaData()).thenReturn(metaData);
@@ -128,8 +130,10 @@ public class ReflectionRowMapperTest {
         ResultSetMetaData metaData = mock(ResultSetMetaData.class);
         when(metaData.getColumnCount()).thenReturn(row.length);
 
-        for (int i = 0; i < row.length; i++)
+        for (int i = 0; i < row.length; i++) {
+            when(metaData.getColumnName(i + 1)).thenReturn("column" + i);
             when(metaData.getColumnClassName(i + 1)).thenReturn(row[i].getClass().getName());
+        }
 
         return metaData;
     }
