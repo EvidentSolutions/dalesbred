@@ -1,22 +1,36 @@
 package fi.evident.dalesbred.example;
 
-import fi.evident.dalesbred.AbstractJdbcDao;
-import fi.evident.dalesbred.JdbcOperations;
-import fi.evident.dalesbred.connection.DriverManagerConnectionProvider;
+import fi.evident.dalesbred.ConnectionCallback;
+import fi.evident.dalesbred.Database;
+import org.jetbrains.annotations.NotNull;
 
-import javax.inject.Provider;
 import java.sql.Connection;
+import java.sql.SQLException;
 
-public class Main extends AbstractJdbcDao {
+import static fi.evident.dalesbred.SqlQuery.query;
+
+public class Main {
+
+    @NotNull
+    public final Database db = Database.forUrlAndCredentials("jdbc:postgresql://db/dalesbred-test", "evident", "Evident11");
 
     public void run() {
-        System.out.println(queryForInt(query("select 42")));
+        db.withTransaction(new ConnectionCallback<Object>() {
+            @Override
+            public Object execute(Connection context) throws SQLException {
+                db.update("create table foo (id serial primary key, name varchar(64) not null)");
+                db.update("insert into foo (name) values ('foo')");
+                db.update("insert into foo (name) values ('bar')");
+
+                System.out.println(db.queryForInt(query("select count(*) from foo")));
+
+                context.rollback();
+                return null;
+            }
+        });
     }
 
     public static void main(String[] args) {
-        Provider<Connection> connectionProvider = new DriverManagerConnectionProvider("jdbc:postgresql://db/dalesbred-test", "evident", "Evident11");
-        Main main = new Main();
-        main.setJdbcOperations(new JdbcOperations(connectionProvider));
-        main.run();
+        new Main().run();
     }
 }
