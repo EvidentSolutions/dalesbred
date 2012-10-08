@@ -37,6 +37,8 @@ public final class JdbcOperations {
                 return callback.execute(connection);
 
             connection = connectionProvider.get();
+            if (connection == null)
+                throw new JdbcException("connection-provider returned null connection");
 
             try {
                 threadConnection.set(connection);
