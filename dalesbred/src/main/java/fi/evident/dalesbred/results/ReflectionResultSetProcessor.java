@@ -1,6 +1,7 @@
 package fi.evident.dalesbred.results;
 
 import fi.evident.dalesbred.DatabaseException;
+import fi.evident.dalesbred.instantiation.Coercions;
 import fi.evident.dalesbred.instantiation.Instantiator;
 import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
 import fi.evident.dalesbred.instantiation.NamedTypeList;
@@ -20,6 +21,7 @@ public final class ReflectionResultSetProcessor<T> implements ResultSetProcessor
 
     private final Class<T> cl;
     private static final InstantiatorRegistry instantiatorRegistry = new InstantiatorRegistry();
+    private static final Coercions coercions = new Coercions();
 
     private ReflectionResultSetProcessor(Class<T> cl) {
         this.cl = requireNonNull(cl);
@@ -41,7 +43,7 @@ public final class ReflectionResultSetProcessor<T> implements ResultSetProcessor
             for (int i = 0; i < args.length; i++)
                 args[i] = resultSet.getObject(i+1);
 
-            result.add(ctor.instantiate(args));
+            result.add(ctor.instantiate(args, coercions));
         }
 
         return result;

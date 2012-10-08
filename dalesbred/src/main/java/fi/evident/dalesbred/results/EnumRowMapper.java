@@ -1,5 +1,6 @@
 package fi.evident.dalesbred.results;
 
+import fi.evident.dalesbred.instantiation.Coercions;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
@@ -10,6 +11,7 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
 public final class EnumRowMapper<T extends Enum<T>> implements RowMapper<T> {
 
     private final Class<T> enumType;
+    private static final Coercions coercions = new Coercions();
 
     public EnumRowMapper(@NotNull Class<T> enumType) {
         this.enumType = requireNonNull(enumType);
@@ -17,11 +19,6 @@ public final class EnumRowMapper<T extends Enum<T>> implements RowMapper<T> {
 
     @Override
     public T mapRow(ResultSet resultSet) throws SQLException {
-        // TODO: this assumes that DB returns enums as strings
-        String value = resultSet.getString(1);
-        if (value == null)
-            return null;
-
-        return Enum.valueOf(enumType, value);
+        return coercions.coerce(enumType, resultSet.getObject(1));
     }
 }
