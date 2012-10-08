@@ -10,5 +10,4 @@ out
 .idea/uiDesigner.xml
 .idea/dataSources.xml
 .idea/dataSources.ids
-local.properties
-gen/
+src/test/resources/connection.properties

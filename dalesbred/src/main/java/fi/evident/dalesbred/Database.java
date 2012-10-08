@@ -213,12 +213,8 @@ public final class Database {
      * @throws NonUniqueResultException if there are no rows or multiple rows
      */
     @Nullable
-    public <T> T findUnique(SqlQuery query, RowMapper<T> cl) {
-        T result = findUniqueOrNull(query, cl);
-        if (result != null)
-            return result;
-        else
-            throw new NonUniqueResultException(0);
+    public <T> T findUnique(SqlQuery query, RowMapper<T> mapper) {
+        return unique(findAll(query, mapper));
     }
 
     /**
@@ -228,11 +224,7 @@ public final class Database {
      */
     @Nullable
     public <T> T findUnique(SqlQuery query, Class<T> cl) {
-        T result = findUniqueOrNull(query, cl);
-        if (result != null)
-            return result;
-        else
-            throw new NonUniqueResultException(0);
+        return unique(findAll(query, cl));
     }
 
     /**
@@ -352,6 +344,14 @@ public final class Database {
             case 1:  return items.get(0);
             default: throw new NonUniqueResultException(items.size());
         }
+    }
+
+    @Nullable
+    private static <T> T unique(@NotNull List<T> items) {
+        if (items.size() == 1)
+            return items.get(0);
+        else
+            throw new NonUniqueResultException(0);
     }
 
     @NotNull
