@@ -111,6 +111,14 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ssh-external</artifactId>
+                <version>2.2</version>
+            </extension>
+        </extensions>
     </build>
 
     <scm>
@@ -125,4 +133,11 @@
             <url>http://repo1.maven.org/maven2/</url>
         </repository>
     </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>evident-maven-repo</id>
+            <url>scpexe://maven.evident.fi/var/www-maven</url>
+        </repository>
+    </distributionManagement>
 </project>
