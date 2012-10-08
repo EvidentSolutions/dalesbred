@@ -1,6 +1,6 @@
 package fi.evident.dalesbred.dialects;
 
-import fi.evident.dalesbred.JdbcException;
+import fi.evident.dalesbred.DatabaseException;
 import org.postgresql.util.PGobject;
 
 import java.sql.SQLException;
@@ -17,7 +17,7 @@ public class PostgreSQLDialect extends Dialect {
             object.setValue(value.name());
             return object;
         } catch (SQLException e) {
-            throw new JdbcException(e);
+            throw new DatabaseException(e);
         }
     }
 }

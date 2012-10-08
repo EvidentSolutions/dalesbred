@@ -1,6 +1,6 @@
 package fi.evident.dalesbred.connection;
 
-import fi.evident.dalesbred.JdbcException;
+import fi.evident.dalesbred.DatabaseException;
 
 import javax.inject.Provider;
 import javax.sql.DataSource;
@@ -25,7 +25,7 @@ public final class DataSourceConnectionProvider implements Provider<Connection> 
         try {
             return dataSource.getConnection();
         } catch (SQLException e) {
-            throw new JdbcException(e);
+            throw new DatabaseException(e);
         }
     }
 }

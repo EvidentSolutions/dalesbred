@@ -67,9 +67,9 @@ public final class Database {
             if (dataSource != null)
                 return forDataSource(dataSource);
             else
-                throw new JdbcException("Could not find DataSource '" + jndiName + "'");
+                throw new DatabaseException("Could not find DataSource '" + jndiName + "'");
         } catch (NamingException e) {
-            throw new JdbcException("Error when looking up DataSource '" + jndiName + "': " + e, e);
+            throw new DatabaseException("Error when looking up DataSource '" + jndiName + "': " + e, e);
         }
     }
 
@@ -114,7 +114,7 @@ public final class Database {
                 connection.close();
             }
         } catch (SQLException e) {
-            throw new JdbcException(e);
+            throw new DatabaseException(e);
         }
     }
 
@@ -132,7 +132,7 @@ public final class Database {
             try {
                 return callback.execute(connection);
             } catch (SQLException e) {
-                throw new JdbcException(e);
+                throw new DatabaseException(e);
             }
         } else {
             if (allowImplicitTransactions)
@@ -159,7 +159,7 @@ public final class Database {
     private Connection openConnection() throws SQLException {
         Connection connection = connectionProvider.get();
         if (connection == null)
-            throw new JdbcException("connection-provider returned null connection");
+            throw new DatabaseException("connection-provider returned null connection");
 
         connection.setAutoCommit(false);
         if (transactionIsolation != -1)
@@ -265,7 +265,7 @@ public final class Database {
         if (value != null)
             return value;
         else
-            throw new JdbcException("database returned null instead of int");
+            throw new DatabaseException("database returned null instead of int");
     }
 
     /**

@@ -1,6 +1,6 @@
 package fi.evident.dalesbred.results;
 
-import fi.evident.dalesbred.JdbcException;
+import fi.evident.dalesbred.DatabaseException;
 import fi.evident.dalesbred.instantiation.Instantiator;
 import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
 import fi.evident.dalesbred.instantiation.NamedTypeList;
@@ -52,7 +52,7 @@ public final class ReflectionResultSetProcessor<T> implements ResultSetProcessor
             NamedTypeList types = getTypes(metaData);
             return instantiatorRegistry.findInstantiator(cl, types);
         } catch (NoSuchMethodException e) {
-            throw new JdbcException(e);
+            throw new DatabaseException(e);
         }
     }
 
@@ -72,7 +72,7 @@ public final class ReflectionResultSetProcessor<T> implements ResultSetProcessor
         try {
             return Class.forName(className);
         } catch (ClassNotFoundException e) {
-            throw new JdbcException("Could not find class '" + className + "'", e);
+            throw new DatabaseException("Could not find class '" + className + "'", e);
         }
     }
 }
