@@ -415,12 +415,19 @@ public final class Database {
 
     @NotNull
     private static <T> ResultSetProcessor<List<T>> resultProcessorForClass(@NotNull Class<T> cl) {
-        RowMapper<T> rowMapper = SingleColumnMappers.findRowMapperForType(cl);
+        RowMapper<T> rowMapper = findRowMapperForType(cl);
 
         if (rowMapper != null)
             return new ListWithRowMapperResultSetProcessor<T>(rowMapper);
         else
             return ReflectionResultSetProcessor.forClass(cl);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> RowMapper<T> findRowMapperForType(Class<T> cl) {
+        if (cl.isEnum())
+            return new EnumRowMapper(cl);
+        return SingleColumnMappers.findRowMapperForType(cl);
     }
 
     @NotNull

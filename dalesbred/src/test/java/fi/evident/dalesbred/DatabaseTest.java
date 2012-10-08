@@ -48,6 +48,18 @@ public class DatabaseTest {
         assertThat(departments.get(1).name, is("bar"));
     }
 
+    @Test
+    public void enums() {
+        db.update("drop type if exists mood");
+        db.update("create type mood as enum ('sad', 'ok', 'happy')");
+
+        assertThat(db.findUnique(Mood.class, "select 'sad'::mood"), is(Mood.SAD));
+    }
+
+    public enum Mood {
+        SAD, OK, HAPPY
+    }
+
     public static class Department {
         final int id;
         final String name;
