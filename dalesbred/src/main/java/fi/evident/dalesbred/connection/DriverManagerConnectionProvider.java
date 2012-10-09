@@ -32,6 +32,7 @@ public final class DriverManagerConnectionProvider implements Provider<Connectio
     }
 
     @Override
+    @NotNull
     public Connection get() {
         try {
             return DriverManager.getConnection(url, user, password);
@@ -40,6 +41,7 @@ public final class DriverManagerConnectionProvider implements Provider<Connectio
         }
     }
 
+    @NotNull
     public String getUrl() {
         return url;
     }

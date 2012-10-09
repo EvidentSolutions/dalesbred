@@ -22,6 +22,7 @@ public final class ListWithRowMapperResultSetProcessor<T> implements ResultSetPr
     }
 
     @Override
+    @NotNull
     public List<T> process(@NotNull ResultSet resultSet) throws SQLException {
         List<T> result = new ArrayList<T>();
 

@@ -38,7 +38,7 @@ public final class Primitives {
              : type;
     }
 
-    public static boolean isAssignableByBoxing(Class<?> target, Class<?> source) {
+    public static boolean isAssignableByBoxing(@NotNull Class<?> target, @NotNull Class<?> source) {
         return wrap(target).isAssignableFrom(wrap(source));
     }
 }

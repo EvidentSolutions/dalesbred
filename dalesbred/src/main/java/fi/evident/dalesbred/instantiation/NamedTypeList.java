@@ -1,5 +1,7 @@
 package fi.evident.dalesbred.instantiation;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
@@ -12,7 +14,7 @@ public final class NamedTypeList {
     private final String[] names;
     private final Class<?>[] types;
 
-    private NamedTypeList(String[] names, Class<?>[] types) {
+    private NamedTypeList(@NotNull String[] names, @NotNull Class<?>[] types) {
         this.names = names;
         this.types = types;
     }
@@ -21,15 +23,18 @@ public final class NamedTypeList {
         return types.length;
     }
 
+    @NotNull
     public Class<?> getType(int index) {
         return types[index];
     }
 
     @Override
+    @NotNull
     public String toString() {
         return Arrays.toString(types);
     }
 
+    @NotNull
     public static Builder builder(int size) {
         return new Builder(size);
     }
@@ -45,12 +50,13 @@ public final class NamedTypeList {
             this.types = new Class<?>[size];
         }
 
-        public void add(String name, Class<?> type) {
+        public void add(@NotNull String name, @NotNull Class<?> type) {
             this.names[index] = requireNonNull(name);
             this.types[index] = requireNonNull(type);
             index++;
         }
 
+        @NotNull
         public NamedTypeList build() {
             if (index != names.length)
                 throw new IllegalStateException("expected " + names.length + " items, but got only " + index);

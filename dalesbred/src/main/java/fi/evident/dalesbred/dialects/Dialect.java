@@ -3,7 +3,6 @@ package fi.evident.dalesbred.dialects;
 import fi.evident.dalesbred.instantiation.Coercion;
 import fi.evident.dalesbred.instantiation.CoercionBase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -16,8 +15,8 @@ public abstract class Dialect {
 
     private static final Logger log = Logger.getLogger(Dialect.class.getName());
 
-    @Nullable
-    public Object valueToDatabase(@Nullable Object value) {
+    @NotNull
+    public Object valueToDatabase(@NotNull Object value) {
         if (value instanceof Enum<?>)
             return createDatabaseEnum((Enum<?>) value);
         else
