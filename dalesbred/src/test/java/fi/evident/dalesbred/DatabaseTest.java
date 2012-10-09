@@ -97,6 +97,36 @@ public class DatabaseTest {
         assertThat(movie.mood, is(Mood.HAPPY));
     }
 
+    @Test
+    public void findUnique_singleResult() {
+        assertThat(db.findUnique(Integer.class, "select 42"), is(42));
+    }
+
+    @Test(expected = NonUniqueResultException.class)
+    public void findUnique_nonUniqueResult() {
+        db.findUnique(Integer.class, "select generate_series(1, 2)");
+    }
+
+    @Test(expected = NonUniqueResultException.class)
+    public void findUnique_emptyResult() {
+        db.findUnique(Integer.class, "select generate_series(0,-1)");
+    }
+
+    @Test
+    public void findUniqueOrNull_singleResult() {
+        assertThat(db.findUniqueOrNull(Integer.class, "select 42"), is(42));
+    }
+
+    @Test(expected = NonUniqueResultException.class)
+    public void findUniqueOrNull_nonUniqueResult() {
+        db.findUniqueOrNull(Integer.class, "select generate_series(1, 2)");
+    }
+
+    @Test
+    public void findUniqueOrNull_emptyResult() {
+        assertThat(db.findUniqueOrNull(Integer.class, "select generate_series(0,-1)"), is(nullValue()));
+    }
+
     enum Mood {
         SAD, OK, HAPPY
     }
