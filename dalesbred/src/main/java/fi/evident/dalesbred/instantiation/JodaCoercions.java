@@ -22,7 +22,7 @@ public class JodaCoercions {
         coercions.registerStoreConversion(new LocalTimeToSqlTimeCoercion());
     }
 
-    private static class DateTimeFromSqlTimestampCoercion extends Coercion<Timestamp, DateTime> {
+    private static class DateTimeFromSqlTimestampCoercion extends CoercionBase<Timestamp, DateTime> {
         DateTimeFromSqlTimestampCoercion() {
             super(Timestamp.class, DateTime.class);
         }
@@ -34,7 +34,7 @@ public class JodaCoercions {
         }
     }
 
-    private static class DateTimeToSqlTimestampCoercion extends Coercion<DateTime,Timestamp> {
+    private static class DateTimeToSqlTimestampCoercion extends CoercionBase<DateTime,Timestamp> {
         DateTimeToSqlTimestampCoercion() {
             super(DateTime.class, Timestamp.class);
         }
@@ -46,7 +46,7 @@ public class JodaCoercions {
         }
     }
 
-    private static class LocalDateFromSqlDateCoercion extends Coercion<Date, LocalDate> {
+    private static class LocalDateFromSqlDateCoercion extends CoercionBase<Date, LocalDate> {
         LocalDateFromSqlDateCoercion() {
             super(Date.class, LocalDate.class);
         }
@@ -59,7 +59,7 @@ public class JodaCoercions {
     }
 
 
-    private static class LocalDateToSqlDateCoercion extends Coercion<LocalDate, Date> {
+    private static class LocalDateToSqlDateCoercion extends CoercionBase<LocalDate, Date> {
         LocalDateToSqlDateCoercion() {
             super(LocalDate.class, Date.class);
         }
@@ -71,7 +71,7 @@ public class JodaCoercions {
         }
     }
 
-    private static class LocalTimeFromSqlTimeCoercion extends Coercion<Time, LocalTime> {
+    private static class LocalTimeFromSqlTimeCoercion extends CoercionBase<Time, LocalTime> {
         LocalTimeFromSqlTimeCoercion() {
             super(Time.class, LocalTime.class);
         }
@@ -83,7 +83,7 @@ public class JodaCoercions {
         }
     }
 
-    private static class LocalTimeToSqlTimeCoercion extends Coercion<LocalTime, Time> {
+    private static class LocalTimeToSqlTimeCoercion extends CoercionBase<LocalTime, Time> {
         LocalTimeToSqlTimeCoercion() {
             super(LocalTime.class, Time.class);
         }

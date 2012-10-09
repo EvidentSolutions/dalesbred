@@ -3,9 +3,11 @@ package fi.evident.dalesbred;
 import fi.evident.dalesbred.connection.DataSourceConnectionProvider;
 import fi.evident.dalesbred.connection.DriverManagerConnectionProvider;
 import fi.evident.dalesbred.dialects.Dialect;
-import fi.evident.dalesbred.instantiation.Coercions;
+import fi.evident.dalesbred.instantiation.Coercion;
 import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
+import fi.evident.dalesbred.instantiation.NamedTypeList;
 import fi.evident.dalesbred.results.*;
+import fi.evident.dalesbred.utils.ResultSetUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -316,12 +318,24 @@ public final class Database {
             @Override
             public Map<K,V> process(@NotNull ResultSet resultSet) throws SQLException {
                 final Map<K,V> result = new LinkedHashMap<K,V>();
-                Coercions coercions = getInstantiatorRegistry().getCoercions();
+                InstantiatorRegistry instantiatorRegistry = getInstantiatorRegistry();
+
+                NamedTypeList types = ResultSetUtils.getTypes(resultSet.getMetaData());
+                if (types.size() != 2)
+                    throw new DatabaseException("expected result-set with 2 columns, but got " + types.size() + " columns");
+
+                @SuppressWarnings("unchecked")
+                Class<Object> keySource = (Class) types.getType(0);
+                @SuppressWarnings("unchecked")
+                Class<Object> valueSource = (Class) types.getType(1);
+
+                Coercion<Object,K> keyCoercion = instantiatorRegistry.getCoercionFromDbValue(keySource, keyType);
+                Coercion<Object,V> valueCoercion = instantiatorRegistry.getCoercionFromDbValue(valueSource, valueType);
 
                 while (resultSet.next()) {
                     Object key = resultSet.getObject(1);
                     Object value = resultSet.getObject(2);
-                    result.put(coercions.coerceFromDB(keyType, key), coercions.coerceFromDB(valueType, value));
+                    result.put(keyCoercion.coerce(key), valueCoercion.coerce(value));
                 }
                 return result;
             }
@@ -475,8 +489,6 @@ public final class Database {
     @SuppressWarnings("unchecked")
     @Nullable
     private <T> RowMapper<T> findRowMapperForType(@NotNull Class<T> cl, @NotNull InstantiatorRegistry instantiatorRegistry) {
-        if (cl.isEnum())
-            return new EnumRowMapper(cl, instantiatorRegistry.getCoercions());
         return SingleColumnMappers.findRowMapperForType(cl);
     }
 

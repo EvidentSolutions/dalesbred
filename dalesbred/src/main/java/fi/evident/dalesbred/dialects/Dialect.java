@@ -1,5 +1,7 @@
 package fi.evident.dalesbred.dialects;
 
+import fi.evident.dalesbred.instantiation.Coercion;
+import fi.evident.dalesbred.instantiation.CoercionBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,11 +33,6 @@ public abstract class Dialect {
     }
 
     @NotNull
-    public <T extends Enum<T>> T databaseValueToEnum(@NotNull Class<T> type, @NotNull Object value) {
-        return Enum.valueOf(type, value.toString());
-    }
-
-    @NotNull
     public static Dialect detect(@NotNull Connection connection) throws SQLException {
         String productName = connection.getMetaData().getDatabaseProductName();
 
@@ -46,5 +43,21 @@ public abstract class Dialect {
             log.info("Could not detect dialect for product name '" + productName + "', falling back to default.");
             return new DefaultDialect();
         }
+    }
+
+    @NotNull
+    public <T extends Enum<T>> Coercion<Object,T> getEnumCoercion(@NotNull final Class<T> enumType) {
+        return new CoercionBase<Object, T>(Object.class, enumType) {
+            @NotNull
+            @Override
+            public T coerce(@NotNull Object value) {
+                return Enum.valueOf(enumType, value.toString());
+            }
+
+            @Override
+            public String toString() {
+                return "EnumCoercion [" + enumType.getName() + "]";
+            }
+        };
     }
 }

@@ -55,26 +55,12 @@ public class InstantiatorRegistryTest {
         assertThat(ctor.instantiate(new Object[] { 3 }).calledConstructor, is(3));
     }
 
-    @Test
-    public void preferConstructorWithoutBoxing() throws Exception {
-        Instantiator<TestClass> ctor = findInstantiator(TestClass.class, long.class);
-        assertThat(ctor.instantiate(new Object[] { 3L }).calledConstructor, is(4));
-    }
-
-    @Test
-    public void preferConstructorWithoutUnboxing() throws Exception {
-        Instantiator<TestClass> ctor = findInstantiator(TestClass.class, Long.class);
-        assertThat(ctor.instantiate(new Object[] { 3L }).calledConstructor, is(5));
-    }
-
     @SuppressWarnings("unused")
     static class TestClass {
         private final int calledConstructor;
         public TestClass() { calledConstructor = 1; }
         public TestClass(String s) { calledConstructor = 2; }
         public TestClass(int x) { calledConstructor = 3; }
-        public TestClass(long x) { calledConstructor = 4; }
-        public TestClass(Long x) { calledConstructor = 5; }
     }
 
     private <T> Instantiator<T> findInstantiator(Class<T> cl, Class<?>... types) throws NoSuchMethodException {

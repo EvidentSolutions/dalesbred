@@ -69,6 +69,7 @@ public class DatabaseTest {
         db.update("drop type if exists mood cascade");
         db.update("create type mood as enum ('SAD', 'OK', 'HAPPY')");
 
+        db.findUnique(Mood.class, "select 'SAD'::mood").getClass();
         assertThat(db.findUnique(Mood.class, "select 'SAD'::mood"), is(Mood.SAD));
         assertThat(db.findUnique(Mood.class, "select null::mood"), is(nullValue()));
     }

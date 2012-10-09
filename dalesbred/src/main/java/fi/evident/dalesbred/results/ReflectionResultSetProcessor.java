@@ -1,9 +1,9 @@
 package fi.evident.dalesbred.results;
 
-import fi.evident.dalesbred.DatabaseException;
 import fi.evident.dalesbred.instantiation.Instantiator;
 import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
 import fi.evident.dalesbred.instantiation.NamedTypeList;
+import fi.evident.dalesbred.utils.ResultSetUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
@@ -50,31 +50,7 @@ public final class ReflectionResultSetProcessor<T> implements ResultSetProcessor
     }
 
     private Instantiator<T> findInstantiator(ResultSetMetaData metaData) throws SQLException {
-        try {
-            NamedTypeList types = getTypes(metaData);
-            return instantiatorRegistry.findInstantiator(cl, types);
-        } catch (NoSuchMethodException e) {
-            throw new DatabaseException(e);
-        }
-    }
-
-    private static NamedTypeList getTypes(ResultSetMetaData metaData) throws SQLException {
-        int columns = metaData.getColumnCount();
-
-        NamedTypeList.Builder result = NamedTypeList.builder(columns);
-
-        for (int i = 0; i < columns; i++)
-            result.add(metaData.getColumnName(i+1), getColumnType(metaData, i+1));
-
-        return result.build();
-    }
-
-    private static Class<?> getColumnType(ResultSetMetaData metaData, int column) throws SQLException {
-        String className = metaData.getColumnClassName(column);
-        try {
-            return Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            throw new DatabaseException("Could not find class '" + className + "'", e);
-        }
+        NamedTypeList types = ResultSetUtils.getTypes(metaData);
+        return instantiatorRegistry.findInstantiator(cl, types);
     }
 }

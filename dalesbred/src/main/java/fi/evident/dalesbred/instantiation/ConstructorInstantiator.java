@@ -3,6 +3,7 @@ package fi.evident.dalesbred.instantiation;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
+import java.util.List;
 
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 import static fi.evident.dalesbred.utils.Throwables.propagate;
@@ -10,27 +11,28 @@ import static fi.evident.dalesbred.utils.Throwables.propagate;
 final class ConstructorInstantiator<T> implements Instantiator<T> {
 
     private final Constructor<T> constructor;
-    private final Coercions coercions;
-    private final int cost;
+    private final List<Coercion<Object,?>> coercions;
 
-    ConstructorInstantiator(@NotNull Constructor<T> constructor, @NotNull Coercions coercions, int cost) {
+    ConstructorInstantiator(@NotNull Constructor<T> constructor, @NotNull List<Coercion<Object,?>> coercions) {
         this.constructor = requireNonNull(constructor);
         this.coercions = requireNonNull(coercions);
-        this.cost = cost;
     }
 
     @Override
     public T instantiate(Object[] arguments) {
         try {
-            Object[] coerced = coercions.coerceAllFromDB(constructor.getParameterTypes(), arguments);
-            return constructor.newInstance(coerced);
+            return constructor.newInstance(coerceArguments(arguments));
         } catch (Exception e) {
             throw propagate(e);
         }
     }
 
-    @Override
-    public int getCost() {
-        return cost;
+    private Object[] coerceArguments(Object[] arguments) {
+        Object[] coerced = new Object[arguments.length];
+
+        for (int i = 0; i< arguments.length; i++)
+            coerced[i] = coercions.get(i).coerce(arguments[i]);
+
+        return coerced;
     }
 }

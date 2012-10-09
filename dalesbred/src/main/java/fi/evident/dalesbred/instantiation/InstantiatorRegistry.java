@@ -1,13 +1,15 @@
 package fi.evident.dalesbred.instantiation;
 
+import fi.evident.dalesbred.DatabaseException;
 import fi.evident.dalesbred.dialects.Dialect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
-import static fi.evident.dalesbred.utils.Primitives.unwrap;
 import static fi.evident.dalesbred.utils.Primitives.wrap;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 import static java.lang.reflect.Modifier.isPublic;
@@ -20,13 +22,6 @@ public final class InstantiatorRegistry {
     private final Dialect dialect;
     private final Coercions coercions;
     private static final Logger log = Logger.getLogger(InstantiatorRegistry.class.getName());
-    private static final int SAME_COST = 0;
-    private static final int SUBTYPE_COST = 1;
-    private static final int BOXING_COST = 100;
-    private static final int UNBOXING_COST = 101;
-    private static final int ENUM_COST = 200;
-    private static final int COERCION_COST = 300;
-    private static final int NO_MATCH_COST = Integer.MAX_VALUE;
 
     public InstantiatorRegistry(@NotNull Dialect dialect) {
         this.dialect = requireNonNull(dialect);
@@ -49,68 +44,93 @@ public final class InstantiatorRegistry {
             return dialect.valueToDatabase(value);
     }
 
-    @NotNull
-    public Coercions getCoercions() {
-        return coercions;
-    }
-
     /**
      * Returns constructor matching given argument types. Differs from 
      * {@link Class#getConstructor(Class[])} in that this method allows
      * does not require strict match for types, but finds any constructor
      * that is assignable from given types.
      */
-    public <T> Instantiator<T> findInstantiator(Class<T> cl, NamedTypeList types) throws NoSuchMethodException {
-        Instantiator<T> best = null;
-
-        for (Constructor<T> constructor : constructorsFor(cl)) {
-            Instantiator<T> instantiator = instantiatorFrom(constructor, types);
-            if (instantiator != null && (best == null || instantiator.getCost() < best.getCost()))
-                best = instantiator;
+    public <T> Instantiator<T> findInstantiator(Class<T> cl, NamedTypeList types) {
+        // First check if we have an immediate coercion registered. If so, we'll just use that.
+        if (types.size() == 1) {
+            @SuppressWarnings("unchecked")
+            Coercion<Object, T> coercion = (Coercion) findCoercionFromDbValue(cl, types.getType(0));
+            if (coercion != null) {
+                return new CoercionInstantiator<T>(coercion);
+            }
         }
 
-        if (best != null)
-            return best;
+        // If there was no coercion, we try to find a matching constructor, applying coercions to arguments.
+        Instantiator<T> instantiator = null;
+
+        for (Constructor<T> constructor : constructorsFor(cl)) {
+            instantiator = instantiatorFrom(constructor, types);
+            if (instantiator != null)
+                break;
+        }
+
+        if (instantiator != null)
+            return instantiator;
         else
-            throw new NoSuchMethodException(cl + " does not have constructor matching types " + types.toString());
+            throw new DatabaseException(cl + " does not have constructor matching types " + types.toString());
     }
 
+    @Nullable
     private <T> Instantiator<T> instantiatorFrom(Constructor<T> constructor, NamedTypeList types) {
         if (!isPublic(constructor.getModifiers())) return null;
-        
-        int cost = cost(constructor, types);
-        if (cost != NO_MATCH_COST)
-            return new ConstructorInstantiator<T>(constructor, coercions, cost);
+
+        List<Coercion<Object,?>> coercions = resolveCoercions(constructor, types);
+        if (coercions != null)
+            return new ConstructorInstantiator<T>(constructor, coercions);
         else
             return null;
     }
 
-    private int cost(Constructor<?> constructor, NamedTypeList columnTypes) {
+    @Nullable
+    private List<Coercion<Object,?>> resolveCoercions(Constructor<?> constructor, NamedTypeList columnTypes) {
         Class<?>[] parameterTypes = constructor.getParameterTypes();
 
         if (parameterTypes.length != columnTypes.size())
-            return NO_MATCH_COST;
+            return null;
 
-        int totalCost = 0;
+        List<Coercion<Object,?>> coercions = new ArrayList<Coercion<Object, ?>>(parameterTypes.length);
+
         for (int i = 0; i < parameterTypes.length; i++) {
-            int assignScore = assignmentCost(parameterTypes[i], columnTypes.getType(i));
-            if (assignScore == NO_MATCH_COST)
-                return NO_MATCH_COST;
+            @SuppressWarnings("unchecked")
+            Coercion<Object,?> coercion = (Coercion) findCoercionFromDbValue(parameterTypes[i], columnTypes.getType(i));
+            if (coercion != null)
+                coercions.add(coercion);
             else
-                totalCost += assignScore;
+                return null;
         }
 
-        return totalCost;
+        return coercions;
     }
 
-    private int assignmentCost(Class<?> target, Class<?> source) {
-        return target == source                               ? SAME_COST
-             : target.isAssignableFrom(source)                ? SUBTYPE_COST
-             : target.isAssignableFrom(wrap(source))          ? BOXING_COST
-             : target.isAssignableFrom(unwrap(source))        ? UNBOXING_COST
-             : target.isEnum()                                ? ENUM_COST
-             : coercions.findCoercionFromDbValue(source, target) != null ? COERCION_COST
-             : NO_MATCH_COST;
+    @NotNull
+    public <S,T> Coercion<S,T> getCoercionFromDbValue(@NotNull Class<S> source, @NotNull Class<T> target) {
+        Coercion<S,T> coercion = findCoercionFromDbValue(source, target);
+        if (coercion != null)
+            return coercion;
+        else
+            throw new DatabaseException("could not find a conversion from " + source.getName() + " to " + target.getName());
+    }
+
+    @Nullable
+    @SuppressWarnings("unchecked")
+    private <S,T> Coercion<S,T> findCoercionFromDbValue(@NotNull Class<S> target, @NotNull Class<T> source) {
+        if (wrap(target).isAssignableFrom(wrap(source)))
+            return (Coercion) Coercion.identity();
+
+        @SuppressWarnings("unchecked")
+        Coercion<S,T> coercion = (Coercion) coercions.findCoercionFromDbValue(source, target);
+        if (coercion != null)
+            return coercion;
+
+        if (target.isEnum())
+            return (Coercion) dialect.getEnumCoercion(target.asSubclass(Enum.class));
+
+        return null;
     }
 
     @SuppressWarnings("unchecked")
