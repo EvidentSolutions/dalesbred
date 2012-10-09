@@ -479,7 +479,7 @@ public final class Database {
 
     @NotNull
     private <T> ResultSetProcessor<List<T>> resultProcessorForClass(@NotNull Class<T> cl) {
-        return ReflectionResultSetProcessor.forClass(cl, getInstantiatorRegistry());
+        return new ReflectionResultSetProcessor<T>(cl, getInstantiatorRegistry());
     }
 
     @NotNull

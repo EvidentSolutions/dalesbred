@@ -23,7 +23,8 @@ public class ReflectionRowMapperTest {
 
     @Test
     public void instantiatingWithSimpleConstructor() throws SQLException {
-        ReflectionResultSetProcessor<SingleConstructor> mapper = ReflectionResultSetProcessor.forClass(SingleConstructor.class, instantiatorRegistry);
+        ReflectionResultSetProcessor<SingleConstructor> mapper =
+                new ReflectionResultSetProcessor<SingleConstructor>(SingleConstructor.class, instantiatorRegistry);
 
         ResultSet resultSet = resultSet(new Object[][] {
             { 1, "foo" },
@@ -41,14 +42,16 @@ public class ReflectionRowMapperTest {
 
     @Test
     public void emptyResultSetProducesNoResults() throws SQLException {
-        ReflectionResultSetProcessor<SingleConstructor> mapper = ReflectionResultSetProcessor.forClass(SingleConstructor.class, instantiatorRegistry);
+        ReflectionResultSetProcessor<SingleConstructor> mapper =
+                new ReflectionResultSetProcessor<SingleConstructor>(SingleConstructor.class, instantiatorRegistry);
 
         assertThat(mapper.process(emptyResultSet(Integer.class, String.class)).isEmpty(), is(true));
     }
 
     @Test
     public void correctConstructorIsPickedBasedOnTypes() throws SQLException {
-        ReflectionResultSetProcessor<TwoConstructors> mapper = ReflectionResultSetProcessor.forClass(TwoConstructors.class, instantiatorRegistry);
+        ReflectionResultSetProcessor<TwoConstructors> mapper =
+                new ReflectionResultSetProcessor<TwoConstructors>(TwoConstructors.class, instantiatorRegistry);
 
         List<TwoConstructors> list = mapper.process(singletonResultSet(1, "foo"));
         assertThat(list.size(), is(1));

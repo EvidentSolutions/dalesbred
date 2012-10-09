@@ -10,7 +10,18 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 
-public class JodaCoercions {
+public final class JodaCoercions {
+
+    private JodaCoercions() { }
+
+    public static boolean hasJoda() {
+        try {
+            Class.forName("org.joda.time.LocalDate");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
 
     public static void register(@NotNull Coercions coercions) {
         coercions.registerLoadConversion(new DateTimeFromSqlTimestampCoercion());
@@ -92,15 +103,6 @@ public class JodaCoercions {
         @Override
         public Time coerce(@NotNull LocalTime value) {
             return new Time(value.toDateTimeToday(DateTimeZone.getDefault()).getMillis());
-        }
-    }
-
-    public static boolean hasJoda() {
-        try {
-            Class.forName("org.joda.time.LocalDate");
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
         }
     }
 }
