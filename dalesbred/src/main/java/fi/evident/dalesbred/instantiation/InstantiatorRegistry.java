@@ -30,7 +30,7 @@ public final class InstantiatorRegistry {
         DefaultCoercions.register(coercions);
 
         if (JodaCoercions.hasJoda()) {
-            log.info("Detected Joda Time in classpath. Registering coercions for Joda.");
+            log.fine("Detected Joda Time in classpath. Registering coercions for Joda.");
             JodaCoercions.register(coercions);
         }
     }

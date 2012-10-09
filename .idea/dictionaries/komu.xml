@@ -10,6 +10,7 @@
       <w>hamcrest</w>
       <w>instantiator</w>
       <w>jndi</w>
+      <w>joda</w>
       <w>jsse</w>
       <w>komu</w>
       <w>mockito</w>
