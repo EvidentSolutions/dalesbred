@@ -33,7 +33,6 @@ public class JodaIntegrationTest {
     }
 
     @Test
-    @Ignore("unimplemented")
     public void jodaTypesAsParameters() {
         DateContainer container = db.findUnique(DateContainer.class, "select '2012-10-09 11:29:25'::timestamp, '2012-10-09'::date, '11:29:25'::time");
 

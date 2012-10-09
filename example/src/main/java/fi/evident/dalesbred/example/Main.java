@@ -14,6 +14,7 @@ public class Main {
     public final Database db = Database.forUrlAndCredentials("jdbc:postgresql://db/dalesbred-test", "evident", "Evident11");
 
     public void exampleTransaction() {
+        db.update("drop table if exists department");
         db.update("create table department (id serial primary key, name varchar(64) not null)");
         db.update("insert into department (name) values ('foo')");
         db.update("insert into department (name) values ('bar')");

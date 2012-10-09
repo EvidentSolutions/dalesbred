@@ -4,6 +4,7 @@ import fi.evident.dalesbred.dialects.Dialect;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
+import java.util.logging.Logger;
 
 import static fi.evident.dalesbred.utils.Primitives.unwrap;
 import static fi.evident.dalesbred.utils.Primitives.wrap;
@@ -15,15 +16,22 @@ import static java.lang.reflect.Modifier.isPublic;
 public final class InstantiatorRegistry {
 
     private final Coercions coercions;
+    private static final Logger log = Logger.getLogger(InstantiatorRegistry.class.getName());
     private static final int SAME_COST = 0;
     private static final int SUBTYPE_COST = 1;
     private static final int BOXING_COST = 100;
     private static final int UNBOXING_COST = 101;
     private static final int ENUM_COST = 200;
+    private static final int COERCION_COST = 300;
     private static final int NO_MATCH_COST = Integer.MAX_VALUE;
 
     public InstantiatorRegistry(@NotNull Dialect dialect) {
         this.coercions = new Coercions(dialect);
+
+        if (JodaCoercions.hasJoda()) {
+            log.info("Detected Joda Time in classpath. Registering coercions for Joda.");
+            JodaCoercions.register(coercions);
+        }
     }
 
     @NotNull
@@ -62,7 +70,7 @@ public final class InstantiatorRegistry {
             return null;
     }
 
-    private static int cost(Constructor<?> constructor, NamedTypeList columnTypes) {
+    private int cost(Constructor<?> constructor, NamedTypeList columnTypes) {
         Class<?>[] parameterTypes = constructor.getParameterTypes();
 
         if (parameterTypes.length != columnTypes.size())
@@ -80,12 +88,13 @@ public final class InstantiatorRegistry {
         return totalCost;
     }
 
-    private static int assignmentCost(Class<?> target, Class<?> source) {
-        return target == source                          ? SAME_COST
-             : target.isAssignableFrom(source)           ? SUBTYPE_COST
-             : target.isAssignableFrom(wrap(source))     ? BOXING_COST
-             : target.isAssignableFrom(unwrap(source))   ? UNBOXING_COST
-             : target.isEnum()                           ? ENUM_COST
+    private int assignmentCost(Class<?> target, Class<?> source) {
+        return target == source                               ? SAME_COST
+             : target.isAssignableFrom(source)                ? SUBTYPE_COST
+             : target.isAssignableFrom(wrap(source))          ? BOXING_COST
+             : target.isAssignableFrom(unwrap(source))        ? UNBOXING_COST
+             : target.isEnum()                                ? ENUM_COST
+             : coercions.findCoercion(source, target) != null ? COERCION_COST
              : NO_MATCH_COST;
     }
 
