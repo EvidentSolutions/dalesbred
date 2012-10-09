@@ -9,17 +9,25 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 
+/**
+ * Represents an SQL query along all of its arguments.
+ */
 public final class SqlQuery {
     final String sql;
     final List<Object> args;
 
-    private SqlQuery(@NotNull @SQL String sql, Object... args) {
+    private SqlQuery(@NotNull @SQL String sql, @NotNull List<Object> args) {
         this.sql = requireNonNull(sql);
-        this.args = unmodifiableList(asList(args));
+        this.args = unmodifiableList(args);
     }
 
     @NotNull
     public static SqlQuery query(@NotNull @SQL String sql, Object... args) {
+        return new SqlQuery(sql, asList(args));
+    }
+
+    @NotNull
+    public static SqlQuery query(@NotNull @SQL String sql, @NotNull List<Object> args) {
         return new SqlQuery(sql, args);
     }
 
@@ -49,5 +57,22 @@ public final class SqlQuery {
         sb.append(']');
 
         return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+
+        if (obj instanceof SqlQuery) {
+            SqlQuery rhs = (SqlQuery) obj;
+            return sql.equals(rhs.sql) && args.equals(rhs.args);
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return sql.hashCode() * 31 + args.hashCode();
     }
 }
