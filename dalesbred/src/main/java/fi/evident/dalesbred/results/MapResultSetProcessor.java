@@ -1,6 +1,6 @@
 package fi.evident.dalesbred.results;
 
-import fi.evident.dalesbred.DatabaseException;
+import fi.evident.dalesbred.UnexpectedResultException;
 import fi.evident.dalesbred.instantiation.Coercion;
 import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
 import fi.evident.dalesbred.instantiation.NamedTypeList;
@@ -37,7 +37,7 @@ public final class MapResultSetProcessor<K,V> implements ResultSetProcessor<Map<
 
         NamedTypeList types = ResultSetUtils.getTypes(resultSet.getMetaData());
         if (types.size() != 2)
-            throw new DatabaseException("Expected ResultSet with 2 columns, but got " + types.size() + " columns.");
+            throw new UnexpectedResultException("Expected ResultSet with 2 columns, but got " + types.size() + " columns.");
 
         @SuppressWarnings("unchecked")
         Class<Object> keySource = (Class) types.getType(0);

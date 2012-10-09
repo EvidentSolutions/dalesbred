@@ -298,7 +298,7 @@ public final class Database {
         if (value != null)
             return value;
         else
-            throw new DatabaseException("database returned null instead of int");
+            throw new UnexpectedResultException("database returned null instead of int");
     }
 
     /**
@@ -409,7 +409,7 @@ public final class Database {
         if (key != null)
             return key;
         else
-            throw new DatabaseException("null key was generated");
+            throw new UnexpectedResultException("null key was generated");
     }
 
     @NotNull
