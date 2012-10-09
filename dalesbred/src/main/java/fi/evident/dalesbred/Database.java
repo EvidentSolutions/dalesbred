@@ -477,7 +477,7 @@ public final class Database {
         if (items.size() == 1)
             return items.get(0);
         else
-            throw new NonUniqueResultException(0);
+            throw new NonUniqueResultException(items.size());
     }
 
     @NotNull
