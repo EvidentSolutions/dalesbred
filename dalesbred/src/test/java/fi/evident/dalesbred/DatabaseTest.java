@@ -54,8 +54,8 @@ public class DatabaseTest {
         db.update("drop table if exists department");
 
         db.update("create table department (id serial primary key, name varchar(64) not null)");
-        int id1 = db.updateAndReturnGeneratedKey(Integer.class, "insert into department (name) values ('foo')");
-        int id2 = db.updateAndReturnGeneratedKey(Integer.class, "insert into department (name) values ('bar')");
+        int id1 = db.findUnique(Integer.class, "insert into department (name) values ('foo') returning id");
+        int id2 = db.findUnique(Integer.class, "insert into department (name) values ('bar') returning id");
 
         Map<Integer, String> map = db.findMap(Integer.class, String.class, "select id, name from department");
 

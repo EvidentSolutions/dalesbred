@@ -6,7 +6,10 @@ import fi.evident.dalesbred.dialects.Dialect;
 import fi.evident.dalesbred.instantiation.Coercion;
 import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
 import fi.evident.dalesbred.instantiation.NamedTypeList;
-import fi.evident.dalesbred.results.*;
+import fi.evident.dalesbred.results.ListWithRowMapperResultSetProcessor;
+import fi.evident.dalesbred.results.ReflectionResultSetProcessor;
+import fi.evident.dalesbred.results.ResultSetProcessor;
+import fi.evident.dalesbred.results.RowMapper;
 import fi.evident.dalesbred.utils.ResultSetUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -476,20 +479,7 @@ public final class Database {
 
     @NotNull
     private <T> ResultSetProcessor<List<T>> resultProcessorForClass(@NotNull Class<T> cl) {
-        InstantiatorRegistry instantiatorRegistry = getInstantiatorRegistry();
-
-        RowMapper<T> rowMapper = findRowMapperForType(cl, instantiatorRegistry);
-
-        if (rowMapper != null)
-            return new ListWithRowMapperResultSetProcessor<T>(rowMapper);
-        else
-            return ReflectionResultSetProcessor.forClass(cl, instantiatorRegistry);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Nullable
-    private <T> RowMapper<T> findRowMapperForType(@NotNull Class<T> cl, @NotNull InstantiatorRegistry instantiatorRegistry) {
-        return SingleColumnMappers.findRowMapperForType(cl);
+        return ReflectionResultSetProcessor.forClass(cl, getInstantiatorRegistry());
     }
 
     @NotNull
