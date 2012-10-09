@@ -437,11 +437,11 @@ public final class Database {
     }
 
     private void bindArguments(@NotNull PreparedStatement ps, @NotNull List<Object> args) throws SQLException {
-        Dialect provider = getDialect(ps.getConnection());
+        InstantiatorRegistry instantiatorRegistry = getInstantiatorRegistry();
         int i = 1;
 
         for (Object arg : args)
-            ps.setObject(i++, provider.valueToDatabase(arg));
+            ps.setObject(i++, instantiatorRegistry.valueToDatabase(arg));
     }
 
     @Nullable

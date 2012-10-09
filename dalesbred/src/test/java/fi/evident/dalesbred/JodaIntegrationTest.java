@@ -3,7 +3,6 @@ package fi.evident.dalesbred;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -42,7 +41,6 @@ public class JodaIntegrationTest {
     }
 
     @Test
-    @Ignore("unimplemented")
     public void saveJodaTypes() {
         db.update("drop table if exists date_test");
         db.update("create table date_test (timestamp timestamp, date date, time time)");

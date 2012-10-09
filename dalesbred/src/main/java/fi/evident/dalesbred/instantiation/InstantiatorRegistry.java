@@ -2,12 +2,14 @@ package fi.evident.dalesbred.instantiation;
 
 import fi.evident.dalesbred.dialects.Dialect;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.util.logging.Logger;
 
 import static fi.evident.dalesbred.utils.Primitives.unwrap;
 import static fi.evident.dalesbred.utils.Primitives.wrap;
+import static fi.evident.dalesbred.utils.Require.requireNonNull;
 import static java.lang.reflect.Modifier.isPublic;
 
 /**
@@ -15,6 +17,7 @@ import static java.lang.reflect.Modifier.isPublic;
  */
 public final class InstantiatorRegistry {
 
+    private final Dialect dialect;
     private final Coercions coercions;
     private static final Logger log = Logger.getLogger(InstantiatorRegistry.class.getName());
     private static final int SAME_COST = 0;
@@ -26,12 +29,24 @@ public final class InstantiatorRegistry {
     private static final int NO_MATCH_COST = Integer.MAX_VALUE;
 
     public InstantiatorRegistry(@NotNull Dialect dialect) {
+        this.dialect = requireNonNull(dialect);
         this.coercions = new Coercions(dialect);
 
         if (JodaCoercions.hasJoda()) {
             log.info("Detected Joda Time in classpath. Registering coercions for Joda.");
             JodaCoercions.register(coercions);
         }
+    }
+
+    @Nullable
+    public Object valueToDatabase(@Nullable Object value) {
+        if (value == null) return null;
+
+        Coercion<Object, Object> coercion = coercions.findCoercionToDb(value.getClass());
+        if (coercion != null)
+            return coercion.coerce(value);
+        else
+            return dialect.valueToDatabase(value);
     }
 
     @NotNull
@@ -94,7 +109,7 @@ public final class InstantiatorRegistry {
              : target.isAssignableFrom(wrap(source))          ? BOXING_COST
              : target.isAssignableFrom(unwrap(source))        ? UNBOXING_COST
              : target.isEnum()                                ? ENUM_COST
-             : coercions.findCoercion(source, target) != null ? COERCION_COST
+             : coercions.findCoercionFromDbValue(source, target) != null ? COERCION_COST
              : NO_MATCH_COST;
     }
 

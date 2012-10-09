@@ -2,6 +2,7 @@ package fi.evident.dalesbred.instantiation;
 
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
@@ -12,13 +13,17 @@ import java.sql.Timestamp;
 public class JodaCoercions {
 
     public static void register(@NotNull Coercions coercions) {
-        coercions.register(new DateTimeCoercion());
-        coercions.register(new LocalDateCoercion());
-        coercions.register(new LocalTimeCoercion());
+        coercions.registerLoadConversion(new DateTimeFromSqlTimestampCoercion());
+        coercions.registerLoadConversion(new LocalDateFromSqlDateCoercion());
+        coercions.registerLoadConversion(new LocalTimeFromSqlTimeCoercion());
+
+        coercions.registerStoreConversion(new DateTimeToSqlTimestampCoercion());
+        coercions.registerStoreConversion(new LocalDateToSqlDateCoercion());
+        coercions.registerStoreConversion(new LocalTimeToSqlTimeCoercion());
     }
 
-    private static class DateTimeCoercion extends Coercion<Timestamp, DateTime> {
-        DateTimeCoercion() {
+    private static class DateTimeFromSqlTimestampCoercion extends Coercion<Timestamp, DateTime> {
+        DateTimeFromSqlTimestampCoercion() {
             super(Timestamp.class, DateTime.class);
         }
 
@@ -29,8 +34,20 @@ public class JodaCoercions {
         }
     }
 
-    private static class LocalDateCoercion extends Coercion<Date, LocalDate> {
-        LocalDateCoercion() {
+    private static class DateTimeToSqlTimestampCoercion extends Coercion<DateTime,Timestamp> {
+        DateTimeToSqlTimestampCoercion() {
+            super(DateTime.class, Timestamp.class);
+        }
+
+        @NotNull
+        @Override
+        public Timestamp coerce(@NotNull DateTime value) {
+            return new Timestamp(value.getMillis());
+        }
+    }
+
+    private static class LocalDateFromSqlDateCoercion extends Coercion<Date, LocalDate> {
+        LocalDateFromSqlDateCoercion() {
             super(Date.class, LocalDate.class);
         }
 
@@ -41,8 +58,21 @@ public class JodaCoercions {
         }
     }
 
-    private static class LocalTimeCoercion extends Coercion<Time, LocalTime> {
-        LocalTimeCoercion() {
+
+    private static class LocalDateToSqlDateCoercion extends Coercion<LocalDate, Date> {
+        LocalDateToSqlDateCoercion() {
+            super(LocalDate.class, Date.class);
+        }
+
+        @NotNull
+        @Override
+        public Date coerce(@NotNull LocalDate value) {
+            return new Date(value.toDateTimeAtStartOfDay().getMillis());
+        }
+    }
+
+    private static class LocalTimeFromSqlTimeCoercion extends Coercion<Time, LocalTime> {
+        LocalTimeFromSqlTimeCoercion() {
             super(Time.class, LocalTime.class);
         }
 
@@ -50,6 +80,18 @@ public class JodaCoercions {
         @Override
         public LocalTime coerce(@NotNull Time value) {
             return new LocalTime(value);
+        }
+    }
+
+    private static class LocalTimeToSqlTimeCoercion extends Coercion<LocalTime, Time> {
+        LocalTimeToSqlTimeCoercion() {
+            super(LocalTime.class, Time.class);
+        }
+
+        @NotNull
+        @Override
+        public Time coerce(@NotNull LocalTime value) {
+            return new Time(value.toDateTimeToday(DateTimeZone.getDefault()).getMillis());
         }
     }
 
