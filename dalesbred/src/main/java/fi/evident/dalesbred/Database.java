@@ -3,14 +3,8 @@ package fi.evident.dalesbred;
 import fi.evident.dalesbred.connection.DataSourceConnectionProvider;
 import fi.evident.dalesbred.connection.DriverManagerConnectionProvider;
 import fi.evident.dalesbred.dialects.Dialect;
-import fi.evident.dalesbred.instantiation.Coercion;
 import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
-import fi.evident.dalesbred.instantiation.NamedTypeList;
-import fi.evident.dalesbred.results.ListWithRowMapperResultSetProcessor;
-import fi.evident.dalesbred.results.ReflectionResultSetProcessor;
-import fi.evident.dalesbred.results.ResultSetProcessor;
-import fi.evident.dalesbred.results.RowMapper;
-import fi.evident.dalesbred.utils.ResultSetUtils;
+import fi.evident.dalesbred.results.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +17,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -319,34 +312,7 @@ public final class Database {
     public <K,V> Map<K, V> findMap(@NotNull final Class<K> keyType,
                                    @NotNull final Class<V> valueType,
                                    @NotNull SqlQuery query) {
-
-        ResultSetProcessor<Map<K,V>> processor = new ResultSetProcessor<Map<K, V>>() {
-            @Override
-            public Map<K,V> process(@NotNull ResultSet resultSet) throws SQLException {
-                final Map<K,V> result = new LinkedHashMap<K,V>();
-                InstantiatorRegistry instantiatorRegistry = getInstantiatorRegistry();
-
-                NamedTypeList types = ResultSetUtils.getTypes(resultSet.getMetaData());
-                if (types.size() != 2)
-                    throw new DatabaseException("expected result-set with 2 columns, but got " + types.size() + " columns");
-
-                @SuppressWarnings("unchecked")
-                Class<Object> keySource = (Class) types.getType(0);
-                @SuppressWarnings("unchecked")
-                Class<Object> valueSource = (Class) types.getType(1);
-
-                Coercion<? super Object, ? extends K> keyCoercion = instantiatorRegistry.getCoercionFromDbValue(keySource, keyType);
-                Coercion<? super Object, ? extends V> valueCoercion = instantiatorRegistry.getCoercionFromDbValue(valueSource, valueType);
-
-                while (resultSet.next()) {
-                    Object key = resultSet.getObject(1);
-                    Object value = resultSet.getObject(2);
-                    result.put(keyCoercion.coerce(key), valueCoercion.coerce(value));
-                }
-                return result;
-            }
-        };
-        return executeQuery(processor, query);
+        return executeQuery(new MapResultSetProcessor<K, V>(keyType, valueType, getInstantiatorRegistry()), query);
     }
 
     @NotNull
