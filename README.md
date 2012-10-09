@@ -11,10 +11,33 @@ while still providing access to low-level functionality.
 Getting started
 ---------------
 
-Setup a database connection:
+Adding Maven dependencies:
+
+    <dependencies>
+        <dependency>
+            <groupId>fi.evident.dalesbred</groupId>
+            <artifactId>dalesbred</artifactId>
+            <version>0.1</version>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>evident-public-maven-repository</id>
+            <url>http://maven.evident.fi/</url>
+        </repository>
+    </repositories>
+
+Configuring the database connection
+-----------------------------------
+
+Using direct connection to database:
 
     Database db = Database.forUrlAndCredentials(
         "jdbc:postgresql://example-host/example-db", "login", "password");
+
+Note that this performs no connection pooling and is therefore probably not your preferred way of configuring
+the system in production.
 
 For container provided data source:
 
