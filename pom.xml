@@ -5,7 +5,7 @@
     <groupId>fi.evident.dalesbred</groupId>
     <artifactId>dalesbred-root</artifactId>
     <packaging>pom</packaging>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.1.1</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -137,7 +137,8 @@
         <url>https://bitbucket.org/evidentsolutions/dalesbred</url>
         <connection>scm:hg:https://bitbucket.org/evidentsolutions/dalesbred</connection>
         <developerConnection>scm:hg:ssh://hg@bitbucket.org/evidentsolutions/dalesbred</developerConnection>
-    </scm>
+      <tag>dalesbred-0.1.1</tag>
+  </scm>
 
     <repositories>
         <repository>
