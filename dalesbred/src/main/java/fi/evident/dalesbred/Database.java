@@ -236,11 +236,11 @@ public final class Database {
      *
      * @throws NonUniqueResultException if there are no rows or multiple rows
      */
-    public <T> T findUnique(RowMapper<T> mapper, SqlQuery query) {
+    public <T> T findUnique(@NotNull RowMapper<T> mapper, @NotNull SqlQuery query) {
         return unique(findAll(mapper, query));
     }
 
-    public <T> T findUnique(RowMapper<T> mapper, @NotNull @SQL String sql, Object... args) {
+    public <T> T findUnique(@NotNull RowMapper<T> mapper, @NotNull @SQL String sql, Object... args) {
         return findUnique(mapper, query(sql, args));
     }
 
@@ -249,11 +249,11 @@ public final class Database {
      *
      * @throws NonUniqueResultException if there are no rows or multiple rows
      */
-    public <T> T findUnique(Class<T> cl, SqlQuery query) {
+    public <T> T findUnique(@NotNull Class<T> cl, @NotNull SqlQuery query) {
         return unique(findAll(cl, query));
     }
 
-    public <T> T findUnique(Class<T> cl, @NotNull @SQL String sql, Object... args) {
+    public <T> T findUnique(@NotNull Class<T> cl, @NotNull @SQL String sql, Object... args) {
         return findUnique(cl, query(sql, args));
     }
 
@@ -264,12 +264,12 @@ public final class Database {
      * @throws NonUniqueResultException if there are multiple result rows
      */
     @Nullable
-    public <T> T findUniqueOrNull(RowMapper<T> rowMapper, SqlQuery query) {
+    public <T> T findUniqueOrNull(@NotNull RowMapper<T> rowMapper, @NotNull SqlQuery query) {
         return uniqueOrNull(findAll(rowMapper, query));
     }
 
     @Nullable
-    public <T> T findUniqueOrNull(RowMapper<T> rowMapper, @NotNull @SQL String sql, Object... args) {
+    public <T> T findUniqueOrNull(@NotNull RowMapper<T> rowMapper, @NotNull @SQL String sql, Object... args) {
         return findUniqueOrNull(rowMapper, query(sql, args));
     }
 
@@ -280,18 +280,18 @@ public final class Database {
      * @throws NonUniqueResultException if there are multiple result rows
      */
     @Nullable
-    public <T> T findUniqueOrNull(Class<T> cl, SqlQuery query) {
+    public <T> T findUniqueOrNull(@NotNull Class<T> cl, @NotNull SqlQuery query) {
         return uniqueOrNull(findAll(cl, query));
     }
 
-    public <T> T findUniqueOrNull(Class<T> cl, @NotNull @SQL String sql, Object... args) {
+    public <T> T findUniqueOrNull(@NotNull Class<T> cl, @NotNull @SQL String sql, Object... args) {
         return findUniqueOrNull(cl, query(sql, args));
     }
 
     /**
      * A convenience method for retrieving a single non-null integer.
      */
-    public int findUniqueInt(SqlQuery query) {
+    public int findUniqueInt(@NotNull SqlQuery query) {
         Integer value = findUnique(Integer.class, query);
         if (value != null)
             return value;
@@ -430,12 +430,12 @@ public final class Database {
         return updateAndReturnGeneratedKey(keyType, query(sql, args));
     }
 
-    private void logQuery(SqlQuery query) {
+    private void logQuery(@NotNull SqlQuery query) {
         if (log.isLoggable(Level.FINE))
             log.fine("executing query " + query);
     }
 
-    private void bindArguments(PreparedStatement ps, List<Object> args) throws SQLException {
+    private void bindArguments(@NotNull PreparedStatement ps, @NotNull List<Object> args) throws SQLException {
         Dialect provider = getDialect(ps.getConnection());
         int i = 1;
 
@@ -452,7 +452,6 @@ public final class Database {
         }
     }
 
-    @Nullable
     private static <T> T unique(@NotNull List<T> items) {
         if (items.size() == 1)
             return items.get(0);
@@ -471,12 +470,14 @@ public final class Database {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> RowMapper<T> findRowMapperForType(Class<T> cl) {
+    @Nullable
+    private <T> RowMapper<T> findRowMapperForType(@NotNull Class<T> cl) {
         if (cl.isEnum())
             return new EnumRowMapper(cl, getCoercions());
         return SingleColumnMappers.findRowMapperForType(cl);
     }
 
+    @NotNull
     private Coercions getCoercions() {
         if (coercions == null) {
             coercions = withTransaction(new ConnectionCallback<Coercions>() {
@@ -491,7 +492,7 @@ public final class Database {
     }
 
     @NotNull
-    private Dialect getDialect(Connection connection) throws SQLException {
+    private Dialect getDialect(@NotNull Connection connection) throws SQLException {
         if (dialect == null)
             dialect = Dialect.detect(connection);
         return dialect;
