@@ -27,6 +27,8 @@ public final class InstantiatorRegistry {
         this.dialect = requireNonNull(dialect);
         this.coercions = new Coercions(dialect);
 
+        DefaultCoercions.register(coercions);
+
         if (JodaCoercions.hasJoda()) {
             log.info("Detected Joda Time in classpath. Registering coercions for Joda.");
             JodaCoercions.register(coercions);
