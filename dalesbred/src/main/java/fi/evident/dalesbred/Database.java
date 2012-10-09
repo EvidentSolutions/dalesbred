@@ -48,8 +48,9 @@ public final class Database {
     /** Logger in which we log actions */
     private final Logger log = Logger.getLogger(getClass().getName());
 
-    /** Transaction isolation level to use, or -1 to indicate default */
-    private int transactionIsolation = -1;
+    /** Transaction isolation level to use, or null to indicate default */
+    @Nullable
+    private Isolation transactionIsolation = null;
 
     /** Do we want to create a new transaction if non-transactional calls are made */
     private boolean allowImplicitTransactions = true;
@@ -175,8 +176,10 @@ public final class Database {
             throw new DatabaseException("connection-provider returned null connection");
 
         connection.setAutoCommit(false);
-        if (transactionIsolation != -1)
-            connection.setTransactionIsolation(transactionIsolation);
+
+        Isolation isolation = transactionIsolation;
+        if (isolation != null)
+            connection.setTransactionIsolation(isolation.level);
 
         return connection;
     }
@@ -515,29 +518,19 @@ public final class Database {
         this.dialect = requireNonNull(dialect);
     }
 
-    public int getTransactionIsolation() {
+    /**
+     * Returns the used transaction isolation level, or null for default leve.
+     */
+    @Nullable
+    public Isolation getTransactionIsolation() {
         return transactionIsolation;
     }
 
     /**
-     * Sets the transaction-isolation level to use.
-     *
-     * @see Connection#TRANSACTION_NONE
-     * @see Connection#TRANSACTION_READ_UNCOMMITTED
-     * @see Connection#TRANSACTION_READ_COMMITTED
-     * @see Connection#TRANSACTION_REPEATABLE_READ
-     * @see Connection#TRANSACTION_SERIALIZABLE
+     * Sets the transaction isolation level to use, or null for default level
      */
-    public void setTransactionIsolation(int level) {
-        if (level != -1
-                && level != Connection.TRANSACTION_NONE
-                && level != Connection.TRANSACTION_READ_COMMITTED
-                && level != Connection.TRANSACTION_READ_UNCOMMITTED
-                && level != Connection.TRANSACTION_REPEATABLE_READ
-                && level != Connection.TRANSACTION_SERIALIZABLE)
-            throw new IllegalArgumentException("invalid isolation level: " + level);
-
-        this.transactionIsolation = level;
+    public void setTransactionIsolation(@Nullable Isolation isolation) {
+        this.transactionIsolation = isolation;
     }
 
     public boolean isAllowImplicitTransactions() {
