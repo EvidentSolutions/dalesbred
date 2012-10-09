@@ -1,7 +1,6 @@
 package fi.evident.dalesbred.results;
 
 import fi.evident.dalesbred.DatabaseException;
-import fi.evident.dalesbred.instantiation.Coercions;
 import fi.evident.dalesbred.instantiation.Instantiator;
 import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
 import fi.evident.dalesbred.instantiation.NamedTypeList;
@@ -21,16 +20,15 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
 public final class ReflectionResultSetProcessor<T> implements ResultSetProcessor<List<T>> {
 
     private final Class<T> cl;
-    private final Coercions coercions;
-    private static final InstantiatorRegistry instantiatorRegistry = new InstantiatorRegistry();
+    private final InstantiatorRegistry instantiatorRegistry;
 
-    private ReflectionResultSetProcessor(@NotNull Class<T> cl, @NotNull Coercions coercions) {
+    private ReflectionResultSetProcessor(@NotNull Class<T> cl, @NotNull InstantiatorRegistry instantiatorRegistry) {
         this.cl = requireNonNull(cl);
-        this.coercions = requireNonNull(coercions);
+        this.instantiatorRegistry = requireNonNull(instantiatorRegistry);
     }
     
-    public static <T> ReflectionResultSetProcessor<T> forClass(@NotNull Class<T> cl, @NotNull Coercions coercions) {
-        return new ReflectionResultSetProcessor<T>(cl, coercions);
+    public static <T> ReflectionResultSetProcessor<T> forClass(@NotNull Class<T> cl, @NotNull InstantiatorRegistry instantiatorRegistry) {
+        return new ReflectionResultSetProcessor<T>(cl, instantiatorRegistry);
     }
 
     @Override
@@ -45,7 +43,7 @@ public final class ReflectionResultSetProcessor<T> implements ResultSetProcessor
             for (int i = 0; i < args.length; i++)
                 args[i] = resultSet.getObject(i+1);
 
-            result.add(ctor.instantiate(args, coercions));
+            result.add(ctor.instantiate(args));
         }
 
         return result;

@@ -1,5 +1,8 @@
 package fi.evident.dalesbred.instantiation;
 
+import fi.evident.dalesbred.dialects.Dialect;
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Constructor;
 
 import static fi.evident.dalesbred.utils.Primitives.unwrap;
@@ -11,12 +14,22 @@ import static java.lang.reflect.Modifier.isPublic;
  */
 public final class InstantiatorRegistry {
 
+    private final Coercions coercions;
     private static final int SAME_COST = 0;
     private static final int SUBTYPE_COST = 1;
     private static final int BOXING_COST = 100;
     private static final int UNBOXING_COST = 101;
     private static final int ENUM_COST = 200;
     private static final int NO_MATCH_COST = Integer.MAX_VALUE;
+
+    public InstantiatorRegistry(@NotNull Dialect dialect) {
+        this.coercions = new Coercions(dialect);
+    }
+
+    @NotNull
+    public Coercions getCoercions() {
+        return coercions;
+    }
 
     /**
      * Returns constructor matching given argument types. Differs from 
@@ -44,7 +57,7 @@ public final class InstantiatorRegistry {
         
         int cost = cost(constructor, types);
         if (cost != NO_MATCH_COST)
-            return new ConstructorInstantiator<T>(constructor, cost);
+            return new ConstructorInstantiator<T>(constructor, coercions, cost);
         else
             return null;
     }

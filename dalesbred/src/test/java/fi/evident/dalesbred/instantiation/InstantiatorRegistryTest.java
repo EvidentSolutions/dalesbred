@@ -9,8 +9,7 @@ import static org.junit.Assert.assertThat;
 
 public class InstantiatorRegistryTest {
 
-    private final InstantiatorRegistry instantiatorRegistry = new InstantiatorRegistry();
-    private final Coercions coercions = new Coercions(new DefaultDialect());
+    private final InstantiatorRegistry instantiatorRegistry = new InstantiatorRegistry(new DefaultDialect());
 
     @Test
     public void everyClassIsAssignableFromItself() {
@@ -35,37 +34,37 @@ public class InstantiatorRegistryTest {
     @Test
     public void findDefaultConstructor() throws Exception {
         Instantiator<TestClass> ctor = findInstantiator(TestClass.class);
-        assertThat(ctor.instantiate(new Object[] { }, coercions).calledConstructor, is(1));
+        assertThat(ctor.instantiate(new Object[] { }).calledConstructor, is(1));
     }
 
     @Test
     public void findConstructedBasedOnType() throws Exception {
         Instantiator<TestClass> ctor = findInstantiator(TestClass.class, String.class);
-        assertThat(ctor.instantiate(new Object[] { "foo", }, coercions).calledConstructor, is(2));
+        assertThat(ctor.instantiate(new Object[] { "foo", }).calledConstructor, is(2));
     }
 
     @Test
     public void findBasedOnPrimitiveType() throws Exception {
         Instantiator<TestClass> ctor = findInstantiator(TestClass.class, int.class);
-        assertThat(ctor.instantiate(new Object[] { 3 }, coercions).calledConstructor, is(3));
+        assertThat(ctor.instantiate(new Object[] { 3 }).calledConstructor, is(3));
     }
 
     @Test
     public void findPrimitiveTypedConstructorWithBoxedType() throws Exception {
         Instantiator<TestClass> ctor = findInstantiator(TestClass.class, Integer.class);
-        assertThat(ctor.instantiate(new Object[] { 3 }, coercions).calledConstructor, is(3));
+        assertThat(ctor.instantiate(new Object[] { 3 }).calledConstructor, is(3));
     }
 
     @Test
     public void preferConstructorWithoutBoxing() throws Exception {
         Instantiator<TestClass> ctor = findInstantiator(TestClass.class, long.class);
-        assertThat(ctor.instantiate(new Object[] { 3L }, coercions).calledConstructor, is(4));
+        assertThat(ctor.instantiate(new Object[] { 3L }).calledConstructor, is(4));
     }
 
     @Test
     public void preferConstructorWithoutUnboxing() throws Exception {
         Instantiator<TestClass> ctor = findInstantiator(TestClass.class, Long.class);
-        assertThat(ctor.instantiate(new Object[] { 3L }, coercions).calledConstructor, is(5));
+        assertThat(ctor.instantiate(new Object[] { 3L }).calledConstructor, is(5));
     }
 
     @SuppressWarnings("unused")

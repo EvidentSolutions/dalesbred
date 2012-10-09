@@ -4,6 +4,7 @@ import fi.evident.dalesbred.connection.DataSourceConnectionProvider;
 import fi.evident.dalesbred.connection.DriverManagerConnectionProvider;
 import fi.evident.dalesbred.dialects.Dialect;
 import fi.evident.dalesbred.instantiation.Coercions;
+import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
 import fi.evident.dalesbred.results.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,9 +52,9 @@ public final class Database {
     @Nullable
     private Dialect dialect;
 
-    /** Coercions to user for data-conversions */
+    /** Instantiators */
     @Nullable
-    private Coercions coercions;
+    private InstantiatorRegistry instantiatorRegistry;
 
     /**
      * Returns a new Database that uses given {@link DataSource} to retrieve connections.
@@ -315,7 +316,7 @@ public final class Database {
             @Override
             public Map<K,V> process(@NotNull ResultSet resultSet) throws SQLException {
                 final Map<K,V> result = new LinkedHashMap<K,V>();
-                Coercions coercions = getCoercions();
+                Coercions coercions = getInstantiatorRegistry().getCoercions();
 
                 while (resultSet.next()) {
                     Object key = resultSet.getObject(1);
@@ -461,34 +462,36 @@ public final class Database {
 
     @NotNull
     private <T> ResultSetProcessor<List<T>> resultProcessorForClass(@NotNull Class<T> cl) {
-        RowMapper<T> rowMapper = findRowMapperForType(cl);
+        InstantiatorRegistry instantiatorRegistry = getInstantiatorRegistry();
+
+        RowMapper<T> rowMapper = findRowMapperForType(cl, instantiatorRegistry);
 
         if (rowMapper != null)
             return new ListWithRowMapperResultSetProcessor<T>(rowMapper);
         else
-            return ReflectionResultSetProcessor.forClass(cl, getCoercions());
+            return ReflectionResultSetProcessor.forClass(cl, instantiatorRegistry);
     }
 
     @SuppressWarnings("unchecked")
     @Nullable
-    private <T> RowMapper<T> findRowMapperForType(@NotNull Class<T> cl) {
+    private <T> RowMapper<T> findRowMapperForType(@NotNull Class<T> cl, @NotNull InstantiatorRegistry instantiatorRegistry) {
         if (cl.isEnum())
-            return new EnumRowMapper(cl, getCoercions());
+            return new EnumRowMapper(cl, instantiatorRegistry.getCoercions());
         return SingleColumnMappers.findRowMapperForType(cl);
     }
 
     @NotNull
-    private Coercions getCoercions() {
-        if (coercions == null) {
-            coercions = withTransaction(new ConnectionCallback<Coercions>() {
+    private InstantiatorRegistry getInstantiatorRegistry() {
+        if (instantiatorRegistry == null) {
+            instantiatorRegistry = withTransaction(new ConnectionCallback<InstantiatorRegistry>() {
                 @Override
-                public Coercions execute(@NotNull Connection connection) throws SQLException {
-                    return new Coercions(getDialect(connection));
+                public InstantiatorRegistry execute(@NotNull Connection connection) throws SQLException {
+                    return new InstantiatorRegistry(getDialect(connection));
                 }
             });
         }
 
-        return coercions;
+        return instantiatorRegistry;
     }
 
     @NotNull
