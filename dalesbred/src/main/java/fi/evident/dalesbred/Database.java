@@ -335,8 +335,8 @@ public final class Database {
                 @SuppressWarnings("unchecked")
                 Class<Object> valueSource = (Class) types.getType(1);
 
-                Coercion<Object,K> keyCoercion = instantiatorRegistry.getCoercionFromDbValue(keySource, keyType);
-                Coercion<Object,V> valueCoercion = instantiatorRegistry.getCoercionFromDbValue(valueSource, valueType);
+                Coercion<? super Object, ? extends K> keyCoercion = instantiatorRegistry.getCoercionFromDbValue(keySource, keyType);
+                Coercion<? super Object, ? extends V> valueCoercion = instantiatorRegistry.getCoercionFromDbValue(valueSource, valueType);
 
                 while (resultSet.next()) {
                     Object key = resultSet.getObject(1);

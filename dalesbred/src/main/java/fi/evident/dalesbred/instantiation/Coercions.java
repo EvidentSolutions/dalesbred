@@ -1,6 +1,5 @@
 package fi.evident.dalesbred.instantiation;
 
-import fi.evident.dalesbred.dialects.Dialect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,14 +10,8 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
 public final class Coercions {
 
-    private final Dialect dialect;
-
     private final List<Coercion<?,?>> loadCoercions = new ArrayList<Coercion<?,?>>();
     private final List<Coercion<?,Object>> storeCoercions = new ArrayList<Coercion<?,Object>>();
-
-    public Coercions(@NotNull Dialect dialect) {
-        this.dialect = requireNonNull(dialect);
-    }
 
     @Nullable
     @SuppressWarnings("unchecked")

@@ -20,12 +20,11 @@ import static java.lang.reflect.Modifier.isPublic;
 public final class InstantiatorRegistry {
 
     private final Dialect dialect;
-    private final Coercions coercions;
+    private final Coercions coercions = new Coercions();
     private static final Logger log = Logger.getLogger(InstantiatorRegistry.class.getName());
 
     public InstantiatorRegistry(@NotNull Dialect dialect) {
         this.dialect = requireNonNull(dialect);
-        this.coercions = new Coercions(dialect);
 
         DefaultCoercions.register(coercions);
 
@@ -56,50 +55,51 @@ public final class InstantiatorRegistry {
         // First check if we have an immediate coercion registered. If so, we'll just use that.
         if (types.size() == 1) {
             @SuppressWarnings("unchecked")
-            Coercion<Object, T> coercion = (Coercion) findCoercionFromDbValue(cl, types.getType(0));
-            if (coercion != null) {
+            Coercion<Object, ? extends T> coercion = (Coercion) findCoercionFromDbValue(types.getType(0), cl);
+            if (coercion != null)
                 return new CoercionInstantiator<T>(coercion);
-            }
         }
 
         // If there was no coercion, we try to find a matching constructor, applying coercions to arguments.
-        Instantiator<T> instantiator = null;
-
         for (Constructor<T> constructor : constructorsFor(cl)) {
-            instantiator = instantiatorFrom(constructor, types);
+            Instantiator<T> instantiator = instantiatorFrom(constructor, types);
             if (instantiator != null)
-                break;
+                return instantiator;
         }
 
-        if (instantiator != null)
-            return instantiator;
-        else
-            throw new DatabaseException(cl + " does not have constructor matching types " + types.toString());
+        throw new DatabaseException(cl + " does not have instantiator matching types " + types);
     }
 
+    /**
+     * Returns an instantiator that uses given constructor and given types to create instances,
+     * or null if there are no coercions that can be made to instantiate the type.
+     */
     @Nullable
     private <T> Instantiator<T> instantiatorFrom(Constructor<T> constructor, NamedTypeList types) {
         if (!isPublic(constructor.getModifiers())) return null;
 
-        List<Coercion<Object,?>> coercions = resolveCoercions(constructor, types);
+        List<Coercion<Object,?>> coercions = resolveCoercions(types, constructor.getParameterTypes());
         if (coercions != null)
             return new ConstructorInstantiator<T>(constructor, coercions);
         else
             return null;
     }
 
+    /**
+     * Returns the list of coercions that need to be performed to convert sourceTypes
+     * to targetTypes, or null if coercions can't be done.
+     */
     @Nullable
-    private List<Coercion<Object,?>> resolveCoercions(Constructor<?> constructor, NamedTypeList columnTypes) {
-        Class<?>[] parameterTypes = constructor.getParameterTypes();
-
-        if (parameterTypes.length != columnTypes.size())
+    private List<Coercion<Object,?>> resolveCoercions(@NotNull NamedTypeList sourceTypes,
+                                                      @NotNull Class<?>[] targetTypes) {
+        if (targetTypes.length != sourceTypes.size())
             return null;
 
-        List<Coercion<Object,?>> coercions = new ArrayList<Coercion<Object, ?>>(parameterTypes.length);
+        List<Coercion<Object,?>> coercions = new ArrayList<Coercion<Object, ?>>(targetTypes.length);
 
-        for (int i = 0; i < parameterTypes.length; i++) {
+        for (int i = 0; i < targetTypes.length; i++) {
             @SuppressWarnings("unchecked")
-            Coercion<Object,?> coercion = (Coercion) findCoercionFromDbValue(parameterTypes[i], columnTypes.getType(i));
+            Coercion<Object,?> coercion = (Coercion) findCoercionFromDbValue(sourceTypes.getType(i), targetTypes[i]);
             if (coercion != null)
                 coercions.add(coercion);
             else
@@ -109,34 +109,41 @@ public final class InstantiatorRegistry {
         return coercions;
     }
 
+    /**
+     * Returns coercion for converting value of source-type to target-type, or throws exception if
+     * there's no such coercion.
+     */
     @NotNull
-    public <S,T> Coercion<S,T> getCoercionFromDbValue(@NotNull Class<S> source, @NotNull Class<T> target) {
-        Coercion<S,T> coercion = findCoercionFromDbValue(source, target);
+    public <S,T> Coercion<? super S, ? extends T> getCoercionFromDbValue(@NotNull Class<S> source, @NotNull Class<T> target) {
+        Coercion<? super S, ? extends T> coercion = findCoercionFromDbValue(source, target);
         if (coercion != null)
             return coercion;
         else
             throw new DatabaseException("could not find a conversion from " + source.getName() + " to " + target.getName());
     }
 
+    /**
+     * Returns coercion for converting value of source to target, or returns null if there's no such coercion.
+     */
     @Nullable
-    @SuppressWarnings("unchecked")
-    private <S,T> Coercion<S,T> findCoercionFromDbValue(@NotNull Class<S> target, @NotNull Class<T> source) {
+    private <S,T> Coercion<? super S, ? extends T> findCoercionFromDbValue(@NotNull Class<S> source, @NotNull Class<T> target) {
         if (wrap(target).isAssignableFrom(wrap(source)))
-            return (Coercion) Coercion.identity();
+            return Coercion.identity();
 
-        @SuppressWarnings("unchecked")
-        Coercion<S,T> coercion = (Coercion) coercions.findCoercionFromDbValue(source, target);
+        Coercion<?,?> coercion = coercions.findCoercionFromDbValue(source, target);
         if (coercion != null)
-            return coercion;
+            return coercion.cast(source, target);
 
         if (target.isEnum())
-            return (Coercion) dialect.getEnumCoercion(target.asSubclass(Enum.class));
+            return dialect.getEnumCoercion(target.asSubclass(Enum.class)).cast(source, target);
 
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    private static <T> Constructor<T>[] constructorsFor(Class<T> cl) {
-        return (Constructor<T>[]) cl.getConstructors();
+    @NotNull
+    private static <T> Constructor<T>[] constructorsFor(@NotNull Class<T> cl) {
+        @SuppressWarnings("unchecked")
+        Constructor<T>[] constructors = (Constructor<T>[]) cl.getConstructors();
+        return constructors;
     }
 }

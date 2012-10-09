@@ -4,11 +4,14 @@ import org.jetbrains.annotations.NotNull;
 
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
+/**
+ * A simple instantiator that just applies a coercion to argument.
+ */
 final class CoercionInstantiator<T> implements Instantiator<T> {
 
-    private final Coercion<Object,T> coercion;
+    private final Coercion<Object, ? extends T> coercion;
 
-    CoercionInstantiator(@NotNull Coercion<Object,T> coercion) {
+    CoercionInstantiator(@NotNull Coercion<Object,? extends T> coercion) {
         this.coercion = requireNonNull(coercion);
     }
 

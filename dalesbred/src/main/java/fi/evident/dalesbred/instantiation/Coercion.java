@@ -13,8 +13,16 @@ public abstract class Coercion<S,T> {
     public abstract T coerce(@NotNull S value);
 
     @SuppressWarnings("unchecked")
-    public static <T> Coercion<T,T> identity() {
+    public static <S,T> Coercion<S,T> identity() {
         return IDENTITY;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <S,T> Coercion<S,T> cast(Class<S> source, Class<T> target) {
+        if (canCoerce(source, target))
+            return (Coercion) this;
+        else
+            throw new RuntimeException("can't cast " + this + " to coercion from " + source.getName() + " to " + target.getName());
     }
 
     private static final class IdentityCoercion<T> extends Coercion<T, T> {

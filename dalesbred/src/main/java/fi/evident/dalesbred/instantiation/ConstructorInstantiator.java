@@ -30,7 +30,7 @@ final class ConstructorInstantiator<T> implements Instantiator<T> {
     private Object[] coerceArguments(Object[] arguments) {
         Object[] coerced = new Object[arguments.length];
 
-        for (int i = 0; i< arguments.length; i++)
+        for (int i = 0; i < arguments.length; i++)
             coerced[i] = coercions.get(i).coerce(arguments[i]);
 
         return coerced;
