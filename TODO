@@ -1,2 +1,2 @@
-- optional support for JodaTime
+- support reusing prepared statements
 - JUnit test case support
