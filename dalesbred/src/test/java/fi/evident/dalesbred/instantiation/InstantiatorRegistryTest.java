@@ -63,7 +63,7 @@ public class InstantiatorRegistryTest {
         public TestClass(int x) { calledConstructor = 3; }
     }
 
-    private <T> Instantiator<T> findInstantiator(Class<T> cl, Class<?>... types) throws NoSuchMethodException {
+    private <T> Instantiator<T> findInstantiator(Class<T> cl, Class<?>... types) {
         NamedTypeList.Builder list = NamedTypeList.builder(types.length);
         for (int i = 0; i < types.length; i++)
             list.add("name" + i, types[i]);

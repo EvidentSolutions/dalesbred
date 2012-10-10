@@ -435,7 +435,7 @@ public final class Database {
             log.fine("executing query " + query);
     }
 
-    private void bindArguments(@NotNull PreparedStatement ps, @NotNull List<Object> args) throws SQLException {
+    private void bindArguments(@NotNull PreparedStatement ps, @NotNull List<?> args) throws SQLException {
         InstantiatorRegistry instantiatorRegistry = getInstantiatorRegistry();
         int i = 1;
 

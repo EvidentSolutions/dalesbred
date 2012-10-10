@@ -7,7 +7,7 @@ import static java.lang.Character.toLowerCase;
 
 public final class StringUtils {
 
-    StringUtils() { }
+    private StringUtils() { }
 
     /**
      * Converts words <em>CamelCasedWords</em> to <em>underscore_separated_words.</em>

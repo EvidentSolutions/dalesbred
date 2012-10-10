@@ -14,9 +14,9 @@ import static java.util.Collections.unmodifiableList;
  */
 public final class SqlQuery {
     final String sql;
-    final List<Object> args;
+    final List<?> args;
 
-    private SqlQuery(@NotNull @SQL String sql, @NotNull List<Object> args) {
+    private SqlQuery(@NotNull @SQL String sql, @NotNull List<?> args) {
         this.sql = requireNonNull(sql);
         this.args = unmodifiableList(args);
     }
@@ -27,7 +27,7 @@ public final class SqlQuery {
     }
 
     @NotNull
-    public static SqlQuery query(@NotNull @SQL String sql, @NotNull List<Object> args) {
+    public static SqlQuery query(@NotNull @SQL String sql, @NotNull List<?> args) {
         return new SqlQuery(sql, args);
     }
 
@@ -37,7 +37,7 @@ public final class SqlQuery {
     }
 
     @NotNull
-    public List<Object> getArguments() {
+    public List<?> getArguments() {
         return args;
     }
 

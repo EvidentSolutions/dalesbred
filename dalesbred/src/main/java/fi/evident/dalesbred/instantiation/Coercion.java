@@ -27,8 +27,6 @@ public abstract class Coercion<S,T> {
 
     private static final class IdentityCoercion<T> extends Coercion<T, T> {
 
-        private static IdentityCoercion INSTANCE = new IdentityCoercion();
-
         @NotNull
         @Override
         public boolean canCoerce(@NotNull Class<?> source, @NotNull Class<?> target) {

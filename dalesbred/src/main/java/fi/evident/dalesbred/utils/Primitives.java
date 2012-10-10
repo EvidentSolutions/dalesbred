@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class Primitives {
 
-    Primitives() { }
+    private Primitives() { }
 
     /**
      * Returns the corresponding wrapper type for a primitive type, or the type itself if it is not a primitive type.

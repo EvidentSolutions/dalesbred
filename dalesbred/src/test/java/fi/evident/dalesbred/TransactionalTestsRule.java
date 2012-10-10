@@ -50,16 +50,6 @@ final class TransactionalTestsRule implements TestRule {
         };
     }
 
-    private static class ThrowableException extends RuntimeException {
-
-        final Throwable throwable;
-
-        public ThrowableException(Throwable throwable) {
-            this.throwable = throwable;
-        }
-    }
-
-
     private Properties loadConnectionProperties(String propertiesName) {
         try {
             InputStream in = getClass().getClassLoader().getResourceAsStream(propertiesName);
@@ -75,5 +65,4 @@ final class TransactionalTestsRule implements TestRule {
             throw new RuntimeException(e);
         }
     }
-
 }

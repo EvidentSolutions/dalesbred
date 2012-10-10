@@ -131,14 +131,6 @@
     <inspection_tool class="StringEqualsEmptyString" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="TestOnlyProblems" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="TypeParameterExtendsFinalClass" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="UNUSED_SYMBOL" enabled="false" level="WARNING" enabled_by_default="false">
-      <option name="LOCAL_VARIABLE" value="true" />
-      <option name="FIELD" value="true" />
-      <option name="METHOD" value="true" />
-      <option name="CLASS" value="true" />
-      <option name="PARAMETER" value="true" />
-      <option name="REPORT_PARAMETER_FOR_PUBLIC_METHODS" value="true" />
-    </inspection_tool>
     <inspection_tool class="UnaryPlus" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnknownGuard" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnnecessaryConstantArrayCreationExpression" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -153,12 +145,6 @@
     <inspection_tool class="UnpredictableBigDecimalConstructorCall" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoreReferences" value="true" />
       <option name="ignoreComplexLiterals" value="false" />
-    </inspection_tool>
-    <inspection_tool class="UnusedDeclaration" enabled="false" level="WARNING" enabled_by_default="false">
-      <option name="ADD_MAINS_TO_ENTRIES" value="true" />
-      <option name="ADD_APPLET_TO_ENTRIES" value="true" />
-      <option name="ADD_SERVLET_TO_ENTRIES" value="true" />
-      <option name="ADD_NONJAVA_TO_ENTRIES" value="true" />
     </inspection_tool>
     <inspection_tool class="UnusedParameters" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="UnusedReturnValue" enabled="false" level="WARNING" enabled_by_default="false" />
