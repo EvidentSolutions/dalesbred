@@ -2,8 +2,6 @@ package fi.evident.dalesbred.instantiation;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
 /**
@@ -31,7 +29,19 @@ public final class NamedTypeList {
     @Override
     @NotNull
     public String toString() {
-        return Arrays.toString(types);
+        StringBuilder sb = new StringBuilder();
+
+        sb.append('[');
+
+        for (int i = 0; i < types.length; i++) {
+            if (i != 0) sb.append(", ");
+
+            sb.append(names[i]).append(": ").append(types[i].getName());
+        }
+
+        sb.append(']');
+
+        return sb.toString();
     }
 
     @NotNull

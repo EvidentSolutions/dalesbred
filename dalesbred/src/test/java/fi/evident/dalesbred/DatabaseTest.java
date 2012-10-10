@@ -1,14 +1,20 @@
 package fi.evident.dalesbred;
 
+import fi.evident.dalesbred.results.RowMapper;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class DatabaseTest {
@@ -125,6 +131,19 @@ public class DatabaseTest {
     @Test
     public void findUniqueOrNull_emptyResult() {
         assertThat(db.findUniqueOrNull(Integer.class, "select generate_series(0,-1)"), is(nullValue()));
+    }
+
+    @Test
+    public void rowMapper() {
+        RowMapper<Integer> squaringRowMapper = new RowMapper<Integer>() {
+            @Override
+            public Integer mapRow(@NotNull ResultSet resultSet) throws SQLException {
+                int value = resultSet.getInt(1);
+                return value*value;
+            }
+        };
+
+        assertEquals(asList(1, 4, 9), db.findAll(squaringRowMapper, "select generate_series(1, 3)"));
     }
 
     enum Mood {

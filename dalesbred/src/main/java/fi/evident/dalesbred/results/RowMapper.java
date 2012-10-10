@@ -18,6 +18,5 @@ public interface RowMapper<T> {
      *
      * @throws SQLException
      */
-    @SuppressWarnings("RedundantThrows")
     T mapRow(@NotNull ResultSet resultSet) throws SQLException;
 }
