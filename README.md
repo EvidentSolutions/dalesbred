@@ -17,7 +17,7 @@ Adding Maven dependencies:
         <dependency>
             <groupId>fi.evident.dalesbred</groupId>
             <artifactId>dalesbred</artifactId>
-            <version>0.1.2</version>
+            <version>0.1.3</version>
         </dependency>
     </dependencies>
 
