@@ -54,6 +54,7 @@ public class BuiltinCoercionsTest {
     public void longCoercions() {
         assertThat(db.findUnique(long.class, "select 42"), is(42L));
         assertThat(db.findUnique(Long.class, "select 42"), is(42L));
+        assertThat(db.findUniqueLong("select 42"), is(42L));
     }
 
     @Test

@@ -308,6 +308,24 @@ public final class Database {
         return findUniqueInt(query(sql, args));
     }
 
+    /**
+     * A convenience method for retrieving a single non-null long.
+     */
+    public long findUniqueLong(@NotNull SqlQuery query) {
+        Long value = findUnique(Long.class, query);
+        if (value != null)
+            return value;
+        else
+            throw new UnexpectedResultException("database returned null instead of long");
+    }
+
+    /**
+     * A convenience method for retrieving a single non-null integer.
+     */
+    public long findUniqueLong(@NotNull @SQL String sql, Object... args) {
+        return findUniqueLong(query(sql, args));
+    }
+
     @NotNull
     public <K,V> Map<K, V> findMap(@NotNull final Class<K> keyType,
                                    @NotNull final Class<V> valueType,
