@@ -118,6 +118,7 @@
                     <artifactId>maven-release-plugin</artifactId>
                     <version>2.3.2</version>
                     <configuration>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
                         <tagNameFormat>dalesbred-@{project.version}</tagNameFormat>
                     </configuration>
                 </plugin>
