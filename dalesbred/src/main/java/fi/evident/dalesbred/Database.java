@@ -318,9 +318,22 @@ public final class Database {
     @NotNull
     public <K,V> Map<K, V> findMap(@NotNull Class<K> keyType,
                                    @NotNull Class<V> valueType,
-                                   @NotNull @SQL String query,
+                                   @NotNull @SQL String sql,
                                    Object... args) {
-        return findMap(keyType, valueType, query(query, args));
+        return findMap(keyType, valueType, query(sql, args));
+    }
+
+    /**
+     * Executes a query and creates a {@link ResultTable} from the results.
+     */
+    @NotNull
+    public ResultTable findTable(@NotNull SqlQuery query) {
+        return executeQuery(new ResultTableResultSetProcessor(), query);
+    }
+
+    @NotNull
+    public ResultTable findTable(@NotNull @SQL String sql, Object... args) {
+        return findTable(query(sql, args));
     }
 
     /**
@@ -485,7 +498,7 @@ public final class Database {
     }
 
     /**
-     * Returns the used transaction isolation level, or null for default leve.
+     * Returns the used transaction isolation level, or null for default level.
      */
     @Nullable
     public Isolation getTransactionIsolation() {

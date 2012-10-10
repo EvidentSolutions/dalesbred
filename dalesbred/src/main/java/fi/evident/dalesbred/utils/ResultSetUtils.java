@@ -24,7 +24,7 @@ public final class ResultSetUtils {
     }
 
     @NotNull
-    private static Class<?> getColumnType(@NotNull ResultSetMetaData metaData, int column) throws SQLException {
+    public static Class<?> getColumnType(@NotNull ResultSetMetaData metaData, int column) throws SQLException {
         String className = metaData.getColumnClassName(column);
         try {
             return Class.forName(className);
