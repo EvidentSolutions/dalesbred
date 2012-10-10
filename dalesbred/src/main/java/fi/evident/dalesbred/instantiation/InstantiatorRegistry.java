@@ -38,7 +38,8 @@ public final class InstantiatorRegistry {
     public Object valueToDatabase(@Nullable Object value) {
         if (value == null) return null;
 
-        Coercion<Object, Object> coercion = coercions.findCoercionToDb(value.getClass());
+        @SuppressWarnings("unchecked")
+        Coercion<Object, Object> coercion = (Coercion) coercions.findCoercionToDb(value.getClass());
         if (coercion != null)
             return coercion.coerce(value);
         else

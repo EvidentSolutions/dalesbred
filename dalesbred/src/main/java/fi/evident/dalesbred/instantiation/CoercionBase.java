@@ -2,6 +2,7 @@ package fi.evident.dalesbred.instantiation;
 
 import org.jetbrains.annotations.NotNull;
 
+import static fi.evident.dalesbred.utils.Primitives.isAssignableByBoxing;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
 public abstract class CoercionBase<S,T> extends Coercion<S,T> {
@@ -17,7 +18,7 @@ public abstract class CoercionBase<S,T> extends Coercion<S,T> {
     @NotNull
     @Override
     public boolean canCoerce(@NotNull Class<?> source, @NotNull Class<?> target) {
-        return this.source.isAssignableFrom(source) && target.isAssignableFrom(this.target);
+        return isAssignableByBoxing(this.source, source) && isAssignableByBoxing(target, this.target);
     }
 
     @Override

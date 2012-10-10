@@ -11,14 +11,13 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
 public final class Coercions {
 
     private final List<Coercion<?,?>> loadCoercions = new ArrayList<Coercion<?,?>>();
-    private final List<Coercion<?,Object>> storeCoercions = new ArrayList<Coercion<?,Object>>();
+    private final List<Coercion<?,?>> storeCoercions = new ArrayList<Coercion<?,?>>();
 
     @Nullable
-    @SuppressWarnings("unchecked")
     public <S,T> Coercion<S,T> findCoercionFromDbValue(@NotNull Class<S> source, @NotNull Class<T> target) {
         for (Coercion<?,?> coercion : loadCoercions)
             if (coercion.canCoerce(source, target))
-                return (Coercion<S,T>) coercion;
+                return coercion.cast(source, target);
 
         return null;
     }
@@ -27,17 +26,15 @@ public final class Coercions {
         loadCoercions.add(requireNonNull(coercion));
     }
 
-    @SuppressWarnings("unchecked")
     public <S,T> void registerStoreConversion(@NotNull Coercion<S, T> coercion) {
-        storeCoercions.add(requireNonNull((Coercion) coercion));
+        storeCoercions.add(requireNonNull(coercion));
     }
 
     @Nullable
-    @SuppressWarnings("unchecked")
-    public <T> Coercion<T,Object> findCoercionToDb(@NotNull Class<? extends T> type) {
+    public <T> Coercion<T,Object> findCoercionToDb(@NotNull Class<T> type) {
         for (Coercion<?,?> coercion : storeCoercions)
             if (coercion.canCoerce(type, Object.class))
-                return (Coercion) coercion;
+                return coercion.cast(type, Object.class);
 
         return null;
     }
