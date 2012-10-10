@@ -10,4 +10,4 @@ out
 .idea/uiDesigner.xml
 .idea/dataSources.xml
 .idea/dataSources.ids
-src/test/resources/connection.properties
+dalesbred/src/test/resources/connection.properties

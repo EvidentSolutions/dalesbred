@@ -61,4 +61,17 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>jenkins</id>
+            <build>
+                <testResources>
+                    <testResource>
+                        <directory>profiles/jenkins/src/test/resources</directory>
+                    </testResource>
+                </testResources>
+            </build>
+        </profile>
+    </profiles>
 </project>
