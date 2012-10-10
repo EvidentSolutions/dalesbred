@@ -1,5 +1,6 @@
 package fi.evident.dalesbred.instantiation;
 
+import fi.evident.dalesbred.Reflective;
 import fi.evident.dalesbred.dialects.DefaultDialect;
 import org.junit.Test;
 
@@ -55,11 +56,16 @@ public class InstantiatorRegistryTest {
         assertThat(ctor.instantiate(new Object[] { 3 }).calledConstructor, is(3));
     }
 
-    @SuppressWarnings("unused")
     static class TestClass {
         private final int calledConstructor;
+
+        @Reflective
         public TestClass() { calledConstructor = 1; }
+
+        @Reflective
         public TestClass(String s) { calledConstructor = 2; }
+
+        @Reflective
         public TestClass(int x) { calledConstructor = 3; }
     }
 

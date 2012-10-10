@@ -1,5 +1,7 @@
 package fi.evident.dalesbred;
 
+import fi.evident.dalesbred.dialects.DefaultDialect;
+import fi.evident.dalesbred.results.ResultSetProcessor;
 import fi.evident.dalesbred.results.RowMapper;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
@@ -14,8 +16,7 @@ import java.util.Map;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class DatabaseTest {
 
@@ -53,13 +54,15 @@ public class DatabaseTest {
         db.update("drop table if exists department");
 
         db.update("create table department (id serial primary key, name varchar(64) not null)");
-        db.update("insert into department (name) values ('foo')");
-        db.update("insert into department (name) values ('bar')");
+        int id1 = db.findUniqueInt("insert into department (name) values ('foo') returning id");
+        int id2 = db.findUniqueInt("insert into department (name) values ('bar') returning id");
 
         List<Department> departments = db.findAll(Department.class, "select id, name from department");
 
         assertThat(departments.size(), is(2));
+        assertThat(departments.get(0).id, is(id1));
         assertThat(departments.get(0).name, is("foo"));
+        assertThat(departments.get(1).id, is(id2));
         assertThat(departments.get(1).name, is("bar"));
     }
 
@@ -81,7 +84,7 @@ public class DatabaseTest {
     @Test
     public void enumsAsPrimitives() {
         db.update("drop type if exists mood cascade");
-        db.update("create type mood as enum ('SAD', 'OK', 'HAPPY')");
+        db.update("create type mood as enum ('SAD', 'HAPPY')");
 
         db.findUnique(Mood.class, "select 'SAD'::mood").getClass();
         assertThat(db.findUnique(Mood.class, "select 'SAD'::mood"), is(Mood.SAD));
@@ -91,7 +94,7 @@ public class DatabaseTest {
     @Test
     public void enumsAsConstructorParameters() {
         db.update("drop type if exists mood cascade");
-        db.update("create type mood as enum ('SAD', 'OK', 'HAPPY')");
+        db.update("create type mood as enum ('SAD', 'HAPPY')");
 
         db.update("drop table if exists movie");
         db.update("create table movie (name varchar(64) primary key, mood mood not null)");
@@ -143,17 +146,77 @@ public class DatabaseTest {
             }
         };
 
-        assertEquals(asList(1, 4, 9), db.findAll(squaringRowMapper, "select generate_series(1, 3)"));
+        assertThat(db.findAll(squaringRowMapper, "select generate_series(1, 3)"), is(asList(1, 4, 9)));
+        assertThat(db.findUnique(squaringRowMapper, "select 7"), is(49));
+        assertThat(db.findUniqueOrNull(squaringRowMapper, "select generate_series(0,-1)"), is(nullValue()));
+    }
+
+    @Test
+    public void customResultProcessor() {
+        ResultSetProcessor<Integer> rowCounter = new ResultSetProcessor<Integer>() {
+            @Override
+            public Integer process(@NotNull ResultSet resultSet) throws SQLException {
+                int rows = 0;
+                while (resultSet.next()) rows++;
+                return rows;
+            }
+        };
+
+        assertThat(db.executeQuery(rowCounter, "select generate_series(1, 10)"), is(10));
+    }
+
+    @Test(expected = DatabaseException.class)
+    public void creatingDatabaseWithJndiDataSourceThrowsExceptionWhenContextIsNotConfigured() {
+        Database.forJndiDataSource("foo");
+    }
+
+    @Test
+    public void isolation() {
+        assertNull(db.getTransactionIsolation());
+
+        db.setTransactionIsolation(Isolation.REPEATABLE_READ);
+        assertSame(Isolation.REPEATABLE_READ, db.getTransactionIsolation());
+    }
+
+    @Test
+    public void implicitTransactions() {
+        db.setAllowImplicitTransactions(false);
+        assertFalse(db.isAllowImplicitTransactions());
+
+        db.setAllowImplicitTransactions(true);
+        assertTrue(db.isAllowImplicitTransactions());
+    }
+
+    @Test
+    public void customDialect() {
+        class UppercaseDialect extends DefaultDialect {
+            @NotNull
+            @Override
+            public Object valueToDatabase(@NotNull Object value) {
+                return value.toString().toUpperCase();
+            }
+        }
+
+        db.setDialect(new UppercaseDialect());
+
+        db.update("drop table if exists my_table");
+        db.update("create table my_table (text varchar)");
+
+        db.update("insert into my_table values (?)", "foo");
+
+        assertEquals("FOO", db.findUnique(String.class, "select text from my_table"));
     }
 
     enum Mood {
-        SAD, OK, HAPPY
+        SAD,
+        HAPPY
     }
 
     public static class Department {
         final int id;
         final String name;
 
+        @Reflective
         public Department(int id, String name) {
             this.id = id;
             this.name = name;
@@ -164,6 +227,7 @@ public class DatabaseTest {
         final String name;
         final Mood mood;
 
+        @Reflective
         public Movie(String name, Mood mood) {
             this.name = name;
             this.mood = mood;

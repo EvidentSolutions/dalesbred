@@ -108,6 +108,7 @@ public class BuiltinCoercionsTest {
         final URL url;
         final URI uri;
 
+        @Reflective
         public UrlAndUri(URL url, URI uri) {
             this.url = url;
             this.uri = uri;
@@ -124,8 +125,8 @@ public class BuiltinCoercionsTest {
         final BigInteger bigIntegerValue;
         final BigDecimal bigDecimalValue;
 
+        @Reflective
         public Numbers(short shortValue, int intValue, long longValue, float floatValue, double doubleValue, BigInteger bigIntegerValue, BigDecimal bigDecimalValue) {
-
             this.shortValue = shortValue;
             this.intValue = intValue;
             this.longValue = longValue;

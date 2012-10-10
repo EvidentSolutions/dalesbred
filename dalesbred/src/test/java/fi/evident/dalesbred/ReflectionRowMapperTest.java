@@ -64,22 +64,24 @@ public class ReflectionRowMapperTest {
         int num;
         String str;
 
+        @Reflective
         public SingleConstructor(int num, String str) {
             this.num = num;
             this.str = str;
         }
     }
 
-    @SuppressWarnings("unused")
     public static class TwoConstructors {
         int num;
         String str;
 
+        @Reflective
         public TwoConstructors(int num, String str) {
             this.num = num;
             this.str = str;
         }
 
+        @Reflective
         public TwoConstructors(int foo, boolean str) {
             throw new RuntimeException("unexpected call two wrong constructor");
         }

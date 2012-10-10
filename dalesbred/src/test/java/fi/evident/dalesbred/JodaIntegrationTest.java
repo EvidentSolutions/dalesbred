@@ -61,6 +61,7 @@ public class JodaIntegrationTest {
         final LocalDate date;
         final LocalTime time;
 
+        @Reflective
         public DateContainer(DateTime dateTime, LocalDate date, LocalTime time) {
             this.dateTime = dateTime;
             this.date = date;
