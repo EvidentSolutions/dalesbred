@@ -15,6 +15,7 @@ final class DefaultCoercions {
         coercions.registerLoadConversion(new StringToUrlCoercion());
         coercions.registerLoadConversion(new StringToUriCoercion());
         coercions.registerLoadConversion(new NumberToShortCoercion());
+        coercions.registerLoadConversion(new NumberToIntCoercion());
         coercions.registerLoadConversion(new NumberToLongCoercion());
         coercions.registerLoadConversion(new NumberToFloatCoercion());
         coercions.registerLoadConversion(new NumberToDoubleCoercion());
@@ -36,6 +37,19 @@ final class DefaultCoercions {
         @Override
         public Short coerce(@NotNull Number value) {
             return value.shortValue();
+        }
+    }
+
+    private static class NumberToIntCoercion extends CoercionBase<Number, Integer> {
+
+        NumberToIntCoercion() {
+            super(Number.class, Integer.class);
+        }
+
+        @NotNull
+        @Override
+        public Integer coerce(@NotNull Number value) {
+            return value.intValue();
         }
     }
 

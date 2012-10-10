@@ -47,6 +47,7 @@ public class BuiltinCoercionsTest {
     public void intCoercions() {
         assertThat(db.findUnique(int.class,    "select 42"), is(42));
         assertThat(db.findUnique(Integer.class,"select 42"), is(42));
+        assertThat(db.findUnique(Integer.class,"select 42::int8"), is(42));
     }
 
     @Test
@@ -102,6 +103,11 @@ public class BuiltinCoercionsTest {
         assertThat(numbers.doubleValue, is(doubleValue));
         assertThat(numbers.bigIntegerValue, is(bigIntegerValue));
         assertThat(numbers.bigDecimalValue, is(bigDecimalValue));
+    }
+
+    @Test
+    public void count() {
+        assertThat(db.findUniqueInt("select count(*) from generate_series(1, 10) n"), is(10));
     }
 
     public static final class UrlAndUri {
