@@ -1,6 +1,5 @@
 package fi.evident.dalesbred;
 
-import fi.evident.dalesbred.dialects.DefaultDialect;
 import fi.evident.dalesbred.results.ResultSetProcessor;
 import fi.evident.dalesbred.results.RowMapper;
 import org.jetbrains.annotations.NotNull;
@@ -185,26 +184,6 @@ public class DatabaseTest {
 
         db.setAllowImplicitTransactions(true);
         assertTrue(db.isAllowImplicitTransactions());
-    }
-
-    @Test
-    public void customDialect() {
-        class UppercaseDialect extends DefaultDialect {
-            @NotNull
-            @Override
-            public Object valueToDatabase(@NotNull Object value) {
-                return value.toString().toUpperCase();
-            }
-        }
-
-        db.setDialect(new UppercaseDialect());
-
-        db.update("drop table if exists my_table");
-        db.update("create table my_table (text varchar)");
-
-        db.update("insert into my_table values (?)", "foo");
-
-        assertEquals("FOO", db.findUnique(String.class, "select text from my_table"));
     }
 
     enum Mood {

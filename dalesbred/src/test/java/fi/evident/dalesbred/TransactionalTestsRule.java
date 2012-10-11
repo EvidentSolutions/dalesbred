@@ -1,10 +1,13 @@
 package fi.evident.dalesbred;
 
+import fi.evident.dalesbred.connection.DriverManagerConnectionProvider;
+import fi.evident.dalesbred.dialects.Dialect;
 import org.jetbrains.annotations.NotNull;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
+import javax.inject.Provider;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -18,12 +21,22 @@ final class TransactionalTestsRule implements TestRule {
     public final Database db;
 
     public TransactionalTestsRule(String properties) {
+        db = new Database(createConnectionProvider(properties));
+        db.setAllowImplicitTransactions(false);
+    }
+
+    public TransactionalTestsRule(@NotNull String properties, @NotNull Dialect dialect) {
+        db = new Database(createConnectionProvider(properties), dialect);
+        db.setAllowImplicitTransactions(false);
+    }
+
+    private Provider<Connection> createConnectionProvider(@NotNull String properties) {
         Properties props = loadConnectionProperties(properties);
         String url = props.getProperty("jdbc.url");
         String login = props.getProperty("jdbc.login");
         String password = props.getProperty("jdbc.password");
-        db = Database.forUrlAndCredentials(url, login, password);
-        db.setAllowImplicitTransactions(false);
+
+        return new DriverManagerConnectionProvider(url, login, password);
     }
 
     @Override

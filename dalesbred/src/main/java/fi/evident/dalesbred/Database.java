@@ -48,12 +48,9 @@ public final class Database {
     /** Do we want to create a new transaction if non-transactional calls are made */
     private boolean allowImplicitTransactions = true;
 
-    @Nullable
-    private Dialect dialect;
-
     /** Instantiators */
-    @Nullable
-    private InstantiatorRegistry instantiatorRegistry;
+    @NotNull
+    private final InstantiatorRegistry instantiatorRegistry;
 
     /**
      * Returns a new Database that uses given {@link DataSource} to retrieve connections.
@@ -92,11 +89,36 @@ public final class Database {
     }
 
     /**
-     * Constructs a new Database that uses given connection-provider.
+     * Constructs a new Database that uses given connection-provider and auto-detects the dialect to use.
      */
     @Inject
     public Database(@NotNull Provider<Connection> connectionProvider) {
+        this(connectionProvider, resolveDialect(connectionProvider));
+    }
+
+    /**
+     * Constructs a new Database that uses given connection-provider and dialect.
+     */
+    public Database(@NotNull Provider<Connection> connectionProvider, @NotNull Dialect dialect) {
         this.connectionProvider = requireNonNull(connectionProvider);
+        this.instantiatorRegistry = new InstantiatorRegistry(dialect);
+    }
+
+    /**
+     * Tries to detect the dialect of database automatically.
+     */
+    @NotNull
+    private static Dialect resolveDialect(@NotNull Provider<Connection> connectionProvider) {
+        try {
+            Connection connection = connectionProvider.get();
+            try {
+                return Dialect.detect(connection);
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Failed autodetect database dialect: " + e, e);
+        }
     }
 
     /**
@@ -330,7 +352,7 @@ public final class Database {
     public <K,V> Map<K, V> findMap(@NotNull final Class<K> keyType,
                                    @NotNull final Class<V> valueType,
                                    @NotNull SqlQuery query) {
-        return executeQuery(new MapResultSetProcessor<K, V>(keyType, valueType, getInstantiatorRegistry()), query);
+        return executeQuery(new MapResultSetProcessor<K, V>(keyType, valueType, instantiatorRegistry), query);
     }
 
     @NotNull
@@ -387,7 +409,7 @@ public final class Database {
     }
 
     private void bindArguments(@NotNull PreparedStatement ps, @NotNull List<?> args) throws SQLException {
-        InstantiatorRegistry instantiatorRegistry = getInstantiatorRegistry();
+        InstantiatorRegistry instantiatorRegistry = this.instantiatorRegistry;
         int i = 1;
 
         for (Object arg : args)
@@ -412,28 +434,7 @@ public final class Database {
 
     @NotNull
     private <T> ResultSetProcessor<List<T>> resultProcessorForClass(@NotNull Class<T> cl) {
-        return new ReflectionResultSetProcessor<T>(cl, getInstantiatorRegistry());
-    }
-
-    @NotNull
-    private InstantiatorRegistry getInstantiatorRegistry() {
-        if (instantiatorRegistry == null) {
-            instantiatorRegistry = withTransaction(new ConnectionCallback<InstantiatorRegistry>() {
-                @Override
-                public InstantiatorRegistry execute(@NotNull Connection connection) throws SQLException {
-                    return new InstantiatorRegistry(getDialect(connection));
-                }
-            });
-        }
-
-        return instantiatorRegistry;
-    }
-
-    @NotNull
-    private Dialect getDialect(@NotNull Connection connection) throws SQLException {
-        if (dialect == null)
-            dialect = Dialect.detect(connection);
-        return dialect;
+        return new ReflectionResultSetProcessor<T>(cl, instantiatorRegistry);
     }
 
     private static <T> T processResults(@NotNull ResultSet resultSet, @NotNull ResultSetProcessor<T> processor) throws SQLException {
@@ -442,10 +443,6 @@ public final class Database {
         } finally {
             resultSet.close();
         }
-    }
-
-    public void setDialect(@NotNull Dialect dialect) {
-        this.dialect = requireNonNull(dialect);
     }
 
     /**
