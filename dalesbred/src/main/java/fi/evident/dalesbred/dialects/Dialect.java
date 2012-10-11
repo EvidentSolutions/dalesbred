@@ -23,6 +23,7 @@
 package fi.evident.dalesbred.dialects;
 
 import fi.evident.dalesbred.DatabaseException;
+import fi.evident.dalesbred.TransactionRollbackException;
 import fi.evident.dalesbred.TransactionSerializationException;
 import fi.evident.dalesbred.instantiation.Coercion;
 import fi.evident.dalesbred.instantiation.CoercionBase;
@@ -109,8 +110,14 @@ public abstract class Dialect {
 
     @NotNull
     public DatabaseException convertException(@NotNull SQLException e) {
-        if (SERIALIZATION_FAILURE.equals(e.getSQLState()))
+        String sqlState = e.getSQLState();
+        if (sqlState == null)
+            return new DatabaseException(e);
+
+        if (sqlState.equals(SERIALIZATION_FAILURE))
             return new TransactionSerializationException(e);
+        else if (sqlState.startsWith("40"))
+            return new TransactionRollbackException(e);
         else
             return new DatabaseException(e);
     }

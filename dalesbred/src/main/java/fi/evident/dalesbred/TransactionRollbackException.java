@@ -25,11 +25,12 @@ package fi.evident.dalesbred;
 import java.sql.SQLException;
 
 /**
- * Exception thrown when database can't achieve desired isolation level
- * due to concurrent updates.
+ * Exception thrown when transaction rolls back.
+ *
+ * @see TransactionSerializationException
  */
-public class TransactionSerializationException extends TransactionRollbackException {
-    public TransactionSerializationException(SQLException cause) {
+public class TransactionRollbackException extends DatabaseException {
+    public TransactionRollbackException(SQLException cause) {
         super(cause);
     }
 }
