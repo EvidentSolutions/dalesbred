@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static fi.evident.dalesbred.Propagation.*;
 import static fi.evident.dalesbred.SqlQuery.query;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
@@ -40,11 +41,11 @@ public final class Database {
     /** Logger in which we log actions */
     private final Logger log = Logger.getLogger(getClass().getName());
 
-    /** Transaction isolation level to use, or null to indicate default */
+    /** The isolation level to use for transactions that have not specified an explicit level. Null for default. */
     @Nullable
-    private Isolation transactionIsolation = null;
+    private Isolation defaultIsolation = null;
 
-    /** Do we want to create a new transaction if non-transactional calls are made */
+    /** Default propagation for new transactions */
     private boolean allowImplicitTransactions = true;
 
     /** The dialect that the database uses */
@@ -107,18 +108,38 @@ public final class Database {
     }
 
     /**
-     * Executes a block of code within a context of a transaction. If there is already an active
-     * transaction in the thread, joins the transaction, otherwise starts a new transaction. If
-     * an exception reaches the outermost transaction, the transaction will be rolled back.
+     * Executes a block of code within a context of a transaction, using {@link Propagation#REQUIRED} propagation.
      */
     public <T> T withTransaction(@NotNull TransactionCallback<T> callback) {
+        return withTransaction(REQUIRED, defaultIsolation, callback);
+    }
+
+    /**
+     * Executes a block of code with given propagation and configuration default isolation.
+     */
+    public <T> T withTransaction(@NotNull Propagation propagation, @NotNull TransactionCallback<T> callback) {
+        return withTransaction(propagation, defaultIsolation, callback);
+    }
+
+    /**
+     * Executes a block of code with given propagation and isolation.
+     */
+    public <T> T withTransaction(@NotNull Propagation propagation, @Nullable Isolation isolation, @NotNull TransactionCallback<T> callback) {
         DatabaseTransaction existingTransaction = activeTransaction.get();
 
         if (existingTransaction != null) {
-            return existingTransaction.join(callback);
+            if (propagation == REQUIRES_NEW)
+                return withSuspendedTransaction(isolation, callback);
+            else if (propagation == NESTED)
+                return existingTransaction.nested(callback);
+            else
+                return existingTransaction.join(callback);
 
         } else {
-            DatabaseTransaction newTransaction = new DatabaseTransaction(connectionProvider, transactionIsolation);
+            if (propagation == MANDATORY)
+                throw new DatabaseException("Transaction propagation was MANDATORY, but there was no existing transaction.");
+
+            DatabaseTransaction newTransaction = new DatabaseTransaction(connectionProvider, isolation);
             try {
                 activeTransaction.set(newTransaction);
                 return newTransaction.execute(callback);
@@ -126,6 +147,16 @@ public final class Database {
                 activeTransaction.set(null);
                 newTransaction.close();
             }
+        }
+    }
+
+    private <T> T withSuspendedTransaction(@Nullable Isolation isolation, @NotNull TransactionCallback<T> callback) {
+        DatabaseTransaction suspended = activeTransaction.get();
+        try {
+            activeTransaction.set(null);
+            return withTransaction(REQUIRED, isolation, callback);
+        } finally {
+            activeTransaction.set(suspended);
         }
     }
 
@@ -399,15 +430,15 @@ public final class Database {
      * Returns the used transaction isolation level, or null for default level.
      */
     @Nullable
-    public Isolation getTransactionIsolation() {
-        return transactionIsolation;
+    public Isolation getDefaultIsolation() {
+        return defaultIsolation;
     }
 
     /**
      * Sets the transaction isolation level to use, or null for default level
      */
-    public void setTransactionIsolation(@Nullable Isolation isolation) {
-        this.transactionIsolation = isolation;
+    public void setDefaultIsolation(@Nullable Isolation isolation) {
+        this.defaultIsolation = isolation;
     }
 
     public boolean isAllowImplicitTransactions() {
@@ -425,6 +456,6 @@ public final class Database {
     @Override
     @NotNull
     public String toString() {
-        return "Database [dialect=" + dialect + ", allowImplicitTransactions=" + allowImplicitTransactions + ", transactionIsolation=" + transactionIsolation + "]";
+        return "Database [dialect=" + dialect + ", allowImplicitTransactions=" + allowImplicitTransactions + ", defaultIsolation=" + defaultIsolation + "]";
     }
 }

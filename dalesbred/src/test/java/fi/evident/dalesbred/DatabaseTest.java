@@ -27,9 +27,9 @@ public class DatabaseTest {
 
     @Test
     public void meaningfulToString() {
-        db.setTransactionIsolation(Isolation.READ_UNCOMMITTED);
+        db.setDefaultIsolation(Isolation.READ_UNCOMMITTED);
         db.setAllowImplicitTransactions(true);
-        assertEquals("Database [dialect=" + new PostgreSQLDialect().toString() + ", allowImplicitTransactions=true, transactionIsolation=READ_UNCOMMITTED]", db.toString());
+        assertEquals("Database [dialect=" + new PostgreSQLDialect().toString() + ", allowImplicitTransactions=true, defaultIsolation=READ_UNCOMMITTED]", db.toString());
     }
 
     @Test
@@ -179,10 +179,10 @@ public class DatabaseTest {
 
     @Test
     public void isolation() {
-        assertNull(db.getTransactionIsolation());
+        assertNull(db.getDefaultIsolation());
 
-        db.setTransactionIsolation(Isolation.REPEATABLE_READ);
-        assertSame(Isolation.REPEATABLE_READ, db.getTransactionIsolation());
+        db.setDefaultIsolation(Isolation.REPEATABLE_READ);
+        assertSame(Isolation.REPEATABLE_READ, db.getDefaultIsolation());
     }
 
     @Test

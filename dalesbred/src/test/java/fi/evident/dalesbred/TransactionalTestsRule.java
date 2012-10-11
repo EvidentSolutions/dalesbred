@@ -30,7 +30,11 @@ final class TransactionalTestsRule implements TestRule {
         db.setAllowImplicitTransactions(false);
     }
 
-    private Provider<Connection> createConnectionProvider(@NotNull String properties) {
+    public static Database createDatabase(String properties) {
+        return new Database(createConnectionProvider(properties));
+    }
+
+    private static Provider<Connection> createConnectionProvider(@NotNull String properties) {
         Properties props = loadConnectionProperties(properties);
         String url = props.getProperty("jdbc.url");
         String login = props.getProperty("jdbc.login");
@@ -63,9 +67,9 @@ final class TransactionalTestsRule implements TestRule {
         };
     }
 
-    private Properties loadConnectionProperties(String propertiesName) {
+    private static Properties loadConnectionProperties(String propertiesName) {
         try {
-            InputStream in = getClass().getClassLoader().getResourceAsStream(propertiesName);
+            InputStream in = TransactionCallback.class.getClassLoader().getResourceAsStream(propertiesName);
             assumeNotNull(in);
             try {
                 Properties properties = new Properties();

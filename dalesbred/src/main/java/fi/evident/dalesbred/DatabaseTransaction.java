@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.inject.Provider;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -51,7 +52,25 @@ final class DatabaseTransaction {
         }
     }
 
-    public <T> T join(@NotNull TransactionCallback<T> callback) {
+    <T> T nested(TransactionCallback<T> callback) {
+        try {
+            Savepoint savepoint = connection.setSavepoint();
+            try {
+                T value = callback.execute(connection);
+                connection.releaseSavepoint(savepoint);
+                return value;
+
+            } catch (Exception e) {
+                connection.rollback(savepoint);
+                log.log(Level.WARNING, "rolled back nested transaction because of exception: " + e, e);
+                throw propagate(e, SQLException.class);
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
+
+    <T> T join(@NotNull TransactionCallback<T> callback) {
         try {
             return callback.execute(connection);
         } catch (SQLException e) {
@@ -59,7 +78,7 @@ final class DatabaseTransaction {
         }
     }
 
-    public void close() {
+    void close() {
         try {
             connection.close();
         } catch (SQLException e) {
