@@ -2,9 +2,9 @@ package fi.evident.dalesbred.example;
 
 import fi.evident.dalesbred.Database;
 import fi.evident.dalesbred.TransactionCallback;
+import fi.evident.dalesbred.TransactionContext;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -29,9 +29,9 @@ public class Main {
     public void run() {
         db.withTransaction(new TransactionCallback<Object>() {
             @Override
-            public Object execute(Connection connection) throws SQLException {
+            public Object execute(TransactionContext tx) throws SQLException {
                 exampleTransaction();
-                connection.rollback();
+                tx.setRollbackOnly();
                 return null;
             }
         });
