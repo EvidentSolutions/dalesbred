@@ -1,2 +1,4 @@
 - support reusing prepared statements
 - JUnit test case support
+- debug mode where plan of long-running queries is logged
+- support for nested transactions
