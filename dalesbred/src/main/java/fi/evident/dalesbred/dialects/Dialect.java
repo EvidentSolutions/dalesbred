@@ -87,7 +87,7 @@ public abstract class Dialect {
                 connection.close();
             }
         } catch (SQLException e) {
-            throw new DatabaseException("Failed autodetect database dialect: " + e, e);
+            throw new DatabaseException("Failed to auto-detect database dialect: " + e, e);
         }
     }
 
@@ -96,7 +96,7 @@ public abstract class Dialect {
         String productName = connection.getMetaData().getDatabaseProductName();
 
         if (productName.equals("PostgreSQL")) {
-            log.fine("automatically detected dialect PostgreSQL");
+            log.fine("Automatically detected dialect PostgreSQL.");
             return new PostgreSQLDialect();
         } else {
             log.info("Could not detect dialect for product name '" + productName + "', falling back to default.");
