@@ -23,7 +23,7 @@ Note that this performs no connection pooling and is therefore probably not
 your preferred way of configuring the system in production. In a container
 you'll probably want to use a named DataSource lookup up from JNDI:
 
-    Database db = Database.forJndiDataSource("java:comp/env/jdbc/ExampleDb"")
+    Database db = Database.forJndiDataSource("java:comp/env/jdbc/ExampleDb");
 
 Alternatively, you might setup a DataSource yourself, in which case you can
 just create a Database out of that:
@@ -93,11 +93,11 @@ If you plan to return stuff from updates, they are queries as far as Dalesbred i
 Transactions
 ------------
 
-To perform bunch of operations in transaction, use TransactionCallback:
+To perform a bunch of operations in transaction, use TransactionCallback:
 
     db.withTransaction(new TransactionCallback<Result>() {
         public Result execute(TransactionContext tx) throws SQLException {
-            // bunch of transactional operations
+            // transactional operations
             ...
         });
     });
@@ -125,7 +125,7 @@ String and variable arguments of parameters. The latter is just convenience
 method for the further, meaning that the following code fragments are
 identical in functionality:
 
-    import static fi.evident.dalesbred.SqlQuery.query
+    import static fi.evident.dalesbred.SqlQuery.query;
 
     SqlQuery query = query("select id, name from department where update_timestamp > ?", date);
     db.findAll(Department.class, query);
@@ -138,7 +138,7 @@ useful to be able to pass the query around with its parameters. In those
 cases you'd want to use the latter form. An example is when you build
 the query dynamically:
 
-    db.findAll(Department.class, buildDepartmentQuery(form))
+    db.findAll(Department.class, buildDepartmentQuery(form));
 
 More examples
 =============
