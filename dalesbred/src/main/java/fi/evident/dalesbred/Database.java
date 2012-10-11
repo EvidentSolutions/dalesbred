@@ -24,7 +24,6 @@ import java.util.logging.Logger;
 
 import static fi.evident.dalesbred.SqlQuery.query;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
-import static fi.evident.dalesbred.utils.Throwables.propagate;
 
 /**
  * The main abstraction of the library: represents a connection to database and provides a way to
@@ -35,8 +34,8 @@ public final class Database {
     /** Provides us with connections whenever we need one */
     private final Provider<Connection> connectionProvider;
 
-    /** A reference to the thread-local connection to make sure we don't open a new one if we are in context of transaction */
-    private final ThreadLocal<Connection> activeTransactionConnection = new ThreadLocal<Connection>();
+    /** The current active transaction of this thread, or null */
+    private final ThreadLocal<DatabaseTransaction> activeTransaction = new ThreadLocal<DatabaseTransaction>();
 
     /** Logger in which we log actions */
     private final Logger log = Logger.getLogger(getClass().getName());
@@ -112,24 +111,21 @@ public final class Database {
      * transaction in the thread, joins the transaction, otherwise starts a new transaction. If
      * an exception reaches the outermost transaction, the transaction will be rolled back.
      */
-    public <T> T withTransaction(@NotNull ConnectionCallback<T> callback) {
-        try {
-            Connection connection = activeTransactionConnection.get();
+    public <T> T withTransaction(@NotNull TransactionCallback<T> callback) {
+        DatabaseTransaction existingTransaction = activeTransaction.get();
 
-            if (connection != null)
-                return callback.execute(connection);
+        if (existingTransaction != null) {
+            return existingTransaction.join(callback);
 
-            connection = openConnection();
-
+        } else {
+            DatabaseTransaction newTransaction = new DatabaseTransaction(connectionProvider, transactionIsolation);
             try {
-                activeTransactionConnection.set(connection);
-                return executeTransactionally(connection, callback);
+                activeTransaction.set(newTransaction);
+                return newTransaction.execute(callback);
             } finally {
-                activeTransactionConnection.set(null);
-                connection.close();
+                activeTransaction.set(null);
+                newTransaction.close();
             }
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
         }
     }
 
@@ -141,48 +137,16 @@ public final class Database {
      * @throws IllegalStateException if there's no active transaction.
      * @see #setAllowImplicitTransactions(boolean)
      */
-    private <T> T withCurrentTransaction(@NotNull ConnectionCallback<T> callback) {
-        Connection connection = activeTransactionConnection.get();
-        if (connection != null) {
-            try {
-                return callback.execute(connection);
-            } catch (SQLException e) {
-                throw new DatabaseException(e);
-            }
+    private <T> T withCurrentTransaction(@NotNull TransactionCallback<T> callback) {
+        if (allowImplicitTransactions) {
+            return withTransaction(callback);
         } else {
-            if (allowImplicitTransactions)
-                return withTransaction(callback);
+            DatabaseTransaction transaction = activeTransaction.get();
+            if (transaction != null)
+                return transaction.join(callback);
             else
-                throw new IllegalStateException("No active transaction. Database accesses should be bracketed with Database.withTransaction(...)");
+                throw new IllegalStateException("Tried to perform database operation without active transaction. Database accesses should be bracketed with Database.withTransaction(...) or implicit transactions should be enabled.");
         }
-    }
-
-    private <T> T executeTransactionally(@NotNull Connection connection, @NotNull final ConnectionCallback<T> callback) throws SQLException {
-        try {
-            T value = callback.execute(connection);
-            connection.commit();
-            return value;
-
-        } catch (Exception e) {
-            connection.rollback();
-            log.log(Level.WARNING, "rolled back transaction because of exception: " + e, e);
-            throw propagate(e, SQLException.class);
-        }
-    }
-
-    @NotNull
-    private Connection openConnection() throws SQLException {
-        Connection connection = connectionProvider.get();
-        if (connection == null)
-            throw new DatabaseException("connection-provider returned null connection");
-
-        connection.setAutoCommit(false);
-
-        Isolation isolation = transactionIsolation;
-        if (isolation != null)
-            connection.setTransactionIsolation(isolation.level);
-
-        return connection;
     }
 
     /**
@@ -190,7 +154,7 @@ public final class Database {
      * All other findXXX-methods are just convenience methods for this one.
      */
     public <T> T executeQuery(@NotNull final ResultSetProcessor<T> processor, @NotNull final SqlQuery query) {
-        return withCurrentTransaction(new ConnectionCallback<T>() {
+        return withCurrentTransaction(new TransactionCallback<T>() {
             @Override
             public T execute(Connection connection) throws SQLException {
                 logQuery(query);
@@ -366,7 +330,7 @@ public final class Database {
      * Executes an update against the database and returns the amount of affected rows.
      */
     public int update(@NotNull final SqlQuery query) {
-        return withCurrentTransaction(new ConnectionCallback<Integer>() {
+        return withCurrentTransaction(new TransactionCallback<Integer>() {
             @Override
             public Integer execute(Connection connection) throws SQLException {
                 logQuery(query);

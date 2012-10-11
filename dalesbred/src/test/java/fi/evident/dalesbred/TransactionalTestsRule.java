@@ -45,7 +45,7 @@ final class TransactionalTestsRule implements TestRule {
             @Override
             public void evaluate() throws Throwable {
                 Throwable throwable =
-                    db.withTransaction(new ConnectionCallback<Throwable>() {
+                    db.withTransaction(new TransactionCallback<Throwable>() {
                         @Override
                         public Throwable execute(@NotNull Connection connection) throws SQLException {
                             try {

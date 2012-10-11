@@ -1,7 +1,7 @@
 package fi.evident.dalesbred.example;
 
-import fi.evident.dalesbred.ConnectionCallback;
 import fi.evident.dalesbred.Database;
+import fi.evident.dalesbred.TransactionCallback;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
@@ -27,7 +27,7 @@ public class Main {
     }
 
     public void run() {
-        db.withTransaction(new ConnectionCallback<Object>() {
+        db.withTransaction(new TransactionCallback<Object>() {
             @Override
             public Object execute(Connection connection) throws SQLException {
                 exampleTransaction();
