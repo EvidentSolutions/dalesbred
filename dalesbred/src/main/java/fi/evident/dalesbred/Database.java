@@ -161,7 +161,7 @@ public final class Database {
             if (propagation == MANDATORY)
                 throw new DatabaseException("Transaction propagation was MANDATORY, but there was no existing transaction.");
 
-            DatabaseTransaction newTransaction = new DatabaseTransaction(connectionProvider, isolation);
+            DatabaseTransaction newTransaction = new DatabaseTransaction(connectionProvider, dialect, isolation);
             try {
                 activeTransaction.set(newTransaction);
                 return newTransaction.execute(callback);

@@ -103,4 +103,8 @@ public abstract class Dialect {
             return new DefaultDialect();
         }
     }
+
+    public DatabaseException convertException(SQLException e) {
+        throw new DatabaseException(e);
+    }
 }

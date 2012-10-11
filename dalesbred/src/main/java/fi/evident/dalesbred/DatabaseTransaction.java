@@ -22,6 +22,7 @@
 
 package fi.evident.dalesbred;
 
+import fi.evident.dalesbred.dialects.Dialect;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Provider;
@@ -31,6 +32,7 @@ import java.sql.Savepoint;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static fi.evident.dalesbred.utils.Require.requireNonNull;
 import static fi.evident.dalesbred.utils.Throwables.propagate;
 
 /**
@@ -39,10 +41,12 @@ import static fi.evident.dalesbred.utils.Throwables.propagate;
 final class DatabaseTransaction {
 
     private final Connection connection;
+    private final Dialect dialect;
     private static final Logger log = Logger.getLogger(DatabaseTransaction.class.getName());
 
-    DatabaseTransaction(@NotNull Provider<Connection> connectionProvider, Isolation isolation) {
+    DatabaseTransaction(@NotNull Provider<Connection> connectionProvider, @NotNull Dialect dialect, Isolation isolation) {
         this.connection = connectionProvider.get();
+        this.dialect = requireNonNull(dialect);
         if (connection == null)
             throw new DatabaseException("connection-provider returned null connection");
 
@@ -53,7 +57,7 @@ final class DatabaseTransaction {
                 connection.setTransactionIsolation(isolation.level);
 
         } catch (SQLException e) {
-            throw new DatabaseException(e);
+            throw dialect.convertException(e);
         }
     }
 
@@ -74,7 +78,7 @@ final class DatabaseTransaction {
                 throw propagate(e, SQLException.class);
             }
         } catch (SQLException e) {
-            throw new DatabaseException(e);
+            throw dialect.convertException(e);
         }
     }
 
@@ -96,7 +100,7 @@ final class DatabaseTransaction {
                 throw propagate(e, SQLException.class);
             }
         } catch (SQLException e) {
-            throw new DatabaseException(e);
+            throw dialect.convertException(e);
         }
     }
 
@@ -104,7 +108,7 @@ final class DatabaseTransaction {
         try {
             return callback.execute(new TransactionContext(connection));
         } catch (SQLException e) {
-            throw new DatabaseException(e);
+            throw dialect.convertException(e);
         }
     }
 
@@ -112,7 +116,7 @@ final class DatabaseTransaction {
         try {
             connection.close();
         } catch (SQLException e) {
-            throw new DatabaseException(e);
+            throw dialect.convertException(e);
         }
     }
 }
