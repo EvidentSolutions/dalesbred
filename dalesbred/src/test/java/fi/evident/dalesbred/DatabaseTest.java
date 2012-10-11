@@ -1,5 +1,6 @@
 package fi.evident.dalesbred;
 
+import fi.evident.dalesbred.dialects.PostgreSQLDialect;
 import fi.evident.dalesbred.results.ResultSetProcessor;
 import fi.evident.dalesbred.results.RowMapper;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +24,13 @@ public class DatabaseTest {
     public final TransactionalTestsRule rule = new TransactionalTestsRule("connection.properties");
 
     private final Database db = rule.db;
+
+    @Test
+    public void meaningfulToString() {
+        db.setTransactionIsolation(Isolation.READ_UNCOMMITTED);
+        db.setAllowImplicitTransactions(true);
+        assertEquals("Database [dialect=" + new PostgreSQLDialect().toString() + ", allowImplicitTransactions=true, transactionIsolation=READ_UNCOMMITTED]", db.toString());
+    }
 
     @Test
     public void primitivesQueries() {

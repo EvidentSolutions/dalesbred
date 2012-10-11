@@ -49,6 +49,12 @@ public abstract class Dialect {
         };
     }
 
+    @Override
+    @NotNull
+    public String toString() {
+        return getClass().getName();
+    }
+
     @NotNull
     public static Dialect detect(@NotNull Provider<Connection> connectionProvider) {
         try {

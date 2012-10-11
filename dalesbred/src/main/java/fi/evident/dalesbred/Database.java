@@ -48,8 +48,10 @@ public final class Database {
     /** Do we want to create a new transaction if non-transactional calls are made */
     private boolean allowImplicitTransactions = true;
 
+    /** The dialect that the database uses */
+    private final Dialect dialect;
+
     /** Instantiators */
-    @NotNull
     private final InstantiatorRegistry instantiatorRegistry;
 
     /**
@@ -101,6 +103,7 @@ public final class Database {
      */
     public Database(@NotNull Provider<Connection> connectionProvider, @NotNull Dialect dialect) {
         this.connectionProvider = requireNonNull(connectionProvider);
+        this.dialect = requireNonNull(dialect);
         this.instantiatorRegistry = new InstantiatorRegistry(dialect);
     }
 
@@ -453,5 +456,11 @@ public final class Database {
      */
     public void setAllowImplicitTransactions(boolean allowImplicitTransactions) {
         this.allowImplicitTransactions = allowImplicitTransactions;
+    }
+
+    @Override
+    @NotNull
+    public String toString() {
+        return "Database [dialect=" + dialect + ", allowImplicitTransactions=" + allowImplicitTransactions + ", transactionIsolation=" + transactionIsolation + "]";
     }
 }
