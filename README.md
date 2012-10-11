@@ -9,45 +9,28 @@ as an API is causes pain. Therefore it wraps JDBC with a set of helpers
 while still providing access to low-level functionality.
 
 Getting started
----------------
-
-Adding Maven dependencies:
-
-    <dependencies>
-        <dependency>
-            <groupId>fi.evident.dalesbred</groupId>
-            <artifactId>dalesbred</artifactId>
-            <version>0.2.0</version>
-        </dependency>
-    </dependencies>
-
-    <repositories>
-        <repository>
-            <id>evident-public-maven-repository</id>
-            <url>http://maven.evident.fi/</url>
-        </repository>
-    </repositories>
+===============
 
 Configuring the database connection
 -----------------------------------
 
-Using direct connection to database:
+Most things in Dalesbred happen through an instance of _Database_. The easiest
+way to get hold of one is to specify the settings manually:
 
-    Database db = Database.forUrlAndCredentials(
-        "jdbc:postgresql://example-host/example-db", "login", "password");
+    Database db = Database.forUrlAndCredentials("jdbc:example-url", "login", "password");
 
 Note that this performs no connection pooling and is therefore probably not
-your preferred way of configuring the system in production.
-
-For container provided data source:
+your preferred way of configuring the system in production. In a container
+you'll probably want to use a named DataSource lookup up from JNDI:
 
     Database db = Database.forJndiDataSource("java:comp/env/jdbc/ExampleDb"")
 
-For other data source:
+Alternatively, you might setup a DataSource yourself, in which case you can
+just create a Database out of that:
 
     Database db = Database.forDataSource(myDataSource);
 
-For _javax.inject_-compatible dependency injection container (e.g. Guice
+Finally, for  _javax.inject_-compatible dependency injection container (e.g. Guice
 or Java EE 6), you can just make sure that there's a
 [Provider](http://docs.oracle.com/javaee/6/api/javax/inject/Provider.html)
 for DataSource around and then just inject your Database:
@@ -85,6 +68,12 @@ You can also convert the results directly to a map:
 
     Map<Integer,String> namesByIds = db.findMap(
             Integer.class, String.class, "select id, name from department");
+
+If for some reason you don't want to map the results into your own class, you
+can ask for a ResultTable, which is basically a detached representation of a
+ResultSet:
+
+    ResultTable employees = db.findTable("select * from employee");
 
 Alternatively, you can supply your own RowMapper or ResultSetProcessor-implementations
 in place of the class and handle the result sets manually, but usually this should
@@ -151,7 +140,27 @@ the query dynamically:
 
     db.findAll(Department.class, buildDepartmentQuery(form))
 
-More information
-----------------
+More examples
+=============
 
-Check out the test cases under _dalesbred/src/test/java_ for more examples.
+Check out the test cases under _dalesbred/src/test/java_ for more usage examples.
+
+Using with Maven
+================
+
+Add the following definitions to your pom.xml:
+
+    <dependencies>
+        <dependency>
+            <groupId>fi.evident.dalesbred</groupId>
+            <artifactId>dalesbred</artifactId>
+            <version>0.2.0</version>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>evident-public-maven-repository</id>
+            <url>http://maven.evident.fi/</url>
+        </repository>
+    </repositories>
