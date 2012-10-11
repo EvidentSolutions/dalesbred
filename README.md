@@ -164,3 +164,9 @@ Add the following definitions to your pom.xml:
             <url>http://maven.evident.fi/</url>
         </repository>
     </repositories>
+
+Attributions
+============
+
+Image of dalesbred used on the website is by [NicePics on Flickr](http://www.flickr.com/photos/48235612@N00/338947492)
+and is used by [CC BY-SA 2.0](http://creativecommons.org/licenses/by-sa/2.0/).
