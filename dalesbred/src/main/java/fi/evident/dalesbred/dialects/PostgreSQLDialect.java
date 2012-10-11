@@ -23,7 +23,6 @@
 package fi.evident.dalesbred.dialects;
 
 import fi.evident.dalesbred.DatabaseException;
-import fi.evident.dalesbred.TransactionSerializationException;
 import org.jetbrains.annotations.NotNull;
 import org.postgresql.util.PGobject;
 
@@ -44,13 +43,5 @@ public class PostgreSQLDialect extends Dialect {
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
-    }
-
-    @Override
-    public DatabaseException convertException(SQLException e) {
-        if ("40001".equals(e.getSQLState()))
-            return new TransactionSerializationException(e);
-        else
-            return super.convertException(e);
     }
 }

@@ -23,6 +23,7 @@
 package fi.evident.dalesbred.dialects;
 
 import fi.evident.dalesbred.DatabaseException;
+import fi.evident.dalesbred.TransactionSerializationException;
 import fi.evident.dalesbred.instantiation.Coercion;
 import fi.evident.dalesbred.instantiation.CoercionBase;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +37,8 @@ import java.util.logging.Logger;
  * Abstracts away the differences of databases.
  */
 public abstract class Dialect {
+
+    private static final String SERIALIZATION_FAILURE = "40001";
 
     private static final Logger log = Logger.getLogger(Dialect.class.getName());
 
@@ -104,7 +107,11 @@ public abstract class Dialect {
         }
     }
 
-    public DatabaseException convertException(SQLException e) {
-        throw new DatabaseException(e);
+    @NotNull
+    public DatabaseException convertException(@NotNull SQLException e) {
+        if (SERIALIZATION_FAILURE.equals(e.getSQLState()))
+            return new TransactionSerializationException(e);
+        else
+            return new DatabaseException(e);
     }
 }
