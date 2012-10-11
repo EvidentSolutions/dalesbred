@@ -1,46 +1,21 @@
 package fi.evident.dalesbred;
 
-import fi.evident.dalesbred.connection.DriverManagerConnectionProvider;
-import fi.evident.dalesbred.dialects.Dialect;
 import org.jetbrains.annotations.NotNull;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import javax.inject.Provider;
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Properties;
 
-import static org.junit.Assume.assumeNotNull;
+import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
 final class TransactionalTestsRule implements TestRule {
 
-    public final Database db;
+    private final Database db;
 
-    public TransactionalTestsRule(String properties) {
-        db = new Database(createConnectionProvider(properties));
-        db.setAllowImplicitTransactions(false);
-    }
-
-    public TransactionalTestsRule(@NotNull String properties, @NotNull Dialect dialect) {
-        db = new Database(createConnectionProvider(properties), dialect);
-        db.setAllowImplicitTransactions(false);
-    }
-
-    public static Database createDatabase(String properties) {
-        return new Database(createConnectionProvider(properties));
-    }
-
-    private static Provider<Connection> createConnectionProvider(@NotNull String properties) {
-        Properties props = loadConnectionProperties(properties);
-        String url = props.getProperty("jdbc.url");
-        String login = props.getProperty("jdbc.login");
-        String password = props.getProperty("jdbc.password");
-
-        return new DriverManagerConnectionProvider(url, login, password);
+    public TransactionalTestsRule(@NotNull Database db) {
+        this.db = requireNonNull(db);
     }
 
     @Override
@@ -65,21 +40,5 @@ final class TransactionalTestsRule implements TestRule {
                     throw throwable;
             }
         };
-    }
-
-    private static Properties loadConnectionProperties(String propertiesName) {
-        try {
-            InputStream in = TransactionCallback.class.getClassLoader().getResourceAsStream(propertiesName);
-            assumeNotNull(in);
-            try {
-                Properties properties = new Properties();
-                properties.load(in);
-                return properties;
-            } finally {
-                in.close();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

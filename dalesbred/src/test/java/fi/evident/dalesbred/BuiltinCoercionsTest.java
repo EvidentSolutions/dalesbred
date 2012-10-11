@@ -15,10 +15,11 @@ import static org.junit.Assert.assertThat;
 
 public class BuiltinCoercionsTest {
 
-    @Rule
-    public final TransactionalTestsRule rule = new TransactionalTestsRule("connection.properties");
+    private final Database db = TestDatabaseProvider.createTestDatabase();
 
-    private final Database db = rule.db;
+    @Rule
+    public final TransactionalTestsRule rule = new TransactionalTestsRule(db);
+
 
     @Test
     public void urlsAndUris() throws MalformedURLException, URISyntaxException {

@@ -9,9 +9,10 @@ import static org.junit.Assert.assertEquals;
 
 public class DatabaseCustomDialectTest {
 
+    private final Database db = TestDatabaseProvider.createTestDatabase(new UppercaseDialect());
+
     @Rule
-    public final TransactionalTestsRule rule = new TransactionalTestsRule("connection.properties", new UppercaseDialect());
-    private final Database db = rule.db;
+    public final TransactionalTestsRule rule = new TransactionalTestsRule(db);
 
     @Test
     public void customDialect() {

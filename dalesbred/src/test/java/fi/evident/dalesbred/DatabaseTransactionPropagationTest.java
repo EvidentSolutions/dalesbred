@@ -14,7 +14,7 @@ import static org.junit.Assert.fail;
 
 public class DatabaseTransactionPropagationTest {
 
-    private final Database db = TransactionalTestsRule.createDatabase("connection.properties"); // TODO
+    private final Database db = TestDatabaseProvider.createTestDatabase();
 
     @Test(expected = DatabaseException.class)
     public void mandatoryPropagationWithoutExistingTransactionThrowsException() {
