@@ -3,7 +3,6 @@ package fi.evident.dalesbred;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import static fi.evident.dalesbred.Isolation.SERIALIZABLE;
@@ -20,7 +19,7 @@ public class DatabaseTransactionPropagationTest {
     public void mandatoryPropagationWithoutExistingTransactionThrowsException() {
         db.withTransaction(MANDATORY, new TransactionCallback<Object>() {
             @Override
-            public Object execute(@NotNull Connection connection) throws SQLException {
+            public Object execute(@NotNull TransactionContext tx) throws SQLException {
                 return null;
             }
         });
@@ -30,10 +29,10 @@ public class DatabaseTransactionPropagationTest {
     public void mandatoryPropagationWithExistingTransactionProceedsNormally() {
         db.withTransaction(REQUIRED, new TransactionCallback<Object>() {
             @Override
-            public Object execute(@NotNull Connection connection) throws SQLException {
+            public Object execute(@NotNull TransactionContext tx) throws SQLException {
                 return db.withTransaction(MANDATORY, new TransactionCallback<Object>() {
                     @Override
-                    public Object execute(@NotNull Connection connection) throws SQLException {
+                    public Object execute(@NotNull TransactionContext tx) throws SQLException {
                         return null;
                     }
                 });
@@ -48,7 +47,7 @@ public class DatabaseTransactionPropagationTest {
 
         db.withTransaction(new TransactionCallback<Object>() {
             @Override
-            public Object execute(@NotNull Connection connection) throws SQLException {
+            public Object execute(@NotNull TransactionContext tx) throws SQLException {
                 db.update("insert into test_table values ('initial')");
 
                 assertThat(db.findUnique(String.class, "select text from test_table"), is("initial"));
@@ -56,7 +55,7 @@ public class DatabaseTransactionPropagationTest {
                 try {
                     db.withTransaction(NESTED, new TransactionCallback<Object>() {
                         @Override
-                        public Object execute(@NotNull Connection connection) throws SQLException {
+                        public Object execute(@NotNull TransactionContext tx) throws SQLException {
                             db.update("update test_table set text = 'new-value'");
 
                             assertThat(db.findUnique(String.class, "select text from test_table"), is("new-value"));
@@ -86,12 +85,12 @@ public class DatabaseTransactionPropagationTest {
 
         db.withTransaction(new TransactionCallback<Object>() {
             @Override
-            public Object execute(@NotNull Connection connection) throws SQLException {
+            public Object execute(@NotNull TransactionContext tx) throws SQLException {
                 db.update("update test_table set text='bar'");
 
                 db.withTransaction(REQUIRES_NEW, new TransactionCallback<Object>() {
                     @Override
-                    public Object execute(@NotNull Connection connection) throws SQLException {
+                    public Object execute(@NotNull TransactionContext tx) throws SQLException {
                         assertThat(db.findUnique(String.class, "select text from test_table"), is("foo"));
                         return null;
                     }

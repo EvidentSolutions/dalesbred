@@ -38,8 +38,12 @@ final class DatabaseTransaction {
     <T> T execute(@NotNull final TransactionCallback<T> callback) {
         try {
             try {
-                T value = callback.execute(connection);
-                connection.commit();
+                TransactionContext ctx = new TransactionContext(connection);
+                T value = callback.execute(ctx);
+                if (ctx.isRollbackOnly())
+                    connection.rollback();
+                else
+                    connection.commit();
                 return value;
 
             } catch (Exception e) {
@@ -56,8 +60,12 @@ final class DatabaseTransaction {
         try {
             Savepoint savepoint = connection.setSavepoint();
             try {
-                T value = callback.execute(connection);
-                connection.releaseSavepoint(savepoint);
+                TransactionContext ctx = new TransactionContext(connection);
+                T value = callback.execute(ctx);
+                if (ctx.isRollbackOnly())
+                    connection.rollback(savepoint);
+                else
+                    connection.releaseSavepoint(savepoint);
                 return value;
 
             } catch (Exception e) {
@@ -72,7 +80,7 @@ final class DatabaseTransaction {
 
     <T> T join(@NotNull TransactionCallback<T> callback) {
         try {
-            return callback.execute(connection);
+            return callback.execute(new TransactionContext(connection));
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }

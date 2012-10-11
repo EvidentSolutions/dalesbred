@@ -187,10 +187,10 @@ public final class Database {
     public <T> T executeQuery(@NotNull final ResultSetProcessor<T> processor, @NotNull final SqlQuery query) {
         return withCurrentTransaction(new TransactionCallback<T>() {
             @Override
-            public T execute(Connection connection) throws SQLException {
+            public T execute(TransactionContext tx) throws SQLException {
                 logQuery(query);
 
-                PreparedStatement ps = connection.prepareStatement(query.sql);
+                PreparedStatement ps = tx.getConnection().prepareStatement(query.sql);
                 try {
                     bindArguments(ps, query.args);
 
@@ -363,10 +363,10 @@ public final class Database {
     public int update(@NotNull final SqlQuery query) {
         return withCurrentTransaction(new TransactionCallback<Integer>() {
             @Override
-            public Integer execute(Connection connection) throws SQLException {
+            public Integer execute(TransactionContext tx) throws SQLException {
                 logQuery(query);
 
-                PreparedStatement ps = connection.prepareStatement(query.sql);
+                PreparedStatement ps = tx.getConnection().prepareStatement(query.sql);
                 try {
                     bindArguments(ps, query.args);
                     return ps.executeUpdate();

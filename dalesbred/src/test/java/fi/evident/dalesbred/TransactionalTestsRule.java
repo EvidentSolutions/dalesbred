@@ -5,7 +5,6 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
@@ -26,12 +25,12 @@ final class TransactionalTestsRule implements TestRule {
                 Throwable throwable =
                     db.withTransaction(new TransactionCallback<Throwable>() {
                         @Override
-                        public Throwable execute(@NotNull Connection connection) throws SQLException {
+                        public Throwable execute(@NotNull TransactionContext tx) throws SQLException {
                             try {
                                 base.evaluate();
                                 return null;
                             } catch (Throwable throwable) {
-                                connection.rollback();
+                                tx.setRollbackOnly();
                                 return throwable;
                             }
                         }
