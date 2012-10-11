@@ -93,7 +93,7 @@ public final class Database {
      */
     @Inject
     public Database(@NotNull Provider<Connection> connectionProvider) {
-        this(connectionProvider, resolveDialect(connectionProvider));
+        this(connectionProvider, Dialect.detect(connectionProvider));
     }
 
     /**
@@ -102,23 +102,6 @@ public final class Database {
     public Database(@NotNull Provider<Connection> connectionProvider, @NotNull Dialect dialect) {
         this.connectionProvider = requireNonNull(connectionProvider);
         this.instantiatorRegistry = new InstantiatorRegistry(dialect);
-    }
-
-    /**
-     * Tries to detect the dialect of database automatically.
-     */
-    @NotNull
-    private static Dialect resolveDialect(@NotNull Provider<Connection> connectionProvider) {
-        try {
-            Connection connection = connectionProvider.get();
-            try {
-                return Dialect.detect(connection);
-            } finally {
-                connection.close();
-            }
-        } catch (SQLException e) {
-            throw new DatabaseException("Failed autodetect database dialect: " + e, e);
-        }
     }
 
     /**

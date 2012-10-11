@@ -1,9 +1,11 @@
 package fi.evident.dalesbred.dialects;
 
+import fi.evident.dalesbred.DatabaseException;
 import fi.evident.dalesbred.instantiation.Coercion;
 import fi.evident.dalesbred.instantiation.CoercionBase;
 import org.jetbrains.annotations.NotNull;
 
+import javax.inject.Provider;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Logger;
@@ -32,19 +34,6 @@ public abstract class Dialect {
     }
 
     @NotNull
-    public static Dialect detect(@NotNull Connection connection) throws SQLException {
-        String productName = connection.getMetaData().getDatabaseProductName();
-
-        if (productName.equals("PostgreSQL")) {
-            log.fine("automatically detected dialect PostgreSQL");
-            return new PostgreSQLDialect();
-        } else {
-            log.info("Could not detect dialect for product name '" + productName + "', falling back to default.");
-            return new DefaultDialect();
-        }
-    }
-
-    @NotNull
     public <T extends Enum<T>> Coercion<Object,T> getEnumCoercion(@NotNull final Class<T> enumType) {
         return new CoercionBase<Object, T>(Object.class, enumType) {
             @NotNull
@@ -58,5 +47,32 @@ public abstract class Dialect {
                 return "EnumCoercion [" + enumType.getName() + "]";
             }
         };
+    }
+
+    @NotNull
+    public static Dialect detect(@NotNull Provider<Connection> connectionProvider) {
+        try {
+            Connection connection = connectionProvider.get();
+            try {
+                return Dialect.detect(connection);
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Failed autodetect database dialect: " + e, e);
+        }
+    }
+
+    @NotNull
+    public static Dialect detect(@NotNull Connection connection) throws SQLException {
+        String productName = connection.getMetaData().getDatabaseProductName();
+
+        if (productName.equals("PostgreSQL")) {
+            log.fine("automatically detected dialect PostgreSQL");
+            return new PostgreSQLDialect();
+        } else {
+            log.info("Could not detect dialect for product name '" + productName + "', falling back to default.");
+            return new DefaultDialect();
+        }
     }
 }
