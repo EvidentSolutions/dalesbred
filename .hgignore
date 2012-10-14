@@ -11,3 +11,4 @@ out
 .idea/dataSources.xml
 .idea/dataSources.ids
 dalesbred/src/test/resources/connection.properties
+dalesbred-junit/src/test/resources/connection.properties
