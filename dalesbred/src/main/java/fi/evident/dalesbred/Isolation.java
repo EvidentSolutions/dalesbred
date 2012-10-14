@@ -29,9 +29,16 @@ import java.sql.Connection;
  */
 public enum Isolation {
 
+    /** @see Connection#TRANSACTION_READ_UNCOMMITTED */
     READ_UNCOMMITTED(Connection.TRANSACTION_READ_UNCOMMITTED),
+
+    /** @see Connection#TRANSACTION_READ_COMMITTED */
     READ_COMMITTED(Connection.TRANSACTION_READ_COMMITTED),
+
+    /** @see Connection#TRANSACTION_REPEATABLE_READ */
     REPEATABLE_READ(Connection.TRANSACTION_REPEATABLE_READ),
+
+    /** @see Connection#TRANSACTION_SERIALIZABLE */
     SERIALIZABLE(Connection.TRANSACTION_SERIALIZABLE);
 
     final int level;
