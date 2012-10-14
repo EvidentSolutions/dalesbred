@@ -24,7 +24,6 @@ package fi.evident.dalesbred;
 
 import fi.evident.dalesbred.connection.DriverManagerConnectionProvider;
 import fi.evident.dalesbred.dialects.Dialect;
-import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Provider;
 import java.io.IOException;
@@ -37,15 +36,15 @@ import static org.junit.Assume.assumeNotNull;
 public class TestDatabaseProvider {
 
     public static Database createTestDatabase() {
-        return new Database(createConnectionProvider("connection.properties"));
+        return new Database(createConnectionProvider());
     }
 
     public static Database createTestDatabase(Dialect dialect) {
-        return new Database(createConnectionProvider("connection.properties"), dialect);
+        return new Database(createConnectionProvider(), dialect);
     }
 
-    private static Provider<Connection> createConnectionProvider(@NotNull String properties) {
-        Properties props = loadConnectionProperties(properties);
+    public static Provider<Connection> createConnectionProvider() {
+        Properties props = loadConnectionProperties("connection.properties");
         String url = props.getProperty("jdbc.url");
         String login = props.getProperty("jdbc.login");
         String password = props.getProperty("jdbc.password");
