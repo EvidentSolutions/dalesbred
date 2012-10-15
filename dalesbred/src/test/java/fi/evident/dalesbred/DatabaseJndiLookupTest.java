@@ -24,6 +24,7 @@ package fi.evident.dalesbred;
 
 import fi.evident.dalesbred.support.MemoryContext;
 import fi.evident.dalesbred.support.SystemPropertyRule;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -33,9 +34,10 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
 import javax.sql.DataSource;
-import java.io.PrintWriter;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Hashtable;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -48,7 +50,7 @@ public class DatabaseJndiLookupTest {
 
     @Test
     public void createDatabaseByFetchingDataSourceFromJndi() throws NamingException {
-        new InitialContext().bind("java:comp/env/foo", new MyDataSource(TestDatabaseProvider.createConnectionProvider()));
+        new InitialContext().bind("java:comp/env/foo", createDataSource(TestDatabaseProvider.createConnectionProvider()));
 
         Database db = Database.forJndiDataSource("java:comp/env/foo");
         assertThat(db.findUniqueInt("select 42"), is(42));
@@ -64,52 +66,20 @@ public class DatabaseJndiLookupTest {
         }
     }
 
-    private static class MyDataSource implements DataSource {
-
-        private final Provider<Connection> connectionProvider;
-
-        private MyDataSource(Provider<Connection> connectionProvider) {
-            this.connectionProvider = connectionProvider;
-        }
-
-        @Override
-        public Connection getConnection() throws SQLException {
-            return connectionProvider.get();
-        }
-
-        @Override
-        public Connection getConnection(String username, String password) throws SQLException {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public PrintWriter getLogWriter() throws SQLException {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void setLogWriter(PrintWriter out) throws SQLException {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void setLoginTimeout(int seconds) throws SQLException {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public int getLoginTimeout() throws SQLException {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public <T> T unwrap(Class<T> iface) throws SQLException {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean isWrapperFor(Class<?> iface) throws SQLException {
-            throw new UnsupportedOperationException();
-        }
+    /**
+     * Creates a simple DataSource that can only return connections from the provider. This is implemented
+     * reflectively because new versions of JDK have added new methods to DataSource and we want to be able
+     * to run the test on all versions.
+     */
+    private static DataSource createDataSource(@NotNull final Provider<Connection> connection) {
+        return (DataSource) Proxy.newProxyInstance(DatabaseJndiLookupTest.class.getClassLoader(), new Class<?>[] { DataSource.class }, new InvocationHandler() {
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                if (method.getName().equals("getConnection"))
+                    return connection.get();
+                else
+                    throw new UnsupportedOperationException("unsupported operation: " + method);
+            }
+        });
     }
 }
