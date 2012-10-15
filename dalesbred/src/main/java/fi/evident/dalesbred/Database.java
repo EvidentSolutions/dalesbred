@@ -27,6 +27,7 @@ import fi.evident.dalesbred.connection.DriverManagerConnectionProvider;
 import fi.evident.dalesbred.dialects.Dialect;
 import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
 import fi.evident.dalesbred.results.*;
+import fi.evident.dalesbred.support.proxy.TransactionalProxyFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -453,6 +454,13 @@ public final class Database {
         } finally {
             resultSet.close();
         }
+    }
+
+    /**
+     * Returns a transactional proxy for given object.
+     */
+    public <T> T createTransactionalProxyFor(Class<T> iface, T target) {
+        return TransactionalProxyFactory.createTransactionalProxyFor(this, iface, target);
     }
 
     /**

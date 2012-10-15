@@ -112,9 +112,29 @@ Nested transactions are supported if your database supports them:
 
     db.withTransaction(Propagation.NESTED, new TransactionCallback<Result>() { ... });
 
-For now, Dalesbred provides only this primitive mechanism for controlling
-transactions, but you can build your own interceptors on top of this functionality
-mechanism. In future, some interceptors could be provided with Dalesbred itself.
+Annotation based transactions
+-----------------------------
+
+The above transaction mechanism is a decent building block for implementing higher
+level abstractions, but it's quite verbose to use in Java. Therefore Dalesbred provides
+a simple support for building transactional proxies for services:
+
+    public interface MyService {
+         void frobnicate();
+    }
+
+    public class MyRealService implements MyService {
+
+         @Transactional
+         public void frobnicate() {
+             ...
+         }
+    }
+
+    ...
+
+    MyService myService = db.createTransactionalProxyFor(MyService.class, new MyRealService());
+    service.frobnicate(); // this call will have a transaction wrapped around it
 
 SqlQuery vs. query parameters
 -----------------------------
