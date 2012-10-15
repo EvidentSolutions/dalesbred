@@ -172,6 +172,13 @@ public final class Database {
         }
     }
 
+    /**
+     * Returns true if and only if the current thread has an active transaction for this database.
+     */
+    public boolean hasActiveTransaction() {
+        return activeTransaction.get() != null;
+    }
+
     private <T> T withSuspendedTransaction(@Nullable Isolation isolation, @NotNull TransactionCallback<T> callback) {
         DatabaseTransaction suspended = activeTransaction.get();
         try {
