@@ -160,6 +160,21 @@ the query dynamically:
 
     db.findAll(Department.class, buildDepartmentQuery(form));
 
+Building queries dynamically
+----------------------------
+
+At the moment there's no high-level API for building queries, but there is a QueryBuilder that
+is basically just a StringBuilder which remembers the query-parameters, so you can say things like:
+
+    QueryBuilder qb = new QueryBuilder("select id, name, status from document");
+    if (status != null)
+        qb.append(" where status=?", status);
+
+    db.findAll(Document.class, qb.build());
+
+For all but simplest dynamic queries, you'll probably want to have a higher level API that understands
+the structure of the SQL.
+
 Test support
 ------------
 
