@@ -459,7 +459,8 @@ public final class Database {
     /**
      * Returns a transactional proxy for given object.
      */
-    public <T> T createTransactionalProxyFor(Class<T> iface, T target) {
+    @NotNull
+    public <T> T createTransactionalProxyFor(@NotNull Class<T> iface, @NotNull T target) {
         return TransactionalProxyFactory.createTransactionalProxyFor(this, iface, target);
     }
 
