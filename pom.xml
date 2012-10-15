@@ -7,6 +7,18 @@
     <packaging>pom</packaging>
     <version>0.2.2-SNAPSHOT</version>
 
+    <name>Dalesbred</name>
+    <description>A database access library for Java</description>
+    <url>https://bitbucket.org/evidentsolutions/dalesbred</url>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://opensource.org/licenses/mit-license.php</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -139,8 +151,7 @@
         <url>https://bitbucket.org/evidentsolutions/dalesbred</url>
         <connection>scm:hg:https://bitbucket.org/evidentsolutions/dalesbred</connection>
         <developerConnection>scm:hg:ssh://hg@bitbucket.org/evidentsolutions/dalesbred</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
+    </scm>
 
     <repositories>
         <repository>
