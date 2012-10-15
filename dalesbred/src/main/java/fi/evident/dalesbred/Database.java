@@ -159,7 +159,7 @@ public final class Database {
 
         } else {
             if (propagation == MANDATORY)
-                throw new DatabaseException("Transaction propagation was MANDATORY, but there was no existing transaction.");
+                throw new NoActiveTransactionException("Transaction propagation was MANDATORY, but there was no existing transaction.");
 
             DatabaseTransaction newTransaction = new DatabaseTransaction(connectionProvider, dialect, isolation);
             try {
@@ -205,7 +205,7 @@ public final class Database {
             if (transaction != null)
                 return transaction.join(callback);
             else
-                throw new IllegalStateException("Tried to perform database operation without active transaction. Database accesses should be bracketed with Database.withTransaction(...) or implicit transactions should be enabled.");
+                throw new NoActiveTransactionException("Tried to perform database operation without active transaction. Database accesses should be bracketed with Database.withTransaction(...) or implicit transactions should be enabled.");
         }
     }
 
