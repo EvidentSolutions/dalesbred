@@ -160,6 +160,26 @@ the query dynamically:
 
     db.findAll(Department.class, buildDepartmentQuery(form));
 
+Test support
+------------
+
+By including the _dalesbred-junit_ artifact in your project as a test dependency,
+you'll get support for writing transactional test cases:
+
+    public class MyTest {
+
+        private final Database db = TestDatabaseProvider.databaseForProperties("testdb.properties");
+
+        @Rule
+        public final TransactionalTests tx = new TransactionalTests(db);
+
+        @Test
+        public void simpleTest() {
+            assertEquals("hello, world!", db.queryForUnique(String.class "select 'hello, world!'");
+        }
+    }
+
+
 More examples
 =============
 
