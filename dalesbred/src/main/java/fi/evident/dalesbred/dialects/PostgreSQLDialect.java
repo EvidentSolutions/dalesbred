@@ -22,7 +22,6 @@
 
 package fi.evident.dalesbred.dialects;
 
-import fi.evident.dalesbred.DatabaseException;
 import org.jetbrains.annotations.NotNull;
 import org.postgresql.util.PGobject;
 
@@ -41,7 +40,7 @@ public class PostgreSQLDialect extends Dialect {
             object.setValue(value.name());
             return object;
         } catch (SQLException e) {
-            throw new DatabaseException(e);
+            throw convertException(e);
         }
     }
 }

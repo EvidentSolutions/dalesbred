@@ -23,6 +23,7 @@
 package fi.evident.dalesbred.dialects;
 
 import fi.evident.dalesbred.DatabaseException;
+import fi.evident.dalesbred.DatabaseSQLException;
 import fi.evident.dalesbred.TransactionRollbackException;
 import fi.evident.dalesbred.TransactionSerializationException;
 import fi.evident.dalesbred.instantiation.Coercion;
@@ -91,7 +92,7 @@ public abstract class Dialect {
                 connection.close();
             }
         } catch (SQLException e) {
-            throw new DatabaseException("Failed to auto-detect database dialect: " + e, e);
+            throw new DatabaseSQLException("Failed to auto-detect database dialect: " + e, e);
         }
     }
 
@@ -112,13 +113,13 @@ public abstract class Dialect {
     public DatabaseException convertException(@NotNull SQLException e) {
         String sqlState = e.getSQLState();
         if (sqlState == null)
-            return new DatabaseException(e);
+            return new DatabaseSQLException(e);
 
         if (sqlState.equals(SERIALIZATION_FAILURE))
             return new TransactionSerializationException(e);
         else if (sqlState.startsWith("40"))
             return new TransactionRollbackException(e);
         else
-            return new DatabaseException(e);
+            return new DatabaseSQLException(e);
     }
 }

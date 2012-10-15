@@ -25,12 +25,20 @@ package fi.evident.dalesbred;
 import java.sql.SQLException;
 
 /**
- * Exception thrown when transaction rolls back.
- *
- * @see TransactionSerializationException
+ * Wraps an {@link SQLException} originating from database.
  */
-public class TransactionRollbackException extends DatabaseSQLException {
-    public TransactionRollbackException(SQLException cause) {
+public class DatabaseSQLException extends DatabaseException {
+
+    public DatabaseSQLException(String message, SQLException cause) {
+        super(message, cause);
+    }
+
+    public DatabaseSQLException(SQLException cause) {
         super(cause);
+    }
+
+    @Override
+    public SQLException getCause() {
+        return (SQLException) super.getCause();
     }
 }

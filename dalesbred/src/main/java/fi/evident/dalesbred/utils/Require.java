@@ -34,4 +34,13 @@ public final class Require {
 
         return value;
     }
+
+    /**
+     * Returns value if it is not {@code null}, otherwise throws {@link NullPointerException}.
+     */
+    public static <T> T requireNonNull(T value, String message) {
+        if (value == null) throw new NullPointerException(message);
+
+        return value;
+    }
 }

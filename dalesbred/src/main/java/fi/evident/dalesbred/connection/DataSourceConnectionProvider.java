@@ -22,7 +22,7 @@
 
 package fi.evident.dalesbred.connection;
 
-import fi.evident.dalesbred.DatabaseException;
+import fi.evident.dalesbred.DatabaseSQLException;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Provider;
@@ -47,13 +47,9 @@ public final class DataSourceConnectionProvider implements Provider<Connection> 
     @NotNull
     public Connection get() {
         try {
-            Connection connection = dataSource.getConnection();
-            if (connection != null)
-                return connection;
-            else
-                throw new DatabaseException("dataSource returned null connection");
+            return requireNonNull(dataSource.getConnection(), "null connection from DataSource");
         } catch (SQLException e) {
-            throw new DatabaseException(e);
+            throw new DatabaseSQLException(e);
         }
     }
 }

@@ -51,7 +51,7 @@ public final class ResultSetUtils {
         try {
             return Class.forName(className);
         } catch (ClassNotFoundException e) {
-            throw new DatabaseException("Could not find class '" + className + "'", e);
+            throw new DatabaseException("Could not find class '" + className + "' specified by ResultSet.", e);
         }
     }
 }

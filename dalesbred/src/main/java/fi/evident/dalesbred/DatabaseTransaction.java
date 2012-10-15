@@ -45,10 +45,8 @@ final class DatabaseTransaction {
     private static final Logger log = Logger.getLogger(DatabaseTransaction.class.getName());
 
     DatabaseTransaction(@NotNull Provider<Connection> connectionProvider, @NotNull Dialect dialect, Isolation isolation) {
-        this.connection = connectionProvider.get();
+        this.connection = requireNonNull(connectionProvider.get(), "null connection from connection-provider");
         this.dialect = requireNonNull(dialect);
-        if (connection == null)
-            throw new DatabaseException("connection-provider returned null connection");
 
         try {
             connection.setAutoCommit(false);

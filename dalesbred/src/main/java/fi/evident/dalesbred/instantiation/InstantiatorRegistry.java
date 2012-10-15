@@ -22,7 +22,6 @@
 
 package fi.evident.dalesbred.instantiation;
 
-import fi.evident.dalesbred.DatabaseException;
 import fi.evident.dalesbred.dialects.Dialect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -90,7 +89,7 @@ public final class InstantiatorRegistry {
                 return instantiator;
         }
 
-        throw new DatabaseException(cl + " does not have instantiator matching types " + types);
+        throw new InstantiationException(cl + " does not have instantiator matching types " + types);
     }
 
     /**
@@ -142,7 +141,7 @@ public final class InstantiatorRegistry {
         if (coercion != null)
             return coercion;
         else
-            throw new DatabaseException("could not find a conversion from " + source.getName() + " to " + target.getName());
+            throw new InstantiationException("could not find a conversion from " + source.getName() + " to " + target.getName());
     }
 
     /**

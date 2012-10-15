@@ -20,17 +20,16 @@
  * THE SOFTWARE.
  */
 
-package fi.evident.dalesbred;
+package fi.evident.dalesbred.instantiation;
 
-import java.sql.SQLException;
+import fi.evident.dalesbred.DatabaseException;
 
 /**
- * Exception thrown when transaction rolls back.
- *
- * @see TransactionSerializationException
+ * Exception thrown when there is a problem with instantiation or coercion.
  */
-public class TransactionRollbackException extends DatabaseSQLException {
-    public TransactionRollbackException(SQLException cause) {
-        super(cause);
+public class InstantiationException extends DatabaseException {
+
+    public InstantiationException(String message) {
+        super(message);
     }
 }

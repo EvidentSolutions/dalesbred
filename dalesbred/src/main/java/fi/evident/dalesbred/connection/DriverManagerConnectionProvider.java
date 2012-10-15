@@ -22,7 +22,7 @@
 
 package fi.evident.dalesbred.connection;
 
-import fi.evident.dalesbred.DatabaseException;
+import fi.evident.dalesbred.DatabaseSQLException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,7 +59,7 @@ public final class DriverManagerConnectionProvider implements Provider<Connectio
         try {
             return DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
-            throw new DatabaseException(e);
+            throw new DatabaseSQLException(e);
         }
     }
 

@@ -22,6 +22,9 @@
 
 package fi.evident.dalesbred;
 
+/**
+ * Base class for all of Dalesbred's exceptions.
+ */
 public class DatabaseException extends RuntimeException {
 
     public DatabaseException(String message) {
