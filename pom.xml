@@ -11,6 +11,25 @@
     <description>A database access library for Java</description>
     <url>https://bitbucket.org/evidentsolutions/dalesbred</url>
 
+    <issueManagement>
+        <system>Bitbucket</system>
+        <url>https://bitbucket.org/evidentsolutions/dalesbred/issues</url>
+    </issueManagement>
+
+    <inceptionYear>2012</inceptionYear>
+
+    <organization>
+        <name>Evident Solutions</name>
+        <url>http://www.evident.fi</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <id>komu</id>
+            <name>Juha Komulainen</name>
+        </developer>
+    </developers>
+
     <licenses>
         <license>
             <name>MIT License</name>
@@ -151,13 +170,6 @@
         <connection>scm:hg:https://bitbucket.org/evidentsolutions/dalesbred</connection>
         <developerConnection>scm:hg:ssh://hg@bitbucket.org/evidentsolutions/dalesbred</developerConnection>
     </scm>
-
-    <repositories>
-        <repository>
-            <id>apache-maven-repository</id>
-            <url>http://repo1.maven.org/maven2/</url>
-        </repository>
-    </repositories>
 
     <distributionManagement>
         <repository>
