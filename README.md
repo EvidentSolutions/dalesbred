@@ -209,7 +209,7 @@ Add the following definitions to your pom.xml:
         <dependency>
             <groupId>fi.evident.dalesbred</groupId>
             <artifactId>dalesbred</artifactId>
-            <version>0.2.1</version>
+            <version>0.2.2</version>
         </dependency>
     </dependencies>
 
