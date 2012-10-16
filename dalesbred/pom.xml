@@ -12,6 +12,8 @@
     <artifactId>dalesbred</artifactId>
     <packaging>jar</packaging>
 
+    <name>Dalesbred</name>
+
     <dependencies>
         <dependency>
             <groupId>javax.inject</groupId>

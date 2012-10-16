@@ -7,7 +7,7 @@
     <packaging>pom</packaging>
     <version>0.2.2-SNAPSHOT</version>
 
-    <name>Dalesbred</name>
+    <name>Dalesbred Root</name>
     <description>A database access library for Java</description>
     <url>https://bitbucket.org/evidentsolutions/dalesbred</url>
 

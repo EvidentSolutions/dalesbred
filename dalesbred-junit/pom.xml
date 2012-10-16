@@ -11,6 +11,8 @@
     <artifactId>dalesbred-junit</artifactId>
     <packaging>jar</packaging>
 
+    <name>Dalesbred JUnit-support</name>
+
     <dependencies>
         <dependency>
             <groupId>fi.evident.dalesbred</groupId>
