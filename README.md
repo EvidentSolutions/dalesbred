@@ -203,22 +203,14 @@ Check out the test cases under _dalesbred/src/test/java_ for more usage examples
 Using with Maven
 ================
 
-Add the following definitions to your pom.xml:
+Dalesbred is available on the central Maven repository, so just add the following
+dependency to your pom.xml:
 
-    <dependencies>
-        <dependency>
-            <groupId>fi.evident.dalesbred</groupId>
-            <artifactId>dalesbred</artifactId>
-            <version>0.2.2</version>
-        </dependency>
-    </dependencies>
-
-    <repositories>
-        <repository>
-            <id>evident-public-maven-repository</id>
-            <url>http://maven.evident.fi/</url>
-        </repository>
-    </repositories>
+    <dependency>
+        <groupId>fi.evident.dalesbred</groupId>
+        <artifactId>dalesbred</artifactId>
+        <version>0.2.3</version>
+    </dependency>
 
 Attributions
 ============
