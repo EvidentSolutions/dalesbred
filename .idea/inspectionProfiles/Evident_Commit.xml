@@ -39,7 +39,6 @@
     <inspection_tool class="DefaultNotLastCaseInSwitch" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="DivideByZero" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="DoubleLiteralMayBeFloatLiteral" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="DoubleNegation" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="EmptyMethod" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="EqualsAndHashcode" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="EqualsCalledOnEnumConstant" enabled="true" level="WARNING" enabled_by_default="true" />

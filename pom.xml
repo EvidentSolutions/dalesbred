@@ -26,7 +26,6 @@
     <modules>
         <module>dalesbred</module>
         <module>dalesbred-junit</module>
-        <module>example</module>
     </modules>
 
     <dependencyManagement>

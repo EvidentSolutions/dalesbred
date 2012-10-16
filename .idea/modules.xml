@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/dalesbred/dalesbred.iml" filepath="$PROJECT_DIR$/dalesbred/dalesbred.iml" />
       <module fileurl="file://$PROJECT_DIR$/dalesbred-junit/dalesbred-junit.iml" filepath="$PROJECT_DIR$/dalesbred-junit/dalesbred-junit.iml" />
       <module fileurl="file://$PROJECT_DIR$/dalesbred-root.iml" filepath="$PROJECT_DIR$/dalesbred-root.iml" />
-      <module fileurl="file://$PROJECT_DIR$/example/example.iml" filepath="$PROJECT_DIR$/example/example.iml" />
     </modules>
   </component>
 </project>
