@@ -147,7 +147,25 @@ public final class Database {
     /**
      * Executes a block of code with given propagation and isolation.
      */
-    public <T> T withTransaction(@NotNull Propagation propagation, @Nullable Isolation isolation, @NotNull TransactionCallback<T> callback) {
+    public <T> T withTransaction(@NotNull Propagation propagation,
+                                 @Nullable Isolation isolation,
+                                 @NotNull TransactionCallback<T> callback) {
+
+        TransactionSettings settings = new TransactionSettings();
+        settings.setPropagation(propagation);
+        settings.setIsolation(isolation);
+
+        return withTransaction(settings, callback);
+    }
+
+    /**
+     * Executes a block of code with given transaction settings.
+     */
+    public <T> T withTransaction(@NotNull TransactionSettings settings,
+                                 @NotNull TransactionCallback<T> callback) {
+
+        Propagation propagation = settings.getPropagation();
+        Isolation isolation = settings.getIsolation();
         DatabaseTransaction existingTransaction = activeTransaction.get();
 
         if (existingTransaction != null) {

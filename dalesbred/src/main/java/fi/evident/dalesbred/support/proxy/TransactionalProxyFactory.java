@@ -68,12 +68,12 @@ public final class TransactionalProxyFactory {
 
         @Override
         public Object invoke(Object proxy, final Method method, final Object[] args) throws Throwable {
-            Transactional tx = findTransactionDefinition(method);
+            TransactionSettings tx = findTransactionSettings(method);
 
             if (tx == null)
                 return invokeWithoutTransaction(method, args);
             else
-                return invokeInTransaction(tx.propagation(), tx.isolation(), method, args);
+                return invokeInTransaction(tx, method, args);
         }
 
         private Object invokeWithoutTransaction(Method method, Object[] args) throws Throwable {
@@ -84,12 +84,11 @@ public final class TransactionalProxyFactory {
             }
         }
 
-        private Object invokeInTransaction(@NotNull Propagation propagation,
-                                           @NotNull Isolation isolation,
+        private Object invokeInTransaction(@NotNull TransactionSettings settings,
                                            @NotNull final Method method,
                                            final Object[] args) throws Throwable {
             try {
-                return db.withTransaction(propagation, isolation, new TransactionCallback<Object>() {
+                return db.withTransaction(settings, new TransactionCallback<Object>() {
                     @Override
                     public Object execute(@NotNull TransactionContext tx) throws SQLException {
                         try {
@@ -103,6 +102,20 @@ public final class TransactionalProxyFactory {
                 });
             } catch (WrappedException e) {
                 throw e.throwable;
+            }
+        }
+
+        @Nullable
+        private TransactionSettings findTransactionSettings(@NotNull Method interfaceMethod) {
+            Transactional tx = findTransactionDefinition(interfaceMethod);
+            if (tx != null) {
+                TransactionSettings settings = new TransactionSettings();
+                settings.setPropagation(tx.propagation());
+                settings.setIsolation(tx.isolation());
+                return settings;
+
+            } else {
+                return null;
             }
         }
 
