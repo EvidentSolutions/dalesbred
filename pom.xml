@@ -220,13 +220,21 @@
         <url>https://bitbucket.org/evidentsolutions/dalesbred</url>
         <connection>scm:hg:https://bitbucket.org/evidentsolutions/dalesbred</connection>
         <developerConnection>scm:hg:ssh://hg@bitbucket.org/evidentsolutions/dalesbred</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <distributionManagement>
         <repository>
-            <id>evident-maven-repo</id>
-            <url>scpexe://maven.evident.fi/var/www-maven</url>
+            <id>sonatype-nexus-staging</id>
+            <name>Sonatype OSS staging repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+            <layout>default</layout>
         </repository>
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshot</id>
+            <name>Sonatype OSS snapshot repository</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <layout>default</layout>
+        </snapshotRepository>
     </distributionManagement>
 </project>
