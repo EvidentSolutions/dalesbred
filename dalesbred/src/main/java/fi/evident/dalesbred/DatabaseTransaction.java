@@ -59,46 +59,62 @@ final class DatabaseTransaction {
         }
     }
 
-    <T> T execute(@NotNull final TransactionCallback<T> callback) {
-        try {
+    <T> T execute(int retries, @NotNull final TransactionCallback<T> callback) {
+        int tries = 1;
+        while (true) {
             try {
-                TransactionContext ctx = new TransactionContext(connection);
-                T value = callback.execute(ctx);
-                if (ctx.isRollbackOnly())
-                    connection.rollback();
-                else
-                    connection.commit();
-                return value;
+                try {
+                    TransactionContext ctx = new TransactionContext(connection);
+                    T value = callback.execute(ctx);
+                    if (ctx.isRollbackOnly())
+                        connection.rollback();
+                    else
+                        connection.commit();
+                    return value;
 
-            } catch (Exception e) {
-                connection.rollback();
-                log.log(Level.WARNING, "rolled back transaction because of exception: " + e, e);
-                throw propagate(e, SQLException.class);
+                } catch (Exception e) {
+                    connection.rollback();
+                    log.log(Level.WARNING, "rolled back transaction because of exception: " + e, e);
+                    throw propagate(e, SQLException.class);
+                }
+            } catch (TransactionSerializationException e) {
+                if (tries++ > retries)
+                    throw e;
+
+                log.fine("automatically retrying failed transaction");
+            } catch (SQLException e) {
+                throw dialect.convertException(e);
             }
-        } catch (SQLException e) {
-            throw dialect.convertException(e);
         }
     }
 
-    <T> T nested(TransactionCallback<T> callback) {
-        try {
-            Savepoint savepoint = connection.setSavepoint();
+    <T> T nested(int retries, @NotNull TransactionCallback<T> callback) {
+        int tries = 1;
+        while (true) {
             try {
-                TransactionContext ctx = new TransactionContext(connection);
-                T value = callback.execute(ctx);
-                if (ctx.isRollbackOnly())
-                    connection.rollback(savepoint);
-                else
-                    connection.releaseSavepoint(savepoint);
-                return value;
+                Savepoint savepoint = connection.setSavepoint();
+                try {
+                    TransactionContext ctx = new TransactionContext(connection);
+                    T value = callback.execute(ctx);
+                    if (ctx.isRollbackOnly())
+                        connection.rollback(savepoint);
+                    else
+                        connection.releaseSavepoint(savepoint);
+                    return value;
 
-            } catch (Exception e) {
-                connection.rollback(savepoint);
-                log.log(Level.WARNING, "rolled back nested transaction because of exception: " + e, e);
-                throw propagate(e, SQLException.class);
+                } catch (Exception e) {
+                    connection.rollback(savepoint);
+                    log.log(Level.WARNING, "rolled back nested transaction because of exception: " + e, e);
+                    throw propagate(e, SQLException.class);
+                }
+            } catch (TransactionSerializationException e) {
+                if (tries++ > retries)
+                    throw e;
+
+                log.fine("automatically retrying failed transaction");
+            } catch (SQLException e) {
+                throw dialect.convertException(e);
             }
-        } catch (SQLException e) {
-            throw dialect.convertException(e);
         }
     }
 

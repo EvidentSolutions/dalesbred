@@ -37,4 +37,9 @@ public class TransactionSettingsTest {
 
         assertEquals("[propagation=REQUIRED, isolation=REPEATABLE_READ]", settings.toString());
     }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void negativeRetries() {
+        new TransactionSettings().setRetries(-1);
+    }
 }

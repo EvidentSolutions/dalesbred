@@ -31,6 +31,7 @@ public final class TransactionSettings {
 
     private Propagation propagation = Propagation.REQUIRED;
     private Isolation isolation;
+    private int retries = 0;
 
     @NotNull
     public Propagation getPropagation() {
@@ -48,6 +49,20 @@ public final class TransactionSettings {
 
     public void setIsolation(@Nullable Isolation isolation) {
         this.isolation = isolation;
+    }
+
+    public int getRetries() {
+        return retries;
+    }
+
+    /**
+     * Sets the maximum amount of automatic retries if transaction fails due to serialization issues.
+     * Default value is 0, meaning no retries.
+     */
+    public void setRetries(int retries) {
+        if (retries < 0) throw new IllegalArgumentException("negative retries: " + retries);
+
+        this.retries = retries;
     }
 
     @Override

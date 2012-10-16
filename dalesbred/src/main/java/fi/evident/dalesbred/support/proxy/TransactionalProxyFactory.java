@@ -112,6 +112,7 @@ public final class TransactionalProxyFactory {
                 TransactionSettings settings = new TransactionSettings();
                 settings.setPropagation(tx.propagation());
                 settings.setIsolation(tx.isolation());
+                settings.setRetries(tx.retries());
                 return settings;
 
             } else {

@@ -166,13 +166,15 @@ public final class Database {
 
         Propagation propagation = settings.getPropagation();
         Isolation isolation = settings.getIsolation();
+        int retries = settings.getRetries();
+
         DatabaseTransaction existingTransaction = activeTransaction.get();
 
         if (existingTransaction != null) {
             if (propagation == REQUIRES_NEW)
                 return withSuspendedTransaction(isolation, callback);
             else if (propagation == NESTED)
-                return existingTransaction.nested(callback);
+                return existingTransaction.nested(retries, callback);
             else
                 return existingTransaction.join(callback);
 
@@ -183,7 +185,7 @@ public final class Database {
             DatabaseTransaction newTransaction = new DatabaseTransaction(connectionProvider, dialect, isolation);
             try {
                 activeTransaction.set(newTransaction);
-                return newTransaction.execute(callback);
+                return newTransaction.execute(retries, callback);
             } finally {
                 activeTransaction.set(null);
                 newTransaction.close();

@@ -22,23 +22,37 @@
 
 package fi.evident.dalesbred;
 
-import java.lang.annotation.*;
+import org.jetbrains.annotations.NotNull;
+import org.junit.Test;
 
-/**
- * Marks the given method or type as transactional.
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Target({ ElementType.METHOD, ElementType.TYPE })
-@Inherited
-public @interface Transactional {
+import java.sql.SQLException;
+import java.util.concurrent.atomic.AtomicInteger;
 
-    /** The propagation for transaction, default is {@link Propagation#REQUIRED}. */
-    Propagation propagation() default Propagation.REQUIRED;
+import static org.junit.Assert.assertEquals;
 
-    /** Isolation for transaction, default is {@link Isolation#READ_COMMITTED} */
-    Isolation isolation() default Isolation.READ_COMMITTED;
+public class DatabaseTransactionRetryTest {
 
-    /** Number of automatic retries due to serialization failures, default is 0. */
-    int retries() default 0;
+    private final Database db = TestDatabaseProvider.createTestDatabase();
+
+    @Test
+    public void maxRetries() {
+        final AtomicInteger tries = new AtomicInteger(0);
+
+        TransactionSettings settings = new TransactionSettings();
+        settings.setRetries(3);
+
+        try {
+            db.withTransaction(settings, new TransactionCallback<Object>() {
+                @Override
+                public Object execute(@NotNull TransactionContext tx) throws SQLException {
+                    tries.incrementAndGet();
+                    throw new TransactionSerializationException(new SQLException());
+                }
+            });
+        } catch (TransactionSerializationException e) {
+            // expected
+        }
+
+        assertEquals(4, tries.get());
+    }
 }
