@@ -34,8 +34,9 @@ public class TransactionSettingsTest {
 
         settings.setPropagation(Propagation.REQUIRED);
         settings.setIsolation(Isolation.REPEATABLE_READ);
+        settings.setRetries(3);
 
-        assertEquals("[propagation=REQUIRED, isolation=REPEATABLE_READ]", settings.toString());
+        assertEquals("[propagation=REQUIRED, isolation=REPEATABLE_READ, retries=3]", settings.toString());
     }
 
     @Test(expected=IllegalArgumentException.class)

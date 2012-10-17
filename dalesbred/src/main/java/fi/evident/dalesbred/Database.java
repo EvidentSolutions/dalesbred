@@ -160,6 +160,8 @@ public final class Database {
 
     /**
      * Executes a block of code with given transaction settings.
+     *
+     * @see TransactionSettings
      */
     public <T> T withTransaction(@NotNull TransactionSettings settings,
                                  @NotNull TransactionCallback<T> callback) {

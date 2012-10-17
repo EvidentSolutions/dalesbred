@@ -27,6 +27,11 @@ import org.jetbrains.annotations.Nullable;
 
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
+/**
+ * Contains all the settings that can be configured for individual-transactions.
+ *
+ * @see Database#withTransaction(TransactionSettings, TransactionCallback)
+ */
 public final class TransactionSettings {
 
     private Propagation propagation = Propagation.REQUIRED;
@@ -38,6 +43,9 @@ public final class TransactionSettings {
         return propagation;
     }
 
+    /**
+     * Sets the default transaction propagation to use.
+     */
     public void setPropagation(@NotNull Propagation propagation) {
         this.propagation = requireNonNull(propagation);
     }
@@ -47,6 +55,9 @@ public final class TransactionSettings {
         return isolation;
     }
 
+    /**
+     * Set the default isolation level to use, or {@code null} for database default level.
+     */
     public void setIsolation(@Nullable Isolation isolation) {
         this.isolation = isolation;
     }
@@ -67,6 +78,6 @@ public final class TransactionSettings {
 
     @Override
     public String toString() {
-        return "[propagation=" + propagation + ", isolation=" + isolation + "]";
+        return "[propagation=" + propagation + ", isolation=" + isolation + ", retries=" + retries + "]";
     }
 }
