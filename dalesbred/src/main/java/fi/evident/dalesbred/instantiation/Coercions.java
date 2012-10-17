@@ -30,6 +30,9 @@ import java.util.List;
 
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
+/**
+ * A set of {@link Coercion}s.
+ */
 public final class Coercions {
 
     private final List<Coercion<?,?>> loadCoercions = new ArrayList<Coercion<?,?>>();

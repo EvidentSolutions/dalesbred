@@ -22,6 +22,9 @@
 
 package fi.evident.dalesbred.instantiation;
 
+/**
+ * Factory for producing objects from given arguments.
+ */
 public interface Instantiator<T> {
     T instantiate(Object[] arguments);
 }

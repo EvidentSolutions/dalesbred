@@ -22,6 +22,9 @@
 
 package fi.evident.dalesbred.dialects;
 
+/**
+ * Default dialect used for databases that don't have special support.
+ */
 public class DefaultDialect extends Dialect {
 
 }

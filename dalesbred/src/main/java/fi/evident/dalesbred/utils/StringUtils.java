@@ -27,6 +27,9 @@ import org.jetbrains.annotations.NotNull;
 import static java.lang.Character.isUpperCase;
 import static java.lang.Character.toLowerCase;
 
+/**
+ * Utilities for strings.
+ */
 public final class StringUtils {
 
     private StringUtils() { }

@@ -29,6 +29,9 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
+/**
+ * Utilities for processing {@link java.sql.ResultSet}s.
+ */
 public final class ResultSetUtils {
 
     private ResultSetUtils() { }

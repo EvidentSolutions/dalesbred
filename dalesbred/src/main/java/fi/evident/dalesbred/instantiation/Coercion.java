@@ -24,6 +24,11 @@ package fi.evident.dalesbred.instantiation;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A conversion from S into T.
+ *
+ * @see CoercionBase for a convenience base class for simple coercions
+ */
 public abstract class Coercion<S,T> {
 
     private static final IdentityCoercion IDENTITY = new IdentityCoercion();

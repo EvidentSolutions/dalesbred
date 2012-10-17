@@ -71,6 +71,9 @@ public final class NamedTypeList {
         return new Builder(size);
     }
 
+    /**
+     * Builder for {@link NamedTypeList}s.
+     */
     public static class Builder {
         private int index = 0;
 

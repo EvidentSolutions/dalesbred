@@ -24,6 +24,9 @@ package fi.evident.dalesbred.utils;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Utilities for handling exceptions and other throwables.
+ */
 public final class Throwables {
 
     private Throwables() { }

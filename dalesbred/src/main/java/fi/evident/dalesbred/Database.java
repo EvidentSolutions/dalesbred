@@ -74,7 +74,7 @@ public final class Database {
     /** The dialect that the database uses */
     private final Dialect dialect;
 
-    /** Instantiators */
+    /** Contains the instantiators and data-converters */
     private final InstantiatorRegistry instantiatorRegistry;
 
     /**
@@ -254,6 +254,11 @@ public final class Database {
         });
     }
 
+    /**
+     * Executes a query and processes the results with given {@link ResultSetProcessor}.
+     *
+     * @see #executeQuery(fi.evident.dalesbred.results.ResultSetProcessor, SqlQuery)
+     */
     public <T> T executeQuery(@NotNull ResultSetProcessor<T> processor, @NotNull @SQL String sql, Object... args) {
         return executeQuery(processor, query(sql, args));
     }
@@ -267,6 +272,10 @@ public final class Database {
         return executeQuery(new ListWithRowMapperResultSetProcessor<T>(rowMapper), query);
     }
 
+    /**
+     * Executes a query and processes each row of the result with given {@link RowMapper}
+     * to produce a list of results.
+     */
     @NotNull
     public <T> List<T> findAll(@NotNull RowMapper<T> rowMapper, @NotNull @SQL String sql, Object... args) {
         return findAll(rowMapper, query(sql, args));
@@ -297,6 +306,11 @@ public final class Database {
         return unique(findAll(mapper, query));
     }
 
+    /**
+     * Finds a unique result from database, using given {@link RowMapper} to convert the row.
+     *
+     * @throws NonUniqueResultException if there are no rows or multiple rows
+     */
     public <T> T findUnique(@NotNull RowMapper<T> mapper, @NotNull @SQL String sql, Object... args) {
         return findUnique(mapper, query(sql, args));
     }
@@ -310,6 +324,11 @@ public final class Database {
         return unique(findAll(cl, query));
     }
 
+    /**
+     * Finds a unique result from database, converting the database row to given class using default mechanisms.
+     *
+     * @throws NonUniqueResultException if there are no rows or multiple rows
+     */
     public <T> T findUnique(@NotNull Class<T> cl, @NotNull @SQL String sql, Object... args) {
         return findUnique(cl, query(sql, args));
     }
@@ -325,6 +344,12 @@ public final class Database {
         return uniqueOrNull(findAll(rowMapper, query));
     }
 
+    /**
+     * Find a unique result from database, using given {@link RowMapper} to convert row. Returns null if
+     * there are no results.
+     *
+     * @throws NonUniqueResultException if there are multiple result rows
+     */
     @Nullable
     public <T> T findUniqueOrNull(@NotNull RowMapper<T> rowMapper, @NotNull @SQL String sql, Object... args) {
         return findUniqueOrNull(rowMapper, query(sql, args));
@@ -341,12 +366,20 @@ public final class Database {
         return uniqueOrNull(findAll(cl, query));
     }
 
+    /**
+     * Finds a unique result from database, converting the database row to given class using default mechanisms.
+     * Returns null if there are no results.
+     *
+     * @throws NonUniqueResultException if there are multiple result rows
+     */
     public <T> T findUniqueOrNull(@NotNull Class<T> cl, @NotNull @SQL String sql, Object... args) {
         return findUniqueOrNull(cl, query(sql, args));
     }
 
     /**
      * A convenience method for retrieving a single non-null integer.
+     *
+     * @throws NonUniqueResultException if there are no rows or multiple rows
      */
     public int findUniqueInt(@NotNull SqlQuery query) {
         Integer value = findUnique(Integer.class, query);
@@ -358,6 +391,8 @@ public final class Database {
 
     /**
      * A convenience method for retrieving a single non-null integer.
+     *
+     * @throws NonUniqueResultException if there are no rows or multiple rows
      */
     public int findUniqueInt(@NotNull @SQL String sql, Object... args) {
         return findUniqueInt(query(sql, args));
@@ -381,6 +416,10 @@ public final class Database {
         return findUniqueLong(query(sql, args));
     }
 
+    /**
+     * Executes a query that returns two values and creates a map from the results,
+     * using the first value as the key and second value as the value for that key.
+     */
     @NotNull
     public <K,V> Map<K, V> findMap(@NotNull final Class<K> keyType,
                                    @NotNull final Class<V> valueType,
@@ -388,6 +427,10 @@ public final class Database {
         return executeQuery(new MapResultSetProcessor<K, V>(keyType, valueType, instantiatorRegistry), query);
     }
 
+    /**
+     * Executes a query that returns two values and creates a map from the results,
+     * using the first value as the key and second value as the value for that key.
+     */
     @NotNull
     public <K,V> Map<K, V> findMap(@NotNull Class<K> keyType,
                                    @NotNull Class<V> valueType,
@@ -404,6 +447,9 @@ public final class Database {
         return executeQuery(new ResultTableResultSetProcessor(), query);
     }
 
+    /**
+     * Executes a query and creates a {@link ResultTable} from the results.
+     */
     @NotNull
     public ResultTable findTable(@NotNull @SQL String sql, Object... args) {
         return findTable(query(sql, args));
@@ -501,6 +547,10 @@ public final class Database {
         this.defaultIsolation = isolation;
     }
 
+    /**
+     * If flag is set to true (by default it's false) queries without active transaction will
+     * not throw exception but will start a fresh transaction.
+     */
     public boolean isAllowImplicitTransactions() {
         return allowImplicitTransactions;
     }
@@ -513,6 +563,9 @@ public final class Database {
         this.allowImplicitTransactions = allowImplicitTransactions;
     }
 
+    /**
+     * Returns a string containing useful debug information about the state of this object.
+     */
     @Override
     @NotNull
     public String toString() {

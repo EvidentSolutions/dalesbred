@@ -29,6 +29,9 @@ import java.sql.SQLException;
 
 import static fi.evident.dalesbred.utils.StringUtils.upperCamelToLowerUnderscore;
 
+/**
+ * Support for PostgreSQL.
+ */
 public class PostgreSQLDialect extends Dialect {
 
     @NotNull

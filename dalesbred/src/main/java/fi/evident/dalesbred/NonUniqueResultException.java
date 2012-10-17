@@ -22,6 +22,13 @@
 
 package fi.evident.dalesbred;
 
+/**
+ * Exception thrown when expecting a unique result from a call, but invalid number
+ * of results was returned by the database.
+ *
+ * @see Database#findUnique(Class, SqlQuery)
+ * @see Database#findUniqueOrNull(Class, SqlQuery)
+ */
 public class NonUniqueResultException extends UnexpectedResultException {
 
     public NonUniqueResultException(int count) {

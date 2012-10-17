@@ -27,6 +27,9 @@ import org.jetbrains.annotations.NotNull;
 import static fi.evident.dalesbred.utils.Primitives.isAssignableByBoxing;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
+/**
+ * Abstract base class for simple coersions.
+ */
 public abstract class CoercionBase<S,T> extends Coercion<S,T> {
 
     private final Class<S> source;

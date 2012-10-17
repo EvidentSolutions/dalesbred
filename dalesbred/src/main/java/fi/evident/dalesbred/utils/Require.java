@@ -22,6 +22,9 @@
 
 package fi.evident.dalesbred.utils;
 
+/**
+ * Precondition assertions.
+ */
 public final class Require {
 
     private Require() { }

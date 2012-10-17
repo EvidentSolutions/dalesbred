@@ -24,6 +24,9 @@ package fi.evident.dalesbred.utils;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Utilities for handling primitive types and their wrappers uniformly.
+ */
 public final class Primitives {
 
     private Primitives() { }
