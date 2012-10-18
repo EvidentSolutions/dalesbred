@@ -49,4 +49,17 @@ public class IsolationTest {
 
         assertEquals(asList(READ_UNCOMMITTED, READ_COMMITTED, REPEATABLE_READ, SERIALIZABLE), levels);
     }
+
+    @Test
+    public void fromJdbcIsolation() {
+        assertEquals(READ_UNCOMMITTED, Isolation.forJdbcCode(Connection.TRANSACTION_READ_UNCOMMITTED));
+        assertEquals(READ_COMMITTED,   Isolation.forJdbcCode(Connection.TRANSACTION_READ_COMMITTED));
+        assertEquals(REPEATABLE_READ,  Isolation.forJdbcCode(Connection.TRANSACTION_REPEATABLE_READ));
+        assertEquals(SERIALIZABLE,     Isolation.forJdbcCode(Connection.TRANSACTION_SERIALIZABLE));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void fromInvalidJdbcIsolation() {
+        Isolation.forJdbcCode(525);
+    }
 }

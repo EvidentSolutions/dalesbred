@@ -46,4 +46,15 @@ public enum Isolation {
     Isolation(int level) {
         this.level = level;
     }
+
+    /**
+     * Returns the isolation value for given JDBC code.
+     */
+    public static Isolation forJdbcCode(int code) {
+        for (Isolation isolation : values())
+            if (isolation.level == code)
+                return isolation;
+
+        throw new IllegalArgumentException("invalid code: " + code);
+    }
 }
