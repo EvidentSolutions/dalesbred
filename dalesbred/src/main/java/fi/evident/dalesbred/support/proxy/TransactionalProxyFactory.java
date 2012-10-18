@@ -30,7 +30,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.sql.SQLException;
 
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
@@ -44,7 +43,7 @@ public final class TransactionalProxyFactory {
     /**
      * Returns a new transactional proxy for given target object.
      */
-    public static <T> T createTransactionalProxyFor(@NotNull Database db, @NotNull final Class<T> iface, @NotNull final T target) {
+    public static <T> T createTransactionalProxyFor(@NotNull Database db, @NotNull Class<T> iface, @NotNull T target) {
         return iface.cast(createTransactionalProxyFor(db, iface.getClassLoader(), new Class<?>[]{iface}, target));
     }
 
@@ -52,7 +51,7 @@ public final class TransactionalProxyFactory {
      * Returns a new transactional proxy for given target object. The proxy will implement all of the
      * given interfaces.
      */
-    public static Object createTransactionalProxyFor(@NotNull final Database db, @NotNull ClassLoader classLoader, @NotNull final Class<?>[] interfaces, @NotNull final Object target) {
+    public static Object createTransactionalProxyFor(@NotNull Database db, @NotNull ClassLoader classLoader, @NotNull Class<?>[] interfaces, @NotNull Object target) {
         return Proxy.newProxyInstance(classLoader, interfaces, new TransactionInvocationHandler(db, target));
     }
 
@@ -67,7 +66,7 @@ public final class TransactionalProxyFactory {
         }
 
         @Override
-        public Object invoke(Object proxy, final Method method, final Object[] args) throws Throwable {
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             TransactionSettings tx = findTransactionSettings(method);
 
             if (tx == null)
@@ -90,7 +89,7 @@ public final class TransactionalProxyFactory {
             try {
                 return db.withTransaction(settings, new TransactionCallback<Object>() {
                     @Override
-                    public Object execute(@NotNull TransactionContext tx) throws SQLException {
+                    public Object execute(@NotNull TransactionContext tx) {
                         try {
                             return method.invoke(target, args);
                         } catch (IllegalAccessException e) {

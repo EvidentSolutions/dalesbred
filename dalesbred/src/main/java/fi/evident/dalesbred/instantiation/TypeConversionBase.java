@@ -40,7 +40,6 @@ public abstract class TypeConversionBase<S,T> extends TypeConversion<S,T> {
         this.target = requireNonNull(target);
     }
 
-    @NotNull
     @Override
     public boolean canConvert(@NotNull Class<?> source, @NotNull Class<?> target) {
         return isAssignableByBoxing(this.source, source) && isAssignableByBoxing(target, this.target);

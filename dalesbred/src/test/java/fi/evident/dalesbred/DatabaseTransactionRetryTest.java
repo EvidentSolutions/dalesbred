@@ -51,7 +51,7 @@ public class DatabaseTransactionRetryTest {
         try {
             db.withTransaction(settings, new TransactionCallback<Object>() {
                 @Override
-                public Object execute(@NotNull TransactionContext tx) throws SQLException {
+                public Object execute(@NotNull TransactionContext tx) {
                     tries.incrementAndGet();
                     throw new TransactionSerializationException(new SQLException());
                 }

@@ -28,7 +28,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
 import java.util.Hashtable;
@@ -43,7 +42,7 @@ public class DatabaseJndiLookupTest {
 
     @Test
     public void createDatabaseByFetchingDataSourceFromJndi() throws NamingException {
-        new InitialContext().bind("java:comp/env/foo", TestDatabaseProvider.createDataSource());
+        MyInitialFactory.initialContext.bind("java:comp/env/foo", TestDatabaseProvider.createDataSource());
 
         Database db = Database.forJndiDataSource("java:comp/env/foo");
         assertThat(db.findUniqueInt("select 42"), is(42));

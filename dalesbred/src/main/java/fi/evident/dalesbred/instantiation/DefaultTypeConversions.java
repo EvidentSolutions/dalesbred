@@ -33,6 +33,8 @@ import java.net.URL;
 
 final class DefaultTypeConversions {
 
+    private DefaultTypeConversions() { }
+
     public static void register(@NotNull TypeConversionRegistry typeConversionRegistry) {
         typeConversionRegistry.registerConversionFromDatabaseType(new StringToUrlTypeConversion());
         typeConversionRegistry.registerConversionFromDatabaseType(new StringToUriTypeConversion());

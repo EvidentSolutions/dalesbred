@@ -49,7 +49,7 @@ public final class ReflectionResultSetProcessor<T> implements ResultSetProcessor
     }
 
     @Override
-    public List<T> process(ResultSet resultSet) throws SQLException {
+    public List<T> process(@NotNull ResultSet resultSet) throws SQLException {
         NamedTypeList types = ResultSetUtils.getTypes(resultSet.getMetaData());
         Instantiator<T> ctor = instantiatorRegistry.findInstantiator(cl, types);
 

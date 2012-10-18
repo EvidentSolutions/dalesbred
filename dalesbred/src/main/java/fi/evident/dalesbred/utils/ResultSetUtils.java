@@ -43,7 +43,7 @@ public final class ResultSetUtils {
         NamedTypeList.Builder result = NamedTypeList.builder(columns);
 
         for (int i = 0; i < columns; i++)
-            result.add(metaData.getColumnName(i+1), ResultSetUtils.getColumnType(metaData, i+1));
+            result.add(metaData.getColumnName(i+1), getColumnType(metaData, i + 1));
 
         return result.build();
     }

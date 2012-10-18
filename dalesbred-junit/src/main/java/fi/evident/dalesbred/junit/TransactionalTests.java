@@ -30,8 +30,6 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import java.sql.SQLException;
-
 import static fi.evident.dalesbred.junit.TransactionalTests.RollbackPolicy.*;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
@@ -82,16 +80,16 @@ public final class TransactionalTests implements TestRule {
                 Throwable throwable =
                     db.withTransaction(new TransactionCallback<Throwable>() {
                         @Override
-                        public Throwable execute(@NotNull TransactionContext tx) throws SQLException {
+                        public Throwable execute(@NotNull TransactionContext tx) {
                             try {
                                 base.evaluate();
                                 if (rollbackPolicy == ROLLBACK_ALWAYS)
                                     tx.setRollbackOnly();
                                 return null;
-                            } catch (Throwable throwable) {
+                            } catch (Throwable e) {
                                 if (rollbackPolicy != ROLLBACK_NEVER)
                                     tx.setRollbackOnly();
-                                return throwable;
+                                return e;
                             }
                         }
                     });

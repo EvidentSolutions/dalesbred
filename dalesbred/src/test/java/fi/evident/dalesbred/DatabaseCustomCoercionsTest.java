@@ -26,6 +26,8 @@ public class DatabaseCustomCoercionsTest {
         db.update("create table custom_save_conversions_test (email varchar)");
 
         db.update("insert into custom_save_conversions_test (email) values (?)", new EmailAddress("user", "example.org"));
+
+        assertEquals("user@example.org", db.findUnique(String.class, "select email from custom_save_conversions_test"));
     }
 
     private static class StringToEmailTypeConversion extends TypeConversionBase<String, EmailAddress> {

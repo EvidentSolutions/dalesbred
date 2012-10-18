@@ -83,8 +83,8 @@ public class ReflectionRowMapperTest {
     }
 
     public static class SingleConstructor {
-        int num;
-        String str;
+        final int num;
+        final String str;
 
         @Reflective
         public SingleConstructor(int num, String str) {

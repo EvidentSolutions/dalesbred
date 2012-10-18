@@ -20,8 +20,10 @@
  * THE SOFTWARE.
  */
 
-package fi.evident.dalesbred.instantiation;
+package fi.evident.dalesbred.support.joda;
 
+import fi.evident.dalesbred.instantiation.TypeConversionBase;
+import fi.evident.dalesbred.instantiation.TypeConversionRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -32,7 +34,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 
-final class JodaTypeConversions {
+public final class JodaTypeConversions {
 
     private JodaTypeConversions() { }
 

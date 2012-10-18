@@ -30,7 +30,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Provider;
 import java.lang.reflect.Method;
-import java.sql.SQLException;
 
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
@@ -56,7 +55,7 @@ public final class AopAllianceTransactionalMethodInterceptor implements MethodIn
             TransactionSettings settings = getTransactionSettings(invocation);
             return databaseProvider.get().withTransaction(settings, new TransactionCallback<Object>() {
                 @Override
-                public Object execute(@NotNull TransactionContext tx) throws SQLException {
+                public Object execute(@NotNull TransactionContext tx) {
                     try {
                         return invocation.proceed();
                     } catch (Throwable e) {

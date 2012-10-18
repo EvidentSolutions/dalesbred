@@ -38,7 +38,7 @@ public final class StringUtils {
      * Converts words <em>CamelCasedWords</em> to <em>underscore_separated_words.</em>
      */
     @NotNull
-    public static String upperCamelToLowerUnderscore(@NotNull String s) {
+    public static String upperCamelToLowerUnderscore(@NotNull CharSequence s) {
         StringBuilder sb = new StringBuilder(s.length() + 5);
 
         boolean candidateWordEnd = false;

@@ -28,8 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.sql.SQLException;
-
 import static fi.evident.dalesbred.Isolation.SERIALIZABLE;
 
 public class DatabaseTransactionIsolationTest {
@@ -52,12 +50,12 @@ public class DatabaseTransactionIsolationTest {
 
         db1.withTransaction(new TransactionCallback<Object>() {
             @Override
-            public Object execute(@NotNull TransactionContext tx) throws SQLException {
+            public Object execute(@NotNull TransactionContext tx) {
                 db1.findUniqueInt("select value from isolation_test");
 
                 db2.withTransaction(new TransactionCallback<Object>() {
                     @Override
-                    public Object execute(@NotNull TransactionContext tx) throws SQLException {
+                    public Object execute(@NotNull TransactionContext tx2) {
                         db2.findUniqueInt("select value from isolation_test");
 
                         db2.update("update isolation_test set value=2");

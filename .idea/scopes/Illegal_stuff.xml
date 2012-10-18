@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Illegal stuff" pattern="lib:com.sun..*||lib:java.applet..*||lib:java.awt..*||lib:java.beans..*||lib:java.rmi..*||lib:javax.imageio..*||lib:javax.print..*||lib:javax.rmi..*||lib:javax.sound..*||lib:javax.swing..*||lib:org.omg..*||lib:sunw..*" />
+</component>

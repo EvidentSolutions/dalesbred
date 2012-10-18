@@ -59,7 +59,7 @@ final class DatabaseTransaction {
         }
     }
 
-    <T> T execute(int retries, @NotNull final TransactionCallback<T> callback) {
+    <T> T execute(int retries, @NotNull TransactionCallback<T> callback) {
         int tries = 1;
         while (true) {
             try {

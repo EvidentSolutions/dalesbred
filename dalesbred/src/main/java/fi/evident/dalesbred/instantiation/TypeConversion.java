@@ -37,7 +37,6 @@ public abstract class TypeConversion<S,T> {
      * Returns true if this coercion knows hows to convert instances of {@code source} to
      * instances of {@code target}.
      */
-    @NotNull
     public abstract boolean canConvert(@NotNull Class<?> source, @NotNull Class<?> target);
 
     /**
@@ -68,7 +67,6 @@ public abstract class TypeConversion<S,T> {
 
     private static final class IdentityTypeConversion<T> extends TypeConversion<T, T> {
 
-        @NotNull
         @Override
         public boolean canConvert(@NotNull Class<?> source, @NotNull Class<?> target) {
             return true;

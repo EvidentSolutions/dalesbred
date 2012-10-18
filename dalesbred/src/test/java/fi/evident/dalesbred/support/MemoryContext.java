@@ -32,144 +32,144 @@ public final class MemoryContext implements Context {
     private final Map<String, Object> map = new HashMap<String, Object>();
 
     @Override
-    public Object lookup(Name name) throws NamingException {
+    public Object lookup(Name name) {
         return lookup(name.toString());
     }
 
     @Override
-    public Object lookup(String name) throws NamingException {
+    public Object lookup(String name) {
         return map.get(name);
     }
 
     @Override
-    public void bind(Name name, Object obj) throws NamingException {
+    public void bind(Name name, Object obj) {
         bind(name.toString(), obj);
     }
 
     @Override
-    public void bind(String name, Object obj) throws NamingException {
+    public void bind(String name, Object obj) {
         map.put(name, obj);
     }
 
     @Override
-    public void rebind(Name name, Object obj) throws NamingException {
+    public void rebind(Name name, Object obj) {
         rebind(name.toString(), obj);
     }
 
     @Override
-    public void rebind(String name, Object obj) throws NamingException {
+    public void rebind(String name, Object obj) {
         map.put(name, obj);
     }
 
     @Override
-    public void unbind(Name name) throws NamingException {
+    public void unbind(Name name) {
         unbind(name.toString());
     }
 
     @Override
-    public void unbind(String name) throws NamingException {
+    public void unbind(String name) {
         map.remove(name);
     }
 
     @Override
-    public void rename(Name oldName, Name newName) throws NamingException {
+    public void rename(Name oldName, Name newName) {
         rename(oldName.toString(), newName.toString());
     }
 
     @Override
-    public void rename(String oldName, String newName) throws NamingException {
+    public void rename(String oldName, String newName) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public NamingEnumeration<NameClassPair> list(Name name) throws NamingException {
+    public NamingEnumeration<NameClassPair> list(Name name) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public NamingEnumeration<NameClassPair> list(String name) throws NamingException {
+    public NamingEnumeration<NameClassPair> list(String name) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public NamingEnumeration<Binding> listBindings(Name name) throws NamingException {
+    public NamingEnumeration<Binding> listBindings(Name name) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public NamingEnumeration<Binding> listBindings(String name) throws NamingException {
+    public NamingEnumeration<Binding> listBindings(String name) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void destroySubcontext(Name name) throws NamingException {
+    public void destroySubcontext(Name name) {
     }
 
     @Override
-    public void destroySubcontext(String name) throws NamingException {
+    public void destroySubcontext(String name) {
     }
 
     @Override
-    public Context createSubcontext(Name name) throws NamingException {
+    public Context createSubcontext(Name name) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Context createSubcontext(String name) throws NamingException {
+    public Context createSubcontext(String name) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Object lookupLink(Name name) throws NamingException {
+    public Object lookupLink(Name name) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Object lookupLink(String name) throws NamingException {
+    public Object lookupLink(String name) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public NameParser getNameParser(Name name) throws NamingException {
+    public NameParser getNameParser(Name name) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public NameParser getNameParser(String name) throws NamingException {
+    public NameParser getNameParser(String name) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Name composeName(Name name, Name prefix) throws NamingException {
+    public Name composeName(Name name, Name prefix) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String composeName(String name, String prefix) throws NamingException {
+    public String composeName(String name, String prefix) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Object addToEnvironment(String propName, Object propVal) throws NamingException {
+    public Object addToEnvironment(String propName, Object propVal) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Object removeFromEnvironment(String propName) throws NamingException {
+    public Object removeFromEnvironment(String propName) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Hashtable<?, ?> getEnvironment() throws NamingException {
+    public Hashtable<?, ?> getEnvironment() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void close() throws NamingException {
+    public void close() {
     }
 
     @Override
-    public String getNameInNamespace() throws NamingException {
+    public String getNameInNamespace() {
         throw new UnsupportedOperationException();
     }
 }

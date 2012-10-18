@@ -40,7 +40,9 @@ import java.util.Properties;
 
 import static org.junit.Assume.assumeNotNull;
 
-public class TestDatabaseProvider {
+public final class TestDatabaseProvider {
+
+    private TestDatabaseProvider() { }
 
     public static Database createTestDatabase() {
         return new Database(createConnectionProvider());

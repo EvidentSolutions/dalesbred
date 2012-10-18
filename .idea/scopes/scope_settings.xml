@@ -1,5 +1,8 @@
 <component name="DependencyValidationManager">
   <state>
     <option name="SKIP_IMPORT_STATEMENTS" value="false" />
+    <deny_rule from_scope="All" to_scope="Illegal stuff" is_deny="true" />
+    <deny_rule from_scope="Support and tests" to_scope="Optional libraries" is_deny="false" />
+    <deny_rule from_scope="Dialects" to_scope="JDBC drivers" is_deny="false" />
   </state>
 </component>

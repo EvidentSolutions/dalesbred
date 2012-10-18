@@ -27,11 +27,9 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import java.sql.SQLException;
-
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
-final class TransactionalTestsRule implements TestRule {
+public final class TransactionalTestsRule implements TestRule {
 
     private final Database db;
 
@@ -47,13 +45,13 @@ final class TransactionalTestsRule implements TestRule {
                 Throwable throwable =
                     db.withTransaction(new TransactionCallback<Throwable>() {
                         @Override
-                        public Throwable execute(@NotNull TransactionContext tx) throws SQLException {
+                        public Throwable execute(@NotNull TransactionContext tx) {
                             try {
                                 base.evaluate();
                                 return null;
-                            } catch (Throwable throwable) {
+                            } catch (Throwable e) {
                                 tx.setRollbackOnly();
-                                return throwable;
+                                return e;
                             }
                         }
                     });

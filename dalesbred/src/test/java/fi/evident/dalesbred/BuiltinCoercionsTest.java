@@ -27,9 +27,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -44,7 +42,7 @@ public class BuiltinCoercionsTest {
 
 
     @Test
-    public void urlsAndUris() throws MalformedURLException, URISyntaxException {
+    public void urlsAndUris() throws Exception {
         db.update("drop table if exists url_and_uri");
         db.update("create table url_and_uri (url varchar(64), uri varchar(64))");
 

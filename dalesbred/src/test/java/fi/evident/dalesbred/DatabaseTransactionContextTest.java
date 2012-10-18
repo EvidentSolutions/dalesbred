@@ -25,8 +25,6 @@ package fi.evident.dalesbred;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-import java.sql.SQLException;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -41,7 +39,7 @@ public class DatabaseTransactionContextTest {
 
         db.withTransaction(new TransactionCallback<Object>() {
             @Override
-            public Object execute(@NotNull TransactionContext tx) throws SQLException {
+            public Object execute(@NotNull TransactionContext tx) {
                 db.update("update test_table set text='bar'");
                 tx.setRollbackOnly();
                 return null;

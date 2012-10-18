@@ -23,6 +23,7 @@
 package fi.evident.dalesbred.instantiation;
 
 import fi.evident.dalesbred.dialects.Dialect;
+import fi.evident.dalesbred.support.joda.JodaTypeConversions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

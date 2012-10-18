@@ -67,7 +67,7 @@ public final class Database {
 
     /** The isolation level to use for transactions that have not specified an explicit level. Null for default. */
     @Nullable
-    private Isolation defaultIsolation = null;
+    private Isolation defaultIsolation;
 
     /** Default propagation for new transactions */
     private boolean allowImplicitTransactions = true;
@@ -244,14 +244,19 @@ public final class Database {
     public <T> T executeQuery(@NotNull final ResultSetProcessor<T> processor, @NotNull final SqlQuery query) {
         return withCurrentTransaction(new TransactionCallback<T>() {
             @Override
-            public T execute(TransactionContext tx) throws SQLException {
+            public T execute(@NotNull TransactionContext tx) throws SQLException {
                 logQuery(query);
 
                 PreparedStatement ps = tx.getConnection().prepareStatement(query.sql);
                 try {
                     bindArguments(ps, query.args);
 
-                    return processResults(ps.executeQuery(), processor);
+                    ResultSet resultSet = ps.executeQuery();
+                    try {
+                        return processor.process(resultSet);
+                    } finally {
+                        resultSet.close();
+                    }
                 } finally {
                     ps.close();
                 }
@@ -426,8 +431,8 @@ public final class Database {
      * using the first value as the key and second value as the value for that key.
      */
     @NotNull
-    public <K,V> Map<K, V> findMap(@NotNull final Class<K> keyType,
-                                   @NotNull final Class<V> valueType,
+    public <K,V> Map<K, V> findMap(@NotNull Class<K> keyType,
+                                   @NotNull Class<V> valueType,
                                    @NotNull SqlQuery query) {
         return executeQuery(new MapResultSetProcessor<K, V>(keyType, valueType, instantiatorRegistry), query);
     }
@@ -466,7 +471,7 @@ public final class Database {
     public int update(@NotNull final SqlQuery query) {
         return withCurrentTransaction(new TransactionCallback<Integer>() {
             @Override
-            public Integer execute(TransactionContext tx) throws SQLException {
+            public Integer execute(@NotNull TransactionContext tx) throws SQLException {
                 logQuery(query);
 
                 PreparedStatement ps = tx.getConnection().prepareStatement(query.sql);
@@ -492,8 +497,7 @@ public final class Database {
             log.fine("executing query " + query);
     }
 
-    private void bindArguments(@NotNull PreparedStatement ps, @NotNull List<?> args) throws SQLException {
-        InstantiatorRegistry instantiatorRegistry = this.instantiatorRegistry;
+    private void bindArguments(@NotNull PreparedStatement ps, @NotNull Iterable<?> args) throws SQLException {
         int i = 1;
 
         for (Object arg : args)
@@ -519,14 +523,6 @@ public final class Database {
     @NotNull
     private <T> ResultSetProcessor<List<T>> resultProcessorForClass(@NotNull Class<T> cl) {
         return new ReflectionResultSetProcessor<T>(cl, instantiatorRegistry);
-    }
-
-    private static <T> T processResults(@NotNull ResultSet resultSet, @NotNull ResultSetProcessor<T> processor) throws SQLException {
-        try {
-            return processor.process(resultSet);
-        } finally {
-            resultSet.close();
-        }
     }
 
     /**

@@ -87,7 +87,7 @@ public abstract class Dialect {
         try {
             Connection connection = connectionProvider.get();
             try {
-                return Dialect.detect(connection);
+                return detect(connection);
             } finally {
                 connection.close();
             }

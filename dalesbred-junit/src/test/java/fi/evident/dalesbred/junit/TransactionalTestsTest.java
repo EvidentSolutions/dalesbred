@@ -29,9 +29,8 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.sql.SQLException;
-
 import static fi.evident.dalesbred.Propagation.MANDATORY;
+import static org.junit.Assert.assertEquals;
 
 public class TransactionalTestsTest {
 
@@ -43,11 +42,13 @@ public class TransactionalTestsTest {
     @Test
     public void checkThatThereIsAnExistingTransaction() {
         // The following code fails if we don't have an active transaction.
-        db.withTransaction(MANDATORY, new TransactionCallback<Object>() {
+        String result = db.withTransaction(MANDATORY, new TransactionCallback<String>() {
             @Override
-            public Object execute(@NotNull TransactionContext tx) throws SQLException {
-                return null;
+            public String  execute(@NotNull TransactionContext tx) {
+                return "ok";
             }
         });
+
+        assertEquals("ok", result);
     }
 }

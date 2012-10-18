@@ -43,7 +43,7 @@ public final class SystemPropertyRule implements TestRule {
     }
 
     @Override
-    public Statement apply(final Statement base, final Description description) {
+    public Statement apply(final Statement base, Description description) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
@@ -56,13 +56,13 @@ public final class SystemPropertyRule implements TestRule {
                     setProperty(property, old);
                 }
             }
-        };
-    }
 
-    private static void setProperty(String name, String value) {
-        if (value != null)
-            System.setProperty(name, value);
-        else
-            System.clearProperty(name);
+            private void setProperty(String name, String value) {
+                if (value != null)
+                    System.setProperty(name, value);
+                else
+                    System.clearProperty(name);
+            }
+        };
     }
 }

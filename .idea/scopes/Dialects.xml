@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Dialects" pattern="src[dalesbred]:fi.evident.dalesbred.dialects..*" />
+</component>

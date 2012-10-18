@@ -26,7 +26,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.sql.Types;
-import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -63,10 +62,10 @@ public class DatabaseResultTableTest {
     }
 
     private static List<Object> values(Object... values) {
-        return Arrays.asList(values);
+        return asList(values);
     }
 
     private static List<Class<?>> types(Class<?>... classes) {
-        return Arrays.asList(classes);
+        return asList(classes);
     }
 }
