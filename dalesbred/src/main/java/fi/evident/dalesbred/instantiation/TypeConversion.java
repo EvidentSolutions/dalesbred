@@ -24,20 +24,33 @@ package fi.evident.dalesbred.instantiation;
 
 import org.jetbrains.annotations.NotNull;
 
+import static fi.evident.dalesbred.utils.Primitives.isAssignableByBoxing;
+import static fi.evident.dalesbred.utils.Primitives.wrap;
+import static fi.evident.dalesbred.utils.Require.requireNonNull;
+
 /**
  * A conversion from S into T.
- *
- * @see TypeConversionBase
  */
 public abstract class TypeConversion<S,T> {
 
-    private static final IdentityTypeConversion IDENTITY = new IdentityTypeConversion();
+    private final Class<S> source;
+    private final Class<T> target;
 
-    /**
-     * Returns true if this coercion knows hows to convert instances of {@code source} to
-     * instances of {@code target}.
-     */
-    public abstract boolean canConvert(@NotNull Class<?> source, @NotNull Class<?> target);
+    @SuppressWarnings("unchecked")
+    public TypeConversion(@NotNull Class<S> source, @NotNull Class<T> target) {
+        this.source = (Class) wrap(requireNonNull(source));
+        this.target = (Class) wrap(requireNonNull(target));
+    }
+
+    @NotNull
+    public Class<S> getSource() {
+        return source;
+    }
+
+    @NotNull
+    public Class<T> getTarget() {
+        return target;
+    }
 
     /**
      * Converts value of type {@code S} to value of type {@code T}.
@@ -48,9 +61,21 @@ public abstract class TypeConversion<S,T> {
     /**
      * Returns identity-coercion, ie. a coercion that does nothing.
      */
+    @NotNull
     @SuppressWarnings("unchecked")
-    public static <S> TypeConversion<S,S> identity() {
-        return IDENTITY;
+    public static <T> TypeConversion<T,T> identity(@NotNull Class<T> type) {
+        return new TypeConversion<T, T>(type, type) {
+            @NotNull
+            @Override
+            public T convert(@NotNull T value) {
+                return value;
+            }
+
+            @Override
+            public String toString() {
+                return "IdentityConversion";
+            }
+        };
     }
 
     /**
@@ -65,17 +90,17 @@ public abstract class TypeConversion<S,T> {
             throw new RuntimeException("can't cast " + this + " to coercion from " + source.getName() + " to " + target.getName());
     }
 
-    private static final class IdentityTypeConversion<T> extends TypeConversion<T, T> {
-
-        @Override
-        public boolean canConvert(@NotNull Class<?> source, @NotNull Class<?> target) {
-            return true;
-        }
-
-        @NotNull
-        @Override
-        public T convert(@NotNull T value) {
-            return value;
-        }
+    @Override
+    public String toString() {
+        return getClass().getName() + " [" + source.getName() + " -> " + target.getName() + "]";
     }
+
+    /**
+     * Returns true if this coercion knows hows to convert instances of {@code source} to
+     * instances of {@code target}.
+     */
+    private boolean canConvert(@NotNull Class<?> source, @NotNull Class<?> target) {
+        return isAssignableByBoxing(this.source, source) && isAssignableByBoxing(target, this.target);
+    }
+
 }

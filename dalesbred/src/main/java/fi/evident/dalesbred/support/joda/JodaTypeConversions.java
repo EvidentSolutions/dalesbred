@@ -22,7 +22,7 @@
 
 package fi.evident.dalesbred.support.joda;
 
-import fi.evident.dalesbred.instantiation.TypeConversionBase;
+import fi.evident.dalesbred.instantiation.TypeConversion;
 import fi.evident.dalesbred.instantiation.TypeConversionRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
@@ -64,7 +64,7 @@ public final class JodaTypeConversions {
         typeConversionRegistry.registerConversionToDatabaseType(new LocalTimeToSqlTimeTypeConversion());
     }
 
-    private static class DateTimeFromSqlTimestampTypeConversion extends TypeConversionBase<Timestamp, DateTime> {
+    private static class DateTimeFromSqlTimestampTypeConversion extends TypeConversion<Timestamp, DateTime> {
         DateTimeFromSqlTimestampTypeConversion() {
             super(Timestamp.class, DateTime.class);
         }
@@ -76,7 +76,7 @@ public final class JodaTypeConversions {
         }
     }
 
-    private static class DateTimeToSqlTimestampTypeConversion extends TypeConversionBase<DateTime,Timestamp> {
+    private static class DateTimeToSqlTimestampTypeConversion extends TypeConversion<DateTime,Timestamp> {
         DateTimeToSqlTimestampTypeConversion() {
             super(DateTime.class, Timestamp.class);
         }
@@ -88,7 +88,7 @@ public final class JodaTypeConversions {
         }
     }
 
-    private static class LocalDateFromSqlDateTypeConversion extends TypeConversionBase<Date, LocalDate> {
+    private static class LocalDateFromSqlDateTypeConversion extends TypeConversion<Date, LocalDate> {
         LocalDateFromSqlDateTypeConversion() {
             super(Date.class, LocalDate.class);
         }
@@ -101,7 +101,7 @@ public final class JodaTypeConversions {
     }
 
 
-    private static class LocalDateToSqlDateTypeConversion extends TypeConversionBase<LocalDate, Date> {
+    private static class LocalDateToSqlDateTypeConversion extends TypeConversion<LocalDate, Date> {
         LocalDateToSqlDateTypeConversion() {
             super(LocalDate.class, Date.class);
         }
@@ -113,7 +113,7 @@ public final class JodaTypeConversions {
         }
     }
 
-    private static class LocalTimeFromSqlTimeTypeConversion extends TypeConversionBase<Time, LocalTime> {
+    private static class LocalTimeFromSqlTimeTypeConversion extends TypeConversion<Time, LocalTime> {
         LocalTimeFromSqlTimeTypeConversion() {
             super(Time.class, LocalTime.class);
         }
@@ -125,7 +125,7 @@ public final class JodaTypeConversions {
         }
     }
 
-    private static class LocalTimeToSqlTimeTypeConversion extends TypeConversionBase<LocalTime, Time> {
+    private static class LocalTimeToSqlTimeTypeConversion extends TypeConversion<LocalTime, Time> {
         LocalTimeToSqlTimeTypeConversion() {
             super(LocalTime.class, Time.class);
         }

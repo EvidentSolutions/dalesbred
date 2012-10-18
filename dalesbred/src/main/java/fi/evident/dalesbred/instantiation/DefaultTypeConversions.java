@@ -51,7 +51,7 @@ final class DefaultTypeConversions {
         typeConversionRegistry.registerConversionToDatabaseType(new ToStringTypeConversion<URI>(URI.class));
     }
 
-    private static class NumberToShortTypeConversion extends TypeConversionBase<Number, Short> {
+    private static class NumberToShortTypeConversion extends TypeConversion<Number, Short> {
 
         NumberToShortTypeConversion() {
             super(Number.class, Short.class);
@@ -64,7 +64,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    private static class NumberToIntTypeConversion extends TypeConversionBase<Number, Integer> {
+    private static class NumberToIntTypeConversion extends TypeConversion<Number, Integer> {
 
         NumberToIntTypeConversion() {
             super(Number.class, Integer.class);
@@ -77,7 +77,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    private static class NumberToLongTypeConversion extends TypeConversionBase<Number, Long> {
+    private static class NumberToLongTypeConversion extends TypeConversion<Number, Long> {
 
         NumberToLongTypeConversion() {
             super(Number.class, Long.class);
@@ -90,7 +90,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    private static class NumberToFloatTypeConversion extends TypeConversionBase<Number, Float> {
+    private static class NumberToFloatTypeConversion extends TypeConversion<Number, Float> {
 
         NumberToFloatTypeConversion() {
             super(Number.class, Float.class);
@@ -103,7 +103,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    private static class NumberToDoubleTypeConversion extends TypeConversionBase<Number, Double> {
+    private static class NumberToDoubleTypeConversion extends TypeConversion<Number, Double> {
 
         NumberToDoubleTypeConversion() {
             super(Number.class, Double.class);
@@ -116,7 +116,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    private static class NumberToBigIntegerTypeConversion extends TypeConversionBase<Number, BigInteger> {
+    private static class NumberToBigIntegerTypeConversion extends TypeConversion<Number, BigInteger> {
 
         NumberToBigIntegerTypeConversion() {
             super(Number.class, BigInteger.class);
@@ -133,7 +133,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    private static class NumberToBigDecimalTypeConversion extends TypeConversionBase<Number, BigDecimal> {
+    private static class NumberToBigDecimalTypeConversion extends TypeConversion<Number, BigDecimal> {
 
         NumberToBigDecimalTypeConversion() {
             super(Number.class, BigDecimal.class);
@@ -150,7 +150,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    private static class BigIntegerToBigDecimalTypeConversion extends TypeConversionBase<BigInteger, BigDecimal> {
+    private static class BigIntegerToBigDecimalTypeConversion extends TypeConversion<BigInteger, BigDecimal> {
 
         BigIntegerToBigDecimalTypeConversion() {
             super(BigInteger.class, BigDecimal.class);
@@ -163,7 +163,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    private static class StringToUrlTypeConversion extends TypeConversionBase<String,URL> {
+    private static class StringToUrlTypeConversion extends TypeConversion<String,URL> {
 
         StringToUrlTypeConversion() {
             super(String.class, URL.class);
@@ -180,7 +180,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    private static class ToStringTypeConversion<S> extends TypeConversionBase<S,String> {
+    private static class ToStringTypeConversion<S> extends TypeConversion<S,String> {
 
         ToStringTypeConversion(Class<S> source) {
             super(source, String.class);
@@ -193,7 +193,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    private static class StringToUriTypeConversion extends TypeConversionBase<String,URI> {
+    private static class StringToUriTypeConversion extends TypeConversion<String,URI> {
 
         StringToUriTypeConversion() {
             super(String.class, URI.class);

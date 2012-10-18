@@ -70,7 +70,7 @@ public class ConversionMapTest {
     }
 
     private static <S, T> TypeConversion<S,T> dummyConversion(@NotNull Class<S> source, @NotNull Class<T> target) {
-        return new TypeConversionBase<S, T>(source, target) {
+        return new TypeConversion<S, T>(source, target) {
             @NotNull
             @Override
             public T convert(@NotNull S value) {

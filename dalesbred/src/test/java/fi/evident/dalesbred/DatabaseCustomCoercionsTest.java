@@ -1,6 +1,6 @@
 package fi.evident.dalesbred;
 
-import fi.evident.dalesbred.instantiation.TypeConversionBase;
+import fi.evident.dalesbred.instantiation.TypeConversion;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
@@ -30,7 +30,7 @@ public class DatabaseCustomCoercionsTest {
         assertEquals("user@example.org", db.findUnique(String.class, "select email from custom_save_conversions_test"));
     }
 
-    private static class StringToEmailTypeConversion extends TypeConversionBase<String, EmailAddress> {
+    private static class StringToEmailTypeConversion extends TypeConversion<String, EmailAddress> {
         public StringToEmailTypeConversion() {
             super(String.class, EmailAddress.class);
         }
@@ -46,7 +46,7 @@ public class DatabaseCustomCoercionsTest {
         }
     }
 
-    private static class EmailToStringTypeConversion extends TypeConversionBase<EmailAddress, String> {
+    private static class EmailToStringTypeConversion extends TypeConversion<EmailAddress, String> {
         public EmailToStringTypeConversion() {
             super(EmailAddress.class, String.class);
         }

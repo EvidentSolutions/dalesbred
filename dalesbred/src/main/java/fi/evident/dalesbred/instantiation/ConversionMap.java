@@ -26,23 +26,38 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import static fi.evident.dalesbred.utils.Require.requireNonNull;
+import static fi.evident.dalesbred.utils.Primitives.isAssignableByBoxing;
+import static fi.evident.dalesbred.utils.Primitives.wrap;
 
 final class ConversionMap {
 
-    private final List<TypeConversion<?,?>> conversions = new ArrayList<TypeConversion<?,?>>();
+    private final Map<Class<?>, List<TypeConversion<?,?>>> mappings = new HashMap<Class<?>, List<TypeConversion<?, ?>>>();
 
     void register(@NotNull TypeConversion<?, ?> coercion) {
-        conversions.add(requireNonNull(coercion));
+        Class<?> source = wrap(coercion.getSource());
+
+        List<TypeConversion<?,?>> items = mappings.get(source);
+        if (items == null) {
+            items = new ArrayList<TypeConversion<?, ?>>();
+            mappings.put(source, items);
+        }
+
+        items.add(coercion);
     }
 
     @Nullable
     <S,T> TypeConversion<S,T> findConversion(@NotNull Class<S> source, @NotNull Class<T> target) {
-        for (TypeConversion<?,?> coercion : conversions)
-            if (coercion.canConvert(source, target))
-                return coercion.cast(source, target);
+        for (Class<?> cl = wrap(source); cl != null; cl = cl.getSuperclass()) {
+            List<TypeConversion<?,?>> candidates = mappings.get(cl);
+            if (candidates != null)
+                for (TypeConversion<?,?> coercion : candidates)
+                    if (isAssignableByBoxing(target, coercion.getTarget()))
+                        return coercion.cast(source, target);
+        }
 
         return null;
     }

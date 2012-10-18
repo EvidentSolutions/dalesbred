@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import static fi.evident.dalesbred.utils.Primitives.wrap;
+import static fi.evident.dalesbred.utils.Primitives.isAssignableByBoxing;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 import static java.lang.reflect.Modifier.isPublic;
 
@@ -153,8 +153,8 @@ public final class InstantiatorRegistry {
      */
     @Nullable
     private <S,T> TypeConversion<? super S, ? extends T> findCoercionFromDbValue(@NotNull Class<S> source, @NotNull Class<T> target) {
-        if (wrap(target).isAssignableFrom(wrap(source)))
-            return TypeConversion.identity().cast(source, target);
+        if (isAssignableByBoxing(target, source))
+            return TypeConversion.identity(target).cast(source, target);
 
         TypeConversion<?,?> coercion = typeConversionRegistry.findCoercionFromDbValue(source, target);
         if (coercion != null)
