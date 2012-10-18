@@ -25,31 +25,25 @@ package fi.evident.dalesbred.instantiation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * The used implementation of TypeConversionRegistry.
- */
-final class DefaultTypeConversionRegistry implements TypeConversionRegistry {
+import java.util.ArrayList;
+import java.util.List;
 
-    private final ConversionMap loadConversions = new ConversionMap();
-    private final ConversionMap storeConversions = new ConversionMap();
+import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
-    @Nullable
-    public <S,T> TypeConversion<S,T> findCoercionFromDbValue(@NotNull Class<S> source, @NotNull Class<T> target) {
-        return loadConversions.findConversion(source, target);
+final class ConversionMap {
+
+    private final List<TypeConversion<?,?>> conversions = new ArrayList<TypeConversion<?,?>>();
+
+    void register(@NotNull TypeConversion<?, ?> coercion) {
+        conversions.add(requireNonNull(coercion));
     }
 
     @Nullable
-    public <T> TypeConversion<T,Object> findCoercionToDb(@NotNull Class<T> type) {
-        return storeConversions.findConversion(type, Object.class);
-    }
+    <S,T> TypeConversion<S,T> findConversion(@NotNull Class<S> source, @NotNull Class<T> target) {
+        for (TypeConversion<?,?> coercion : conversions)
+            if (coercion.canConvert(source, target))
+                return coercion.cast(source, target);
 
-    @Override
-    public void registerConversionFromDatabaseType(@NotNull TypeConversion<?, ?> conversion) {
-        loadConversions.register(conversion);
-    }
-
-    @Override
-    public void registerConversionToDatabaseType(@NotNull TypeConversion<?, ?> conversion) {
-        storeConversions.register(conversion);
+        return null;
     }
 }
