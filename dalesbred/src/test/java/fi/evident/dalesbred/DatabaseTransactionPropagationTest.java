@@ -22,7 +22,10 @@
 
 package fi.evident.dalesbred;
 
+import fi.evident.dalesbred.testutils.LoggingController;
+import fi.evident.dalesbred.testutils.SuppressLogging;
 import org.jetbrains.annotations.NotNull;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.sql.SQLException;
@@ -36,6 +39,9 @@ import static org.junit.Assert.fail;
 public class DatabaseTransactionPropagationTest {
 
     private final Database db = TestDatabaseProvider.createTestDatabase();
+
+    @Rule
+    public final LoggingController loggingController = new LoggingController();
 
     @Test(expected = DatabaseException.class)
     public void mandatoryPropagationWithoutExistingTransactionThrowsException() {
@@ -63,6 +69,7 @@ public class DatabaseTransactionPropagationTest {
     }
 
     @Test
+    @SuppressLogging
     public void nestedTransactions() {
         db.update("drop table if exists test_table");
         db.update("create table test_table (text varchar)");

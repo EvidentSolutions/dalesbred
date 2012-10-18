@@ -22,7 +22,10 @@
 
 package fi.evident.dalesbred;
 
+import fi.evident.dalesbred.testutils.LoggingController;
+import fi.evident.dalesbred.testutils.SuppressLogging;
 import org.jetbrains.annotations.NotNull;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.sql.SQLException;
@@ -34,7 +37,11 @@ public class DatabaseTransactionRetryTest {
 
     private final Database db = TestDatabaseProvider.createTestDatabase();
 
+    @Rule
+    public final LoggingController loggingController = new LoggingController();
+
     @Test
+    @SuppressLogging
     public void maxRetries() {
         final AtomicInteger tries = new AtomicInteger(0);
 

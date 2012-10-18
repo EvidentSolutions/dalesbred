@@ -22,7 +22,10 @@
 
 package fi.evident.dalesbred;
 
+import fi.evident.dalesbred.testutils.LoggingController;
+import fi.evident.dalesbred.testutils.SuppressLogging;
 import org.jetbrains.annotations.NotNull;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.sql.SQLException;
@@ -34,7 +37,11 @@ public class DatabaseTransactionIsolationTest {
     private final Database db1 = TestDatabaseProvider.createTestDatabase();
     private final Database db2 = TestDatabaseProvider.createTestDatabase();
 
+    @Rule
+    public final LoggingController loggingController = new LoggingController();
+
     @Test(expected = TransactionSerializationException.class)
+    @SuppressLogging
     public void concurrentUpdatesInSerializableTransactionThrowTransactionSerializationException() {
         db1.setDefaultIsolation(SERIALIZABLE);
         db2.setDefaultIsolation(SERIALIZABLE);

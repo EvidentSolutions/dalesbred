@@ -22,6 +22,9 @@
 
 package fi.evident.dalesbred;
 
+import fi.evident.dalesbred.testutils.LoggingController;
+import fi.evident.dalesbred.testutils.SuppressLogging;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -33,6 +36,9 @@ import static org.junit.Assert.fail;
 public class DatabaseTransactionalProxyTest {
 
     private final Database db = TestDatabaseProvider.createTestDatabase();
+
+    @Rule
+    public final LoggingController loggingController = new LoggingController();
 
     @Test
     public void serviceWithTransactionalMethods() {
@@ -107,6 +113,7 @@ public class DatabaseTransactionalProxyTest {
     }
 
     @Test
+    @SuppressLogging
     public void uncheckedExceptionsAreThrownThroughUnchanged() {
         ServiceWithTransactionalMethods service = db.createTransactionalProxyFor(ServiceWithTransactionalMethods.class, new ServiceWithTransactionalMethods() {
             @Override
@@ -134,6 +141,7 @@ public class DatabaseTransactionalProxyTest {
     }
 
     @Test
+    @SuppressLogging
     public void checkedExceptionsAreThrownThroughUnchanged() {
         ServiceWithCheckedException service = db.createTransactionalProxyFor(ServiceWithCheckedException.class, new ServiceWithCheckedException() {
             @Override
