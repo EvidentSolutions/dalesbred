@@ -20,38 +20,34 @@
  * THE SOFTWARE.
  */
 
-package fi.evident.dalesbred.connection;
+package fi.evident.dalesbred.support.guice;
 
-import fi.evident.dalesbred.DatabaseSQLException;
-import org.jetbrains.annotations.NotNull;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import fi.evident.dalesbred.Database;
+import fi.evident.dalesbred.TestDatabaseProvider;
+import org.junit.Test;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
 
-import static fi.evident.dalesbred.utils.Require.requireNonNull;
+import static org.junit.Assert.assertEquals;
 
-/**
- * A provider for connection that delegates the requests to given {@link DataSource}.
- */
-public final class DataSourceConnectionProvider implements Provider<Connection> {
+public class DataSourceDatabaseModuleTest {
 
-    private final DataSource dataSource;
+    @Test
+    public void testCreation() {
+        Injector injector = Guice.createInjector(new DataSourceDatabaseModule(), new MyDataSourceModule());
 
-    @Inject
-    public DataSourceConnectionProvider(@NotNull DataSource dataSource) {
-        this.dataSource = requireNonNull(dataSource);
+        Database db = injector.getInstance(Database.class);
+
+        assertEquals(42, db.findUniqueInt("select 42"));
     }
 
-    @Override
-    @NotNull
-    public Connection get() {
-        try {
-            return requireNonNull(dataSource.getConnection(), "null connection from DataSource");
-        } catch (SQLException e) {
-            throw new DatabaseSQLException(e);
+    private static class MyDataSourceModule extends AbstractModule {
+        @Override
+        protected void configure() {
+            bind(DataSource.class).toInstance(TestDatabaseProvider.createDataSource());
         }
     }
 }

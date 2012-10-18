@@ -26,6 +26,8 @@ import fi.evident.dalesbred.DatabaseSQLException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -47,7 +49,10 @@ public final class DriverManagerConnectionProvider implements Provider<Connectio
         this(url, null, null);
     }
 
-    public DriverManagerConnectionProvider(@NotNull String url, @Nullable String user, @Nullable String password) {
+    @Inject
+    public DriverManagerConnectionProvider(@Named("jdbc.url") @NotNull String url,
+                                           @Named("jdbc.login") @Nullable String user,
+                                           @Named("jdbc.password") @Nullable String password) {
         this.url = requireNonNull(url);
         this.user = user;
         this.password = password;

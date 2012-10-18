@@ -22,12 +22,19 @@
 
 package fi.evident.dalesbred;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Module;
+import com.google.inject.name.Names;
 import fi.evident.dalesbred.connection.DriverManagerConnectionProvider;
 import fi.evident.dalesbred.dialects.Dialect;
 
 import javax.inject.Provider;
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.util.Properties;
 
@@ -52,6 +59,21 @@ public class TestDatabaseProvider {
         return new DriverManagerConnectionProvider(url, login, password);
     }
 
+    public static DataSource createDataSource() {
+        return createDataSource(createConnectionProvider());
+    }
+
+    public static Module propertiesModule() {
+        return new AbstractModule() {
+            @Override
+            protected void configure() {
+                Properties props = loadConnectionProperties("connection.properties");
+
+                Names.bindProperties(binder(), props);
+            }
+        };
+    }
+
     private static Properties loadConnectionProperties(String propertiesName) {
         try {
             InputStream in = TransactionCallback.class.getClassLoader().getResourceAsStream(propertiesName);
@@ -66,5 +88,23 @@ public class TestDatabaseProvider {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    /**
+     * Creates a simple DataSource that can only return connections from the provider. This is implemented
+     * reflectively because new versions of JDK have added new methods to DataSource and we want to be able
+     * to run the test on all versions.
+     */
+    private static DataSource createDataSource(final Provider<Connection> connection) {
+        return (DataSource) Proxy.newProxyInstance(DatabaseJndiLookupTest.class.getClassLoader(), new Class<?>[]{DataSource.class}, new InvocationHandler() {
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                if (method.getName().equals("getConnection"))
+                    return connection.get();
+                else
+                    throw new UnsupportedOperationException("unsupported operation: " + method);
+            }
+        });
     }
 }

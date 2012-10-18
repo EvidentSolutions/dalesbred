@@ -20,38 +20,24 @@
  * THE SOFTWARE.
  */
 
-package fi.evident.dalesbred.connection;
+package fi.evident.dalesbred.support.guice;
 
-import fi.evident.dalesbred.DatabaseSQLException;
-import org.jetbrains.annotations.NotNull;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import fi.evident.dalesbred.Database;
+import fi.evident.dalesbred.TestDatabaseProvider;
+import org.junit.Test;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
+import static org.junit.Assert.assertEquals;
 
-import static fi.evident.dalesbred.utils.Require.requireNonNull;
+public class DriverManagerDatabaseModuleTest {
 
-/**
- * A provider for connection that delegates the requests to given {@link DataSource}.
- */
-public final class DataSourceConnectionProvider implements Provider<Connection> {
+    @Test
+    public void testCreation() {
+        Injector injector = Guice.createInjector(new DriverManagerDatabaseModule(), TestDatabaseProvider.propertiesModule());
 
-    private final DataSource dataSource;
+        Database db = injector.getInstance(Database.class);
 
-    @Inject
-    public DataSourceConnectionProvider(@NotNull DataSource dataSource) {
-        this.dataSource = requireNonNull(dataSource);
-    }
-
-    @Override
-    @NotNull
-    public Connection get() {
-        try {
-            return requireNonNull(dataSource.getConnection(), "null connection from DataSource");
-        } catch (SQLException e) {
-            throw new DatabaseSQLException(e);
-        }
+        assertEquals(42, db.findUniqueInt("select 42"));
     }
 }

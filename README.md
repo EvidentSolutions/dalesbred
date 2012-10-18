@@ -136,6 +136,20 @@ a simple support for building transactional proxies for services:
     MyService myService = db.createTransactionalProxyFor(MyService.class, new MyRealService());
     service.frobnicate(); // this call will have a transaction wrapped around it
 
+If you are using Guice, Dalesbred can integrate with its interceptor support, see section below.
+
+Guice-integration
+-----------------
+
+Dalesbred has support for integration with Guice 3. You can just pass in DataSourceDatabaseModule
+or DriverManagerConnectionModule when constructing your injector and you'll get automatic support
+for annotation based transactions and can @Inject your database wherever you need it.
+
+    Injector injector = Guice.createInjector(new DataSourceDatabaseModule(), new MyOtherModule());
+
+See the Javadoc of the modules to see what how they are configured.
+
+
 SqlQuery vs. query parameters
 -----------------------------
 
