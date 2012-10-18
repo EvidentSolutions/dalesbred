@@ -34,10 +34,17 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 
+/**
+ * Conversions for Joda Time. These are automatically detected if Joda is found on
+ * classpath, so the user doesn't need to do anything to get Joda-support.
+ */
 public final class JodaTypeConversions {
 
     private JodaTypeConversions() { }
 
+    /**
+     * Returns true if Joda is found on classpath.
+     */
     public static boolean hasJoda() {
         try {
             Class.forName("org.joda.time.LocalDate");
