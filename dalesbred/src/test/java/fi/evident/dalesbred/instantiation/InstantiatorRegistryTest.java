@@ -24,6 +24,7 @@ package fi.evident.dalesbred.instantiation;
 
 import fi.evident.dalesbred.Reflective;
 import fi.evident.dalesbred.dialects.DefaultDialect;
+import fi.evident.dalesbred.instantiation.test.InaccessibleClassRef;
 import org.junit.Test;
 
 import static fi.evident.dalesbred.utils.Primitives.isAssignableByBoxing;
@@ -78,7 +79,17 @@ public class InstantiatorRegistryTest {
         assertThat(ctor.instantiate(new Object[] { 3 }).calledConstructor, is(3));
     }
 
-    static class TestClass {
+    @Test(expected = InstantiationException.class)
+    public void findingInstantiatorForInaccessibleClassThrowsNiceException() {
+        findInstantiator(InaccessibleClassRef.INACCESSIBLE_CLASS, int.class).instantiate(new Object[]{3});
+    }
+
+    @Test(expected = InstantiationException.class)
+    public void findingInstantiatorForInaccessibleConstructorThrowsNiceException() {
+        findInstantiator(InaccessibleConstructor.class, int.class).instantiate(new Object[] { 3 });
+    }
+
+    public static class TestClass {
         private final int calledConstructor;
 
         @Reflective
@@ -101,5 +112,11 @@ public class InstantiatorRegistryTest {
 
     private static void assertAssignable(Class<?> target, Class<?> source) {
         assertThat(isAssignableByBoxing(target, source), is(true));
+    }
+
+    public static class InaccessibleConstructor {
+
+        @Reflective
+        InaccessibleConstructor(int x) { }
     }
 }

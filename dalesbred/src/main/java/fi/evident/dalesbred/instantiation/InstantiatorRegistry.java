@@ -82,6 +82,9 @@ public final class InstantiatorRegistry {
                 return new CoercionInstantiator<T>(coercion);
         }
 
+        if (!isPublic(cl.getModifiers()))
+            throw new InstantiationException(cl + " can't be instantiated reflectively because it is not public");
+
         // If there was no coercion, we try to find a matching constructor, applying coercions to arguments.
         for (Constructor<T> constructor : constructorsFor(cl)) {
             Instantiator<T> instantiator = instantiatorFrom(constructor, types);
@@ -89,7 +92,7 @@ public final class InstantiatorRegistry {
                 return instantiator;
         }
 
-        throw new InstantiationException(cl + " does not have instantiator matching types " + types);
+        throw new InstantiationException(cl + " does not have an accessible constructor matching types " + types);
     }
 
     /**
@@ -113,7 +116,7 @@ public final class InstantiatorRegistry {
      */
     @Nullable
     private List<TypeConversion<Object,?>> resolveCoercions(@NotNull NamedTypeList sourceTypes,
-                                                      @NotNull Class<?>[] targetTypes) {
+                                                            @NotNull Class<?>[] targetTypes) {
         if (targetTypes.length != sourceTypes.size())
             return null;
 
