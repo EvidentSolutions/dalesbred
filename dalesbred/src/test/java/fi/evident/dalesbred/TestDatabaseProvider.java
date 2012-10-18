@@ -53,7 +53,7 @@ public final class TestDatabaseProvider {
     }
 
     public static Provider<Connection> createConnectionProvider() {
-        Properties props = loadConnectionProperties("connection.properties");
+        Properties props = loadProperties();
         String url = props.getProperty("jdbc.url");
         String login = props.getProperty("jdbc.login");
         String password = props.getProperty("jdbc.password");
@@ -69,16 +69,16 @@ public final class TestDatabaseProvider {
         return new AbstractModule() {
             @Override
             protected void configure() {
-                Properties props = loadConnectionProperties("connection.properties");
+                Properties props = loadProperties();
 
                 Names.bindProperties(binder(), props);
             }
         };
     }
 
-    private static Properties loadConnectionProperties(String propertiesName) {
+    public static Properties loadProperties() {
         try {
-            InputStream in = TransactionCallback.class.getClassLoader().getResourceAsStream(propertiesName);
+            InputStream in = TransactionCallback.class.getClassLoader().getResourceAsStream("connection.properties");
             assumeNotNull(in);
             try {
                 Properties properties = new Properties();
