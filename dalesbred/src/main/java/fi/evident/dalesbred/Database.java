@@ -93,11 +93,15 @@ public final class Database {
     public static Database forJndiDataSource(@NotNull String jndiName) {
         try {
             InitialContext ctx = new InitialContext();
-            DataSource dataSource = (DataSource) ctx.lookup(jndiName);
-            if (dataSource != null)
-                return forDataSource(dataSource);
-            else
-                throw new DatabaseException("Could not find DataSource '" + jndiName + "'");
+            try {
+                DataSource dataSource = (DataSource) ctx.lookup(jndiName);
+                if (dataSource != null)
+                    return forDataSource(dataSource);
+                else
+                    throw new DatabaseException("Could not find DataSource '" + jndiName + "'");
+            } finally {
+                ctx.close();
+            }
         } catch (NamingException e) {
             throw new DatabaseException("Error when looking up DataSource '" + jndiName + "': " + e, e);
         }
