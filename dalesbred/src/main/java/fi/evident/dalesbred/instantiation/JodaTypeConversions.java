@@ -32,9 +32,9 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 
-final class JodaCoercions {
+final class JodaTypeConversions {
 
-    private JodaCoercions() { }
+    private JodaTypeConversions() { }
 
     public static boolean hasJoda() {
         try {
@@ -45,85 +45,85 @@ final class JodaCoercions {
         }
     }
 
-    public static void register(@NotNull Coercions coercions) {
-        coercions.registerLoadConversion(new DateTimeFromSqlTimestampCoercion());
-        coercions.registerLoadConversion(new LocalDateFromSqlDateCoercion());
-        coercions.registerLoadConversion(new LocalTimeFromSqlTimeCoercion());
+    public static void register(@NotNull TypeConversionRegistry typeConversionRegistry) {
+        typeConversionRegistry.registerLoadConversion(new DateTimeFromSqlTimestampTypeConversion());
+        typeConversionRegistry.registerLoadConversion(new LocalDateFromSqlDateTypeConversion());
+        typeConversionRegistry.registerLoadConversion(new LocalTimeFromSqlTimeTypeConversion());
 
-        coercions.registerStoreConversion(new DateTimeToSqlTimestampCoercion());
-        coercions.registerStoreConversion(new LocalDateToSqlDateCoercion());
-        coercions.registerStoreConversion(new LocalTimeToSqlTimeCoercion());
+        typeConversionRegistry.registerStoreConversion(new DateTimeToSqlTimestampTypeConversion());
+        typeConversionRegistry.registerStoreConversion(new LocalDateToSqlDateTypeConversion());
+        typeConversionRegistry.registerStoreConversion(new LocalTimeToSqlTimeTypeConversion());
     }
 
-    private static class DateTimeFromSqlTimestampCoercion extends CoercionBase<Timestamp, DateTime> {
-        DateTimeFromSqlTimestampCoercion() {
+    private static class DateTimeFromSqlTimestampTypeConversion extends TypeConversionBase<Timestamp, DateTime> {
+        DateTimeFromSqlTimestampTypeConversion() {
             super(Timestamp.class, DateTime.class);
         }
 
         @NotNull
         @Override
-        public DateTime coerce(@NotNull Timestamp value) {
+        public DateTime convert(@NotNull Timestamp value) {
             return new DateTime(value);
         }
     }
 
-    private static class DateTimeToSqlTimestampCoercion extends CoercionBase<DateTime,Timestamp> {
-        DateTimeToSqlTimestampCoercion() {
+    private static class DateTimeToSqlTimestampTypeConversion extends TypeConversionBase<DateTime,Timestamp> {
+        DateTimeToSqlTimestampTypeConversion() {
             super(DateTime.class, Timestamp.class);
         }
 
         @NotNull
         @Override
-        public Timestamp coerce(@NotNull DateTime value) {
+        public Timestamp convert(@NotNull DateTime value) {
             return new Timestamp(value.getMillis());
         }
     }
 
-    private static class LocalDateFromSqlDateCoercion extends CoercionBase<Date, LocalDate> {
-        LocalDateFromSqlDateCoercion() {
+    private static class LocalDateFromSqlDateTypeConversion extends TypeConversionBase<Date, LocalDate> {
+        LocalDateFromSqlDateTypeConversion() {
             super(Date.class, LocalDate.class);
         }
 
         @NotNull
         @Override
-        public LocalDate coerce(@NotNull Date value) {
+        public LocalDate convert(@NotNull Date value) {
             return new LocalDate(value);
         }
     }
 
 
-    private static class LocalDateToSqlDateCoercion extends CoercionBase<LocalDate, Date> {
-        LocalDateToSqlDateCoercion() {
+    private static class LocalDateToSqlDateTypeConversion extends TypeConversionBase<LocalDate, Date> {
+        LocalDateToSqlDateTypeConversion() {
             super(LocalDate.class, Date.class);
         }
 
         @NotNull
         @Override
-        public Date coerce(@NotNull LocalDate value) {
+        public Date convert(@NotNull LocalDate value) {
             return new Date(value.toDateTimeAtStartOfDay().getMillis());
         }
     }
 
-    private static class LocalTimeFromSqlTimeCoercion extends CoercionBase<Time, LocalTime> {
-        LocalTimeFromSqlTimeCoercion() {
+    private static class LocalTimeFromSqlTimeTypeConversion extends TypeConversionBase<Time, LocalTime> {
+        LocalTimeFromSqlTimeTypeConversion() {
             super(Time.class, LocalTime.class);
         }
 
         @NotNull
         @Override
-        public LocalTime coerce(@NotNull Time value) {
+        public LocalTime convert(@NotNull Time value) {
             return new LocalTime(value);
         }
     }
 
-    private static class LocalTimeToSqlTimeCoercion extends CoercionBase<LocalTime, Time> {
-        LocalTimeToSqlTimeCoercion() {
+    private static class LocalTimeToSqlTimeTypeConversion extends TypeConversionBase<LocalTime, Time> {
+        LocalTimeToSqlTimeTypeConversion() {
             super(LocalTime.class, Time.class);
         }
 
         @NotNull
         @Override
-        public Time coerce(@NotNull LocalTime value) {
+        public Time convert(@NotNull LocalTime value) {
             return new Time(value.toDateTimeToday(DateTimeZone.getDefault()).getMillis());
         }
     }

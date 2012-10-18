@@ -33,9 +33,9 @@ import static fi.evident.dalesbred.utils.Throwables.propagate;
 final class ConstructorInstantiator<T> implements Instantiator<T> {
 
     private final Constructor<T> constructor;
-    private final List<Coercion<Object,?>> coercions;
+    private final List<TypeConversion<Object,?>> coercions;
 
-    ConstructorInstantiator(@NotNull Constructor<T> constructor, @NotNull List<Coercion<Object,?>> coercions) {
+    ConstructorInstantiator(@NotNull Constructor<T> constructor, @NotNull List<TypeConversion<Object,?>> coercions) {
         this.constructor = requireNonNull(constructor);
         this.coercions = requireNonNull(coercions);
     }
@@ -53,7 +53,7 @@ final class ConstructorInstantiator<T> implements Instantiator<T> {
         Object[] coerced = new Object[arguments.length];
 
         for (int i = 0; i < arguments.length; i++)
-            coerced[i] = coercions.get(i).coerce(arguments[i]);
+            coerced[i] = coercions.get(i).convert(arguments[i]);
 
         return coerced;
     }

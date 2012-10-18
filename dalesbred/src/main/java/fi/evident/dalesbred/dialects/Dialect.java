@@ -26,8 +26,8 @@ import fi.evident.dalesbred.DatabaseException;
 import fi.evident.dalesbred.DatabaseSQLException;
 import fi.evident.dalesbred.TransactionRollbackException;
 import fi.evident.dalesbred.TransactionSerializationException;
-import fi.evident.dalesbred.instantiation.Coercion;
-import fi.evident.dalesbred.instantiation.CoercionBase;
+import fi.evident.dalesbred.instantiation.TypeConversion;
+import fi.evident.dalesbred.instantiation.TypeConversionBase;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Provider;
@@ -61,11 +61,11 @@ public abstract class Dialect {
     }
 
     @NotNull
-    public <T extends Enum<T>> Coercion<Object,T> getEnumCoercion(@NotNull final Class<T> enumType) {
-        return new CoercionBase<Object, T>(Object.class, enumType) {
+    public <T extends Enum<T>> TypeConversion<Object,T> getEnumCoercion(@NotNull final Class<T> enumType) {
+        return new TypeConversionBase<Object, T>(Object.class, enumType) {
             @NotNull
             @Override
-            public T coerce(@NotNull Object value) {
+            public T convert(@NotNull Object value) {
                 return Enum.valueOf(enumType, value.toString());
             }
 

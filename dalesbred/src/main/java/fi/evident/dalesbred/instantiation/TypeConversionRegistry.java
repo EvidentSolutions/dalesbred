@@ -23,31 +23,44 @@
 package fi.evident.dalesbred.instantiation;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import static fi.evident.dalesbred.utils.Primitives.isAssignableByBoxing;
+import java.util.ArrayList;
+import java.util.List;
+
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
 /**
- * Abstract base class for simple coersions.
+ * A set of {@link TypeConversion}s.
  */
-public abstract class CoercionBase<S,T> extends Coercion<S,T> {
+public final class TypeConversionRegistry {
 
-    private final Class<S> source;
-    private final Class<T> target;
+    private final List<TypeConversion<?,?>> loadCoercions = new ArrayList<TypeConversion<?,?>>();
+    private final List<TypeConversion<?,?>> storeCoercions = new ArrayList<TypeConversion<?,?>>();
 
-    protected CoercionBase(@NotNull Class<S> source, @NotNull Class<T> target) {
-        this.source = requireNonNull(source);
-        this.target = requireNonNull(target);
+    @Nullable
+    public <S,T> TypeConversion<S,T> findCoercionFromDbValue(@NotNull Class<S> source, @NotNull Class<T> target) {
+        for (TypeConversion<?,?> coercion : loadCoercions)
+            if (coercion.canConvert(source, target))
+                return coercion.cast(source, target);
+
+        return null;
     }
 
-    @NotNull
-    @Override
-    public boolean canCoerce(@NotNull Class<?> source, @NotNull Class<?> target) {
-        return isAssignableByBoxing(this.source, source) && isAssignableByBoxing(target, this.target);
+    public <S,T> void registerLoadConversion(@NotNull TypeConversion<S, T> coercion) {
+        loadCoercions.add(requireNonNull(coercion));
     }
 
-    @Override
-    public String toString() {
-        return getClass().getName() + " [" + source.getName() + " -> " + target.getName() + "]";
+    public <S,T> void registerStoreConversion(@NotNull TypeConversion<S, T> coercion) {
+        storeCoercions.add(requireNonNull(coercion));
+    }
+
+    @Nullable
+    public <T> TypeConversion<T,Object> findCoercionToDb(@NotNull Class<T> type) {
+        for (TypeConversion<?,?> coercion : storeCoercions)
+            if (coercion.canConvert(type, Object.class))
+                return coercion.cast(type, Object.class);
+
+        return null;
     }
 }

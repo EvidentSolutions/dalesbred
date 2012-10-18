@@ -41,17 +41,17 @@ import static java.lang.reflect.Modifier.isPublic;
 public final class InstantiatorRegistry {
 
     private final Dialect dialect;
-    private final Coercions coercions = new Coercions();
+    private final TypeConversionRegistry typeConversionRegistry = new TypeConversionRegistry();
     private static final Logger log = Logger.getLogger(InstantiatorRegistry.class.getName());
 
     public InstantiatorRegistry(@NotNull Dialect dialect) {
         this.dialect = requireNonNull(dialect);
 
-        DefaultCoercions.register(coercions);
+        DefaultTypeConversions.register(typeConversionRegistry);
 
-        if (JodaCoercions.hasJoda()) {
-            log.fine("Detected Joda Time in classpath. Registering coercions for Joda.");
-            JodaCoercions.register(coercions);
+        if (JodaTypeConversions.hasJoda()) {
+            log.fine("Detected Joda Time in classpath. Registering type conversions for Joda.");
+            JodaTypeConversions.register(typeConversionRegistry);
         }
     }
 
@@ -60,9 +60,9 @@ public final class InstantiatorRegistry {
         if (value == null) return null;
 
         @SuppressWarnings("unchecked")
-        Coercion<Object, Object> coercion = (Coercion) coercions.findCoercionToDb(value.getClass());
+        TypeConversion<Object, Object> coercion = (TypeConversion) typeConversionRegistry.findCoercionToDb(value.getClass());
         if (coercion != null)
-            return coercion.coerce(value);
+            return coercion.convert(value);
         else
             return dialect.valueToDatabase(value);
     }
@@ -77,7 +77,7 @@ public final class InstantiatorRegistry {
         // First check if we have an immediate coercion registered. If so, we'll just use that.
         if (types.size() == 1) {
             @SuppressWarnings("unchecked")
-            Coercion<Object, ? extends T> coercion = (Coercion) findCoercionFromDbValue(types.getType(0), cl);
+            TypeConversion<Object, ? extends T> coercion = (TypeConversion) findCoercionFromDbValue(types.getType(0), cl);
             if (coercion != null)
                 return new CoercionInstantiator<T>(coercion);
         }
@@ -100,7 +100,7 @@ public final class InstantiatorRegistry {
     private <T> Instantiator<T> instantiatorFrom(Constructor<T> constructor, NamedTypeList types) {
         if (!isPublic(constructor.getModifiers())) return null;
 
-        List<Coercion<Object,?>> coercions = resolveCoercions(types, constructor.getParameterTypes());
+        List<TypeConversion<Object,?>> coercions = resolveCoercions(types, constructor.getParameterTypes());
         if (coercions != null)
             return new ConstructorInstantiator<T>(constructor, coercions);
         else
@@ -112,16 +112,16 @@ public final class InstantiatorRegistry {
      * to targetTypes, or null if coercions can't be done.
      */
     @Nullable
-    private List<Coercion<Object,?>> resolveCoercions(@NotNull NamedTypeList sourceTypes,
+    private List<TypeConversion<Object,?>> resolveCoercions(@NotNull NamedTypeList sourceTypes,
                                                       @NotNull Class<?>[] targetTypes) {
         if (targetTypes.length != sourceTypes.size())
             return null;
 
-        List<Coercion<Object,?>> coercions = new ArrayList<Coercion<Object, ?>>(targetTypes.length);
+        List<TypeConversion<Object,?>> coercions = new ArrayList<TypeConversion<Object, ?>>(targetTypes.length);
 
         for (int i = 0; i < targetTypes.length; i++) {
             @SuppressWarnings("unchecked")
-            Coercion<Object,?> coercion = (Coercion) findCoercionFromDbValue(sourceTypes.getType(i), targetTypes[i]);
+            TypeConversion<Object,?> coercion = (TypeConversion) findCoercionFromDbValue(sourceTypes.getType(i), targetTypes[i]);
             if (coercion != null)
                 coercions.add(coercion);
             else
@@ -136,8 +136,8 @@ public final class InstantiatorRegistry {
      * there's no such coercion.
      */
     @NotNull
-    public <S,T> Coercion<? super S, ? extends T> getCoercionFromDbValue(@NotNull Class<S> source, @NotNull Class<T> target) {
-        Coercion<? super S, ? extends T> coercion = findCoercionFromDbValue(source, target);
+    public <S,T> TypeConversion<? super S, ? extends T> getCoercionFromDbValue(@NotNull Class<S> source, @NotNull Class<T> target) {
+        TypeConversion<? super S, ? extends T> coercion = findCoercionFromDbValue(source, target);
         if (coercion != null)
             return coercion;
         else
@@ -148,11 +148,11 @@ public final class InstantiatorRegistry {
      * Returns coercion for converting value of source to target, or returns null if there's no such coercion.
      */
     @Nullable
-    private <S,T> Coercion<? super S, ? extends T> findCoercionFromDbValue(@NotNull Class<S> source, @NotNull Class<T> target) {
+    private <S,T> TypeConversion<? super S, ? extends T> findCoercionFromDbValue(@NotNull Class<S> source, @NotNull Class<T> target) {
         if (wrap(target).isAssignableFrom(wrap(source)))
-            return Coercion.identity().cast(source, target);
+            return TypeConversion.identity().cast(source, target);
 
-        Coercion<?,?> coercion = coercions.findCoercionFromDbValue(source, target);
+        TypeConversion<?,?> coercion = typeConversionRegistry.findCoercionFromDbValue(source, target);
         if (coercion != null)
             return coercion.cast(source, target);
 

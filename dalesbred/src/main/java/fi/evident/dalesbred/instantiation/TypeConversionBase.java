@@ -23,44 +23,31 @@
 package fi.evident.dalesbred.instantiation;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import static fi.evident.dalesbred.utils.Primitives.isAssignableByBoxing;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
 /**
- * A set of {@link Coercion}s.
+ * Abstract base class for simple conversions.
  */
-public final class Coercions {
+public abstract class TypeConversionBase<S,T> extends TypeConversion<S,T> {
 
-    private final List<Coercion<?,?>> loadCoercions = new ArrayList<Coercion<?,?>>();
-    private final List<Coercion<?,?>> storeCoercions = new ArrayList<Coercion<?,?>>();
+    private final Class<S> source;
+    private final Class<T> target;
 
-    @Nullable
-    public <S,T> Coercion<S,T> findCoercionFromDbValue(@NotNull Class<S> source, @NotNull Class<T> target) {
-        for (Coercion<?,?> coercion : loadCoercions)
-            if (coercion.canCoerce(source, target))
-                return coercion.cast(source, target);
-
-        return null;
+    protected TypeConversionBase(@NotNull Class<S> source, @NotNull Class<T> target) {
+        this.source = requireNonNull(source);
+        this.target = requireNonNull(target);
     }
 
-    public <S,T> void registerLoadConversion(@NotNull Coercion<S, T> coercion) {
-        loadCoercions.add(requireNonNull(coercion));
+    @NotNull
+    @Override
+    public boolean canConvert(@NotNull Class<?> source, @NotNull Class<?> target) {
+        return isAssignableByBoxing(this.source, source) && isAssignableByBoxing(target, this.target);
     }
 
-    public <S,T> void registerStoreConversion(@NotNull Coercion<S, T> coercion) {
-        storeCoercions.add(requireNonNull(coercion));
-    }
-
-    @Nullable
-    public <T> Coercion<T,Object> findCoercionToDb(@NotNull Class<T> type) {
-        for (Coercion<?,?> coercion : storeCoercions)
-            if (coercion.canCoerce(type, Object.class))
-                return coercion.cast(type, Object.class);
-
-        return null;
+    @Override
+    public String toString() {
+        return getClass().getName() + " [" + source.getName() + " -> " + target.getName() + "]";
     }
 }

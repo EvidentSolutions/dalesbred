@@ -23,9 +23,9 @@
 package fi.evident.dalesbred.results;
 
 import fi.evident.dalesbred.UnexpectedResultException;
-import fi.evident.dalesbred.instantiation.Coercion;
 import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
 import fi.evident.dalesbred.instantiation.NamedTypeList;
+import fi.evident.dalesbred.instantiation.TypeConversion;
 import fi.evident.dalesbred.utils.ResultSetUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -66,12 +66,12 @@ public final class MapResultSetProcessor<K,V> implements ResultSetProcessor<Map<
         @SuppressWarnings("unchecked")
         Class<Object> valueSource = (Class) types.getType(1);
 
-        Coercion<? super Object, ? extends K> keyCoercion = instantiatorRegistry.getCoercionFromDbValue(keySource, keyType);
-        Coercion<? super Object, ? extends V> valueCoercion = instantiatorRegistry.getCoercionFromDbValue(valueSource, valueType);
+        TypeConversion<? super Object, ? extends K> keyCoercion = instantiatorRegistry.getCoercionFromDbValue(keySource, keyType);
+        TypeConversion<? super Object, ? extends V> valueCoercion = instantiatorRegistry.getCoercionFromDbValue(valueSource, valueType);
 
         while (resultSet.next()) {
-            K key = keyCoercion.coerce(resultSet.getObject(1));
-            V value = valueCoercion.coerce(resultSet.getObject(2));
+            K key = keyCoercion.convert(resultSet.getObject(1));
+            V value = valueCoercion.convert(resultSet.getObject(2));
             result.put(key, value);
         }
 

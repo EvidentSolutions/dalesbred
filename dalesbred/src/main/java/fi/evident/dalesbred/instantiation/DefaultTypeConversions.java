@@ -31,98 +31,98 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-final class DefaultCoercions {
+final class DefaultTypeConversions {
 
-    public static void register(@NotNull Coercions coercions) {
-        coercions.registerLoadConversion(new StringToUrlCoercion());
-        coercions.registerLoadConversion(new StringToUriCoercion());
-        coercions.registerLoadConversion(new NumberToShortCoercion());
-        coercions.registerLoadConversion(new NumberToIntCoercion());
-        coercions.registerLoadConversion(new NumberToLongCoercion());
-        coercions.registerLoadConversion(new NumberToFloatCoercion());
-        coercions.registerLoadConversion(new NumberToDoubleCoercion());
-        coercions.registerLoadConversion(new NumberToBigIntegerCoercion());
-        coercions.registerLoadConversion(new NumberToBigDecimalCoercion());
+    public static void register(@NotNull TypeConversionRegistry typeConversionRegistry) {
+        typeConversionRegistry.registerLoadConversion(new StringToUrlTypeConversion());
+        typeConversionRegistry.registerLoadConversion(new StringToUriTypeConversion());
+        typeConversionRegistry.registerLoadConversion(new NumberToShortTypeConversion());
+        typeConversionRegistry.registerLoadConversion(new NumberToIntTypeConversion());
+        typeConversionRegistry.registerLoadConversion(new NumberToLongTypeConversion());
+        typeConversionRegistry.registerLoadConversion(new NumberToFloatTypeConversion());
+        typeConversionRegistry.registerLoadConversion(new NumberToDoubleTypeConversion());
+        typeConversionRegistry.registerLoadConversion(new NumberToBigIntegerTypeConversion());
+        typeConversionRegistry.registerLoadConversion(new NumberToBigDecimalTypeConversion());
 
-        coercions.registerStoreConversion(new BigIntegerToBigDecimalCoercion());
-        coercions.registerStoreConversion(new ToStringCoercion<URL>(URL.class));
-        coercions.registerStoreConversion(new ToStringCoercion<URI>(URI.class));
+        typeConversionRegistry.registerStoreConversion(new BigIntegerToBigDecimalTypeConversion());
+        typeConversionRegistry.registerStoreConversion(new ToStringTypeConversion<URL>(URL.class));
+        typeConversionRegistry.registerStoreConversion(new ToStringTypeConversion<URI>(URI.class));
     }
 
-    private static class NumberToShortCoercion extends CoercionBase<Number, Short> {
+    private static class NumberToShortTypeConversion extends TypeConversionBase<Number, Short> {
 
-        NumberToShortCoercion() {
+        NumberToShortTypeConversion() {
             super(Number.class, Short.class);
         }
 
         @NotNull
         @Override
-        public Short coerce(@NotNull Number value) {
+        public Short convert(@NotNull Number value) {
             return value.shortValue();
         }
     }
 
-    private static class NumberToIntCoercion extends CoercionBase<Number, Integer> {
+    private static class NumberToIntTypeConversion extends TypeConversionBase<Number, Integer> {
 
-        NumberToIntCoercion() {
+        NumberToIntTypeConversion() {
             super(Number.class, Integer.class);
         }
 
         @NotNull
         @Override
-        public Integer coerce(@NotNull Number value) {
+        public Integer convert(@NotNull Number value) {
             return value.intValue();
         }
     }
 
-    private static class NumberToLongCoercion extends CoercionBase<Number, Long> {
+    private static class NumberToLongTypeConversion extends TypeConversionBase<Number, Long> {
 
-        NumberToLongCoercion() {
+        NumberToLongTypeConversion() {
             super(Number.class, Long.class);
         }
 
         @NotNull
         @Override
-        public Long coerce(@NotNull Number value) {
+        public Long convert(@NotNull Number value) {
             return value.longValue();
         }
     }
 
-    private static class NumberToFloatCoercion extends CoercionBase<Number, Float> {
+    private static class NumberToFloatTypeConversion extends TypeConversionBase<Number, Float> {
 
-        NumberToFloatCoercion() {
+        NumberToFloatTypeConversion() {
             super(Number.class, Float.class);
         }
 
         @NotNull
         @Override
-        public Float coerce(@NotNull Number value) {
+        public Float convert(@NotNull Number value) {
             return value.floatValue();
         }
     }
 
-    private static class NumberToDoubleCoercion extends CoercionBase<Number, Double> {
+    private static class NumberToDoubleTypeConversion extends TypeConversionBase<Number, Double> {
 
-        NumberToDoubleCoercion() {
+        NumberToDoubleTypeConversion() {
             super(Number.class, Double.class);
         }
 
         @NotNull
         @Override
-        public Double coerce(@NotNull Number value) {
+        public Double convert(@NotNull Number value) {
             return value.doubleValue();
         }
     }
 
-    private static class NumberToBigIntegerCoercion extends CoercionBase<Number, BigInteger> {
+    private static class NumberToBigIntegerTypeConversion extends TypeConversionBase<Number, BigInteger> {
 
-        NumberToBigIntegerCoercion() {
+        NumberToBigIntegerTypeConversion() {
             super(Number.class, BigInteger.class);
         }
 
         @NotNull
         @Override
-        public BigInteger coerce(@NotNull Number value) {
+        public BigInteger convert(@NotNull Number value) {
             return (value instanceof BigInteger) ? (BigInteger) value
                  : (value instanceof BigDecimal) ? ((BigDecimal) value).toBigInteger()
                  : (value instanceof Integer)    ? BigInteger.valueOf(value.intValue())
@@ -131,15 +131,15 @@ final class DefaultCoercions {
         }
     }
 
-    private static class NumberToBigDecimalCoercion extends CoercionBase<Number, BigDecimal> {
+    private static class NumberToBigDecimalTypeConversion extends TypeConversionBase<Number, BigDecimal> {
 
-        NumberToBigDecimalCoercion() {
+        NumberToBigDecimalTypeConversion() {
             super(Number.class, BigDecimal.class);
         }
 
         @NotNull
         @Override
-        public BigDecimal coerce(@NotNull Number value) {
+        public BigDecimal convert(@NotNull Number value) {
             return (value instanceof BigDecimal) ? (BigDecimal) value
                     : (value instanceof BigInteger) ? new BigDecimal((BigInteger) value)
                     : (value instanceof Integer)    ? BigDecimal.valueOf(value.intValue())
@@ -148,28 +148,28 @@ final class DefaultCoercions {
         }
     }
 
-    private static class BigIntegerToBigDecimalCoercion extends CoercionBase<BigInteger, BigDecimal> {
+    private static class BigIntegerToBigDecimalTypeConversion extends TypeConversionBase<BigInteger, BigDecimal> {
 
-        BigIntegerToBigDecimalCoercion() {
+        BigIntegerToBigDecimalTypeConversion() {
             super(BigInteger.class, BigDecimal.class);
         }
 
         @NotNull
         @Override
-        public BigDecimal coerce(@NotNull BigInteger value) {
+        public BigDecimal convert(@NotNull BigInteger value) {
             return new BigDecimal(value);
         }
     }
 
-    private static class StringToUrlCoercion extends CoercionBase<String,URL> {
+    private static class StringToUrlTypeConversion extends TypeConversionBase<String,URL> {
 
-        StringToUrlCoercion() {
+        StringToUrlTypeConversion() {
             super(String.class, URL.class);
         }
 
         @NotNull
         @Override
-        public URL coerce(@NotNull String value) {
+        public URL convert(@NotNull String value) {
             try {
                 return new URL(value);
             } catch (MalformedURLException e) {
@@ -178,28 +178,28 @@ final class DefaultCoercions {
         }
     }
 
-    private static class ToStringCoercion<S> extends CoercionBase<S,String> {
+    private static class ToStringTypeConversion<S> extends TypeConversionBase<S,String> {
 
-        ToStringCoercion(Class<S> source) {
+        ToStringTypeConversion(Class<S> source) {
             super(source, String.class);
         }
 
         @NotNull
         @Override
-        public String coerce(@NotNull S value) {
+        public String convert(@NotNull S value) {
             return value.toString();
         }
     }
 
-    private static class StringToUriCoercion extends CoercionBase<String,URI> {
+    private static class StringToUriTypeConversion extends TypeConversionBase<String,URI> {
 
-        StringToUriCoercion() {
+        StringToUriTypeConversion() {
             super(String.class, URI.class);
         }
 
         @NotNull
         @Override
-        public URI coerce(@NotNull String value) {
+        public URI convert(@NotNull String value) {
             try {
                 return new URI(value);
             } catch (URISyntaxException e) {

@@ -31,15 +31,15 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
  */
 final class CoercionInstantiator<T> implements Instantiator<T> {
 
-    private final Coercion<Object, ? extends T> coercion;
+    private final TypeConversion<Object, ? extends T> coercion;
 
-    CoercionInstantiator(@NotNull Coercion<Object,? extends T> coercion) {
+    CoercionInstantiator(@NotNull TypeConversion<Object,? extends T> coercion) {
         this.coercion = requireNonNull(coercion);
     }
 
     @Override
     public T instantiate(Object[] arguments) {
         Object value = arguments[0];
-        return (value != null) ? coercion.coerce(value) : null;
+        return (value != null) ? coercion.convert(value) : null;
     }
 }
