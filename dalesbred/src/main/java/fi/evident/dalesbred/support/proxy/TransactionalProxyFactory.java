@@ -101,7 +101,7 @@ public final class TransactionalProxyFactory {
                     }
                 });
             } catch (WrappedException e) {
-                throw e.throwable;
+                throw e.getCause();
             }
         }
 
@@ -141,10 +141,8 @@ public final class TransactionalProxyFactory {
     }
 
     private static class WrappedException extends RuntimeException {
-        final Throwable throwable;
-
-        WrappedException(Throwable throwable) {
-            this.throwable = throwable;
+        WrappedException(@NotNull Throwable throwable) {
+            super(throwable);
         }
     }
 }
