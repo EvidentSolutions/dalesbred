@@ -27,23 +27,37 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A conversion from S into T.
  *
- * @see CoercionBase for a convenience base class for simple coercions
+ * @see CoercionBase
  */
 public abstract class Coercion<S,T> {
 
     private static final IdentityCoercion IDENTITY = new IdentityCoercion();
 
+    /**
+     * Returns true if this coercion knows hows to convert instances of {@code source} to
+     * instances of {@code target}.
+     */
     @NotNull
     public abstract boolean canCoerce(@NotNull Class<?> source, @NotNull Class<?> target);
 
+    /**
+     * Converts value of type {@code S} to value of type {@code T}.
+     */
     @NotNull
     public abstract T coerce(@NotNull S value);
 
+    /**
+     * Returns identity-coercion, ie. a coercion that does nothing.
+     */
     @SuppressWarnings("unchecked")
-    public static <S,T> Coercion<S,T> identity() {
+    public static <S> Coercion<S,S> identity() {
         return IDENTITY;
     }
 
+    /**
+     * Safely casts this coercion into a coercion from {@code S} to {@code T} or throws an exception
+     * if coercion is not compatible.
+     */
     @SuppressWarnings("unchecked")
     public <S,T> Coercion<S,T> cast(Class<S> source, Class<T> target) {
         if (canCoerce(source, target))

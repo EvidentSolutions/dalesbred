@@ -150,7 +150,7 @@ public final class InstantiatorRegistry {
     @Nullable
     private <S,T> Coercion<? super S, ? extends T> findCoercionFromDbValue(@NotNull Class<S> source, @NotNull Class<T> target) {
         if (wrap(target).isAssignableFrom(wrap(source)))
-            return Coercion.identity();
+            return Coercion.identity().cast(source, target);
 
         Coercion<?,?> coercion = coercions.findCoercionFromDbValue(source, target);
         if (coercion != null)
