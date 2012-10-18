@@ -23,44 +23,20 @@
 package fi.evident.dalesbred.instantiation;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
 /**
- * A set of {@link TypeConversion}s.
+ * Registry containing the {@link TypeConversion}s used when converting database values
+ * to objects and vice versa.
  */
-public final class TypeConversionRegistry {
+public interface TypeConversionRegistry {
 
-    private final List<TypeConversion<?,?>> loadCoercions = new ArrayList<TypeConversion<?,?>>();
-    private final List<TypeConversion<?,?>> storeCoercions = new ArrayList<TypeConversion<?,?>>();
+    /**
+     * Registers a new conversion that is used when loading data from the database.
+     */
+    void registerConversionFromDatabaseType(@NotNull TypeConversion<?, ?> coercion);
 
-    @Nullable
-    public <S,T> TypeConversion<S,T> findCoercionFromDbValue(@NotNull Class<S> source, @NotNull Class<T> target) {
-        for (TypeConversion<?,?> coercion : loadCoercions)
-            if (coercion.canConvert(source, target))
-                return coercion.cast(source, target);
-
-        return null;
-    }
-
-    public <S,T> void registerLoadConversion(@NotNull TypeConversion<S, T> coercion) {
-        loadCoercions.add(requireNonNull(coercion));
-    }
-
-    public <S,T> void registerStoreConversion(@NotNull TypeConversion<S, T> coercion) {
-        storeCoercions.add(requireNonNull(coercion));
-    }
-
-    @Nullable
-    public <T> TypeConversion<T,Object> findCoercionToDb(@NotNull Class<T> type) {
-        for (TypeConversion<?,?> coercion : storeCoercions)
-            if (coercion.canConvert(type, Object.class))
-                return coercion.cast(type, Object.class);
-
-        return null;
-    }
+    /**
+     * Registers a new conversion that is used when sending data to the database.
+     */
+    void registerConversionToDatabaseType(@NotNull TypeConversion<?, ?> coercion);
 }

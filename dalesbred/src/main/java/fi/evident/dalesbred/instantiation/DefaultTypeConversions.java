@@ -34,19 +34,19 @@ import java.net.URL;
 final class DefaultTypeConversions {
 
     public static void register(@NotNull TypeConversionRegistry typeConversionRegistry) {
-        typeConversionRegistry.registerLoadConversion(new StringToUrlTypeConversion());
-        typeConversionRegistry.registerLoadConversion(new StringToUriTypeConversion());
-        typeConversionRegistry.registerLoadConversion(new NumberToShortTypeConversion());
-        typeConversionRegistry.registerLoadConversion(new NumberToIntTypeConversion());
-        typeConversionRegistry.registerLoadConversion(new NumberToLongTypeConversion());
-        typeConversionRegistry.registerLoadConversion(new NumberToFloatTypeConversion());
-        typeConversionRegistry.registerLoadConversion(new NumberToDoubleTypeConversion());
-        typeConversionRegistry.registerLoadConversion(new NumberToBigIntegerTypeConversion());
-        typeConversionRegistry.registerLoadConversion(new NumberToBigDecimalTypeConversion());
+        typeConversionRegistry.registerConversionFromDatabaseType(new StringToUrlTypeConversion());
+        typeConversionRegistry.registerConversionFromDatabaseType(new StringToUriTypeConversion());
+        typeConversionRegistry.registerConversionFromDatabaseType(new NumberToShortTypeConversion());
+        typeConversionRegistry.registerConversionFromDatabaseType(new NumberToIntTypeConversion());
+        typeConversionRegistry.registerConversionFromDatabaseType(new NumberToLongTypeConversion());
+        typeConversionRegistry.registerConversionFromDatabaseType(new NumberToFloatTypeConversion());
+        typeConversionRegistry.registerConversionFromDatabaseType(new NumberToDoubleTypeConversion());
+        typeConversionRegistry.registerConversionFromDatabaseType(new NumberToBigIntegerTypeConversion());
+        typeConversionRegistry.registerConversionFromDatabaseType(new NumberToBigDecimalTypeConversion());
 
-        typeConversionRegistry.registerStoreConversion(new BigIntegerToBigDecimalTypeConversion());
-        typeConversionRegistry.registerStoreConversion(new ToStringTypeConversion<URL>(URL.class));
-        typeConversionRegistry.registerStoreConversion(new ToStringTypeConversion<URI>(URI.class));
+        typeConversionRegistry.registerConversionToDatabaseType(new BigIntegerToBigDecimalTypeConversion());
+        typeConversionRegistry.registerConversionToDatabaseType(new ToStringTypeConversion<URL>(URL.class));
+        typeConversionRegistry.registerConversionToDatabaseType(new ToStringTypeConversion<URI>(URI.class));
     }
 
     private static class NumberToShortTypeConversion extends TypeConversionBase<Number, Short> {

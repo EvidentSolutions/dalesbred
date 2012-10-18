@@ -26,6 +26,7 @@ import fi.evident.dalesbred.connection.DataSourceConnectionProvider;
 import fi.evident.dalesbred.connection.DriverManagerConnectionProvider;
 import fi.evident.dalesbred.dialects.Dialect;
 import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
+import fi.evident.dalesbred.instantiation.TypeConversionRegistry;
 import fi.evident.dalesbred.results.*;
 import fi.evident.dalesbred.support.proxy.TransactionalProxyFactory;
 import org.jetbrains.annotations.NotNull;
@@ -522,6 +523,14 @@ public final class Database {
         } finally {
             resultSet.close();
         }
+    }
+
+    /**
+     * Returns {@link TypeConversionRegistry} that can be used to register new type-conversions.
+     */
+    @NotNull
+    public TypeConversionRegistry getTypeConversionRegistry() {
+        return instantiatorRegistry.getTypeConversionRegistry();
     }
 
     /**

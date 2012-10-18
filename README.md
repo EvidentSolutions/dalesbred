@@ -175,6 +175,20 @@ is basically just a StringBuilder which remembers the query-parameters, so you c
 For all but simplest dynamic queries, you'll probably want to have a higher level API that understands
 the structure of the SQL.
 
+Custom type-conversions
+-----------------------
+
+Sometimes you need to convert database values to your own custom types and vice versa. To do that,
+you can register your own TypeConversion-implementations to TypeConversionRegistry:
+
+    TypeConversionRegistry conversions = db.getTypeConversionRegistry();
+    conversions.registerConversionFromDatabaseType(new StringToEmailAddressConversion());
+    conversions.registerConversionToDatabaseType(new EmailAddressToStringConversion());
+
+There are built-in conversions from Joda Time's DateTime, LocalDate and LocalTime to java.sql.Timestamp,
+java.sql.Date and java.sql.Time, respectively. These will be automatically registered if Joda Time is
+detected on classpath.
+
 Test support
 ------------
 

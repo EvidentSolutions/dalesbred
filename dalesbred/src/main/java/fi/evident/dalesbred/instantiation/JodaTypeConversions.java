@@ -46,13 +46,13 @@ final class JodaTypeConversions {
     }
 
     public static void register(@NotNull TypeConversionRegistry typeConversionRegistry) {
-        typeConversionRegistry.registerLoadConversion(new DateTimeFromSqlTimestampTypeConversion());
-        typeConversionRegistry.registerLoadConversion(new LocalDateFromSqlDateTypeConversion());
-        typeConversionRegistry.registerLoadConversion(new LocalTimeFromSqlTimeTypeConversion());
+        typeConversionRegistry.registerConversionFromDatabaseType(new DateTimeFromSqlTimestampTypeConversion());
+        typeConversionRegistry.registerConversionFromDatabaseType(new LocalDateFromSqlDateTypeConversion());
+        typeConversionRegistry.registerConversionFromDatabaseType(new LocalTimeFromSqlTimeTypeConversion());
 
-        typeConversionRegistry.registerStoreConversion(new DateTimeToSqlTimestampTypeConversion());
-        typeConversionRegistry.registerStoreConversion(new LocalDateToSqlDateTypeConversion());
-        typeConversionRegistry.registerStoreConversion(new LocalTimeToSqlTimeTypeConversion());
+        typeConversionRegistry.registerConversionToDatabaseType(new DateTimeToSqlTimestampTypeConversion());
+        typeConversionRegistry.registerConversionToDatabaseType(new LocalDateToSqlDateTypeConversion());
+        typeConversionRegistry.registerConversionToDatabaseType(new LocalTimeToSqlTimeTypeConversion());
     }
 
     private static class DateTimeFromSqlTimestampTypeConversion extends TypeConversionBase<Timestamp, DateTime> {

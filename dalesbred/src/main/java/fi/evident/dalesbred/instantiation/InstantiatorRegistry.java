@@ -41,7 +41,7 @@ import static java.lang.reflect.Modifier.isPublic;
 public final class InstantiatorRegistry {
 
     private final Dialect dialect;
-    private final TypeConversionRegistry typeConversionRegistry = new TypeConversionRegistry();
+    private final DefaultTypeConversionRegistry typeConversionRegistry = new DefaultTypeConversionRegistry();
     private static final Logger log = Logger.getLogger(InstantiatorRegistry.class.getName());
 
     public InstantiatorRegistry(@NotNull Dialect dialect) {
@@ -167,5 +167,10 @@ public final class InstantiatorRegistry {
         @SuppressWarnings("unchecked")
         Constructor<T>[] constructors = (Constructor<T>[]) cl.getConstructors();
         return constructors;
+    }
+
+    @NotNull
+    public TypeConversionRegistry getTypeConversionRegistry() {
+        return typeConversionRegistry;
     }
 }
