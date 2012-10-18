@@ -73,6 +73,14 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <excludePackageNames>fi.evident.dalesbred.support.joda:fi.evident.dalesbred.support.proxy:fi.evident.dalesbred.utils</excludePackageNames>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
