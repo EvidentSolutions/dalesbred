@@ -53,7 +53,7 @@ To fetch results with multiple columns, you need a class with matching construct
 
     :::java
     List<Department> departments = db.findAll(Department.class,
-            "select id, name from department);
+            "select id, name from department");
 
     ...
 
