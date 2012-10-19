@@ -5,11 +5,11 @@ Dalesbred is a breed of domestic sheep originating in the United Kingdom.
 
 It is also a library that strives to make database access from Java nicer.
 Dalesbred assumes that SQL is a great way to access database, but that JDBC
-as an API is causes pain. Therefore it wraps JDBC with a set of helpers
+as an API causes pain. Therefore it wraps JDBC with a set of helpers
 while still providing access to low-level functionality.
 
-Getting started
-===============
+Get started
+===========
 
 Configuring the database connection
 -----------------------------------
