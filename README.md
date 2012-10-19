@@ -17,6 +17,7 @@ Configuring the database connection
 Most things in Dalesbred happen through an instance of _Database_. The easiest
 way to get hold of one is to specify the settings manually:
 
+    :::java
     Database db = Database.forUrlAndCredentials("jdbc:example-url", "login", "password");
 
 Note that this performs no connection pooling and is therefore probably not
