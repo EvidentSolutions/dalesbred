@@ -57,7 +57,10 @@ public final class TransactionalProxyFactory {
 
     private static final class TransactionInvocationHandler implements InvocationHandler {
 
+        @NotNull
         private final Database db;
+
+        @NotNull
         private final Object target;
 
         public TransactionInvocationHandler(@NotNull Database db, @NotNull Object target) {
@@ -66,7 +69,7 @@ public final class TransactionalProxyFactory {
         }
 
         @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        public Object invoke(@NotNull Object proxy, @NotNull Method method, @Nullable Object[] args) throws Throwable {
             TransactionSettings tx = findTransactionSettings(method);
 
             if (tx == null)
@@ -75,7 +78,7 @@ public final class TransactionalProxyFactory {
                 return invokeInTransaction(tx, method, args);
         }
 
-        private Object invokeWithoutTransaction(Method method, Object[] args) throws Throwable {
+        private Object invokeWithoutTransaction(@NotNull Method method, @Nullable Object[] args) throws Throwable {
             try {
                 return method.invoke(target, args);
             } catch (InvocationTargetException e) {
@@ -85,7 +88,7 @@ public final class TransactionalProxyFactory {
 
         private Object invokeInTransaction(@NotNull TransactionSettings settings,
                                            @NotNull final Method method,
-                                           final Object[] args) throws Throwable {
+                                           @Nullable final Object[] args) throws Throwable {
             try {
                 return db.withTransaction(settings, new TransactionCallback<Object>() {
                     @Override

@@ -69,6 +69,7 @@ public class ConversionMapTest {
         assertSame(conversion, registry.findConversion(int.class, long.class));
     }
 
+    @NotNull
     private static <S, T> TypeConversion<S,T> dummyConversion(@NotNull Class<S> source, @NotNull Class<T> target) {
         return new TypeConversion<S, T>(source, target) {
             @NotNull

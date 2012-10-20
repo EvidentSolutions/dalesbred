@@ -23,6 +23,7 @@
 package fi.evident.dalesbred;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -38,6 +39,7 @@ public class DatabaseTransactionContextTest {
         db.update("insert into test_table (text) values ('foo')");
 
         db.withTransaction(new TransactionCallback<Object>() {
+            @Nullable
             @Override
             public Object execute(@NotNull TransactionContext tx) {
                 db.update("update test_table set text='bar'");

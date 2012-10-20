@@ -22,6 +22,8 @@
 
 package fi.evident.dalesbred.support;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.naming.*;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -32,7 +34,7 @@ public final class MemoryContext implements Context {
     private final Map<String, Object> map = new HashMap<String, Object>();
 
     @Override
-    public Object lookup(Name name) {
+    public Object lookup(@NotNull Name name) {
         return lookup(name.toString());
     }
 
@@ -42,7 +44,7 @@ public final class MemoryContext implements Context {
     }
 
     @Override
-    public void bind(Name name, Object obj) {
+    public void bind(@NotNull Name name, Object obj) {
         bind(name.toString(), obj);
     }
 
@@ -52,7 +54,7 @@ public final class MemoryContext implements Context {
     }
 
     @Override
-    public void rebind(Name name, Object obj) {
+    public void rebind(@NotNull Name name, Object obj) {
         rebind(name.toString(), obj);
     }
 
@@ -62,7 +64,7 @@ public final class MemoryContext implements Context {
     }
 
     @Override
-    public void unbind(Name name) {
+    public void unbind(@NotNull Name name) {
         unbind(name.toString());
     }
 
@@ -72,7 +74,7 @@ public final class MemoryContext implements Context {
     }
 
     @Override
-    public void rename(Name oldName, Name newName) {
+    public void rename(@NotNull Name oldName, @NotNull Name newName) {
         rename(oldName.toString(), newName.toString());
     }
 
@@ -81,21 +83,25 @@ public final class MemoryContext implements Context {
         throw new UnsupportedOperationException();
     }
 
+    @NotNull
     @Override
     public NamingEnumeration<NameClassPair> list(Name name) {
         throw new UnsupportedOperationException();
     }
 
+    @NotNull
     @Override
     public NamingEnumeration<NameClassPair> list(String name) {
         throw new UnsupportedOperationException();
     }
 
+    @NotNull
     @Override
     public NamingEnumeration<Binding> listBindings(Name name) {
         throw new UnsupportedOperationException();
     }
 
+    @NotNull
     @Override
     public NamingEnumeration<Binding> listBindings(String name) {
         throw new UnsupportedOperationException();
@@ -109,56 +115,67 @@ public final class MemoryContext implements Context {
     public void destroySubcontext(String name) {
     }
 
+    @NotNull
     @Override
     public Context createSubcontext(Name name) {
         throw new UnsupportedOperationException();
     }
 
+    @NotNull
     @Override
     public Context createSubcontext(String name) {
         throw new UnsupportedOperationException();
     }
 
+    @NotNull
     @Override
     public Object lookupLink(Name name) {
         throw new UnsupportedOperationException();
     }
 
+    @NotNull
     @Override
     public Object lookupLink(String name) {
         throw new UnsupportedOperationException();
     }
 
+    @NotNull
     @Override
     public NameParser getNameParser(Name name) {
         throw new UnsupportedOperationException();
     }
 
+    @NotNull
     @Override
     public NameParser getNameParser(String name) {
         throw new UnsupportedOperationException();
     }
 
+    @NotNull
     @Override
     public Name composeName(Name name, Name prefix) {
         throw new UnsupportedOperationException();
     }
 
+    @NotNull
     @Override
     public String composeName(String name, String prefix) {
         throw new UnsupportedOperationException();
     }
 
+    @NotNull
     @Override
     public Object addToEnvironment(String propName, Object propVal) {
         throw new UnsupportedOperationException();
     }
 
+    @NotNull
     @Override
     public Object removeFromEnvironment(String propName) {
         throw new UnsupportedOperationException();
     }
 
+    @NotNull
     @Override
     public Hashtable<?, ?> getEnvironment() {
         throw new UnsupportedOperationException();
@@ -168,6 +185,7 @@ public final class MemoryContext implements Context {
     public void close() {
     }
 
+    @NotNull
     @Override
     public String getNameInNamespace() {
         throw new UnsupportedOperationException();

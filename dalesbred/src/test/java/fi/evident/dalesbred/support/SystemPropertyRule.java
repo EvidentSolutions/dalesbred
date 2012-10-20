@@ -23,6 +23,7 @@
 package fi.evident.dalesbred.support;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -34,6 +35,7 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
  */
 public final class SystemPropertyRule implements TestRule {
 
+    @Nullable
     private final String property;
     private final String value;
 
@@ -42,8 +44,9 @@ public final class SystemPropertyRule implements TestRule {
         this.value = value;
     }
 
+    @Nullable
     @Override
-    public Statement apply(final Statement base, Description description) {
+    public Statement apply(@NotNull final Statement base, Description description) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
@@ -57,7 +60,7 @@ public final class SystemPropertyRule implements TestRule {
                 }
             }
 
-            private void setProperty(String name, String value) {
+            private void setProperty(@NotNull String name, @Nullable String value) {
                 if (value != null)
                     System.setProperty(name, value);
                 else

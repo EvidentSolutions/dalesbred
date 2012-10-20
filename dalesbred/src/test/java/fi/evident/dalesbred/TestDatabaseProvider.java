@@ -27,6 +27,7 @@ import com.google.inject.Module;
 import com.google.inject.name.Names;
 import fi.evident.dalesbred.connection.DriverManagerConnectionProvider;
 import fi.evident.dalesbred.dialects.Dialect;
+import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Provider;
 import javax.sql.DataSource;
@@ -44,14 +45,17 @@ public final class TestDatabaseProvider {
 
     private TestDatabaseProvider() { }
 
+    @NotNull
     public static Database createTestDatabase() {
         return new Database(createConnectionProvider());
     }
 
-    public static Database createTestDatabase(Dialect dialect) {
+    @NotNull
+    public static Database createTestDatabase(@NotNull Dialect dialect) {
         return new Database(createConnectionProvider(), dialect);
     }
 
+    @NotNull
     public static Provider<Connection> createConnectionProvider() {
         Properties props = loadProperties();
         String url = props.getProperty("jdbc.url");
@@ -61,10 +65,12 @@ public final class TestDatabaseProvider {
         return new DriverManagerConnectionProvider(url, login, password);
     }
 
+    @NotNull
     public static DataSource createDataSource() {
         return createDataSource(createConnectionProvider());
     }
 
+    @NotNull
     public static Module propertiesModule() {
         return new AbstractModule() {
             @Override
@@ -76,6 +82,7 @@ public final class TestDatabaseProvider {
         };
     }
 
+    @NotNull
     public static Properties loadProperties() {
         try {
             InputStream in = TransactionCallback.class.getClassLoader().getResourceAsStream("connection.properties");
@@ -98,10 +105,11 @@ public final class TestDatabaseProvider {
      * reflectively because new versions of JDK have added new methods to DataSource and we want to be able
      * to run the test on all versions.
      */
-    private static DataSource createDataSource(final Provider<Connection> connection) {
+    @NotNull
+    private static DataSource createDataSource(@NotNull final Provider<Connection> connection) {
         return (DataSource) Proxy.newProxyInstance(DatabaseJndiLookupTest.class.getClassLoader(), new Class<?>[]{DataSource.class}, new InvocationHandler() {
             @Override
-            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            public Object invoke(Object proxy, @NotNull Method method, Object[] args) throws Throwable {
                 if (method.getName().equals("getConnection"))
                     return connection.get();
                 else

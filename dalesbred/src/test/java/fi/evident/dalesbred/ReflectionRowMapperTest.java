@@ -25,6 +25,7 @@ package fi.evident.dalesbred;
 import fi.evident.dalesbred.dialects.DefaultDialect;
 import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
 import fi.evident.dalesbred.results.ReflectionResultSetProcessor;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.mockito.stubbing.OngoingStubbing;
 
@@ -109,7 +110,7 @@ public class ReflectionRowMapperTest {
         }
     }
 
-    private static ResultSet emptyResultSet(Class<?>... types) throws SQLException {
+    private static ResultSet emptyResultSet(@NotNull Class<?>... types) throws SQLException {
         ResultSetMetaData metaData = mock(ResultSetMetaData.class);
         when(metaData.getColumnCount()).thenReturn(types.length);
 
@@ -126,7 +127,7 @@ public class ReflectionRowMapperTest {
         return resultSet;
     }
 
-    private static ResultSet singletonResultSet(Object... values) throws SQLException {
+    private static ResultSet singletonResultSet(@NotNull Object... values) throws SQLException {
         ResultSet resultSet = mock(ResultSet.class);
         ResultSetMetaData metadata = metadataFromRow(values);
         when(resultSet.getMetaData()).thenReturn(metadata);
@@ -140,7 +141,7 @@ public class ReflectionRowMapperTest {
         return resultSet;
     }
 
-    private static ResultSet resultSet(Object[][] rows) throws SQLException {
+    private static ResultSet resultSet(@NotNull Object[][] rows) throws SQLException {
         ResultSet resultSet = mock(ResultSet.class);
         ResultSetMetaData metadata = metadataFromRow(rows[0]);
         when(resultSet.getMetaData()).thenReturn(metadata);
@@ -158,7 +159,7 @@ public class ReflectionRowMapperTest {
         return resultSet;
     }
 
-    private static ResultSetMetaData metadataFromRow(Object[] row) throws SQLException {
+    private static ResultSetMetaData metadataFromRow(@NotNull Object[] row) throws SQLException {
         ResultSetMetaData metaData = mock(ResultSetMetaData.class);
         when(metaData.getColumnCount()).thenReturn(row.length);
 

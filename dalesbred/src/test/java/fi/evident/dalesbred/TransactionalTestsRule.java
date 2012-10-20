@@ -23,6 +23,7 @@
 package fi.evident.dalesbred;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -31,19 +32,22 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
 public final class TransactionalTestsRule implements TestRule {
 
+    @Nullable
     private final Database db;
 
     public TransactionalTestsRule(@NotNull Database db) {
         this.db = requireNonNull(db);
     }
 
+    @Nullable
     @Override
-    public Statement apply(final Statement base, Description description) {
+    public Statement apply(@NotNull final Statement base, Description description) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
                 Throwable throwable =
                     db.withTransaction(new TransactionCallback<Throwable>() {
+                        @Nullable
                         @Override
                         public Throwable execute(@NotNull TransactionContext tx) {
                             try {

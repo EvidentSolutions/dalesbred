@@ -22,6 +22,8 @@
 
 package fi.evident.dalesbred;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.SQLException;
 
 /**
@@ -37,6 +39,7 @@ public class DatabaseSQLException extends DatabaseException {
         super(cause);
     }
 
+    @NotNull
     @Override
     public SQLException getCause() {
         return (SQLException) super.getCause();

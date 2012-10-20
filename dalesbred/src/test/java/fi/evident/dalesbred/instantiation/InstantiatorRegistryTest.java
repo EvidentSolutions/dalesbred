@@ -25,10 +25,12 @@ package fi.evident.dalesbred.instantiation;
 import fi.evident.dalesbred.Reflective;
 import fi.evident.dalesbred.dialects.DefaultDialect;
 import fi.evident.dalesbred.instantiation.test.InaccessibleClassRef;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 import static fi.evident.dalesbred.utils.Primitives.isAssignableByBoxing;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 public class InstantiatorRegistryTest {
@@ -58,25 +60,33 @@ public class InstantiatorRegistryTest {
     @Test
     public void findDefaultConstructor() throws Exception {
         Instantiator<TestClass> ctor = findInstantiator(TestClass.class);
-        assertThat(ctor.instantiate(new Object[] { }).calledConstructor, is(1));
+        TestClass result = ctor.instantiate(new Object[]{});
+        assertNotNull(result);
+        assertThat(result.calledConstructor, is(1));
     }
 
     @Test
     public void findConstructedBasedOnType() throws Exception {
         Instantiator<TestClass> ctor = findInstantiator(TestClass.class, String.class);
-        assertThat(ctor.instantiate(new Object[] { "foo", }).calledConstructor, is(2));
+        TestClass result = ctor.instantiate(new Object[]{"foo",});
+        assertNotNull(result);
+        assertThat(result.calledConstructor, is(2));
     }
 
     @Test
     public void findBasedOnPrimitiveType() throws Exception {
         Instantiator<TestClass> ctor = findInstantiator(TestClass.class, int.class);
-        assertThat(ctor.instantiate(new Object[] { 3 }).calledConstructor, is(3));
+        TestClass result = ctor.instantiate(new Object[]{3});
+        assertNotNull(result);
+        assertThat(result.calledConstructor, is(3));
     }
 
     @Test
     public void findPrimitiveTypedConstructorWithBoxedType() throws Exception {
         Instantiator<TestClass> ctor = findInstantiator(TestClass.class, Integer.class);
-        assertThat(ctor.instantiate(new Object[] { 3 }).calledConstructor, is(3));
+        TestClass result = ctor.instantiate(new Object[]{3});
+        assertNotNull(result);
+        assertThat(result.calledConstructor, is(3));
     }
 
     @Test(expected = InstantiationException.class)
@@ -102,7 +112,8 @@ public class InstantiatorRegistryTest {
         public TestClass(int x) { calledConstructor = 3; }
     }
 
-    private <T> Instantiator<T> findInstantiator(Class<T> cl, Class<?>... types) {
+    @NotNull
+    private <T> Instantiator<T> findInstantiator(@NotNull Class<T> cl, @NotNull Class<?>... types) {
         NamedTypeList.Builder list = NamedTypeList.builder(types.length);
         for (int i = 0; i < types.length; i++)
             list.add("name" + i, types[i]);
@@ -110,7 +121,7 @@ public class InstantiatorRegistryTest {
         return instantiatorRegistry.findInstantiator(cl, list.build());
     }
 
-    private static void assertAssignable(Class<?> target, Class<?> source) {
+    private static void assertAssignable(@NotNull Class<?> target, @NotNull Class<?> source) {
         assertThat(isAssignableByBoxing(target, source), is(true));
     }
 

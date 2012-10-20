@@ -25,6 +25,7 @@ package fi.evident.dalesbred;
 import fi.evident.dalesbred.testutils.LoggingController;
 import fi.evident.dalesbred.testutils.SuppressLogging;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -43,6 +44,7 @@ public class DatabaseTransactionPropagationTest {
     @Test(expected = DatabaseException.class)
     public void mandatoryPropagationWithoutExistingTransactionThrowsException() {
         db.withTransaction(MANDATORY, new TransactionCallback<Object>() {
+            @Nullable
             @Override
             public Object execute(@NotNull TransactionContext tx) {
                 return null;
@@ -56,6 +58,7 @@ public class DatabaseTransactionPropagationTest {
             @Override
             public String execute(@NotNull TransactionContext tx) {
                 return db.withTransaction(MANDATORY, new TransactionCallback<String>() {
+                    @NotNull
                     @Override
                     public String execute(@NotNull TransactionContext tx2) {
                         return "ok";
@@ -74,6 +77,7 @@ public class DatabaseTransactionPropagationTest {
         db.update("create table test_table (text varchar)");
 
         db.withTransaction(new TransactionCallback<Object>() {
+            @Nullable
             @Override
             public Object execute(@NotNull TransactionContext tx) {
                 db.update("insert into test_table (text) values ('initial')");
@@ -82,6 +86,7 @@ public class DatabaseTransactionPropagationTest {
 
                 try {
                     db.withTransaction(NESTED, new TransactionCallback<Object>() {
+                        @NotNull
                         @Override
                         public Object execute(@NotNull TransactionContext tx2) {
                             db.update("update test_table set text = 'new-value'");
@@ -112,11 +117,13 @@ public class DatabaseTransactionPropagationTest {
         db.update("insert into test_table (text) values ('foo')");
 
         db.withTransaction(new TransactionCallback<Object>() {
+            @Nullable
             @Override
             public Object execute(@NotNull TransactionContext tx) {
                 db.update("update test_table set text='bar'");
 
                 db.withTransaction(REQUIRES_NEW, new TransactionCallback<Object>() {
+                    @Nullable
                     @Override
                     public Object execute(@NotNull TransactionContext tx2) {
                         assertThat(db.findUnique(String.class, "select text from test_table"), is("foo"));

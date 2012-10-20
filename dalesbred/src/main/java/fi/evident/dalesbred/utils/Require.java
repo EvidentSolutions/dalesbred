@@ -22,6 +22,8 @@
 
 package fi.evident.dalesbred.utils;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Precondition assertions.
  */
@@ -32,7 +34,9 @@ public final class Require {
     /**
      * Returns value if it is not {@code null}, otherwise throws {@link NullPointerException}.
      */
-    public static <T> T requireNonNull(T value) {
+    @NotNull
+    @SuppressWarnings("ConstantConditions")
+    public static <T> T requireNonNull(@NotNull T value) {
         if (value == null) throw new NullPointerException();
 
         return value;
@@ -41,7 +45,9 @@ public final class Require {
     /**
      * Returns value if it is not {@code null}, otherwise throws {@link NullPointerException}.
      */
-    public static <T> T requireNonNull(T value, String message) {
+    @NotNull
+    @SuppressWarnings("ConstantConditions")
+    public static <T> T requireNonNull(@NotNull T value, @NotNull String message) {
         if (value == null) throw new NullPointerException(message);
 
         return value;

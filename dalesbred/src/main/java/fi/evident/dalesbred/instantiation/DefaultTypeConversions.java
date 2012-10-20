@@ -182,7 +182,7 @@ final class DefaultTypeConversions {
 
     private static class ToStringTypeConversion<S> extends TypeConversion<S,String> {
 
-        ToStringTypeConversion(Class<S> source) {
+        ToStringTypeConversion(@NotNull Class<S> source) {
             super(source, String.class);
         }
 

@@ -22,6 +22,7 @@
 
 package fi.evident.dalesbred.testutils;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -33,8 +34,9 @@ import java.util.logging.Logger;
  * A rules that allows logging to be controlled on level of individual tests.
  */
 public final class LoggingController implements TestRule {
+    @NotNull
     @Override
-    public Statement apply(final Statement base, Description description) {
+    public Statement apply(@NotNull final Statement base, @NotNull Description description) {
         if (description.getAnnotation(SuppressLogging.class) == null)
             return base;
 

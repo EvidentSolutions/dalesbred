@@ -43,6 +43,7 @@ public class TransactionalTestsTest {
     public void checkThatThereIsAnExistingTransaction() {
         // The following code fails if we don't have an active transaction.
         String result = db.withTransaction(MANDATORY, new TransactionCallback<String>() {
+            @NotNull
             @Override
             public String  execute(@NotNull TransactionContext tx) {
                 return "ok";

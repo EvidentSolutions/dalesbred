@@ -57,6 +57,7 @@ public final class TestDatabaseProvider {
      *
      * @throws org.junit.internal.AssumptionViolatedException if properties were not found
      */
+    @NotNull
     public static Database databaseForProperties(@NotNull String propertiesPath) {
         return new Database(createConnectionProvider(propertiesPath));
     }
@@ -66,10 +67,12 @@ public final class TestDatabaseProvider {
      *
      * @throws org.junit.internal.AssumptionViolatedException if properties were not found
      */
+    @NotNull
     public static Database databaseForProperties(@NotNull String propertiesPath, @NotNull Dialect dialect) {
         return new Database(createConnectionProvider(propertiesPath), dialect);
     }
 
+    @NotNull
     private static Provider<Connection> createConnectionProvider(@NotNull String propertiesPath) {
         Properties props = loadConnectionProperties(propertiesPath);
 
@@ -83,7 +86,8 @@ public final class TestDatabaseProvider {
         return new DriverManagerConnectionProvider(url, login, password);
     }
 
-    private static Properties loadConnectionProperties(String propertiesName) {
+    @NotNull
+    private static Properties loadConnectionProperties(@NotNull String propertiesName) {
         InputStream in = TransactionCallback.class.getClassLoader().getResourceAsStream(propertiesName);
         if (in == null)
             throw new AssumptionViolatedException("Could not find database configuration file '" + propertiesName + "'.");

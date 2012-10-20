@@ -53,6 +53,7 @@ public final class MapResultSetProcessor<K,V> implements ResultSetProcessor<Map<
         this.instantiatorRegistry = requireNonNull(instantiatorRegistry);
     }
 
+    @NotNull
     @Override
     public Map<K, V> process(@NotNull ResultSet resultSet) throws SQLException {
         Map<K,V> result = new LinkedHashMap<K,V>();

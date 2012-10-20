@@ -22,6 +22,8 @@
 
 package fi.evident.dalesbred;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.annotation.*;
 
 /**
@@ -34,10 +36,10 @@ import java.lang.annotation.*;
 public @interface Transactional {
 
     /** The propagation for transaction, default is {@link Propagation#REQUIRED}. */
-    Propagation propagation() default Propagation.REQUIRED;
+    @NotNull Propagation propagation() default Propagation.REQUIRED;
 
     /** Isolation for transaction, default is {@link Isolation#READ_COMMITTED} */
-    Isolation isolation() default Isolation.READ_COMMITTED;
+    @NotNull Isolation isolation() default Isolation.READ_COMMITTED;
 
     /** Number of automatic retries due to serialization failures, default is 0. */
     int retries() default 0;

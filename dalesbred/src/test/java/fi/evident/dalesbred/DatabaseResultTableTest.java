@@ -22,6 +22,7 @@
 
 package fi.evident.dalesbred;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -61,10 +62,12 @@ public class DatabaseResultTableTest {
         assertThat(table.toString(), is("ResultTable [columns=[num: java.lang.Integer, str: java.lang.String, bool: java.lang.Boolean], rows=1]"));
     }
 
+    @NotNull
     private static List<Object> values(Object... values) {
         return asList(values);
     }
 
+    @NotNull
     private static List<Class<?>> types(Class<?>... classes) {
         return asList(classes);
     }

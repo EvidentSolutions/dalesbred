@@ -26,6 +26,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Key;
 import fi.evident.dalesbred.Database;
 import fi.evident.dalesbred.connection.DriverManagerConnectionProvider;
+import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Singleton;
 import java.sql.Connection;
@@ -49,6 +50,7 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
  */
 public final class DriverManagerDatabaseModule extends AbstractModule {
 
+    @NotNull
     private final Key<Database> databaseKey;
 
     /**
@@ -61,7 +63,7 @@ public final class DriverManagerDatabaseModule extends AbstractModule {
     /**
      * Creates a module that creates a database instance with given key.
      */
-    public DriverManagerDatabaseModule(Key<Database> databaseKey) {
+    public DriverManagerDatabaseModule(@NotNull Key<Database> databaseKey) {
         this.databaseKey = requireNonNull(databaseKey);
     }
 

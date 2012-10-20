@@ -33,7 +33,10 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
  */
 public abstract class TypeConversion<S,T> {
 
+    @NotNull
     private final Class<S> source;
+
+    @NotNull
     private final Class<T> target;
 
     @SuppressWarnings("unchecked")
@@ -71,6 +74,7 @@ public abstract class TypeConversion<S,T> {
                 return value;
             }
 
+            @NotNull
             @Override
             public String toString() {
                 return "IdentityConversion";
@@ -82,14 +86,16 @@ public abstract class TypeConversion<S,T> {
      * Safely casts this coercion into a coercion from {@code S} to {@code T} or throws an exception
      * if coercion is not compatible.
      */
+    @NotNull
     @SuppressWarnings("unchecked")
-    public <S,T> TypeConversion<S,T> cast(Class<S> source, Class<T> target) {
+    public <S,T> TypeConversion<S,T> cast(@NotNull Class<S> source, @NotNull Class<T> target) {
         if (canConvert(source, target))
             return (TypeConversion) this;
         else
             throw new RuntimeException("can't cast " + this + " to coercion from " + source.getName() + " to " + target.getName());
     }
 
+    @NotNull
     @Override
     public String toString() {
         return getClass().getName() + " [" + source.getName() + " -> " + target.getName() + "]";

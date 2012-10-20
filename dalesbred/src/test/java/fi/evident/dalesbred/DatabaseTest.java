@@ -168,6 +168,7 @@ public class DatabaseTest {
     @Test
     public void rowMapper() {
         RowMapper<Integer> squaringRowMapper = new RowMapper<Integer>() {
+            @NotNull
             @Override
             public Integer mapRow(@NotNull ResultSet resultSet) throws SQLException {
                 int value = resultSet.getInt(1);

@@ -74,7 +74,8 @@ public final class InstantiatorRegistry {
      * does not require strict match for types, but finds any constructor
      * that is assignable from given types.
      */
-    public <T> Instantiator<T> findInstantiator(Class<T> cl, NamedTypeList types) {
+    @NotNull
+    public <T> Instantiator<T> findInstantiator(@NotNull Class<T> cl, @NotNull NamedTypeList types) {
         // First check if we have an immediate coercion registered. If so, we'll just use that.
         if (types.size() == 1) {
             @SuppressWarnings("unchecked")
@@ -101,7 +102,7 @@ public final class InstantiatorRegistry {
      * or null if there are no coercions that can be made to instantiate the type.
      */
     @Nullable
-    private <T> Instantiator<T> instantiatorFrom(Constructor<T> constructor, NamedTypeList types) {
+    private <T> Instantiator<T> instantiatorFrom(@NotNull Constructor<T> constructor, @NotNull NamedTypeList types) {
         if (!isPublic(constructor.getModifiers())) return null;
 
         List<TypeConversion<Object,?>> coercions = resolveCoercions(types, constructor.getParameterTypes());

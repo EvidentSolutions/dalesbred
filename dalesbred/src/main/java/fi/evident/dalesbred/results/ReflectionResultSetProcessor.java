@@ -48,6 +48,7 @@ public final class ReflectionResultSetProcessor<T> implements ResultSetProcessor
         this.instantiatorRegistry = requireNonNull(instantiatorRegistry);
     }
 
+    @NotNull
     @Override
     public List<T> process(@NotNull ResultSet resultSet) throws SQLException {
         NamedTypeList types = ResultSetUtils.getTypes(resultSet.getMetaData());

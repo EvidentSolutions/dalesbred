@@ -34,8 +34,12 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
  */
 public final class TransactionSettings {
 
+    @NotNull
     private Propagation propagation = Propagation.REQUIRED;
+
+    @Nullable
     private Isolation isolation;
+
     private int retries = 0;
 
     @NotNull
@@ -76,6 +80,7 @@ public final class TransactionSettings {
         this.retries = retries;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "[propagation=" + propagation + ", isolation=" + isolation + ", retries=" + retries + "]";

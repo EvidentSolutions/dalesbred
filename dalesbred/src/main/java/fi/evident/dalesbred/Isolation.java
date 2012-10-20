@@ -22,6 +22,8 @@
 
 package fi.evident.dalesbred;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.Connection;
 
 /**
@@ -50,6 +52,7 @@ public enum Isolation {
     /**
      * Returns the isolation value for given JDBC code.
      */
+    @NotNull
     public static Isolation forJdbcCode(int code) {
         for (Isolation isolation : values())
             if (isolation.level == code)

@@ -24,6 +24,7 @@ package fi.evident.dalesbred;
 
 import fi.evident.dalesbred.support.MemoryContext;
 import fi.evident.dalesbred.support.SystemPropertyRule;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -52,6 +53,7 @@ public class DatabaseJndiLookupTest {
 
         private static final MemoryContext initialContext = new MemoryContext();
 
+        @NotNull
         @Override
         public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
             return initialContext;

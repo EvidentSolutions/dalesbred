@@ -60,7 +60,10 @@ public class DatabaseCustomCoercionsTest {
 
     public static class EmailAddress {
 
+        @NotNull
         private final String user;
+
+        @NotNull
         private final String host;
 
         // This constructor has two parameters so that the reflection mechanism can't coerce the type automatically.
@@ -69,6 +72,7 @@ public class DatabaseCustomCoercionsTest {
             this.host = requireNonNull(host);
         }
 
+        @NotNull
         @Override
         public String toString() {
             return user + "@" + host;

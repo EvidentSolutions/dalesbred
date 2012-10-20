@@ -26,6 +26,7 @@ import fi.evident.dalesbred.Database;
 import fi.evident.dalesbred.TransactionCallback;
 import fi.evident.dalesbred.TransactionContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -44,7 +45,10 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
  */
 public final class TransactionalTests implements TestRule {
 
+    @NotNull
     private final Database db;
+
+    @NotNull
     private final RollbackPolicy rollbackPolicy;
 
     /**
@@ -72,13 +76,15 @@ public final class TransactionalTests implements TestRule {
         this.rollbackPolicy = requireNonNull(rollbackPolicy);
     }
 
+    @NotNull
     @Override
-    public Statement apply(final Statement base, Description description) {
+    public Statement apply(@NotNull final Statement base, Description description) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
                 Throwable throwable =
                     db.withTransaction(new TransactionCallback<Throwable>() {
+                        @Nullable
                         @Override
                         public Throwable execute(@NotNull TransactionContext tx) {
                             try {

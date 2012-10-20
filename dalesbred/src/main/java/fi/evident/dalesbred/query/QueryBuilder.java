@@ -73,6 +73,7 @@ public final class QueryBuilder {
     /**
      * Appends given fragment to this query.
      */
+    @NotNull
     public QueryBuilder append(@NotNull String sql) {
         return append(sql, emptyList());
     }
@@ -80,6 +81,7 @@ public final class QueryBuilder {
     /**
      * Appends given fragment and arguments to this query.
      */
+    @NotNull
     public QueryBuilder append(@NotNull String sql, Object... args) {
         return append(sql, asList(args));
     }
@@ -87,6 +89,7 @@ public final class QueryBuilder {
     /**
      * Appends given fragment and arguments to this query.
      */
+    @NotNull
     public QueryBuilder append(@NotNull String sql, Collection<?> args) {
         query.append(requireNonNull(sql));
         addArguments(args);
@@ -96,6 +99,7 @@ public final class QueryBuilder {
     /**
      * Adds a given amount of comma-separated place-holders. The amount must be at last 1.
      */
+    @NotNull
     public QueryBuilder appendPlaceholders(int count) {
         if (count <= 0) throw new IllegalArgumentException("count must be positive, but was: " + count);
 
@@ -109,6 +113,7 @@ public final class QueryBuilder {
     /**
      * Adds an argument to this query.
      */
+    @NotNull
     public QueryBuilder addArgument(Object argument) {
         arguments.add(argument);
         return this;
@@ -117,6 +122,7 @@ public final class QueryBuilder {
     /**
      * Adds given arguments to this query.
      */
+    @NotNull
     public QueryBuilder addArguments(Object... arguments) {
         return addArguments(asList(arguments));
     }
@@ -124,6 +130,7 @@ public final class QueryBuilder {
     /**
      * Adds given arguments to this query.
      */
+    @NotNull
     public QueryBuilder addArguments(Collection<?> arguments) {
         this.arguments.addAll(arguments);
         return this;
@@ -134,6 +141,7 @@ public final class QueryBuilder {
      *
      * @throws IllegalStateException if the builder is empty
      */
+    @NotNull
     public SqlQuery build() {
         if (query.length() == 0)
             throw new IllegalStateException("empty query");

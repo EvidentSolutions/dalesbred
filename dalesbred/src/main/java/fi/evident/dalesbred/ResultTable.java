@@ -63,7 +63,7 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
     /**
      * Returns the value of given named column of given row.
      */
-    public Object get(int row, String column) {
+    public Object get(int row, @NotNull String column) {
         return rows.get(row).get(column);
     }
 
@@ -122,7 +122,7 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
             return values.get(column);
         }
 
-        public Object get(String column) {
+        public Object get(@NotNull String column) {
             return values.get(indices.columnIndexForName(column));
         }
 
@@ -208,6 +208,7 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
             return databaseType;
         }
 
+        @NotNull
         @Override
         public String toString() {
             return name + ": " + type.getName();
@@ -228,6 +229,7 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
     public static class Builder {
 
         private final List<ColumnMetadata> columns;
+        @NotNull
         private final ColumnIndices indices;
         private final List<ResultRow> rows = new ArrayList<ResultRow>();
 
@@ -256,16 +258,17 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
 
         // Just store the names as list. Since the amount of columns is usually small,
         // it's probably faster than HashMap and consumes a lot less memory.
+        @NotNull
         private final String[] names;
 
-        ColumnIndices(List<ColumnMetadata> columns) {
+        ColumnIndices(@NotNull List<ColumnMetadata> columns) {
             names = new String[columns.size()];
 
             for (int i = 0; i < names.length; i++)
                 names[i] = columns.get(i).getName();
         }
 
-        int columnIndexForName(String name) {
+        int columnIndexForName(@NotNull String name) {
             for (int i = 0; i < names.length; i++)
                 if (name.equalsIgnoreCase(names[i]))
                     return i;

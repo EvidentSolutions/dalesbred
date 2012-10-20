@@ -102,8 +102,9 @@ public class AopAllianceTransactionalMethodInterceptorTest {
         }
     }
 
-    private static Isolation getTransactionIsolation(Database db) {
+    private static Isolation getTransactionIsolation(@NotNull Database db) {
         return db.withTransaction(Propagation.MANDATORY, new TransactionCallback<Isolation>() {
+            @NotNull
             @Override
             public Isolation execute(@NotNull TransactionContext tx) throws SQLException {
                 return Isolation.forJdbcCode(tx.getConnection().getTransactionIsolation());

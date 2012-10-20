@@ -25,6 +25,7 @@ package fi.evident.dalesbred;
 import fi.evident.dalesbred.testutils.LoggingController;
 import fi.evident.dalesbred.testutils.SuppressLogging;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -49,11 +50,13 @@ public class DatabaseTransactionIsolationTest {
         db1.update("insert into isolation_test (value) values (1)");
 
         db1.withTransaction(new TransactionCallback<Object>() {
+            @Nullable
             @Override
             public Object execute(@NotNull TransactionContext tx) {
                 db1.findUniqueInt("select value from isolation_test");
 
                 db2.withTransaction(new TransactionCallback<Object>() {
+                    @Nullable
                     @Override
                     public Object execute(@NotNull TransactionContext tx2) {
                         db2.findUniqueInt("select value from isolation_test");

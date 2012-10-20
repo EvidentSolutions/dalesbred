@@ -68,6 +68,7 @@ public abstract class Dialect {
                 return Enum.valueOf(enumType, value.toString());
             }
 
+            @NotNull
             @Override
             public String toString() {
                 return "EnumCoercion [" + enumType.getName() + "]";

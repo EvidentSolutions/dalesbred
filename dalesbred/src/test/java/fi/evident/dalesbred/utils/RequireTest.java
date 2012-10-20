@@ -29,7 +29,8 @@ import static org.junit.Assert.assertThat;
 
 public class RequireTest {
 
-    @Test(expected=NullPointerException.class)
+    @Test(expected=RuntimeException.class)
+    @SuppressWarnings("ConstantConditions")
     public void requireNonNullThrowsOnNullValues() {
         Require.requireNonNull(null);
     }

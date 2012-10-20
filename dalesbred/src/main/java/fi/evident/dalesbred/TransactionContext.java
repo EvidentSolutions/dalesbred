@@ -33,6 +33,7 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
  */
 public final class TransactionContext {
 
+    @NotNull
     private final Connection connection;
     private boolean rollbackOnly = false;
 

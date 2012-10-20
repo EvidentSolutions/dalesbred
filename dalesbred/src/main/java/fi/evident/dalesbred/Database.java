@@ -76,6 +76,7 @@ public final class Database {
     private final Dialect dialect;
 
     /** Contains the instantiators and data-converters */
+    @NotNull
     private final InstantiatorRegistry instantiatorRegistry;
 
     /**
@@ -382,6 +383,7 @@ public final class Database {
      *
      * @throws NonUniqueResultException if there are multiple result rows
      */
+    @Nullable
     public <T> T findUniqueOrNull(@NotNull Class<T> cl, @NotNull @SQL String sql, Object... args) {
         return findUniqueOrNull(cl, query(sql, args));
     }

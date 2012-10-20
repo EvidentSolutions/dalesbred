@@ -50,6 +50,7 @@ public class DatabaseTransactionRetryTest {
 
         try {
             db.withTransaction(settings, new TransactionCallback<Object>() {
+                @NotNull
                 @Override
                 public Object execute(@NotNull TransactionContext tx) {
                     tries.incrementAndGet();

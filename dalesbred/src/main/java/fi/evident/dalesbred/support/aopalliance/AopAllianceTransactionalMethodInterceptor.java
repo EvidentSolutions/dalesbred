@@ -40,6 +40,7 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
  */
 public final class AopAllianceTransactionalMethodInterceptor implements MethodInterceptor {
 
+    @Nullable
     private final Provider<Database> databaseProvider;
 
     /**
@@ -50,7 +51,7 @@ public final class AopAllianceTransactionalMethodInterceptor implements MethodIn
     }
 
     @Override
-    public Object invoke(final MethodInvocation invocation) throws Throwable {
+    public Object invoke(@NotNull final MethodInvocation invocation) throws Throwable {
         try {
             TransactionSettings settings = getTransactionSettings(invocation);
             return databaseProvider.get().withTransaction(settings, new TransactionCallback<Object>() {
@@ -68,6 +69,7 @@ public final class AopAllianceTransactionalMethodInterceptor implements MethodIn
         }
     }
 
+    @NotNull
     private TransactionSettings getTransactionSettings(@NotNull MethodInvocation invocation) {
         TransactionSettings settings = new TransactionSettings();
 

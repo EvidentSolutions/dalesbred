@@ -42,7 +42,11 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
 public final class DriverManagerConnectionProvider implements Provider<Connection> {
 
     private final String url;
+
+    @Nullable
     private String user;
+
+    @Nullable
     private String password;
 
     public DriverManagerConnectionProvider(@NotNull String url) {
@@ -73,19 +77,21 @@ public final class DriverManagerConnectionProvider implements Provider<Connectio
         return url;
     }
 
+    @Nullable
     public String getUser() {
         return user;
     }
 
-    public void setUser(String user) {
+    public void setUser(@Nullable String user) {
         this.user = user;
     }
 
+    @Nullable
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(@Nullable String password) {
         this.password = password;
     }
 }

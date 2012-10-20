@@ -31,7 +31,9 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
  */
 public final class NamedTypeList {
 
+    @NotNull
     private final String[] names;
+    @NotNull
     private final Class<?>[] types;
 
     private NamedTypeList(@NotNull String[] names, @NotNull Class<?>[] types) {
@@ -77,7 +79,9 @@ public final class NamedTypeList {
     public static class Builder {
         private int index = 0;
 
+        @NotNull
         private final String[] names;
+        @NotNull
         private final Class<?>[] types;
 
         private Builder(int size) {

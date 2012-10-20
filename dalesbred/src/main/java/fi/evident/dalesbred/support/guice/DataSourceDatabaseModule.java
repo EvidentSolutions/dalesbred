@@ -26,6 +26,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Key;
 import fi.evident.dalesbred.Database;
 import fi.evident.dalesbred.connection.DataSourceConnectionProvider;
+import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Singleton;
 import java.sql.Connection;
@@ -41,6 +42,7 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
  */
 public final class DataSourceDatabaseModule extends AbstractModule {
 
+    @NotNull
     private final Key<Database> databaseKey;
 
     /**
@@ -53,7 +55,7 @@ public final class DataSourceDatabaseModule extends AbstractModule {
     /**
      * Creates a module that creates a database instance with given key.
      */
-    public DataSourceDatabaseModule(Key<Database> databaseKey) {
+    public DataSourceDatabaseModule(@NotNull Key<Database> databaseKey) {
         this.databaseKey = requireNonNull(databaseKey);
     }
 
