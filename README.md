@@ -261,6 +261,16 @@ dependency to your pom.xml:
         <version>0.2.3</version>
     </dependency>
 
+For the JUnit test-support clases, add the following:
+
+    :::xml
+    <dependency>
+        <groupId>fi.evident.dalesbred</groupId>
+        <artifactId>dalesbred-junit</artifactId>
+        <version>0.2.3</version>
+        <scope>test</scope>
+    </dependency>
+
 Attributions
 ============
 
