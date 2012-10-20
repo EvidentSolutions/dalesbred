@@ -39,10 +39,9 @@ public abstract class TypeConversion<S,T> {
     @NotNull
     private final Class<T> target;
 
-    @SuppressWarnings("unchecked")
     public TypeConversion(@NotNull Class<S> source, @NotNull Class<T> target) {
-        this.source = (Class) wrap(requireNonNull(source));
-        this.target = (Class) wrap(requireNonNull(target));
+        this.source = wrap(requireNonNull(source));
+        this.target = wrap(requireNonNull(target));
     }
 
     @NotNull
@@ -65,7 +64,6 @@ public abstract class TypeConversion<S,T> {
      * Returns identity-coercion, ie. a coercion that does nothing.
      */
     @NotNull
-    @SuppressWarnings("unchecked")
     public static <T> TypeConversion<T,T> identity(@NotNull Class<T> type) {
         return new TypeConversion<T, T>(type, type) {
             @NotNull
@@ -87,12 +85,25 @@ public abstract class TypeConversion<S,T> {
      * if coercion is not compatible.
      */
     @NotNull
-    @SuppressWarnings("unchecked")
     public <S,T> TypeConversion<S,T> cast(@NotNull Class<S> source, @NotNull Class<T> target) {
-        if (canConvert(source, target))
-            return (TypeConversion) this;
-        else
+        if (canConvert(source, target)) {
+            @SuppressWarnings("unchecked")
+            TypeConversion<S,T> result = (TypeConversion<S,T>) this;
+            return result;
+        } else
             throw new RuntimeException("can't cast " + this + " to coercion from " + source.getName() + " to " + target.getName());
+    }
+
+    @NotNull
+    public <T2> TypeConversion<Object,T2> unsafeCast(@NotNull final Class<T2> target) {
+        final TypeConversion<S,T2> self = cast(source, target);
+        return new TypeConversion<Object, T2>(Object.class, target) {
+            @NotNull
+            @Override
+            public T2 convert(@NotNull Object value) {
+                return self.convert(source.cast(value));
+            }
+        };
     }
 
     @NotNull

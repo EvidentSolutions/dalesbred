@@ -60,10 +60,9 @@ public final class InstantiatorRegistry {
     public Object valueToDatabase(@Nullable Object value) {
         if (value == null) return null;
 
-        @SuppressWarnings("unchecked")
-        TypeConversion<Object, Object> coercion = (TypeConversion) typeConversionRegistry.findCoercionToDb(value.getClass());
+        TypeConversion<?, ?> coercion = typeConversionRegistry.findCoercionToDb(value.getClass());
         if (coercion != null)
-            return coercion.convert(value);
+            return coercion.unsafeCast(Object.class).convert(value);
         else
             return dialect.valueToDatabase(value);
     }
@@ -78,8 +77,7 @@ public final class InstantiatorRegistry {
     public <T> Instantiator<T> findInstantiator(@NotNull Class<T> cl, @NotNull NamedTypeList types) {
         // First check if we have an immediate coercion registered. If so, we'll just use that.
         if (types.size() == 1) {
-            @SuppressWarnings("unchecked")
-            TypeConversion<Object, ? extends T> coercion = (TypeConversion) findCoercionFromDbValue(types.getType(0), cl);
+            TypeConversion<Object, ? extends T> coercion = findCoercionFromDbValue(types.getType(0), cl);
             if (coercion != null)
                 return new CoercionInstantiator<T>(coercion);
         }
@@ -125,8 +123,7 @@ public final class InstantiatorRegistry {
         List<TypeConversion<Object,?>> coercions = new ArrayList<TypeConversion<Object, ?>>(targetTypes.length);
 
         for (int i = 0; i < targetTypes.length; i++) {
-            @SuppressWarnings("unchecked")
-            TypeConversion<Object,?> coercion = (TypeConversion) findCoercionFromDbValue(sourceTypes.getType(i), targetTypes[i]);
+            TypeConversion<Object,?> coercion = findCoercionFromDbValue(sourceTypes.getType(i), targetTypes[i]);
             if (coercion != null)
                 coercions.add(coercion);
             else
@@ -153,16 +150,16 @@ public final class InstantiatorRegistry {
      * Returns coercion for converting value of source to target, or returns null if there's no such coercion.
      */
     @Nullable
-    private <S,T> TypeConversion<? super S, ? extends T> findCoercionFromDbValue(@NotNull Class<S> source, @NotNull Class<T> target) {
+    private <T> TypeConversion<Object, ? extends T> findCoercionFromDbValue(@NotNull Class<?> source, @NotNull Class<T> target) {
         if (isAssignableByBoxing(target, source))
-            return TypeConversion.identity(target).cast(source, target);
+            return TypeConversion.identity(target).unsafeCast(target);
 
         TypeConversion<?,?> coercion = typeConversionRegistry.findCoercionFromDbValue(source, target);
         if (coercion != null)
-            return coercion.cast(source, target);
+            return coercion.unsafeCast(target);
 
         if (target.isEnum())
-            return dialect.getEnumCoercion(target.asSubclass(Enum.class)).cast(source, target);
+            return dialect.getEnumCoercion(target.asSubclass(Enum.class)).unsafeCast(target);
 
         return null;
     }

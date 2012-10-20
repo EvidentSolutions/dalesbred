@@ -62,13 +62,8 @@ public final class MapResultSetProcessor<K,V> implements ResultSetProcessor<Map<
         if (types.size() != 2)
             throw new UnexpectedResultException("Expected ResultSet with 2 columns, but got " + types.size() + " columns.");
 
-        @SuppressWarnings("unchecked")
-        Class<Object> keySource = (Class) types.getType(0);
-        @SuppressWarnings("unchecked")
-        Class<Object> valueSource = (Class) types.getType(1);
-
-        TypeConversion<? super Object, ? extends K> keyCoercion = instantiatorRegistry.getCoercionFromDbValue(keySource, keyType);
-        TypeConversion<? super Object, ? extends V> valueCoercion = instantiatorRegistry.getCoercionFromDbValue(valueSource, valueType);
+        TypeConversion<Object, K> keyCoercion = getConversion(types.getType(0), keyType);
+        TypeConversion<Object, V> valueCoercion = getConversion(types.getType(1), valueType);
 
         while (resultSet.next()) {
             K key = keyCoercion.convert(resultSet.getObject(1));
@@ -77,5 +72,10 @@ public final class MapResultSetProcessor<K,V> implements ResultSetProcessor<Map<
         }
 
         return result;
+    }
+
+    @NotNull
+    private <T> TypeConversion<Object, T> getConversion(@NotNull Class<?> sourceType, @NotNull Class<T> targetType) {
+        return instantiatorRegistry.getCoercionFromDbValue(sourceType, targetType).unsafeCast(targetType);
     }
 }

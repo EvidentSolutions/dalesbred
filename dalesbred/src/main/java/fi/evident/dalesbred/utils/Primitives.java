@@ -35,8 +35,9 @@ public final class Primitives {
      * Returns the corresponding wrapper type for a primitive type, or the type itself if it is not a primitive type.
      */
     @NotNull
-    public static Class<?> wrap(@NotNull Class<?> type) {
-        return (type == boolean.class) ? Boolean.class
+    public static <T> Class<T> wrap(@NotNull Class<T> type) {
+        Class<?> result =
+               (type == boolean.class) ? Boolean.class
              : (type == byte.class)    ? Byte.class
              : (type == char.class)    ? Character.class
              : (type == short.class)   ? Short.class
@@ -45,14 +46,19 @@ public final class Primitives {
              : (type == float.class)   ? Float.class
              : (type == double.class)  ? Double.class
              : type;
+
+        @SuppressWarnings("unchecked")
+        Class<T> casted = (Class<T>) result;
+        return casted;
     }
 
     /**
      * Returns the corresponding primitive type for a wrapper type, or the type itself if it is not a wrapper.
      */
     @NotNull
-    public static Class<?> unwrap(@NotNull Class<?> type) {
-        return (type == Boolean.class)   ? boolean.class
+    public static <T> Class<T> unwrap(@NotNull Class<T> type) {
+        Class<?> result =
+               (type == Boolean.class)   ? boolean.class
              : (type == Byte.class)      ? byte.class
              : (type == Character.class) ? char.class
              : (type == Short.class)     ? short.class
@@ -61,6 +67,10 @@ public final class Primitives {
              : (type == Float.class)     ? float.class
              : (type == Double.class)    ? double.class
              : type;
+
+        @SuppressWarnings("unchecked")
+        Class<T> casted = (Class<T>) result;
+        return casted;
     }
 
     public static boolean isAssignableByBoxing(@NotNull Class<?> target, @NotNull Class<?> source) {
