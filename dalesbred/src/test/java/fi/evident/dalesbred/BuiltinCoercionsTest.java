@@ -53,7 +53,7 @@ public class BuiltinCoercionsTest {
 
         UrlAndUri result = db.findUnique(UrlAndUri.class, "select url, uri from url_and_uri");
 
-        assertThat(result.url, is(url));
+        assertThat(result.url.toString(), is(url.toString()));
         assertThat(result.uri, is(uri));
     }
 
