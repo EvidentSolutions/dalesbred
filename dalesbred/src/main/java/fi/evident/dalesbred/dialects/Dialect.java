@@ -71,7 +71,7 @@ public abstract class Dialect {
             @NotNull
             @Override
             public String toString() {
-                return "EnumCoercion [" + enumType.getName() + "]";
+                return "EnumCoercion [" + enumType.getName() + ']';
             }
         };
     }

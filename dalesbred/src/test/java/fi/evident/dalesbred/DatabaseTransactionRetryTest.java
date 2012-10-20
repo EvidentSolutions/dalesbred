@@ -31,7 +31,8 @@ import org.junit.Test;
 import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class DatabaseTransactionRetryTest {
 
@@ -61,6 +62,6 @@ public class DatabaseTransactionRetryTest {
             // expected
         }
 
-        assertEquals(4, tries.get());
+        assertThat(tries.get(), is(4));
     }
 }

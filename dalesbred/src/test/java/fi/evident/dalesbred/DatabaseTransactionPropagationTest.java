@@ -60,7 +60,7 @@ public class DatabaseTransactionPropagationTest {
                 return db.withTransaction(MANDATORY, new TransactionCallback<String>() {
                     @NotNull
                     @Override
-                    public String execute(@NotNull TransactionContext tx2) {
+                    public String execute(@NotNull TransactionContext tx) {
                         return "ok";
                     }
                 });
@@ -88,7 +88,7 @@ public class DatabaseTransactionPropagationTest {
                     db.withTransaction(NESTED, new TransactionCallback<Object>() {
                         @NotNull
                         @Override
-                        public Object execute(@NotNull TransactionContext tx2) {
+                        public Object execute(@NotNull TransactionContext tx) {
                             db.update("update test_table set text = 'new-value'");
 
                             assertThat(db.findUnique(String.class, "select text from test_table"), is("new-value"));
@@ -125,7 +125,7 @@ public class DatabaseTransactionPropagationTest {
                 db.withTransaction(REQUIRES_NEW, new TransactionCallback<Object>() {
                     @Nullable
                     @Override
-                    public Object execute(@NotNull TransactionContext tx2) {
+                    public Object execute(@NotNull TransactionContext tx) {
                         assertThat(db.findUnique(String.class, "select text from test_table"), is("foo"));
                         return null;
                     }

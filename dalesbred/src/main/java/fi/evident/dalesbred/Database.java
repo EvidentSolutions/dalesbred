@@ -99,7 +99,7 @@ public final class Database {
                 if (dataSource != null)
                     return forDataSource(dataSource);
                 else
-                    throw new DatabaseException("Could not find DataSource '" + jndiName + "'");
+                    throw new DatabaseException("Could not find DataSource '" + jndiName + '\'');
             } finally {
                 ctx.close();
             }
@@ -580,6 +580,6 @@ public final class Database {
     @Override
     @NotNull
     public String toString() {
-        return "Database [dialect=" + dialect + ", allowImplicitTransactions=" + allowImplicitTransactions + ", defaultIsolation=" + defaultIsolation + "]";
+        return "Database [dialect=" + dialect + ", allowImplicitTransactions=" + allowImplicitTransactions + ", defaultIsolation=" + defaultIsolation + ']';
     }
 }

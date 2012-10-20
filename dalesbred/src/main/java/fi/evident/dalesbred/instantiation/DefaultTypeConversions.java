@@ -35,20 +35,20 @@ final class DefaultTypeConversions {
 
     private DefaultTypeConversions() { }
 
-    public static void register(@NotNull TypeConversionRegistry typeConversionRegistry) {
-        typeConversionRegistry.registerConversionFromDatabaseType(new StringToUrlTypeConversion());
-        typeConversionRegistry.registerConversionFromDatabaseType(new StringToUriTypeConversion());
-        typeConversionRegistry.registerConversionFromDatabaseType(new NumberToShortTypeConversion());
-        typeConversionRegistry.registerConversionFromDatabaseType(new NumberToIntTypeConversion());
-        typeConversionRegistry.registerConversionFromDatabaseType(new NumberToLongTypeConversion());
-        typeConversionRegistry.registerConversionFromDatabaseType(new NumberToFloatTypeConversion());
-        typeConversionRegistry.registerConversionFromDatabaseType(new NumberToDoubleTypeConversion());
-        typeConversionRegistry.registerConversionFromDatabaseType(new NumberToBigIntegerTypeConversion());
-        typeConversionRegistry.registerConversionFromDatabaseType(new NumberToBigDecimalTypeConversion());
+    public static void register(@NotNull TypeConversionRegistry registry) {
+        registry.registerConversionFromDatabaseType(new StringToUrlTypeConversion());
+        registry.registerConversionFromDatabaseType(new StringToUriTypeConversion());
+        registry.registerConversionFromDatabaseType(new NumberToShortTypeConversion());
+        registry.registerConversionFromDatabaseType(new NumberToIntTypeConversion());
+        registry.registerConversionFromDatabaseType(new NumberToLongTypeConversion());
+        registry.registerConversionFromDatabaseType(new NumberToFloatTypeConversion());
+        registry.registerConversionFromDatabaseType(new NumberToDoubleTypeConversion());
+        registry.registerConversionFromDatabaseType(new NumberToBigIntegerTypeConversion());
+        registry.registerConversionFromDatabaseType(new NumberToBigDecimalTypeConversion());
 
-        typeConversionRegistry.registerConversionToDatabaseType(new BigIntegerToBigDecimalTypeConversion());
-        typeConversionRegistry.registerConversionToDatabaseType(new ToStringTypeConversion<URL>(URL.class));
-        typeConversionRegistry.registerConversionToDatabaseType(new ToStringTypeConversion<URI>(URI.class));
+        registry.registerConversionToDatabaseType(new BigIntegerToBigDecimalTypeConversion());
+        registry.registerConversionToDatabaseType(new ToStringTypeConversion<URL>(URL.class));
+        registry.registerConversionToDatabaseType(new ToStringTypeConversion<URI>(URI.class));
     }
 
     private static class NumberToShortTypeConversion extends TypeConversion<Number, Short> {
@@ -127,7 +127,7 @@ final class DefaultTypeConversions {
         public BigInteger convert(@NotNull Number value) {
             return (value instanceof BigInteger) ? (BigInteger) value
                  : (value instanceof BigDecimal) ? ((BigDecimal) value).toBigInteger()
-                 : (value instanceof Integer)    ? BigInteger.valueOf(value.intValue())
+                 : (value instanceof Integer)    ? BigInteger.valueOf(value.longValue())
                  : (value instanceof Long)       ? BigInteger.valueOf(value.longValue())
                  : new BigInteger(value.toString());
         }
@@ -144,7 +144,7 @@ final class DefaultTypeConversions {
         public BigDecimal convert(@NotNull Number value) {
             return (value instanceof BigDecimal) ? (BigDecimal) value
                     : (value instanceof BigInteger) ? new BigDecimal((BigInteger) value)
-                    : (value instanceof Integer)    ? BigDecimal.valueOf(value.intValue())
+                    : (value instanceof Integer)    ? BigDecimal.valueOf(value.longValue())
                     : (value instanceof Long)       ? BigDecimal.valueOf(value.longValue())
                     : new BigDecimal(value.toString());
         }

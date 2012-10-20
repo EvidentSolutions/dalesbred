@@ -33,7 +33,7 @@ import java.net.URL;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class BuiltinCoercionsTest {
+public class BuiltinConversionsTest {
 
     private final Database db = TestDatabaseProvider.createTestDatabase();
 
@@ -58,51 +58,51 @@ public class BuiltinCoercionsTest {
     }
 
     @Test
-    public void shortCoercions() {
+    public void shortConversions() {
         assertThat(db.findUnique(short.class, "select 42"), is((short) 42));
         assertThat(db.findUnique(Short.class, "select 42"), is((short) 42));
         assertThat(db.findUnique(Short.class, "select 42::int8"), is((short) 42));
     }
 
     @Test
-    public void intCoercions() {
+    public void intConversions() {
         assertThat(db.findUnique(int.class,    "select 42"), is(42));
         assertThat(db.findUnique(Integer.class,"select 42"), is(42));
         assertThat(db.findUnique(Integer.class,"select 42::int8"), is(42));
     }
 
     @Test
-    public void longCoercions() {
+    public void longConversions() {
         assertThat(db.findUnique(long.class, "select 42"), is(42L));
         assertThat(db.findUnique(Long.class, "select 42"), is(42L));
         assertThat(db.findUniqueLong("select 42"), is(42L));
     }
 
     @Test
-    public void floatCoercions() {
-        assertThat(db.findUnique(float.class, "select 42"), is(42f));
-        assertThat(db.findUnique(Float.class, "select 42"), is(42f));
+    public void floatConversions() {
+        assertThat(db.findUnique(float.class, "select 42"), is(42.0f));
+        assertThat(db.findUnique(Float.class, "select 42"), is(42.0f));
     }
 
     @Test
-    public void doubleCoercions() {
+    public void doubleConversions() {
         assertThat(db.findUnique(double.class, "select 42"), is(42.0));
         assertThat(db.findUnique(Double.class, "select 42"), is(42.0));
     }
 
     @Test
-    public void bigIntegerCoercions() {
+    public void bigIntegerConversions() {
         assertThat(db.findUnique(BigInteger.class, "select 42"), is(BigInteger.valueOf(42)));
     }
 
     @Test
-    public void bigDecimalCoercions() {
+    public void bigDecimalConversions() {
         assertThat(db.findUnique(BigDecimal.class, "select 42"), is(BigDecimal.valueOf(42)));
         assertThat(db.findUnique(BigDecimal.class, "select 42"), is(BigDecimal.valueOf(42)));
     }
 
     @Test
-    public void numberCoercions() {
+    public void numberConversions() {
         db.update("drop table if exists numbers");
         db.update("create table numbers (short int2, int int4, long int8, float float4, double float8, bigint numeric, bigdecimal numeric)");
 

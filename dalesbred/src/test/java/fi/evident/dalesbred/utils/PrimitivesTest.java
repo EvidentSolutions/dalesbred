@@ -34,21 +34,21 @@ public class PrimitivesTest {
 
     @Test
     public void wrapping() {
-        assertThat(wrap(char.class), isClass(Character.class));
-        assertThat(wrap(boolean.class), isClass(Boolean.class));
-        assertThat(wrap(Boolean.class), isClass(Boolean.class));
-        assertThat(wrap(String.class), isClass(String.class));
+        assertThat(wrap(char.class), sameClass(Character.class));
+        assertThat(wrap(boolean.class), sameClass(Boolean.class));
+        assertThat(wrap(Boolean.class), sameClass(Boolean.class));
+        assertThat(wrap(String.class), sameClass(String.class));
     }
 
     @Test
     public void unwrapping() {
-        assertThat(unwrap(Character.class), isClass(char.class));
-        assertThat(unwrap(Boolean.class), isClass(boolean.class));
-        assertThat(unwrap(boolean.class), isClass(boolean.class));
-        assertThat(unwrap(String.class), isClass(String.class));
+        assertThat(unwrap(Character.class), sameClass(char.class));
+        assertThat(unwrap(Boolean.class), sameClass(boolean.class));
+        assertThat(unwrap(boolean.class), sameClass(boolean.class));
+        assertThat(unwrap(String.class), sameClass(String.class));
     }
 
-    private static Matcher<Object> isClass(Class<?> cl) {
+    private static Matcher<Object> sameClass(Class<?> cl) {
         return CoreMatchers.is((Object) cl);
     }
 }

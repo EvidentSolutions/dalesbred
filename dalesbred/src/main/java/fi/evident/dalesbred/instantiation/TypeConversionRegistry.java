@@ -33,10 +33,10 @@ public interface TypeConversionRegistry {
     /**
      * Registers a new conversion that is used when loading data from the database.
      */
-    void registerConversionFromDatabaseType(@NotNull TypeConversion<?, ?> coercion);
+    void registerConversionFromDatabaseType(@NotNull TypeConversion<?, ?> conversion);
 
     /**
      * Registers a new conversion that is used when sending data to the database.
      */
-    void registerConversionToDatabaseType(@NotNull TypeConversion<?, ?> coercion);
+    void registerConversionToDatabaseType(@NotNull TypeConversion<?, ?> conversion);
 }

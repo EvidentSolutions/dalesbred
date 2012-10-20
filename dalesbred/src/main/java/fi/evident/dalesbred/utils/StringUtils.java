@@ -38,12 +38,12 @@ public final class StringUtils {
      * Converts words <em>CamelCasedWords</em> to <em>underscore_separated_words.</em>
      */
     @NotNull
-    public static String upperCamelToLowerUnderscore(@NotNull CharSequence s) {
-        StringBuilder sb = new StringBuilder(s.length() + 5);
+    public static String upperCamelToLowerUnderscore(@NotNull CharSequence cs) {
+        StringBuilder sb = new StringBuilder(cs.length() + 5);
 
         boolean candidateWordEnd = false;
-        for (int i = 0, len = s.length(); i < len; i++) {
-            char ch = s.charAt(i);
+        for (int i = 0, len = cs.length(); i < len; i++) {
+            char ch = cs.charAt(i);
 
             if (isUpperCase(ch) && candidateWordEnd) {
                 sb.append('_');

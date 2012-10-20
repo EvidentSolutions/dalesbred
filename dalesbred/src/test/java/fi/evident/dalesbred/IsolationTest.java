@@ -30,16 +30,18 @@ import java.util.List;
 
 import static fi.evident.dalesbred.Isolation.*;
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class IsolationTest {
 
     @Test
     public void levelsMatchJdbcLevels() {
-        assertEquals(Connection.TRANSACTION_READ_UNCOMMITTED, READ_UNCOMMITTED.level);
-        assertEquals(Connection.TRANSACTION_READ_COMMITTED, READ_COMMITTED.level);
-        assertEquals(Connection.TRANSACTION_REPEATABLE_READ, REPEATABLE_READ.level);
-        assertEquals(Connection.TRANSACTION_SERIALIZABLE, SERIALIZABLE.level);
+        assertThat(READ_UNCOMMITTED.level, is(Connection.TRANSACTION_READ_UNCOMMITTED));
+        assertThat(READ_COMMITTED.level, is(Connection.TRANSACTION_READ_COMMITTED));
+        assertThat(REPEATABLE_READ.level, is(Connection.TRANSACTION_REPEATABLE_READ));
+        assertThat(SERIALIZABLE.level, is(Connection.TRANSACTION_SERIALIZABLE));
     }
 
     @Test

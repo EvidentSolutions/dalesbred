@@ -95,12 +95,12 @@ public abstract class TypeConversion<S,T> {
     }
 
     @NotNull
-    public <T2> TypeConversion<Object,T2> unsafeCast(@NotNull final Class<T2> target) {
-        final TypeConversion<S,T2> self = cast(source, target);
-        return new TypeConversion<Object, T2>(Object.class, target) {
+    public <R> TypeConversion<Object,R> unsafeCast(@NotNull final Class<R> target) {
+        final TypeConversion<S,R> self = cast(source, target);
+        return new TypeConversion<Object, R>(Object.class, target) {
             @NotNull
             @Override
-            public T2 convert(@NotNull Object value) {
+            public R convert(@NotNull Object value) {
                 return self.convert(source.cast(value));
             }
         };
@@ -109,7 +109,7 @@ public abstract class TypeConversion<S,T> {
     @NotNull
     @Override
     public String toString() {
-        return getClass().getName() + " [" + source.getName() + " -> " + target.getName() + "]";
+        return getClass().getName() + " [" + source.getName() + " -> " + target.getName() + ']';
     }
 
     /**

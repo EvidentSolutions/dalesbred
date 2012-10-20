@@ -143,7 +143,7 @@ public class DatabaseTransactionalProxyTest {
     @Test
     @SuppressLogging
     public void checkedExceptionsAreThrownThroughUnchanged() {
-        ServiceWithCheckedException service = db.createTransactionalProxyFor(ServiceWithCheckedException.class, new ServiceWithCheckedException() {
+        ServiceWithCheckedExceptions service = db.createTransactionalProxyFor(ServiceWithCheckedExceptions.class, new ServiceWithCheckedExceptions() {
             @Override
             public void transactionalMethod() throws IOException {
                 throw new IOException();
@@ -191,12 +191,11 @@ public class DatabaseTransactionalProxyTest {
         int methodWithMandatoryPropagation();
     }
 
-    public interface ServiceWithCheckedException {
+    public interface ServiceWithCheckedExceptions {
 
         @Transactional
         void transactionalMethod() throws IOException;
 
         void nonTransactionalMethod() throws IOException;
     }
-
 }

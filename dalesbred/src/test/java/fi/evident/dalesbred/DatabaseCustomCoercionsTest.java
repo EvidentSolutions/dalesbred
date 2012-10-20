@@ -4,6 +4,8 @@ import fi.evident.dalesbred.instantiation.TypeConversion;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
+import java.util.regex.Pattern;
+
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 import static org.junit.Assert.assertEquals;
 
@@ -31,6 +33,8 @@ public class DatabaseCustomCoercionsTest {
     }
 
     private static class StringToEmailTypeConversion extends TypeConversion<String, EmailAddress> {
+        private static final Pattern AT_SIGN = Pattern.compile("@");
+
         public StringToEmailTypeConversion() {
             super(String.class, EmailAddress.class);
         }
@@ -38,11 +42,11 @@ public class DatabaseCustomCoercionsTest {
         @NotNull
         @Override
         public EmailAddress convert(@NotNull String value) {
-            String[] parts = value.split("@");
+            String[] parts = AT_SIGN.split(value);
             if (parts.length == 2)
                 return new EmailAddress(parts[0], parts[1]);
             throw
-                new IllegalArgumentException("invalid address: '" + value + "'");
+                new IllegalArgumentException("invalid address: '" + value + '\'');
         }
     }
 
@@ -75,15 +79,15 @@ public class DatabaseCustomCoercionsTest {
         @NotNull
         @Override
         public String toString() {
-            return user + "@" + host;
+            return user + '@' + host;
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
 
-            if (o instanceof EmailAddress) {
-                EmailAddress rhs = (EmailAddress) o;
+            if (obj instanceof EmailAddress) {
+                EmailAddress rhs = (EmailAddress) obj;
                 return user.equals(rhs.user) && host.equals(rhs.host);
             }
 

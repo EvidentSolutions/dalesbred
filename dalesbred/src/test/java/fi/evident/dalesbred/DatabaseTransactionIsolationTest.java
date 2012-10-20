@@ -58,7 +58,7 @@ public class DatabaseTransactionIsolationTest {
                 db2.withTransaction(new TransactionCallback<Object>() {
                     @Nullable
                     @Override
-                    public Object execute(@NotNull TransactionContext tx2) {
+                    public Object execute(@NotNull TransactionContext tx) {
                         db2.findUniqueInt("select value from isolation_test");
 
                         db2.update("update isolation_test set value=2");

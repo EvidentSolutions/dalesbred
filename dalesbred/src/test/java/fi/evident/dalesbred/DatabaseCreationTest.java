@@ -26,7 +26,8 @@ import org.junit.Test;
 
 import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class DatabaseCreationTest {
 
@@ -39,6 +40,6 @@ public class DatabaseCreationTest {
 
         Database db = Database.forUrlAndCredentials(url, login, password);
 
-        assertEquals(42, db.findUniqueInt("select 42"));
+        assertThat(db.findUniqueInt("select 42"), is(42));
     }
 }

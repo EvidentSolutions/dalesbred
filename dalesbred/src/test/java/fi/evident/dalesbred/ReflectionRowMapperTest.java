@@ -105,7 +105,7 @@ public class ReflectionRowMapperTest {
         }
 
         @Reflective
-        public TwoConstructors(int foo, boolean str) {
+        public TwoConstructors(int num, boolean flag) {
             throw new RuntimeException("unexpected call two wrong constructor");
         }
     }

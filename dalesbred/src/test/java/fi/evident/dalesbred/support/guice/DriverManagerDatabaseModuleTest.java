@@ -28,7 +28,8 @@ import fi.evident.dalesbred.Database;
 import fi.evident.dalesbred.TestDatabaseProvider;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class DriverManagerDatabaseModuleTest {
 
@@ -38,6 +39,6 @@ public class DriverManagerDatabaseModuleTest {
 
         Database db = injector.getInstance(Database.class);
 
-        assertEquals(42, db.findUniqueInt("select 42"));
+        assertThat(db.findUniqueInt("select 42"), is(42));
     }
 }

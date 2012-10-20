@@ -83,6 +83,6 @@ public final class TransactionSettings {
     @NotNull
     @Override
     public String toString() {
-        return "[propagation=" + propagation + ", isolation=" + isolation + ", retries=" + retries + "]";
+        return "[propagation=" + propagation + ", isolation=" + isolation + ", retries=" + retries + ']';
     }
 }

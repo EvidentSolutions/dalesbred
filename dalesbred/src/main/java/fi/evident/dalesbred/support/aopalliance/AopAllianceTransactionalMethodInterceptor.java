@@ -70,7 +70,7 @@ public final class AopAllianceTransactionalMethodInterceptor implements MethodIn
     }
 
     @NotNull
-    private TransactionSettings getTransactionSettings(@NotNull MethodInvocation invocation) {
+    private static TransactionSettings getTransactionSettings(@NotNull MethodInvocation invocation) {
         TransactionSettings settings = new TransactionSettings();
 
         Transactional tx = findTransactionDefinition(invocation.getMethod());
@@ -84,7 +84,7 @@ public final class AopAllianceTransactionalMethodInterceptor implements MethodIn
     }
 
     @Nullable
-    private Transactional findTransactionDefinition(@NotNull Method method) {
+    private static Transactional findTransactionDefinition(@NotNull Method method) {
         Transactional tx = method.getAnnotation(Transactional.class);
         return (tx != null) ? tx : method.getDeclaringClass().getAnnotation(Transactional.class);
     }

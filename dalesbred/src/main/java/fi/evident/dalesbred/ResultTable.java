@@ -102,7 +102,7 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
     @Override
     @NotNull
     public String toString() {
-        return "ResultTable [columns=" + columns + ", rows=" + rows.size() + "]";
+        return "ResultTable [columns=" + columns + ", rows=" + rows.size() + ']';
     }
 
     /**
@@ -273,7 +273,7 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
                 if (name.equalsIgnoreCase(names[i]))
                     return i;
 
-            throw new IllegalArgumentException("unknown column name '" + name + "'");
+            throw new IllegalArgumentException("unknown column name '" + name + '\'');
         }
     }
 }

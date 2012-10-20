@@ -31,7 +31,8 @@ import org.junit.Test;
 
 import javax.sql.DataSource;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class DataSourceDatabaseModuleTest {
 
@@ -41,7 +42,7 @@ public class DataSourceDatabaseModuleTest {
 
         Database db = injector.getInstance(Database.class);
 
-        assertEquals(42, db.findUniqueInt("select 42"));
+        assertThat(db.findUniqueInt("select 42"), is(42));
     }
 
     private static class MyDataSourceModule extends AbstractModule {
