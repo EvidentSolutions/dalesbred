@@ -76,7 +76,7 @@ public class DatabaseTransactionPropagationTest {
         db.withTransaction(new TransactionCallback<Object>() {
             @Override
             public Object execute(@NotNull TransactionContext tx) {
-                db.update("insert into test_table values ('initial')");
+                db.update("insert into test_table (text) values ('initial')");
 
                 assertThat(db.findUnique(String.class, "select text from test_table"), is("initial"));
 
@@ -109,7 +109,7 @@ public class DatabaseTransactionPropagationTest {
 
         db.update("drop table if exists test_table");
         db.update("create table test_table (text varchar)");
-        db.update("insert into test_table values ('foo')");
+        db.update("insert into test_table (text) values ('foo')");
 
         db.withTransaction(new TransactionCallback<Object>() {
             @Override

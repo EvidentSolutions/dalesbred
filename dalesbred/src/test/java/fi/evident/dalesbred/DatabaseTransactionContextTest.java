@@ -35,7 +35,7 @@ public class DatabaseTransactionContextTest {
     public void rollbackOnly() {
         db.update("drop table if exists test_table");
         db.update("create table test_table (text varchar)");
-        db.update("insert into test_table values ('foo')");
+        db.update("insert into test_table (text) values ('foo')");
 
         db.withTransaction(new TransactionCallback<Object>() {
             @Override

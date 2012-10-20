@@ -114,7 +114,8 @@ public class BuiltinCoercionsTest {
         BigInteger bigIntegerValue = new BigInteger("2334593458934593485734985734958734958375984357349857943857");
         BigDecimal bigDecimalValue = new BigDecimal("234239472938472394823.23948723948723948723498237429387423948");
 
-        db.update("insert into numbers values (?, ?, ?, ?, ?, ?, ?)", shortValue, intValue, longValue, floatValue, doubleValue, bigIntegerValue, bigDecimalValue);
+        db.update("insert into numbers (short, int, long, float, double, bigint, bigdecimal) values (?, ?, ?, ?, ?, ?, ?)",
+                  shortValue, intValue, longValue, floatValue, doubleValue, bigIntegerValue, bigDecimalValue);
 
         Numbers numbers = db.findUnique(Numbers.class, "select * from numbers");
 
