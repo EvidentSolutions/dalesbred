@@ -7,12 +7,14 @@
       <w>bigdecimal</w>
       <w>bitbucket</w>
       <w>buildnumber</w>
+      <w>changelog</w>
       <w>charsets</w>
       <w>contravariance</w>
       <w>dalesbred</w>
       <w>dalesbred's</w>
       <w>endian</w>
       <w>fixme</w>
+      <w>frobnicate</w>
       <w>hamcrest</w>
       <w>instantiator</w>
       <w>instantiators</w>
@@ -28,6 +30,7 @@
       <w>scpexe</w>
       <w>sonatype</w>
       <w>sunrsasign</w>
+      <w>testdb</w>
       <w>throwables</w>
       <w>toolchain</w>
       <w>toolchains</w>

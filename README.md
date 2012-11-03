@@ -261,7 +261,7 @@ dependency to your pom.xml:
         <version>0.2.3</version>
     </dependency>
 
-For the JUnit test-support clases, add the following:
+For the JUnit test-support classes, add the following:
 
     :::xml
     <dependency>
