@@ -50,6 +50,11 @@ public class AopAllianceTransactionalMethodInterceptorTest {
     @Named("myService2")
     private MyService service2;
 
+    @Before
+    public void checkConfiguration() {
+        TestDatabaseProvider.assumeConfigurationExists();
+    }
+
     @Test
     public void interceptorCreatesTransaction() {
         assertThat(service1.isExecutedTransactionally(), is(true));

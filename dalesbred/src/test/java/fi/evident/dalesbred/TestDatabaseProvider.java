@@ -82,6 +82,10 @@ public final class TestDatabaseProvider {
         };
     }
 
+    public static void assumeConfigurationExists() {
+        loadProperties();
+    }
+
     @NotNull
     public static Properties loadProperties() {
         try {

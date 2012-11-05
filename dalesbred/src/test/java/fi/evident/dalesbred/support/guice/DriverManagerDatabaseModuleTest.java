@@ -35,6 +35,7 @@ public class DriverManagerDatabaseModuleTest {
 
     @Test
     public void testCreation() {
+        TestDatabaseProvider.assumeConfigurationExists();
         Injector injector = Guice.createInjector(new DriverManagerDatabaseModule(), TestDatabaseProvider.propertiesModule());
 
         Database db = injector.getInstance(Database.class);
