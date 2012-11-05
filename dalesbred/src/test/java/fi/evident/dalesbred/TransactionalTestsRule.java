@@ -32,7 +32,7 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
 public final class TransactionalTestsRule implements TestRule {
 
-    @Nullable
+    @NotNull
     private final Database db;
 
     public TransactionalTestsRule(@NotNull Database db) {
