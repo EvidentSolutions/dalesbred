@@ -51,7 +51,7 @@ final class ConversionMap {
 
     @Nullable
     <S,T> TypeConversion<S,T> findConversion(@NotNull Class<S> source, @NotNull Class<T> target) {
-        for (Class<? super S> cl = wrap(source); cl != null; cl = cl.getSuperclass()) {
+        for (Class<?> cl = wrap(source); cl != null; cl = cl.getSuperclass()) {
             List<TypeConversion<?,?>> candidates = mappings.get(cl);
             if (candidates != null)
                 for (TypeConversion<?,?> coercion : candidates)
