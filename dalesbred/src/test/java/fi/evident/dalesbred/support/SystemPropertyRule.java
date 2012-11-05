@@ -35,7 +35,7 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
  */
 public final class SystemPropertyRule implements TestRule {
 
-    @Nullable
+    @NotNull
     private final String property;
     private final String value;
 
