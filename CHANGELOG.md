@@ -1,4 +1,4 @@
-## 0.2.4 (yyyy-mm-dd)
+## 0.2.4 (2012-11-05)
 
   - Support for user defined type-conversions.
   - Optional Guice-support.
