@@ -85,4 +85,16 @@ public final class TransactionSettings {
     public String toString() {
         return "[propagation=" + propagation + ", isolation=" + isolation + ", retries=" + retries + ']';
     }
+
+    /**
+     *
+     */
+    @NotNull
+    public static TransactionSettings fromAnnotation(@NotNull Transactional transactional) {
+        TransactionSettings settings = new TransactionSettings();
+        settings.setIsolation(transactional.isolation());
+        settings.setPropagation(transactional.propagation());
+        settings.setRetries(transactional.retries());
+        return settings;
+    }
 }

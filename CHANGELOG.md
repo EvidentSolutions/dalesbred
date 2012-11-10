@@ -1,5 +1,6 @@
 ## x.y.z (yyyy-mm-dd)
 
+  - Support for converting Transactional-annotation into TransactionSettings.
   - Support passing Provider<Database> instead of Database when creating TransactionalTests.
 
 ## 0.2.4 (2012-11-05)

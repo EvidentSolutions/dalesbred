@@ -110,16 +110,7 @@ public final class TransactionalProxyFactory {
         @Nullable
         private TransactionSettings findTransactionSettings(@NotNull Method interfaceMethod) {
             Transactional tx = findTransactionDefinition(interfaceMethod);
-            if (tx != null) {
-                TransactionSettings settings = new TransactionSettings();
-                settings.setPropagation(tx.propagation());
-                settings.setIsolation(tx.isolation());
-                settings.setRetries(tx.retries());
-                return settings;
-
-            } else {
-                return null;
-            }
+            return  (tx != null) ? TransactionSettings.fromAnnotation(tx) : null;
         }
 
         @Nullable

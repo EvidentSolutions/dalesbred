@@ -71,16 +71,11 @@ public final class AopAllianceTransactionalMethodInterceptor implements MethodIn
 
     @NotNull
     private static TransactionSettings getTransactionSettings(@NotNull MethodInvocation invocation) {
-        TransactionSettings settings = new TransactionSettings();
-
         Transactional tx = findTransactionDefinition(invocation.getMethod());
-        if (tx != null) {
-            settings.setPropagation(tx.propagation());
-            settings.setIsolation(tx.isolation());
-            settings.setRetries(tx.retries());
-        }
-
-        return settings;
+        if (tx != null)
+            return TransactionSettings.fromAnnotation(tx);
+        else
+            return new TransactionSettings();
     }
 
     @Nullable
