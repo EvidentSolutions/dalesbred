@@ -62,12 +62,15 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
 public final class Database {
 
     /** Provides us with connections whenever we need one */
+    @NotNull
     private final Provider<Connection> connectionProvider;
 
     /** The current active transaction of this thread, or null */
+    @NotNull
     private final ThreadLocal<DatabaseTransaction> activeTransaction = new ThreadLocal<DatabaseTransaction>();
 
     /** Logger in which we log actions */
+    @NotNull
     private final Logger log = Logger.getLogger(getClass().getName());
 
     /** The isolation level to use for transactions that have not specified an explicit level. */
@@ -75,12 +78,14 @@ public final class Database {
     private Isolation defaultIsolation = Isolation.DEFAULT;
 
     /** The default propagation for transactions */
+    @NotNull
     private Propagation defaultPropagation = Propagation.DEFAULT;
 
     /** Default propagation for new transactions */
     private boolean allowImplicitTransactions = true;
 
     /** The dialect that the database uses */
+    @NotNull
     private final Dialect dialect;
 
     /** Contains the instantiators and data-converters */
