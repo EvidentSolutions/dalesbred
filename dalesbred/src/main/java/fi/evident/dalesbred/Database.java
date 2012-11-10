@@ -50,8 +50,14 @@ import static fi.evident.dalesbred.SqlQuery.query;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
 /**
+ * <p>
  * The main abstraction of the library: represents a configured connection to database and provides a way to
  * execute callbacks in transactions.
+ * </p>
+ * <p>
+ * Usually you'll need only single instance of this in your application, unless you need to connect
+ * several different databases or need different default settings for different use cases.
+ * </p>
  */
 public final class Database {
 
