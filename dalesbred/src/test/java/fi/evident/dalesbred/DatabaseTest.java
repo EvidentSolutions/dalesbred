@@ -202,10 +202,18 @@ public class DatabaseTest {
 
     @Test
     public void isolation() {
-        assertNull(db.getDefaultIsolation());
+        assertSame(Isolation.DEFAULT, db.getDefaultIsolation());
 
         db.setDefaultIsolation(Isolation.REPEATABLE_READ);
         assertSame(Isolation.REPEATABLE_READ, db.getDefaultIsolation());
+    }
+
+    @Test
+    public void propagation() {
+        assertSame(Propagation.DEFAULT, db.getDefaultPropagation());
+
+        db.setDefaultPropagation(Propagation.NESTED);
+        assertSame(Propagation.NESTED, db.getDefaultPropagation());
     }
 
     @Test

@@ -46,12 +46,11 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static fi.evident.dalesbred.Propagation.*;
 import static fi.evident.dalesbred.SqlQuery.query;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
 /**
- * The main abstraction of the library: represents a connection to database and provides a way to
+ * The main abstraction of the library: represents a configured connection to database and provides a way to
  * execute callbacks in transactions.
  */
 public final class Database {
@@ -65,9 +64,12 @@ public final class Database {
     /** Logger in which we log actions */
     private final Logger log = Logger.getLogger(getClass().getName());
 
-    /** The isolation level to use for transactions that have not specified an explicit level. Null for default. */
-    @Nullable
-    private Isolation defaultIsolation;
+    /** The isolation level to use for transactions that have not specified an explicit level. */
+    @NotNull
+    private Isolation defaultIsolation = Isolation.DEFAULT;
+
+    /** The default propagation for transactions */
+    private Propagation defaultPropagation = Propagation.DEFAULT;
 
     /** Default propagation for new transactions */
     private boolean allowImplicitTransactions = true;
@@ -140,21 +142,21 @@ public final class Database {
      * Executes a block of code within a context of a transaction, using {@link Propagation#REQUIRED} propagation.
      */
     public <T> T withTransaction(@NotNull TransactionCallback<T> callback) {
-        return withTransaction(REQUIRED, defaultIsolation, callback);
+        return withTransaction(Propagation.DEFAULT, Isolation.DEFAULT, callback);
     }
 
     /**
      * Executes a block of code with given propagation and configuration default isolation.
      */
     public <T> T withTransaction(@NotNull Propagation propagation, @NotNull TransactionCallback<T> callback) {
-        return withTransaction(propagation, defaultIsolation, callback);
+        return withTransaction(propagation, Isolation.DEFAULT, callback);
     }
 
     /**
      * Executes a block of code with given propagation and isolation.
      */
     public <T> T withTransaction(@NotNull Propagation propagation,
-                                 @Nullable Isolation isolation,
+                                 @NotNull Isolation isolation,
                                  @NotNull TransactionCallback<T> callback) {
 
         TransactionSettings settings = new TransactionSettings();
@@ -172,22 +174,22 @@ public final class Database {
     public <T> T withTransaction(@NotNull TransactionSettings settings,
                                  @NotNull TransactionCallback<T> callback) {
 
-        Propagation propagation = settings.getPropagation();
-        Isolation isolation = settings.getIsolation();
+        Propagation propagation = settings.getPropagation().normalize(defaultPropagation);
+        Isolation isolation = settings.getIsolation().normalize(defaultIsolation);
         int retries = settings.getRetries();
 
         DatabaseTransaction existingTransaction = activeTransaction.get();
 
         if (existingTransaction != null) {
-            if (propagation == REQUIRES_NEW)
+            if (propagation == Propagation.REQUIRES_NEW)
                 return withSuspendedTransaction(isolation, callback);
-            else if (propagation == NESTED)
+            else if (propagation == Propagation.NESTED)
                 return existingTransaction.nested(retries, callback);
             else
                 return existingTransaction.join(callback);
 
         } else {
-            if (propagation == MANDATORY)
+            if (propagation == Propagation.MANDATORY)
                 throw new NoActiveTransactionException("Transaction propagation was MANDATORY, but there was no existing transaction.");
 
             DatabaseTransaction newTransaction = new DatabaseTransaction(connectionProvider, dialect, isolation);
@@ -208,11 +210,11 @@ public final class Database {
         return activeTransaction.get() != null;
     }
 
-    private <T> T withSuspendedTransaction(@Nullable Isolation isolation, @NotNull TransactionCallback<T> callback) {
+    private <T> T withSuspendedTransaction(@NotNull Isolation isolation, @NotNull TransactionCallback<T> callback) {
         DatabaseTransaction suspended = activeTransaction.get();
         try {
             activeTransaction.set(null);
-            return withTransaction(REQUIRED, isolation, callback);
+            return withTransaction(Propagation.REQUIRED, isolation, callback);
         } finally {
             activeTransaction.set(suspended);
         }
@@ -544,18 +546,33 @@ public final class Database {
     }
 
     /**
-     * Returns the used transaction isolation level, or null for default level.
+     * Returns the used transaction isolation level.
      */
-    @Nullable
+    @NotNull
     public Isolation getDefaultIsolation() {
         return defaultIsolation;
     }
 
     /**
-     * Sets the transaction isolation level to use, or null for default level
+     * Sets the transaction isolation level to use.
      */
-    public void setDefaultIsolation(@Nullable Isolation isolation) {
+    public void setDefaultIsolation(@NotNull Isolation isolation) {
         this.defaultIsolation = isolation;
+    }
+
+    /**
+     * Returns the default transaction propagation to use.
+     */
+    @NotNull
+    public Propagation getDefaultPropagation() {
+        return defaultPropagation;
+    }
+
+    /**
+     * Returns the default transaction propagation to use.
+     */
+    public void setDefaultPropagation(@NotNull Propagation propagation) {
+        defaultPropagation = propagation;
     }
 
     /**

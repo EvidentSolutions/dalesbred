@@ -23,7 +23,6 @@
 package fi.evident.dalesbred;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
@@ -35,10 +34,10 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
 public final class TransactionSettings {
 
     @NotNull
-    private Propagation propagation = Propagation.REQUIRED;
+    private Propagation propagation = Propagation.DEFAULT;
 
-    @Nullable
-    private Isolation isolation;
+    @NotNull
+    private Isolation isolation = Isolation.DEFAULT;
 
     private int retries = 0;
 
@@ -54,15 +53,15 @@ public final class TransactionSettings {
         this.propagation = requireNonNull(propagation);
     }
 
-    @Nullable
+    @NotNull
     public Isolation getIsolation() {
         return isolation;
     }
 
     /**
-     * Set the default isolation level to use, or {@code null} for database default level.
+     * Set the default isolation level to use.
      */
-    public void setIsolation(@Nullable Isolation isolation) {
+    public void setIsolation(@NotNull Isolation isolation) {
         this.isolation = isolation;
     }
 
@@ -87,7 +86,7 @@ public final class TransactionSettings {
     }
 
     /**
-     *
+     * Constructs TransactionSettings from given annotation.
      */
     @NotNull
     public static TransactionSettings fromAnnotation(@NotNull Transactional transactional) {

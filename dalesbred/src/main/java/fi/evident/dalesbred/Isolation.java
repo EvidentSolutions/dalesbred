@@ -31,6 +31,9 @@ import java.sql.Connection;
  */
 public enum Isolation {
 
+    /** Use the default isolation level */
+    DEFAULT(0),
+
     /** @see Connection#TRANSACTION_READ_UNCOMMITTED */
     READ_UNCOMMITTED(Connection.TRANSACTION_READ_UNCOMMITTED),
 
@@ -59,5 +62,9 @@ public enum Isolation {
                 return isolation;
 
         throw new IllegalArgumentException("invalid code: " + code);
+    }
+
+    Isolation normalize(Isolation defaultValue) {
+        return (this == DEFAULT) ? defaultValue : this;
     }
 }

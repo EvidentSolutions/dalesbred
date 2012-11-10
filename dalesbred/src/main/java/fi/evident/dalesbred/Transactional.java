@@ -35,11 +35,11 @@ import java.lang.annotation.*;
 @Inherited
 public @interface Transactional {
 
-    /** The propagation for transaction, default is {@link Propagation#REQUIRED}. */
-    @NotNull Propagation propagation() default Propagation.REQUIRED;
+    /** The propagation for transaction */
+    @NotNull Propagation propagation() default Propagation.DEFAULT;
 
-    /** Isolation for transaction, default is {@link Isolation#READ_COMMITTED} */
-    @NotNull Isolation isolation() default Isolation.READ_COMMITTED;
+    /** Isolation for transaction */
+    @NotNull Isolation isolation() default Isolation.DEFAULT;
 
     /** Number of automatic retries due to serialization failures, default is 0. */
     int retries() default 0;

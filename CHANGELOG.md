@@ -1,5 +1,8 @@
 ## x.y.z (yyyy-mm-dd)
 
+  - Changed the way that Isolation and Propagation are configured, so that the
+    default isolation and propagation can be specified at Database-level even
+    when using annotations.
   - Support for converting Transactional-annotation into TransactionSettings.
   - Support passing Provider<Database> instead of Database when creating TransactionalTests.
 

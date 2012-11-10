@@ -24,7 +24,6 @@ package fi.evident.dalesbred;
 
 import fi.evident.dalesbred.dialects.Dialect;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Provider;
 import java.sql.Connection;
@@ -48,14 +47,14 @@ final class DatabaseTransaction {
     private final Dialect dialect;
     private static final Logger log = Logger.getLogger(DatabaseTransaction.class.getName());
 
-    DatabaseTransaction(@NotNull Provider<Connection> connectionProvider, @NotNull Dialect dialect, @Nullable Isolation isolation) {
+    DatabaseTransaction(@NotNull Provider<Connection> connectionProvider, @NotNull Dialect dialect, @NotNull Isolation isolation) {
         this.connection = requireNonNull(connectionProvider.get(), "null connection from connection-provider");
         this.dialect = requireNonNull(dialect);
 
         try {
             connection.setAutoCommit(false);
 
-            if (isolation != null)
+            if (isolation != Isolation.DEFAULT)
                 connection.setTransactionIsolation(isolation.level);
 
         } catch (SQLException e) {
