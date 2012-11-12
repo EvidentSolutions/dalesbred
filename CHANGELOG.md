@@ -1,3 +1,7 @@
+## x.y.z (yyyy-mm-dd)
+
+  - Support passing Provider<Database> instead of Database when creating TransactionalTests.
+
 ## 0.2.4 (2012-11-05)
 
   - Support for user defined type-conversions.

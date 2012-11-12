@@ -31,6 +31,8 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
+import javax.inject.Provider;
+
 import static fi.evident.dalesbred.junit.TransactionalTests.RollbackPolicy.*;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
@@ -46,7 +48,7 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
 public final class TransactionalTests implements TestRule {
 
     @NotNull
-    private final Database db;
+    private final Provider<Database> db;
 
     @NotNull
     private final RollbackPolicy rollbackPolicy;
@@ -71,7 +73,29 @@ public final class TransactionalTests implements TestRule {
      * Constructs a rule that will wrap tests in transactions and use the specified
      * rollback-policy for rolling back the transaction.
      */
-    public TransactionalTests(@NotNull Database db, @NotNull RollbackPolicy rollbackPolicy) {
+    public TransactionalTests(@NotNull final Database db, @NotNull RollbackPolicy rollbackPolicy) {
+        this(new Provider<Database>() {
+            @Override
+            public Database get() {
+                return db;
+            }
+        }, rollbackPolicy);
+    }
+
+    /**
+     * Constructs a rule that will wrap tests in transactions and use the default
+     * rollback-policy ({@link RollbackPolicy#ROLLBACK_ON_FAILURE}) for rolling back
+     * the transaction.
+     */
+    public TransactionalTests(@NotNull Provider<Database> db) {
+        this(db, ROLLBACK_ON_FAILURE);
+    }
+
+    /**
+     * Constructs a rule that will wrap tests in transactions and use the specified
+     * rollback-policy for rolling back the transaction.
+     */
+    public TransactionalTests(@NotNull Provider<Database> db, @NotNull RollbackPolicy rollbackPolicy) {
         this.db = requireNonNull(db);
         this.rollbackPolicy = requireNonNull(rollbackPolicy);
     }
@@ -83,7 +107,7 @@ public final class TransactionalTests implements TestRule {
             @Override
             public void evaluate() throws Throwable {
                 Throwable throwable =
-                    db.withTransaction(new TransactionCallback<Throwable>() {
+                    db.get().withTransaction(new TransactionCallback<Throwable>() {
                         @Nullable
                         @Override
                         public Throwable execute(@NotNull TransactionContext tx) {
