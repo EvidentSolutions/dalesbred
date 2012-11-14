@@ -593,6 +593,6 @@ public final class Database {
     @Override
     @NotNull
     public String toString() {
-        return "Database [dialect=" + dialect + ", allowImplicitTransactions=" + allowImplicitTransactions + ", defaultIsolation=" + defaultIsolation + ']';
+        return "Database [dialect=" + dialect + ", allowImplicitTransactions=" + allowImplicitTransactions + ", defaultIsolation=" + defaultIsolation + ", defaultPropagation=" + defaultPropagation + ']';
     }
 }
