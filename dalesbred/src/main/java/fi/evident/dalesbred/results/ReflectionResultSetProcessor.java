@@ -22,6 +22,7 @@
 
 package fi.evident.dalesbred.results;
 
+import fi.evident.dalesbred.UnexpectedResultException;
 import fi.evident.dalesbred.instantiation.Instantiator;
 import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
 import fi.evident.dalesbred.instantiation.NamedTypeList;
@@ -53,6 +54,7 @@ public final class ReflectionResultSetProcessor<T> implements ResultSetProcessor
     public List<T> process(@NotNull ResultSet resultSet) throws SQLException {
         NamedTypeList types = ResultSetUtils.getTypes(resultSet.getMetaData());
         Instantiator<T> ctor = instantiatorRegistry.findInstantiator(cl, types);
+        boolean allowNulls = !cl.isPrimitive();
 
         ArrayList<T> result = new ArrayList<T>();
 
@@ -62,7 +64,11 @@ public final class ReflectionResultSetProcessor<T> implements ResultSetProcessor
             for (int i = 0; i < args.length; i++)
                 args[i] = resultSet.getObject(i+1);
 
-            result.add(ctor.instantiate(args));
+            T value = ctor.instantiate(args);
+            if (value != null || allowNulls)
+                result.add(value);
+            else
+                throw new UnexpectedResultException("expected " + cl.getName() + ", but got null");
         }
 
         return result;
