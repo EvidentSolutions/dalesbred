@@ -14,7 +14,7 @@ Get started
 Configuring the database connection
 -----------------------------------
 
-Most things in Dalesbred happen through an instance of _Database_. The easiest
+Most things in Dalesbred happen through an instance of `Database`. The easiest
 way to get hold of one is to specify the settings manually:
 
     :::java
@@ -22,13 +22,13 @@ way to get hold of one is to specify the settings manually:
 
 Note that this performs no connection pooling and is therefore probably not
 your preferred way of configuring the system in production. In a container
-you'll probably want to use a named DataSource lookup up from JNDI:
+you'll probably want to use a named `DataSource` lookup up from JNDI:
 
     :::java
     Database db = Database.forJndiDataSource("java:comp/env/jdbc/ExampleDb");
 
-Alternatively, you might setup a DataSource yourself, in which case you can
-just create a Database out of that:
+Alternatively, you might setup a `DataSource` yourself, in which case you can
+just create a `Database` out of that:
 
     :::java
     Database db = Database.forDataSource(myDataSource);
@@ -36,7 +36,7 @@ just create a Database out of that:
 Finally, for  _javax.inject_-compatible dependency injection container (e.g. Guice
 or Java EE 6), you can just make sure that there's a
 [Provider](http://docs.oracle.com/javaee/6/api/javax/inject/Provider.html)
-for DataSource around and then just inject your Database:
+for `DataSource` around and then just inject your `Database`:
 
     :::java
     @Inject Database db;
@@ -77,13 +77,13 @@ You can also convert the results directly to a map:
             Integer.class, String.class, "select id, name from department");
 
 If for some reason you don't want to map the results into your own class, you
-can ask for a ResultTable, which is basically a detached representation of a
-ResultSet:
+can ask for a `ResultTable`, which is basically a detached representation of a
+`ResultSet`:
 
     :::java
     ResultTable employees = db.findTable("select * from employee");
 
-Alternatively, you can supply your own RowMapper or ResultSetProcessor-implementations
+Alternatively, you can supply your own `RowMapper` or `ResultSetProcessor`-implementation
 in place of the class and handle the result sets manually, but usually this should
 be unnecessary.
 
@@ -103,7 +103,7 @@ If you plan to return stuff from updates, they are queries as far as Dalesbred i
 Transactions
 ------------
 
-To perform a bunch of operations in transaction, use TransactionCallback:
+To perform a bunch of operations in transaction, use `TransactionCallback`:
 
     :::java
     db.withTransaction(new TransactionCallback<Result>() {
@@ -155,8 +155,8 @@ If you are using Guice, Dalesbred can integrate with its interceptor support, se
 Guice-integration
 -----------------
 
-Dalesbred has support for integration with Guice 3. You can just pass in DataSourceDatabaseModule
-or DriverManagerConnectionModule when constructing your injector and you'll get automatic support
+Dalesbred has support for integration with Guice 3. You can just pass in `DataSourceDatabaseModule`
+or `DriverManagerConnectionModule` when constructing your injector and you'll get automatic support
 for annotation based transactions and can @Inject your database wherever you need it.
 
     :::java
@@ -169,8 +169,8 @@ SqlQuery vs. query parameters
 -----------------------------
 
 All methods come in two variants: there's an implementation that takes
-an SqlQuery as a parameter and there's another implementation that takes
-String and variable arguments of parameters. The latter is just convenience
+an `SqlQuery` as a parameter and there's another implementation that takes
+`String` and variable arguments of parameters. The latter is just convenience
 method for the further, meaning that the following code fragments are
 identical in functionality:
 
@@ -194,8 +194,8 @@ the query dynamically:
 Building queries dynamically
 ----------------------------
 
-At the moment there's no high-level API for building queries, but there is a QueryBuilder that
-is basically just a StringBuilder which remembers the query-parameters, so you can say things like:
+At the moment there's no high-level API for building queries, but there is a `QueryBuilder` that
+is basically just a `StringBuilder` which remembers the query-parameters, so you can say things like:
 
     :::java
     QueryBuilder qb = new QueryBuilder("select id, name, status from document");
@@ -211,15 +211,15 @@ Custom type-conversions
 -----------------------
 
 Sometimes you need to convert database values to your own custom types and vice versa. To do that,
-you can register your own TypeConversion-implementations to TypeConversionRegistry:
+you can register your own `TypeConversion`-implementations to `TypeConversionRegistry`:
 
     :::java
     TypeConversionRegistry conversions = db.getTypeConversionRegistry();
     conversions.registerConversionFromDatabaseType(new StringToEmailAddressConversion());
     conversions.registerConversionToDatabaseType(new EmailAddressToStringConversion());
 
-There are built-in conversions from Joda Time's DateTime, LocalDate and LocalTime to java.sql.Timestamp,
-java.sql.Date and java.sql.Time, respectively. These will be automatically registered if Joda Time is
+There are built-in conversions from Joda Time's `DateTime`, `LocalDate` and `LocalTime` to `java.sql.Timestamp`,
+`java.sql.Date` and `java.sql.Time`, respectively. These will be automatically registered if Joda Time is
 detected on classpath.
 
 Confidential values
