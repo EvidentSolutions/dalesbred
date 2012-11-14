@@ -22,11 +22,14 @@
 
 package fi.evident.dalesbred.connection;
 
+import fi.evident.dalesbred.DatabaseException;
 import fi.evident.dalesbred.DatabaseSQLException;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -38,6 +41,7 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
  */
 public final class DataSourceConnectionProvider implements Provider<Connection> {
 
+    @NotNull
     private final DataSource dataSource;
 
     @Inject
@@ -52,6 +56,24 @@ public final class DataSourceConnectionProvider implements Provider<Connection> 
             return requireNonNull(dataSource.getConnection(), "null connection from DataSource");
         } catch (SQLException e) {
             throw new DatabaseSQLException(e);
+        }
+    }
+
+    @NotNull
+    public static DataSourceConnectionProvider fromJndi(@NotNull String jndiName) {
+        try {
+            InitialContext ctx = new InitialContext();
+            try {
+                DataSource dataSource = (DataSource) ctx.lookup(jndiName);
+                if (dataSource != null)
+                    return new DataSourceConnectionProvider(dataSource);
+                else
+                    throw new DatabaseException("Could not find DataSource '" + jndiName + '\'');
+            } finally {
+                ctx.close();
+            }
+        } catch (NamingException e) {
+            throw new DatabaseException("Error when looking up DataSource '" + jndiName + "': " + e, e);
         }
     }
 }

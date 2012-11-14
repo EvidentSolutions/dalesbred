@@ -34,8 +34,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -105,20 +103,7 @@ public final class Database {
      */
     @NotNull
     public static Database forJndiDataSource(@NotNull String jndiName) {
-        try {
-            InitialContext ctx = new InitialContext();
-            try {
-                DataSource dataSource = (DataSource) ctx.lookup(jndiName);
-                if (dataSource != null)
-                    return forDataSource(dataSource);
-                else
-                    throw new DatabaseException("Could not find DataSource '" + jndiName + '\'');
-            } finally {
-                ctx.close();
-            }
-        } catch (NamingException e) {
-            throw new DatabaseException("Error when looking up DataSource '" + jndiName + "': " + e, e);
-        }
+        return new Database(DataSourceConnectionProvider.fromJndi(jndiName));
     }
 
     /**
