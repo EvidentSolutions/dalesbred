@@ -24,6 +24,7 @@ package fi.evident.dalesbred;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 
@@ -34,9 +35,11 @@ import static java.util.Collections.unmodifiableList;
 /**
  * Represents an SQL query along all of its arguments.
  */
-public final class SqlQuery {
+public final class SqlQuery implements Serializable {
+
     final String sql;
     final List<?> args;
+    private static final long serialVersionUID = 1;
 
     private SqlQuery(@NotNull @SQL String sql, @NotNull List<?> args) {
         this.sql = requireNonNull(sql);
