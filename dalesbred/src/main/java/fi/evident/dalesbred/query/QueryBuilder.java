@@ -120,6 +120,15 @@ public final class QueryBuilder {
     }
 
     /**
+     * Adds an argument to this query.
+     */
+    @NotNull
+    public QueryBuilder addConfidentialArgument(Object argument) {
+        arguments.add(SqlQuery.confidential(argument));
+        return this;
+    }
+
+    /**
      * Adds given arguments to this query.
      */
     @NotNull

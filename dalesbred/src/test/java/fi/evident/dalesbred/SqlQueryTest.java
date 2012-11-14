@@ -24,6 +24,7 @@ package fi.evident.dalesbred;
 
 import org.junit.Test;
 
+import static fi.evident.dalesbred.SqlQuery.confidential;
 import static fi.evident.dalesbred.SqlQuery.query;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
@@ -60,5 +61,12 @@ public class SqlQueryTest {
 
         assertEquals("select * from foo", query.getSql());
         assertEquals(asList(1, 2, 3), query.getArguments());
+    }
+
+    @Test
+    public void secretValuesAreNotShownInToString() {
+        SqlQuery query = query("select * from foo where login=? and password=?", "foo", confidential("bar"));
+
+        assertEquals("select * from foo where login=? and password=? [foo, ****]", query.toString());
     }
 }

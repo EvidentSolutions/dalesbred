@@ -45,6 +45,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static fi.evident.dalesbred.SqlQuery.query;
+import static fi.evident.dalesbred.SqlQuery.unwrapConfidential;
 import static fi.evident.dalesbred.results.UniqueResultSetProcessor.unique;
 import static fi.evident.dalesbred.results.UniqueResultSetProcessor.uniqueOrEmpty;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
@@ -501,7 +502,7 @@ public final class Database {
         int i = 1;
 
         for (Object arg : args)
-            ps.setObject(i++, instantiatorRegistry.valueToDatabase(arg));
+            ps.setObject(i++, instantiatorRegistry.valueToDatabase(unwrapConfidential(arg)));
     }
 
     @NotNull

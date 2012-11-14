@@ -1,5 +1,6 @@
 ## x.y.z (yyyy-mm-dd)
 
+  - Added support for confidential query parameters, which never show up in logs.
   - Exceptions thrown when executing a query will reference the query that caused the exception to be thrown.
   - Changed the way that Isolation and Propagation are configured, so that the
     default isolation and propagation can be specified at Database-level even

@@ -22,6 +22,7 @@
 
 package fi.evident.dalesbred.query;
 
+import fi.evident.dalesbred.SqlQuery;
 import org.junit.Test;
 
 import static fi.evident.dalesbred.SqlQuery.query;
@@ -77,5 +78,11 @@ public class QueryBuilderTest {
     @Test
     public void placeholder() {
         assertEquals(QueryBuilder.PLACEHOLDER, new QueryBuilder().appendPlaceholders(1).build().getSql());
+    }
+
+    @Test
+    public void confidentialArguments() {
+        SqlQuery query = new QueryBuilder("select * from user where password=?").addConfidentialArgument("foo").build();
+        assertEquals("select * from user where password=? [****]", query.toString());
     }
 }

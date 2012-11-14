@@ -23,6 +23,7 @@
 package fi.evident.dalesbred;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -99,5 +100,55 @@ public final class SqlQuery implements Serializable {
     @Override
     public int hashCode() {
         return sql.hashCode() * 31 + args.hashCode();
+    }
+
+    /**
+     * If the argument is a confidential value, returns it unwrapped, otherwise returns the value as it is.
+     */
+    static Object unwrapConfidential(Object arg) {
+        if (arg instanceof ConfidentialValue)
+            return ((ConfidentialValue) arg).value;
+        else
+            return arg;
+    }
+
+    /**
+     * Wraps the value in a confidential wrapper which prevents it from ever being shown
+     * in any logs or stack-traces, but it can still be used normally as a query-parameter.
+     */
+    public static Object confidential(Object value) {
+        return new ConfidentialValue(value);
+    }
+
+    private static class ConfidentialValue {
+
+        @Nullable
+        private final Object value;
+
+        private ConfidentialValue(@Nullable Object value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return "****";
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) return true;
+
+            if (o instanceof ConfidentialValue) {
+                ConfidentialValue rhs = (ConfidentialValue) o;
+                return (value == null) ? rhs.value == null : value.equals(rhs.value);
+            }
+
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return (value != null) ? value.hashCode() : 0;
+        }
     }
 }

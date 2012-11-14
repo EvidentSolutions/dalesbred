@@ -222,6 +222,22 @@ There are built-in conversions from Joda Time's DateTime, LocalDate and LocalTim
 java.sql.Date and java.sql.Time, respectively. These will be automatically registered if Joda Time is
 detected on classpath.
 
+Confidential values
+-------------------
+
+Dalesbred tries to provide detailed exceptions and logs which include all the parameters of queries. While
+this is generally useful, it could mean that sensitive information such as passwords or credit card numbers
+might end up in logs or error messages. When building a query, you can wrap such values with `SqlQuery.confidential`
+so that only asterisks will be displayed whenever those values are printed, but they are still sent to database
+correctly:
+
+    :::java
+    import static fi.evident.dalesbred.SqlQuery.confidential;
+
+    ...
+
+    db.update("insert into credit_card (number) values (?)", confidential(creditCardNumber));
+
 Test support
 ------------
 

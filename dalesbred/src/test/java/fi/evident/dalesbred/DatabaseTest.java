@@ -35,6 +35,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import static fi.evident.dalesbred.SqlQuery.confidential;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -198,6 +199,11 @@ public class DatabaseTest {
     @Test(expected = DatabaseException.class)
     public void creatingDatabaseWithJndiDataSourceThrowsExceptionWhenContextIsNotConfigured() {
         Database.forJndiDataSource("foo");
+    }
+
+    @Test
+    public void confidentialValuesWorkLikeNormals() {
+        assertThat(db.findUnique(String.class, "select ?", confidential("foo")), is("foo"));
     }
 
     @Test
