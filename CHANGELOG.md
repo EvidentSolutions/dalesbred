@@ -1,4 +1,4 @@
-## x.y.z (yyyy-mm-dd)
+## 0.2.5 (2012-11-14)
 
   - Added support for confidential query parameters, which never show up in logs.
   - Exceptions thrown when executing a query will reference the query that caused the exception to be thrown.
