@@ -22,43 +22,27 @@
 
 package fi.evident.dalesbred;
 
-import org.jetbrains.annotations.Nullable;
+import org.junit.After;
+import org.junit.Test;
 
-/**
- * Base class for all of Dalesbred's exceptions.
- */
-public class DatabaseException extends RuntimeException {
+import static fi.evident.dalesbred.SqlQuery.query;
+import static org.junit.Assert.assertEquals;
 
-    @Nullable
-    private final SqlQuery query = DebugContext.getCurrentQuery();
+public class DatabaseExceptionTest {
 
-    public DatabaseException(String message) {
-        super(message);
+    @After
+    public void clearDebugContext() {
+        DebugContext.setCurrentQuery(null);
     }
 
-    public DatabaseException(Throwable cause) {
-        super(cause);
-    }
-    
-    public DatabaseException(String message, Throwable cause) {
-        super(message, cause);
+    @Test
+    public void queryIsIncludedInToString() {
+        DebugContext.setCurrentQuery(query("select * from foo where id=?", 42));
+        assertEquals("fi.evident.dalesbred.DatabaseException: exception message (query: select * from foo where id=? [42])", new DatabaseException("exception message").toString());
     }
 
-    /**
-     * If this exception was thrown during an execution of a query, returns the query. Otherwise
-     * returns {@code null}.
-     */
-    @Nullable
-    public SqlQuery getQuery() {
-        return query;
-    }
-
-    @Override
-    public String toString() {
-        String basicToString = super.toString();
-        if (query != null)
-            return basicToString + " (query: " + query + ')';
-        else
-            return basicToString;
+    @Test
+    public void ifQueryIsNotPresentItIsNotIncluded() {
+        assertEquals("fi.evident.dalesbred.DatabaseException: exception message", new DatabaseException("exception message").toString());
     }
 }
