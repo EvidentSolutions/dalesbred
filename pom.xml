@@ -12,7 +12,7 @@
     <groupId>fi.evident.dalesbred</groupId>
     <artifactId>dalesbred-root</artifactId>
     <packaging>pom</packaging>
-    <version>0.2.5-SNAPSHOT</version>
+    <version>0.2.5</version>
 
     <name>Dalesbred Root</name>
     <description>A database access library for Java</description>
@@ -231,6 +231,6 @@
         <url>https://bitbucket.org/evidentsolutions/dalesbred</url>
         <connection>scm:hg:https://bitbucket.org/evidentsolutions/dalesbred</connection>
         <developerConnection>scm:hg:ssh://hg@bitbucket.org/evidentsolutions/dalesbred</developerConnection>
-        <tag>HEAD</tag>
+        <tag>dalesbred-0.2.5</tag>
     </scm>
 </project>
