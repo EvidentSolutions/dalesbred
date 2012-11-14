@@ -24,32 +24,18 @@ package fi.evident.dalesbred;
 
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Base class for all of Dalesbred's exceptions.
- */
-public class DatabaseException extends RuntimeException {
+final class DebugContext {
+
+    private static final ThreadLocal<SqlQuery> currentQuery = new ThreadLocal<SqlQuery>();
+
+    private DebugContext() { }
 
     @Nullable
-    private final SqlQuery query = DebugContext.getCurrentQuery();
-
-    public DatabaseException(String message) {
-        super(message);
+    static SqlQuery getCurrentQuery() {
+        return currentQuery.get();
     }
 
-    public DatabaseException(Throwable cause) {
-        super(cause);
-    }
-    
-    public DatabaseException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    /**
-     * If this exception was thrown during an execution of a query, returns the query. Otherwise
-     * returns {@code null}.
-     */
-    @Nullable
-    public SqlQuery getQuery() {
-        return query;
+    static void setCurrentQuery(@Nullable SqlQuery query) {
+        currentQuery.set(query);
     }
 }

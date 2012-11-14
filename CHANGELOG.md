@@ -1,5 +1,6 @@
 ## x.y.z (yyyy-mm-dd)
 
+  - Exceptions thrown when executing a query will reference the query that caused the exception to be thrown.
   - Changed the way that Isolation and Propagation are configured, so that the
     default isolation and propagation can be specified at Database-level even
     when using annotations.

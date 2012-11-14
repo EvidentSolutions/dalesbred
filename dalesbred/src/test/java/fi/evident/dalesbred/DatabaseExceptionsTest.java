@@ -22,34 +22,39 @@
 
 package fi.evident.dalesbred;
 
-import org.jetbrains.annotations.Nullable;
+import org.junit.Rule;
+import org.junit.Test;
 
-/**
- * Base class for all of Dalesbred's exceptions.
- */
-public class DatabaseException extends RuntimeException {
+import static fi.evident.dalesbred.SqlQuery.query;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
-    @Nullable
-    private final SqlQuery query = DebugContext.getCurrentQuery();
+public class DatabaseExceptionsTest {
 
-    public DatabaseException(String message) {
-        super(message);
+    private final Database db = TestDatabaseProvider.createTestDatabase();
+
+    @Rule
+    public final TransactionalTestsRule rule = new TransactionalTestsRule(db);
+
+    @Test
+    public void findUniqueOrNull_nonUniqueResult() {
+        SqlQuery query = query("select generate_series(1, 2)");
+        try {
+            db.findUniqueOrNull(Integer.class, query);
+            fail("Expected NonUniqueResultException");
+        } catch (NonUniqueResultException e) {
+            assertSame(query, e.getQuery());
+        }
     }
 
-    public DatabaseException(Throwable cause) {
-        super(cause);
-    }
-    
-    public DatabaseException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    /**
-     * If this exception was thrown during an execution of a query, returns the query. Otherwise
-     * returns {@code null}.
-     */
-    @Nullable
-    public SqlQuery getQuery() {
-        return query;
+    @Test
+    public void findUniqueInt_nullResult() {
+        SqlQuery query = query("select null::int");
+        try {
+            db.findUniqueInt(query);
+            fail("Expected UnexpectedResultException");
+        } catch (UnexpectedResultException e) {
+            assertSame(query, e.getQuery());
+        }
     }
 }

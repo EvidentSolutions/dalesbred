@@ -45,6 +45,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static fi.evident.dalesbred.SqlQuery.query;
+import static fi.evident.dalesbred.results.UniqueResultSetProcessor.unique;
+import static fi.evident.dalesbred.results.UniqueResultSetProcessor.uniqueOrEmpty;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
 /**
@@ -224,15 +226,21 @@ public final class Database {
      * @throws IllegalStateException if there's no active transaction.
      * @see #setAllowImplicitTransactions(boolean)
      */
-    private <T> T withCurrentTransaction(@NotNull TransactionCallback<T> callback) {
-        if (allowImplicitTransactions) {
-            return withTransaction(callback);
-        } else {
-            DatabaseTransaction transaction = activeTransaction.get();
-            if (transaction != null)
-                return transaction.join(callback);
-            else
-                throw new NoActiveTransactionException("Tried to perform database operation without active transaction. Database accesses should be bracketed with Database.withTransaction(...) or implicit transactions should be enabled.");
+    private <T> T withCurrentTransaction(@NotNull SqlQuery query, @NotNull TransactionCallback<T> callback) {
+        SqlQuery oldQuery = DebugContext.getCurrentQuery();
+        try {
+            DebugContext.setCurrentQuery(query);
+            if (allowImplicitTransactions) {
+                return withTransaction(callback);
+            } else {
+                DatabaseTransaction transaction = activeTransaction.get();
+                if (transaction != null)
+                    return transaction.join(callback);
+                else
+                    throw new NoActiveTransactionException("Tried to perform database operation without active transaction. Database accesses should be bracketed with Database.withTransaction(...) or implicit transactions should be enabled.");
+            }
+        } finally {
+            DebugContext.setCurrentQuery(oldQuery);
         }
     }
 
@@ -241,7 +249,7 @@ public final class Database {
      * All other findXXX-methods are just convenience methods for this one.
      */
     public <T> T executeQuery(@NotNull final ResultSetProcessor<T> processor, @NotNull final SqlQuery query) {
-        return withCurrentTransaction(new TransactionCallback<T>() {
+        return withCurrentTransaction(query, new TransactionCallback<T>() {
             @Override
             public T execute(@NotNull TransactionContext tx) throws SQLException {
                 logQuery(query);
@@ -312,7 +320,7 @@ public final class Database {
      * @throws NonUniqueResultException if there are no rows or multiple rows
      */
     public <T> T findUnique(@NotNull RowMapper<T> mapper, @NotNull SqlQuery query) {
-        return unique(findAll(mapper, query));
+        return executeQuery(unique(new ListWithRowMapperResultSetProcessor<T>(mapper)), query);
     }
 
     /**
@@ -330,7 +338,7 @@ public final class Database {
      * @throws NonUniqueResultException if there are no rows or multiple rows
      */
     public <T> T findUnique(@NotNull Class<T> cl, @NotNull SqlQuery query) {
-        return unique(findAll(cl, query));
+        return executeQuery(unique(resultProcessorForClass(cl)), query);
     }
 
     /**
@@ -350,7 +358,7 @@ public final class Database {
      */
     @Nullable
     public <T> T findUniqueOrNull(@NotNull RowMapper<T> rowMapper, @NotNull SqlQuery query) {
-        return uniqueOrNull(findAll(rowMapper, query));
+        return executeQuery(uniqueOrEmpty(new ListWithRowMapperResultSetProcessor<T>(rowMapper)), query);
     }
 
     /**
@@ -372,7 +380,7 @@ public final class Database {
      */
     @Nullable
     public <T> T findUniqueOrNull(@NotNull Class<T> cl, @NotNull SqlQuery query) {
-        return uniqueOrNull(findAll(cl, query));
+        return executeQuery(uniqueOrEmpty(resultProcessorForClass(cl)), query);
     }
 
     /**
@@ -392,11 +400,7 @@ public final class Database {
      * @throws NonUniqueResultException if there are no rows or multiple rows
      */
     public int findUniqueInt(@NotNull SqlQuery query) {
-        Integer value = findUnique(Integer.class, query);
-        if (value != null)
-            return value;
-        else
-            throw new UnexpectedResultException("database returned null instead of int");
+        return executeQuery(unique(resultProcessorForClass(int.class)), query);
     }
 
     /**
@@ -412,11 +416,7 @@ public final class Database {
      * A convenience method for retrieving a single non-null long.
      */
     public long findUniqueLong(@NotNull SqlQuery query) {
-        Long value = findUnique(Long.class, query);
-        if (value != null)
-            return value;
-        else
-            throw new UnexpectedResultException("database returned null instead of long");
+        return executeQuery(unique(resultProcessorForClass(long.class)), query);
     }
 
     /**
@@ -469,7 +469,7 @@ public final class Database {
      * Executes an update against the database and returns the amount of affected rows.
      */
     public int update(@NotNull final SqlQuery query) {
-        return withCurrentTransaction(new TransactionCallback<Integer>() {
+        return withCurrentTransaction(query, new TransactionCallback<Integer>() {
             @Override
             public Integer execute(@NotNull TransactionContext tx) throws SQLException {
                 logQuery(query);
@@ -502,22 +502,6 @@ public final class Database {
 
         for (Object arg : args)
             ps.setObject(i++, instantiatorRegistry.valueToDatabase(arg));
-    }
-
-    @Nullable
-    private static <T> T uniqueOrNull(@NotNull List<T> items) {
-        switch (items.size()) {
-            case 0:  return null;
-            case 1:  return items.get(0);
-            default: throw new NonUniqueResultException(items.size());
-        }
-    }
-
-    private static <T> T unique(@NotNull List<T> items) {
-        if (items.size() == 1)
-            return items.get(0);
-        else
-            throw new NonUniqueResultException(items.size());
     }
 
     @NotNull
