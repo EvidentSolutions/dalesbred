@@ -51,7 +51,7 @@ public class DatabaseTest {
     public void meaningfulToString() {
         db.setDefaultIsolation(Isolation.READ_UNCOMMITTED);
         db.setAllowImplicitTransactions(true);
-        assertEquals("Database [dialect=" + new PostgreSQLDialect().toString() + ", allowImplicitTransactions=true, defaultIsolation=READ_UNCOMMITTED]", db.toString());
+        assertEquals("Database [dialect=" + new PostgreSQLDialect().toString() + ", allowImplicitTransactions=true, defaultIsolation=READ_UNCOMMITTED, defaultPropagation=DEFAULT]", db.toString());
     }
 
     @Test
