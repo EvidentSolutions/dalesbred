@@ -105,7 +105,8 @@ public final class SqlQuery implements Serializable {
     /**
      * If the argument is a confidential value, returns it unwrapped, otherwise returns the value as it is.
      */
-    static Object unwrapConfidential(Object arg) {
+    @Nullable
+    static Object unwrapConfidential(@Nullable Object arg) {
         if (arg instanceof ConfidentialValue)
             return ((ConfidentialValue) arg).value;
         else

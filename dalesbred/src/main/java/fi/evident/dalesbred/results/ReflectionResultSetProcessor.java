@@ -41,7 +41,10 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
  */
 public final class ReflectionResultSetProcessor<T> implements ResultSetProcessor<List<T>> {
 
+    @NotNull
     private final Class<T> cl;
+
+    @NotNull
     private final InstantiatorRegistry instantiatorRegistry;
 
     public ReflectionResultSetProcessor(@NotNull Class<T> cl, @NotNull InstantiatorRegistry instantiatorRegistry) {

@@ -37,7 +37,10 @@ import static java.util.Collections.unmodifiableList;
  */
 public final class ResultTable implements Iterable<ResultTable.ResultRow> {
 
+    @NotNull
     private final List<ColumnMetadata> columns;
+
+    @NotNull
     private final List<ResultRow> rows;
 
     private ResultTable(@NotNull List<ColumnMetadata> columns, @NotNull List<ResultRow> rows) {
@@ -113,7 +116,7 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
         private final List<Object> values;
         private final ColumnIndices indices;
 
-        private ResultRow(List<Object> values, ColumnIndices indices) {
+        private ResultRow(@NotNull List<Object> values, @NotNull ColumnIndices indices) {
             this.values = unmodifiableList(values);
             this.indices = requireNonNull(indices);
         }
@@ -160,7 +163,7 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
         private final int jdbcType;
         private final String databaseType;
 
-        public ColumnMetadata(int index, @NotNull String name, @NotNull Class<?> type, int jdbcType, String databaseType) {
+        public ColumnMetadata(int index, @NotNull String name, @NotNull Class<?> type, int jdbcType, @NotNull String databaseType) {
             this.index = index;
             this.name = requireNonNull(name);
             this.type = requireNonNull(type);

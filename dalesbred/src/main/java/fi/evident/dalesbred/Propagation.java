@@ -22,6 +22,8 @@
 
 package fi.evident.dalesbred;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Transaction propagation types.
  */
@@ -42,7 +44,8 @@ public enum Propagation {
     /** Start a nested transaction if there is a current transaction, otherwise start a new normal transaction. */
     NESTED,;
 
-    Propagation normalize(Propagation defaultValue) {
+    @NotNull
+    Propagation normalize(@NotNull Propagation defaultValue) {
         return (this != DEFAULT)         ? this
              : (defaultValue != DEFAULT) ? defaultValue
              : REQUIRED;

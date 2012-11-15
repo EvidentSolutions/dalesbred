@@ -23,13 +23,14 @@
 package fi.evident.dalesbred.instantiation;
 
 import fi.evident.dalesbred.DatabaseException;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Exception thrown when there is a problem with instantiation or coercion.
  */
 public class InstantiationException extends DatabaseException {
 
-    public InstantiationException(String message) {
+    public InstantiationException(@NotNull String message) {
         super(message);
     }
 }

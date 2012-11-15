@@ -32,6 +32,7 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
  */
 final class CoercionInstantiator<T> implements Instantiator<T> {
 
+    @NotNull
     private final TypeConversion<Object, ? extends T> coercion;
 
     CoercionInstantiator(@NotNull TypeConversion<Object,? extends T> coercion) {

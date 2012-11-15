@@ -22,6 +22,8 @@
 
 package fi.evident.dalesbred;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.SQLException;
 
 /**
@@ -29,7 +31,7 @@ import java.sql.SQLException;
  * due to concurrent updates.
  */
 public class TransactionSerializationException extends TransactionRollbackException {
-    public TransactionSerializationException(SQLException cause) {
+    public TransactionSerializationException(@NotNull SQLException cause) {
         super(cause);
     }
 }

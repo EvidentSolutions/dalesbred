@@ -102,7 +102,7 @@ public final class TransactionalTests implements TestRule {
 
     @NotNull
     @Override
-    public Statement apply(@NotNull final Statement base, Description description) {
+    public Statement apply(@NotNull final Statement base, @NotNull Description description) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {

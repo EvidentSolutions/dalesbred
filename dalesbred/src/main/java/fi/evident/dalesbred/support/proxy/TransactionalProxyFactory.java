@@ -78,6 +78,7 @@ public final class TransactionalProxyFactory {
                 return invokeInTransaction(tx, method, args);
         }
 
+        @Nullable
         private Object invokeWithoutTransaction(@NotNull Method method, @Nullable Object[] args) throws Throwable {
             try {
                 return method.invoke(target, args);
@@ -86,6 +87,7 @@ public final class TransactionalProxyFactory {
             }
         }
 
+        @Nullable
         private Object invokeInTransaction(@NotNull TransactionSettings settings,
                                            @NotNull final Method method,
                                            @Nullable final Object[] args) throws Throwable {

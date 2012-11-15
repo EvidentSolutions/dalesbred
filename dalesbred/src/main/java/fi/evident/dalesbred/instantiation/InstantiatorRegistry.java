@@ -41,8 +41,13 @@ import static java.lang.reflect.Modifier.isPublic;
  */
 public final class InstantiatorRegistry {
 
+    @NotNull
     private final Dialect dialect;
+
+    @NotNull
     private final DefaultTypeConversionRegistry typeConversionRegistry = new DefaultTypeConversionRegistry();
+
+    @NotNull
     private static final Logger log = Logger.getLogger(InstantiatorRegistry.class.getName());
 
     public InstantiatorRegistry(@NotNull Dialect dialect) {

@@ -24,6 +24,7 @@ package fi.evident.dalesbred.query;
 
 import fi.evident.dalesbred.SqlQuery;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -114,7 +115,7 @@ public final class QueryBuilder {
      * Adds an argument to this query.
      */
     @NotNull
-    public QueryBuilder addArgument(Object argument) {
+    public QueryBuilder addArgument(@Nullable Object argument) {
         arguments.add(argument);
         return this;
     }
@@ -123,7 +124,7 @@ public final class QueryBuilder {
      * Adds an argument to this query.
      */
     @NotNull
-    public QueryBuilder addConfidentialArgument(Object argument) {
+    public QueryBuilder addConfidentialArgument(@Nullable Object argument) {
         arguments.add(SqlQuery.confidential(argument));
         return this;
     }
@@ -140,7 +141,7 @@ public final class QueryBuilder {
      * Adds given arguments to this query.
      */
     @NotNull
-    public QueryBuilder addArguments(Collection<?> arguments) {
+    public QueryBuilder addArguments(@NotNull Collection<?> arguments) {
         this.arguments.addAll(arguments);
         return this;
     }

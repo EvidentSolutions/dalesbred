@@ -41,8 +41,13 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
  */
 public final class MapResultSetProcessor<K,V> implements ResultSetProcessor<Map<K,V>> {
 
+    @NotNull
     private final Class<K> keyType;
+
+    @NotNull
     private final Class<V> valueType;
+
+    @NotNull
     private final InstantiatorRegistry instantiatorRegistry;
 
     public MapResultSetProcessor(@NotNull Class<K> keyType,

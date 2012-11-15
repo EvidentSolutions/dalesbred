@@ -64,7 +64,8 @@ public enum Isolation {
         throw new IllegalArgumentException("invalid code: " + code);
     }
 
-    Isolation normalize(Isolation defaultValue) {
+    @NotNull
+    Isolation normalize(@NotNull Isolation defaultValue) {
         return (this == DEFAULT) ? defaultValue : this;
     }
 }

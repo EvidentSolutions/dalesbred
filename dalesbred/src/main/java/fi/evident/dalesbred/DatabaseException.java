@@ -22,6 +22,7 @@
 
 package fi.evident.dalesbred;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -32,15 +33,15 @@ public class DatabaseException extends RuntimeException {
     @Nullable
     private final SqlQuery query = DebugContext.getCurrentQuery();
 
-    public DatabaseException(String message) {
+    public DatabaseException(@NotNull String message) {
         super(message);
     }
 
-    public DatabaseException(Throwable cause) {
+    public DatabaseException(@NotNull Throwable cause) {
         super(cause);
     }
     
-    public DatabaseException(String message, Throwable cause) {
+    public DatabaseException(@NotNull String message, @NotNull Throwable cause) {
         super(message, cause);
     }
 

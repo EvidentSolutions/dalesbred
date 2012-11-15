@@ -31,11 +31,11 @@ import java.sql.SQLException;
  */
 public class DatabaseSQLException extends DatabaseException {
 
-    public DatabaseSQLException(String message, SQLException cause) {
+    public DatabaseSQLException(@NotNull String message, @NotNull SQLException cause) {
         super(message, cause);
     }
 
-    public DatabaseSQLException(SQLException cause) {
+    public DatabaseSQLException(@NotNull SQLException cause) {
         super(cause);
     }
 

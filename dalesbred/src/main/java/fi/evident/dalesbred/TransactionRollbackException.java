@@ -22,6 +22,8 @@
 
 package fi.evident.dalesbred;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.SQLException;
 
 /**
@@ -30,7 +32,7 @@ import java.sql.SQLException;
  * @see TransactionSerializationException
  */
 public class TransactionRollbackException extends DatabaseSQLException {
-    public TransactionRollbackException(SQLException cause) {
+    public TransactionRollbackException(@NotNull SQLException cause) {
         super(cause);
     }
 }

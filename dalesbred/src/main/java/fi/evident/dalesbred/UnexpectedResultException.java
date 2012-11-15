@@ -22,11 +22,13 @@
 
 package fi.evident.dalesbred;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Exception thrown when result from database is unexpected.
  */
 public class UnexpectedResultException extends DatabaseException {
-    public UnexpectedResultException(String message) {
+    public UnexpectedResultException(@NotNull String message) {
         super(message);
     }
 }

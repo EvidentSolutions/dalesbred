@@ -51,6 +51,7 @@ public final class AopAllianceTransactionalMethodInterceptor implements MethodIn
     }
 
     @Override
+    @Nullable
     public Object invoke(@NotNull final MethodInvocation invocation) throws Throwable {
         try {
             TransactionSettings settings = getTransactionSettings(invocation);
@@ -85,7 +86,7 @@ public final class AopAllianceTransactionalMethodInterceptor implements MethodIn
     }
 
     private static class WrappedException extends RuntimeException {
-        WrappedException(Throwable e) {
+        WrappedException(@NotNull Throwable e) {
             super(e);
         }
     }

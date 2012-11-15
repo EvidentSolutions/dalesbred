@@ -116,7 +116,7 @@ public final class Database {
      * @see DriverManagerConnectionProvider
      */
     @NotNull
-    public static Database forUrlAndCredentials(@NotNull String url, String username, String password) {
+    public static Database forUrlAndCredentials(@NotNull String url, @Nullable String username, @Nullable String password) {
         return new Database(new DriverManagerConnectionProvider(url, username, password));
     }
 
