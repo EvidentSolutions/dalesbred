@@ -51,6 +51,7 @@ public final class DataSourceConnectionProvider implements Provider<Connection> 
 
     @Override
     @NotNull
+    @SuppressWarnings("JDBCResourceOpenedButNotSafelyClosed")
     public Connection get() {
         try {
             return requireNonNull(dataSource.getConnection(), "null connection from DataSource");

@@ -55,9 +55,9 @@ public class QueryBuilderTest {
     @Test
     public void placeholders() {
         QueryBuilder qb = new QueryBuilder("select * from document");
-        qb.append(" where id in (").appendPlaceholders(4).append(")").addArguments(1,2,3).addArgument(4);
+        SqlQuery query = qb.append(" where id in (").appendPlaceholders(4).append(")").addArguments(1,2,3).addArgument(4).build();
 
-        assertEquals(query("select * from document where id in (?,?,?,?)", 1, 2, 3, 4), qb.build());
+        assertEquals(query("select * from document where id in (?,?,?,?)", 1, 2, 3, 4), query);
     }
 
     @Test(expected = IllegalArgumentException.class)

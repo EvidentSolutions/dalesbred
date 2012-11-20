@@ -24,6 +24,7 @@ package fi.evident.dalesbred.results;
 
 import fi.evident.dalesbred.NonUniqueResultException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -55,6 +56,7 @@ public final class UniqueResultSetProcessor<T> implements ResultSetProcessor<T> 
     }
 
     @Override
+    @Nullable
     public T process(@NotNull ResultSet resultSet) throws SQLException {
         List<T> results = resultSetProcessor.process(resultSet);
 

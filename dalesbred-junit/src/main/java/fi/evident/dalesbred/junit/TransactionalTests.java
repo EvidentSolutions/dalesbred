@@ -42,7 +42,7 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
  * To use the rule, create a database and add the following lines to your test:
  * <pre>
  * {@literal @Rule}
- * public final TransactionalTests tx = new TransactionalTests(db);
+ * public final TransactionalTests transactionalTests = new TransactionalTests(db);
  * </pre>
  */
 public final class TransactionalTests implements TestRule {

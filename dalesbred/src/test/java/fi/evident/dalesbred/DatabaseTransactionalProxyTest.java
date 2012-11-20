@@ -70,9 +70,8 @@ public class DatabaseTransactionalProxyTest {
             }
 
             @Override
-            public int methodWithMandatoryPropagation() {
+            public void methodWithMandatoryPropagation() {
                 fail("we shouldn't end up here");
-                return 0;
             }
         });
 
@@ -188,7 +187,7 @@ public class DatabaseTransactionalProxyTest {
         int methodWithoutSpecificSettings();
 
         @Transactional(propagation = Propagation.MANDATORY)
-        int methodWithMandatoryPropagation();
+        void methodWithMandatoryPropagation();
     }
 
     public interface ServiceWithCheckedExceptions {

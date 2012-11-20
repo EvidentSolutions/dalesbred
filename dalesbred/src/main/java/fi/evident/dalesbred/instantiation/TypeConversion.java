@@ -85,19 +85,19 @@ public abstract class TypeConversion<S,T> {
      * if coercion is not compatible.
      */
     @NotNull
-    public <S,T> TypeConversion<S,T> cast(@NotNull Class<S> source, @NotNull Class<T> target) {
-        if (canConvert(source, target)) {
+    public <S,T> TypeConversion<S,T> cast(@NotNull Class<S> requiredSource, @NotNull Class<T> requiredTarget) {
+        if (canConvert(requiredSource, requiredTarget)) {
             @SuppressWarnings("unchecked")
             TypeConversion<S,T> result = (TypeConversion<S,T>) this;
             return result;
         } else
-            throw new RuntimeException("can't cast " + this + " to coercion from " + source.getName() + " to " + target.getName());
+            throw new RuntimeException("can't cast " + this + " to coercion from " + requiredSource.getName() + " to " + requiredTarget.getName());
     }
 
     @NotNull
-    public <R> TypeConversion<Object,R> unsafeCast(@NotNull final Class<R> target) {
-        final TypeConversion<S,R> self = cast(source, target);
-        return new TypeConversion<Object, R>(Object.class, target) {
+    public <R> TypeConversion<Object,R> unsafeCast(@NotNull final Class<R> requiredTarget) {
+        final TypeConversion<S,R> self = cast(source, requiredTarget);
+        return new TypeConversion<Object, R>(Object.class, requiredTarget) {
             @NotNull
             @Override
             public R convert(@NotNull Object value) {
@@ -113,11 +113,10 @@ public abstract class TypeConversion<S,T> {
     }
 
     /**
-     * Returns true if this coercion knows hows to convert instances of {@code source} to
-     * instances of {@code target}.
+     * Returns true if this coercion knows hows to convert instances of {@code requiredSource} to
+     * instances of {@code requiredTarget}.
      */
-    private boolean canConvert(@NotNull Class<?> source, @NotNull Class<?> target) {
-        return isAssignableByBoxing(this.source, source) && isAssignableByBoxing(target, this.target);
+    private boolean canConvert(@NotNull Class<?> requiredSource, @NotNull Class<?> requiredTarget) {
+        return isAssignableByBoxing(source, requiredSource) && isAssignableByBoxing(requiredTarget, target);
     }
-
 }

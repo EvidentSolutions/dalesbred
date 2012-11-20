@@ -40,7 +40,7 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
  */
 public final class AopAllianceTransactionalMethodInterceptor implements MethodInterceptor {
 
-    @Nullable
+    @NotNull
     private final Provider<Database> databaseProvider;
 
     /**

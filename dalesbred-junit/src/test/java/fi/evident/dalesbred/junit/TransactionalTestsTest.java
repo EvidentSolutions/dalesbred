@@ -37,7 +37,7 @@ public class TransactionalTestsTest {
     private final Database db = TestDatabaseProvider.databaseForProperties("connection.properties");
 
     @Rule
-    public final TransactionalTests tx = new TransactionalTests(db);
+    public final TransactionalTests transactionalTests = new TransactionalTests(db);
 
     @Test
     public void checkThatThereIsAnExistingTransaction() {

@@ -70,7 +70,7 @@ public final class SqlQuery implements Serializable {
     @NotNull
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(10 + sql.length() + 10 * args.size());
 
         sb.append(sql);
 
@@ -136,11 +136,11 @@ public final class SqlQuery implements Serializable {
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (o == this) return true;
+        public boolean equals(Object obj) {
+            if (obj == this) return true;
 
-            if (o instanceof ConfidentialValue) {
-                ConfidentialValue rhs = (ConfidentialValue) o;
+            if (obj instanceof ConfidentialValue) {
+                ConfidentialValue rhs = (ConfidentialValue) obj;
                 return (value == null) ? rhs.value == null : value.equals(rhs.value);
             }
 

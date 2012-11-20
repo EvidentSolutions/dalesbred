@@ -124,6 +124,7 @@ final class DefaultTypeConversions {
 
         @NotNull
         @Override
+        @SuppressWarnings("ObjectToString")
         public BigInteger convert(@NotNull Number value) {
             return (value instanceof BigInteger) ? (BigInteger) value
                  : (value instanceof BigDecimal) ? ((BigDecimal) value).toBigInteger()
@@ -141,6 +142,7 @@ final class DefaultTypeConversions {
 
         @NotNull
         @Override
+        @SuppressWarnings("ObjectToString")
         public BigDecimal convert(@NotNull Number value) {
             return (value instanceof BigDecimal) ? (BigDecimal) value
                     : (value instanceof BigInteger) ? new BigDecimal((BigInteger) value)

@@ -231,6 +231,17 @@ public class DatabaseTest {
         assertTrue(db.isAllowImplicitTransactions());
     }
 
+    @Test
+    public void returnValueOfUpdate() {
+        db.update("drop table if exists department");
+
+        db.update("create table department (id serial primary key, name varchar(64) not null)");
+        db.findUnique(Integer.class, "insert into department (name) values ('foo') returning id");
+        db.findUnique(Integer.class, "insert into department (name) values ('bar') returning id");
+
+        assertThat(db.update("update department set name=name || 'suffix'"), is(2));
+    }
+
     enum Mood {
         SAD,
         HAPPY

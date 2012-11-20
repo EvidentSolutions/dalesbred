@@ -39,7 +39,7 @@ public class TransactionalTestsWithProviderTest {
     private final Database db = TestDatabaseProvider.databaseForProperties("connection.properties");
 
     @Rule
-    public final TransactionalTests tx = new TransactionalTests(new Provider<Database>() {
+    public final TransactionalTests transactionalTests = new TransactionalTests(new Provider<Database>() {
         @Override
         public Database get() {
             return db;

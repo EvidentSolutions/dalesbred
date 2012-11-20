@@ -33,6 +33,7 @@ public final class NamedTypeList {
 
     @NotNull
     private final String[] names;
+
     @NotNull
     private final Class<?>[] types;
 
@@ -53,7 +54,8 @@ public final class NamedTypeList {
     @Override
     @NotNull
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        @SuppressWarnings("MagicNumber")
+        StringBuilder sb = new StringBuilder(10 + types.length * 30);
 
         sb.append('[');
 
@@ -90,8 +92,8 @@ public final class NamedTypeList {
         }
 
         public void add(@NotNull String name, @NotNull Class<?> type) {
-            this.names[index] = requireNonNull(name);
-            this.types[index] = requireNonNull(type);
+            names[index] = requireNonNull(name);
+            types[index] = requireNonNull(type);
             index++;
         }
 

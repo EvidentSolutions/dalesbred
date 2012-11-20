@@ -46,7 +46,7 @@ public final class QueryBuilder {
     public static final String PLACEHOLDER = "?";
 
     /** The SQL query gathered so far */
-    private final StringBuilder query = new StringBuilder();
+    private final StringBuilder query = new StringBuilder(100);
 
     /** The arguments gathered so far */
     private final List<Object> arguments = new ArrayList<Object>();
@@ -133,16 +133,16 @@ public final class QueryBuilder {
      * Adds given arguments to this query.
      */
     @NotNull
-    public QueryBuilder addArguments(Object... arguments) {
-        return addArguments(asList(arguments));
+    public QueryBuilder addArguments(Object... args) {
+        return addArguments(asList(args));
     }
 
     /**
      * Adds given arguments to this query.
      */
     @NotNull
-    public QueryBuilder addArguments(@NotNull Collection<?> arguments) {
-        this.arguments.addAll(arguments);
+    public QueryBuilder addArguments(@NotNull Collection<?> args) {
+        arguments.addAll(args);
         return this;
     }
 

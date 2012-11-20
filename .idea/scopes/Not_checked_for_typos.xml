@@ -1,3 +1,3 @@
 <component name="DependencyValidationManager">
-  <scope name="Not checked for typos" pattern="file:.hgtags" />
+  <scope name="Not checked for typos" pattern="file:.hgtags||file:.hgsigs" />
 </component>

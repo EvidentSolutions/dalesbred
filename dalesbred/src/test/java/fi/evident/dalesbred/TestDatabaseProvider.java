@@ -87,6 +87,7 @@ public final class TestDatabaseProvider {
     }
 
     @NotNull
+    @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
     public static Properties loadProperties() {
         try {
             InputStream in = TransactionCallback.class.getClassLoader().getResourceAsStream("connection.properties");
