@@ -22,9 +22,14 @@
 
 package fi.evident.dalesbred.instantiation;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matcher;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class NamedTypeListTest {
 
@@ -38,5 +43,38 @@ public class NamedTypeListTest {
         NamedTypeList types = builder.build();
 
         assertEquals("[foo: java.lang.String, bar: java.lang.Integer, baz: java.lang.Boolean]", types.toString());
+    }
+
+    @Test
+    public void names() {
+        NamedTypeList.Builder builder = NamedTypeList.builder(3);
+        builder.add("foo", String.class);
+        builder.add("bar", Integer.class);
+        builder.add("baz", Boolean.class);
+
+        NamedTypeList types = builder.build();
+
+        assertThat(types.getName(0), is("foo"));
+        assertThat(types.getName(1), is("bar"));
+        assertThat(types.getName(2), is("baz"));
+    }
+
+    @Test
+    public void types() {
+        NamedTypeList.Builder builder = NamedTypeList.builder(3);
+        builder.add("foo", String.class);
+        builder.add("bar", Integer.class);
+        builder.add("baz", Boolean.class);
+
+        NamedTypeList types = builder.build();
+
+        assertThat(types.getType(0), is(type(String.class)));
+        assertThat(types.getType(1), is(type(Integer.class)));
+        assertThat(types.getType(2), is(type(Boolean.class)));
+    }
+
+    @NotNull
+    private static Matcher<Class<?>> type(@NotNull Class<?> cl) {
+        return CoreMatchers.<Class<?>>sameInstance(cl);
     }
 }

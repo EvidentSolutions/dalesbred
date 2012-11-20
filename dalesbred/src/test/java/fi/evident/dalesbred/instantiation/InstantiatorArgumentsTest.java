@@ -22,44 +22,30 @@
 
 package fi.evident.dalesbred.instantiation;
 
-import org.jetbrains.annotations.NotNull;
+import org.junit.Test;
 
-import java.lang.reflect.Constructor;
 import java.util.List;
 
-import static fi.evident.dalesbred.utils.Require.requireNonNull;
-import static fi.evident.dalesbred.utils.Throwables.propagate;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
-final class ConstructorInstantiator<T> implements Instantiator<T> {
+public class InstantiatorArgumentsTest {
 
-    @NotNull
-    private final Constructor<T> constructor;
+    @Test
+    public void constructorArgumentsAreRetained() {
+        NamedTypeList types = NamedTypeList.builder(2).add("foo", String.class).add("bar", int.class).build();
+        List<?> values = asList("bar", 4);
 
-    @NotNull
-    private final List<TypeConversion<Object,?>> conversions;
-
-    ConstructorInstantiator(@NotNull Constructor<T> constructor, @NotNull List<TypeConversion<Object,?>> conversions) {
-        this.constructor = requireNonNull(constructor);
-        this.conversions = requireNonNull(conversions);
+        InstantiatorArguments arguments = new InstantiatorArguments(types, values);
+        assertSame(types, arguments.getTypes());
+        assertEquals(values, arguments.getValues());
     }
 
-    @Override
-    @NotNull
-    public T instantiate(@NotNull InstantiatorArguments arguments) {
-        try {
-            return constructor.newInstance(coerceArguments(arguments.getValues()));
-        } catch (Exception e) {
-            throw propagate(e);
-        }
-    }
-
-    @NotNull
-    private Object[] coerceArguments(@NotNull List<?> arguments) {
-        Object[] result = new Object[arguments.size()];
-
-        for (int i = 0; i < result.length; i++)
-            result[i] = conversions.get(i).convert(arguments.get(i));
-
-        return result;
+    @Test(expected = IllegalArgumentException.class)
+    public void sizesOfArgumentListsDiffer() {
+        NamedTypeList types = NamedTypeList.builder(2).add("foo", String.class).add("bar", int.class).build();
+        new InstantiatorArguments(types, singletonList("bar"));
     }
 }

@@ -30,5 +30,5 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface Instantiator<T> {
     @Nullable
-    T instantiate(@NotNull Object[] arguments);
+    T instantiate(@NotNull InstantiatorArguments arguments);
 }

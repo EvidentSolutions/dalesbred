@@ -1,3 +1,7 @@
+## x.y.z (yyyy-mm-dd)
+
+  - Pass more information about the results to instantiators.
+
 ## 0.2.5 (2012-11-14)
 
   - Added support for confidential query parameters, which never show up in logs.

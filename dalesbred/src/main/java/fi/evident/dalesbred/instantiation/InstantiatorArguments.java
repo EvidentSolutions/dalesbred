@@ -24,42 +24,36 @@ package fi.evident.dalesbred.instantiation;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Constructor;
 import java.util.List;
 
-import static fi.evident.dalesbred.utils.Require.requireNonNull;
-import static fi.evident.dalesbred.utils.Throwables.propagate;
+import static java.util.Collections.unmodifiableList;
 
-final class ConstructorInstantiator<T> implements Instantiator<T> {
+/**
+ * Contains the arguments of instantiator as well their names and types.
+ */
+public final class InstantiatorArguments {
 
     @NotNull
-    private final Constructor<T> constructor;
+    private final NamedTypeList types;
 
     @NotNull
-    private final List<TypeConversion<Object,?>> conversions;
+    private final List<?> values;
 
-    ConstructorInstantiator(@NotNull Constructor<T> constructor, @NotNull List<TypeConversion<Object,?>> conversions) {
-        this.constructor = requireNonNull(constructor);
-        this.conversions = requireNonNull(conversions);
-    }
+    public InstantiatorArguments(@NotNull NamedTypeList types, @NotNull List<?> values) {
+        if (types.size() != values.size())
+            throw new IllegalArgumentException("got " + types.size() + " types, but " + values.size() + " values");
 
-    @Override
-    @NotNull
-    public T instantiate(@NotNull InstantiatorArguments arguments) {
-        try {
-            return constructor.newInstance(coerceArguments(arguments.getValues()));
-        } catch (Exception e) {
-            throw propagate(e);
-        }
+        this.types = types;
+        this.values = unmodifiableList(values);
     }
 
     @NotNull
-    private Object[] coerceArguments(@NotNull List<?> arguments) {
-        Object[] result = new Object[arguments.size()];
+    public NamedTypeList getTypes() {
+        return types;
+    }
 
-        for (int i = 0; i < result.length; i++)
-            result[i] = conversions.get(i).convert(arguments.get(i));
-
-        return result;
+    @NotNull
+    public List<?> getValues() {
+        return values;
     }
 }

@@ -41,8 +41,10 @@ final class CoercionInstantiator<T> implements Instantiator<T> {
 
     @Nullable
     @Override
-    public T instantiate(@NotNull Object[] arguments) {
-        Object value = arguments[0];
+    public T instantiate(@NotNull InstantiatorArguments arguments) {
+        assert arguments.getValues().size() == 1;
+
+        Object value = arguments.getValues().get(0);
         return (value != null) ? coercion.convert(value) : null;
     }
 }

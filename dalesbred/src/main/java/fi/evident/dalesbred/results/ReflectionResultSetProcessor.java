@@ -24,6 +24,7 @@ package fi.evident.dalesbred.results;
 
 import fi.evident.dalesbred.UnexpectedResultException;
 import fi.evident.dalesbred.instantiation.Instantiator;
+import fi.evident.dalesbred.instantiation.InstantiatorArguments;
 import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
 import fi.evident.dalesbred.instantiation.NamedTypeList;
 import fi.evident.dalesbred.utils.ResultSetUtils;
@@ -32,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
@@ -61,17 +63,20 @@ public final class ReflectionResultSetProcessor<T> implements ResultSetProcessor
 
         ArrayList<T> result = new ArrayList<T>();
 
-        Object[] args = new Object[types.size()];
+        // For performance reasons we reuse the same arguments-array and InstantiatorArguments-object for all rows.
+        // This should be fine as long as the instantiators don't hang on to their arguments for too long.
+        Object[] arguments = new Object[types.size()];
+        InstantiatorArguments instantiatorArguments = new InstantiatorArguments(types, Arrays.asList(arguments));
 
         while (resultSet.next()) {
-            for (int i = 0; i < args.length; i++)
-                args[i] = resultSet.getObject(i+1);
+            for (int i = 0; i < arguments.length; i++)
+                arguments[i] = resultSet.getObject(i+1);
 
-            T value = ctor.instantiate(args);
+            T value = ctor.instantiate(instantiatorArguments);
             if (value != null || allowNulls)
                 result.add(value);
             else
-                throw new UnexpectedResultException("expected " + cl.getName() + ", but got null");
+                throw new UnexpectedResultException("Expected " + cl.getName() + ", but got null");
         }
 
         return result;

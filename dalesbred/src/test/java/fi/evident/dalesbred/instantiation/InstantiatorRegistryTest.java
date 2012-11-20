@@ -26,9 +26,11 @@ import fi.evident.dalesbred.Reflective;
 import fi.evident.dalesbred.dialects.DefaultDialect;
 import fi.evident.dalesbred.instantiation.test.InaccessibleClassRef;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 import static fi.evident.dalesbred.utils.Primitives.isAssignableByBoxing;
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -59,44 +61,40 @@ public class InstantiatorRegistryTest {
 
     @Test
     public void findDefaultConstructor() throws Exception {
-        Instantiator<TestClass> ctor = findInstantiator(TestClass.class);
-        TestClass result = ctor.instantiate(new Object[]{});
+        TestClass result = instantiate(TestClass.class, new Class<?>[0], new Object[0]);
         assertNotNull(result);
         assertThat(result.calledConstructor, is(1));
     }
 
     @Test
     public void findConstructedBasedOnType() throws Exception {
-        Instantiator<TestClass> ctor = findInstantiator(TestClass.class, String.class);
-        TestClass result = ctor.instantiate(new Object[]{"foo",});
+        TestClass result = instantiate(TestClass.class, String.class, "foo");
         assertNotNull(result);
         assertThat(result.calledConstructor, is(2));
     }
 
     @Test
     public void findBasedOnPrimitiveType() throws Exception {
-        Instantiator<TestClass> ctor = findInstantiator(TestClass.class, int.class);
-        TestClass result = ctor.instantiate(new Object[]{3});
+        TestClass result = instantiate(TestClass.class, int.class, 3);
         assertNotNull(result);
         assertThat(result.calledConstructor, is(3));
     }
 
     @Test
     public void findPrimitiveTypedConstructorWithBoxedType() throws Exception {
-        Instantiator<TestClass> ctor = findInstantiator(TestClass.class, Integer.class);
-        TestClass result = ctor.instantiate(new Object[]{3});
+        TestClass result = instantiate(TestClass.class, Integer.class, 3);
         assertNotNull(result);
         assertThat(result.calledConstructor, is(3));
     }
 
     @Test(expected = InstantiationException.class)
     public void findingInstantiatorForInaccessibleClassThrowsNiceException() {
-        findInstantiator(InaccessibleClassRef.INACCESSIBLE_CLASS, int.class).instantiate(new Object[]{3});
+        instantiate(InaccessibleClassRef.INACCESSIBLE_CLASS, int.class, 3);
     }
 
     @Test(expected = InstantiationException.class)
     public void findingInstantiatorForInaccessibleConstructorThrowsNiceException() {
-        findInstantiator(InaccessibleConstructor.class, int.class).instantiate(new Object[] { 3 });
+        instantiate(InaccessibleConstructor.class, int.class, 3);
     }
 
     public static class TestClass {
@@ -112,13 +110,24 @@ public class InstantiatorRegistryTest {
         public TestClass(int x) { calledConstructor = 3; }
     }
 
-    @NotNull
-    private <T> Instantiator<T> findInstantiator(@NotNull Class<T> cl, @NotNull Class<?>... types) {
+    @Nullable
+    private <T,V> T instantiate(@NotNull Class<T> cl, @NotNull Class<V> type, V value) {
+        return instantiate(cl, new Class<?>[]{type}, new Object[]{value});
+    }
+
+    @Nullable
+    private <T> T instantiate(@NotNull Class<T> cl, @NotNull Class<?>[] types, Object[] values) {
+        NamedTypeList namedTypeList = createNamedTypeList(types);
+        Instantiator<T> instantiator = instantiatorRegistry.findInstantiator(cl, namedTypeList);
+        InstantiatorArguments arguments = new InstantiatorArguments(namedTypeList, asList(values));
+        return instantiator.instantiate(arguments);
+    }
+
+    private static NamedTypeList createNamedTypeList(Class<?>[] types) {
         NamedTypeList.Builder list = NamedTypeList.builder(types.length);
         for (int i = 0; i < types.length; i++)
             list.add("name" + i, types[i]);
-
-        return instantiatorRegistry.findInstantiator(cl, list.build());
+        return list.build();
     }
 
     private static void assertAssignable(@NotNull Class<?> target, @NotNull Class<?> source) {

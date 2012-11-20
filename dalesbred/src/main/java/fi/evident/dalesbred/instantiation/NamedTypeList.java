@@ -47,6 +47,11 @@ public final class NamedTypeList {
     }
 
     @NotNull
+    public String getName(int index) {
+        return names[index];
+    }
+
+    @NotNull
     public Class<?> getType(int index) {
         return types[index];
     }
@@ -91,10 +96,11 @@ public final class NamedTypeList {
             this.types = new Class<?>[size];
         }
 
-        public void add(@NotNull String name, @NotNull Class<?> type) {
+        public Builder add(@NotNull String name, @NotNull Class<?> type) {
             names[index] = requireNonNull(name);
             types[index] = requireNonNull(type);
             index++;
+            return this;
         }
 
         @NotNull
