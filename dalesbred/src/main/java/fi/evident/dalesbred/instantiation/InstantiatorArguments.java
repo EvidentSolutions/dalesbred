@@ -56,4 +56,8 @@ public final class InstantiatorArguments {
     public List<?> getValues() {
         return values;
     }
+
+    public int size() {
+        return types.size();
+    }
 }

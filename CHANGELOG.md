@@ -1,5 +1,7 @@
 ## x.y.z (yyyy-mm-dd)
 
+  - More flexible reflection instantiation: if result has more column than constructor has parameters, the
+    instantiator will try to set the extra columns using setters or direct fields access.
   - Pass more information about the results to instantiators.
 
 ## 0.2.5 (2012-11-14)

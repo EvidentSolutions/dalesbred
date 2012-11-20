@@ -24,7 +24,11 @@ package fi.evident.dalesbred.instantiation;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 
 /**
  * Represents a named list of types, e.g. the result types of SQL-query.
@@ -54,6 +58,11 @@ public final class NamedTypeList {
     @NotNull
     public Class<?> getType(int index) {
         return types[index];
+    }
+
+    @NotNull
+    public List<String> getNames() {
+        return unmodifiableList(asList(names));
     }
 
     @Override

@@ -28,13 +28,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
 
 import static fi.evident.dalesbred.utils.Primitives.isAssignableByBoxing;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 import static java.lang.reflect.Modifier.isPublic;
+import static java.util.Arrays.sort;
 
 /**
  * Provides {@link Instantiator}s for classes.
@@ -82,7 +83,7 @@ public final class InstantiatorRegistry {
     public <T> Instantiator<T> findInstantiator(@NotNull Class<T> cl, @NotNull NamedTypeList types) {
         // First check if we have an immediate coercion registered. If so, we'll just use that.
         if (types.size() == 1) {
-            TypeConversion<Object, ? extends T> coercion = findCoercionFromDbValue(types.getType(0), cl);
+            TypeConversion<Object, ? extends T> coercion = findConversionFromDbValue(types.getType(0), cl);
             if (coercion != null)
                 return new CoercionInstantiator<T>(coercion);
         }
@@ -91,13 +92,13 @@ public final class InstantiatorRegistry {
             throw new InstantiationException(cl + " can't be instantiated reflectively because it is not public");
 
         // If there was no coercion, we try to find a matching constructor, applying coercions to arguments.
-        for (Constructor<T> constructor : constructorsFor(cl)) {
+        for (Constructor<T> constructor : constructorsSortedByDescendingParameterCount(cl)) {
             Instantiator<T> instantiator = instantiatorFrom(constructor, types);
             if (instantiator != null)
                 return instantiator;
         }
 
-        throw new InstantiationException(cl + " does not have an accessible constructor matching types " + types);
+        throw new InstantiationException("could not find a way to instantiate " + cl + " with parameters " + types);
     }
 
     /**
@@ -108,11 +109,61 @@ public final class InstantiatorRegistry {
     private <T> Instantiator<T> instantiatorFrom(@NotNull Constructor<T> constructor, @NotNull NamedTypeList types) {
         if (!isPublic(constructor.getModifiers())) return null;
 
-        List<TypeConversion<Object,?>> coercions = resolveCoercions(types, constructor.getParameterTypes());
-        if (coercions != null)
-            return new ConstructorInstantiator<T>(constructor, coercions);
-        else
+        Class<?>[] targetTypes = findTargetTypes(constructor, types);
+        if (targetTypes == null)
             return null;
+
+        TypeConversion<Object, ?>[] conversions = resolveCoercions(types, targetTypes);
+        if (conversions != null) {
+            PropertyAccessor[] accessors = createPropertyAccessorsForValuesNotCoveredByConstructor(constructor, types.getNames());
+            return new ReflectionInstantiator<T>(constructor, conversions, accessors);
+        } else
+            return null;
+    }
+
+    @NotNull
+    private static PropertyAccessor[] createPropertyAccessorsForValuesNotCoveredByConstructor(@NotNull Constructor<?> constructor,
+                                                                                              @NotNull List<String> names) {
+        int constructorParameterCount = constructor.getParameterTypes().length;
+        PropertyAccessor[] accessors = new PropertyAccessor[names.size() - constructorParameterCount];
+
+        for (int i = 0; i < accessors.length; i++)
+            accessors[i] = createAccessor(i + constructorParameterCount, constructor.getDeclaringClass(), names);
+
+        return accessors;
+    }
+
+    @NotNull
+    private static PropertyAccessor createAccessor(int index, @NotNull Class<?> cl, @NotNull List<String> names) {
+        PropertyAccessor accessor = PropertyAccessor.findAccessor(cl, names.get(index));
+        if (accessor != null)
+            return accessor;
+        else
+            throw new InstantiationException("Could not find neither setter nor field for '" + names.get(index) + '\'');
+    }
+
+    /**
+     * Returns the target types that need to have coercions. The types contain first as many constructor
+     * parameter types as we have and then the types of properties of object as given by names of result-set.
+     */
+    @Nullable
+    private static Class<?>[] findTargetTypes(@NotNull Constructor<?> ctor, @NotNull NamedTypeList resultSetTypes) {
+        Class<?>[] constructorParameterTypes = ctor.getParameterTypes();
+        if (constructorParameterTypes.length > resultSetTypes.size()) return null;
+        if (constructorParameterTypes.length == resultSetTypes.size()) return constructorParameterTypes;
+
+        Class<?>[] result = new Class<?>[resultSetTypes.size()];
+        System.arraycopy(constructorParameterTypes, 0, result, 0, constructorParameterTypes.length);
+
+        for (int i = constructorParameterTypes.length; i < result.length; i++) {
+            Class<?> type = PropertyAccessor.findPropertyType(ctor.getDeclaringClass(), resultSetTypes.getName(i));
+            if (type != null)
+                result[i] = type;
+           else
+                 return null;
+        }
+
+        return result;
     }
 
     /**
@@ -120,22 +171,23 @@ public final class InstantiatorRegistry {
      * to targetTypes, or null if coercions can't be done.
      */
     @Nullable
-    private List<TypeConversion<Object,?>> resolveCoercions(@NotNull NamedTypeList sourceTypes,
+    private TypeConversion<Object,?>[] resolveCoercions(@NotNull NamedTypeList sourceTypes,
                                                             @NotNull Class<?>[] targetTypes) {
         if (targetTypes.length != sourceTypes.size())
             return null;
 
-        List<TypeConversion<Object,?>> coercions = new ArrayList<TypeConversion<Object, ?>>(targetTypes.length);
+        @SuppressWarnings("unchecked")
+        TypeConversion<Object,?>[] conversions = new TypeConversion[targetTypes.length];
 
         for (int i = 0; i < targetTypes.length; i++) {
-            TypeConversion<Object,?> coercion = findCoercionFromDbValue(sourceTypes.getType(i), targetTypes[i]);
-            if (coercion != null)
-                coercions.add(coercion);
+            TypeConversion<Object,?> conversion = findConversionFromDbValue(sourceTypes.getType(i), targetTypes[i]);
+            if (conversion != null)
+                conversions[i] = conversion;
             else
                 return null;
         }
 
-        return coercions;
+        return conversions;
     }
 
     /**
@@ -144,7 +196,7 @@ public final class InstantiatorRegistry {
      */
     @NotNull
     public <S,T> TypeConversion<? super S, ? extends T> getCoercionFromDbValue(@NotNull Class<S> source, @NotNull Class<T> target) {
-        TypeConversion<? super S, ? extends T> coercion = findCoercionFromDbValue(source, target);
+        TypeConversion<? super S, ? extends T> coercion = findConversionFromDbValue(source, target);
         if (coercion != null)
             return coercion;
         else
@@ -155,7 +207,7 @@ public final class InstantiatorRegistry {
      * Returns coercion for converting value of source to target, or returns null if there's no such coercion.
      */
     @Nullable
-    private <T> TypeConversion<Object, ? extends T> findCoercionFromDbValue(@NotNull Class<?> source, @NotNull Class<T> target) {
+    private <T> TypeConversion<Object, ? extends T> findConversionFromDbValue(@NotNull Class<?> source, @NotNull Class<T> target) {
         if (isAssignableByBoxing(target, source))
             return TypeConversion.identity(target).unsafeCast(target);
 
@@ -170,9 +222,20 @@ public final class InstantiatorRegistry {
     }
 
     @NotNull
-    private static <T> Constructor<T>[] constructorsFor(@NotNull Class<T> cl) {
+    private static <T> Constructor<T>[] constructorsSortedByDescendingParameterCount(@NotNull Class<T> cl) {
         @SuppressWarnings("unchecked")
         Constructor<T>[] constructors = (Constructor<T>[]) cl.getConstructors();
+
+        sort(constructors, new Comparator<Constructor<T>>() {
+            @Override
+            public int compare(Constructor<T> o1, Constructor<T> o2) {
+                int c1 = o1.getParameterTypes().length;
+                int c2 = o2.getParameterTypes().length;
+                return (c1 < c2) ? 1
+                     : (c1 > c2) ? -1
+                     : 0;
+            }
+        });
         return constructors;
     }
 

@@ -30,35 +30,58 @@ import java.util.List;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 import static fi.evident.dalesbred.utils.Throwables.propagate;
 
-final class ConstructorInstantiator<T> implements Instantiator<T> {
+/**
+ * An instantiator that uses constructor and setters or fields to instantiate an object.
+ */
+final class ReflectionInstantiator<T> implements Instantiator<T> {
 
     @NotNull
     private final Constructor<T> constructor;
 
-    @NotNull
-    private final List<TypeConversion<Object,?>> conversions;
+    private final int constructorParameterCount;
 
-    ConstructorInstantiator(@NotNull Constructor<T> constructor, @NotNull List<TypeConversion<Object,?>> conversions) {
+    @NotNull
+    private final TypeConversion<Object, ?>[] conversions;
+
+    @NotNull
+    private final PropertyAccessor[] accessors;
+
+    ReflectionInstantiator(@NotNull Constructor<T> constructor,
+                           @NotNull TypeConversion<Object, ?>[] conversions,
+                           @NotNull PropertyAccessor[] accessors) {
         this.constructor = requireNonNull(constructor);
         this.conversions = requireNonNull(conversions);
+        this.constructorParameterCount = constructor.getParameterTypes().length;
+        this.accessors = accessors;
     }
 
     @Override
     @NotNull
     public T instantiate(@NotNull InstantiatorArguments arguments) {
         try {
-            return constructor.newInstance(coerceArguments(arguments.getValues()));
+            T value = constructor.newInstance(constructorArguments(arguments.getValues()));
+            bindRemainingProperties(value, arguments);
+            return value;
         } catch (Exception e) {
             throw propagate(e);
         }
     }
 
+    private void bindRemainingProperties(@NotNull T result, @NotNull InstantiatorArguments arguments) {
+        for (int i = 0; i < accessors.length; i++) {
+            int argumentIndex = i + constructorParameterCount;
+            Object originalValue = arguments.getValues().get(argumentIndex);
+            Object convertedValue = conversions[argumentIndex].convert(originalValue);
+            accessors[i].set(result, convertedValue);
+        }
+    }
+
     @NotNull
-    private Object[] coerceArguments(@NotNull List<?> arguments) {
-        Object[] result = new Object[arguments.size()];
+    private Object[] constructorArguments(@NotNull List<?> arguments) {
+        Object[] result = new Object[constructorParameterCount];
 
         for (int i = 0; i < result.length; i++)
-            result[i] = conversions.get(i).convert(arguments.get(i));
+            result[i] = conversions[i].convert(arguments.get(i));
 
         return result;
     }

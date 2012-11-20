@@ -61,7 +61,7 @@ public class InstantiatorRegistryTest {
 
     @Test
     public void findDefaultConstructor() throws Exception {
-        TestClass result = instantiate(TestClass.class, new Class<?>[0], new Object[0]);
+        TestClass result = instantiate(TestClass.class, NamedTypeList.builder(0).build());
         assertNotNull(result);
         assertThat(result.calledConstructor, is(1));
     }
@@ -97,8 +97,23 @@ public class InstantiatorRegistryTest {
         instantiate(InaccessibleConstructor.class, int.class, 3);
     }
 
+    @Test
+    public void extraFieldsCanBeSpecifiedWithSettersAndFields() {
+        NamedTypeList types = NamedTypeList.builder(3).add("arg", String.class).add("propertyWithAccessors", String.class).add("publicField", String.class).build();
+
+        TestClass result = instantiate(TestClass.class, types, "foo", "bar", "baz");
+        assertNotNull(result);
+        assertThat(result.calledConstructor, is(2));
+        assertThat(result.getPropertyWithAccessors(), is("bar"));
+        assertThat(result.publicField, is("baz"));
+    }
+
     public static class TestClass {
         private final int calledConstructor;
+
+        public String publicField = "";
+
+        private String propertyWithAccessors = "";
 
         @Reflective
         public TestClass() { calledConstructor = 1; }
@@ -108,16 +123,24 @@ public class InstantiatorRegistryTest {
 
         @Reflective
         public TestClass(int x) { calledConstructor = 3; }
+
+        public String getPropertyWithAccessors() {
+            return propertyWithAccessors;
+        }
+
+        @Reflective
+        public void setPropertyWithAccessors(String propertyWithAccessors) {
+            this.propertyWithAccessors = propertyWithAccessors;
+        }
     }
 
     @Nullable
     private <T,V> T instantiate(@NotNull Class<T> cl, @NotNull Class<V> type, V value) {
-        return instantiate(cl, new Class<?>[]{type}, new Object[]{value});
+        return instantiate(cl, createNamedTypeList(new Class<?>[]{type}), value);
     }
 
     @Nullable
-    private <T> T instantiate(@NotNull Class<T> cl, @NotNull Class<?>[] types, Object[] values) {
-        NamedTypeList namedTypeList = createNamedTypeList(types);
+    private <T> T instantiate(Class<T> cl, NamedTypeList namedTypeList, Object... values) {
         Instantiator<T> instantiator = instantiatorRegistry.findInstantiator(cl, namedTypeList);
         InstantiatorArguments arguments = new InstantiatorArguments(namedTypeList, asList(values));
         return instantiator.instantiate(arguments);

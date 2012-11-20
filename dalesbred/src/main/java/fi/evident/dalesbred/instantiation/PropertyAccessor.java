@@ -1,0 +1,137 @@
+/*
+ * Copyright (c) 2012 Evident Solutions Oy
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+package fi.evident.dalesbred.instantiation;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
+import static fi.evident.dalesbred.utils.Throwables.propagate;
+import static java.lang.Character.toUpperCase;
+import static java.lang.reflect.Modifier.isPublic;
+
+abstract class PropertyAccessor {
+
+    abstract void set(Object object, Object value);
+
+    abstract Class<?> getType();
+
+    @Nullable
+    static PropertyAccessor findAccessor(@NotNull Class<?> cl, @NotNull String name) {
+        Method setter = findSetter(cl, name);
+        if (setter != null) {
+            return new SetterPropertyAccessor(setter);
+        } else {
+            Field field = findField(cl, name);
+            if (field != null)
+                return new FieldPropertyAccessor(field);
+            else
+                return null;
+        }
+    }
+
+    @Nullable
+    private static Field findField(@NotNull Class<?> cl, @NotNull String name) {
+        try {
+            Field field = cl.getField(name);
+            return isPublic(field.getModifiers()) ? field : null;
+        } catch (NoSuchFieldException e) {
+            return null;
+        }
+    }
+
+    @Nullable
+    private static Method findSetter(@NotNull Class<?> cl, @NotNull String name) {
+        Method result = null;
+
+        String methodName = "set" + toUpperCase(name.charAt(0)) + name.substring(1);
+        for (Method method : cl.getMethods())
+            if (methodName.equals(method.getName()) && isPublic(method.getModifiers()) && method.getParameterTypes().length == 1) {
+                if (result != null)
+                    throw new InstantiationException("Conflicting setters for property: " + result + " - " + methodName);
+                result = method;
+            }
+
+        return result;
+    }
+
+    @Nullable
+    public static Class<?> findPropertyType(@NotNull Class<?> cl, @NotNull String name) {
+        PropertyAccessor accessor = findAccessor(cl, name);
+        if (accessor != null)
+            return accessor.getType();
+        else
+            return null;
+    }
+
+    private static final class FieldPropertyAccessor extends PropertyAccessor {
+
+        @NotNull
+        private final Field field;
+
+        private FieldPropertyAccessor(@NotNull Field field) {
+            this.field = field;
+        }
+
+        @Override
+        Class<?> getType() {
+            return field.getType();
+        }
+
+        @Override
+        void set(Object object, Object value) {
+            try {
+                field.set(object, value);
+            } catch (IllegalAccessException e) {
+                throw propagate(e);
+            }
+        }
+    }
+
+    private static final class SetterPropertyAccessor extends PropertyAccessor {
+
+        @NotNull
+        private final Method setter;
+
+        private SetterPropertyAccessor(@NotNull Method setter) {
+            this.setter = setter;
+        }
+
+        @Override
+        Class<?> getType() {
+            return setter.getParameterTypes()[0];
+        }
+
+        @Override
+        void set(Object object, Object value) {
+            try {
+                setter.invoke(object, value);
+            } catch (Exception e) {
+                throw propagate(e);
+            }
+        }
+    }
+}
+
