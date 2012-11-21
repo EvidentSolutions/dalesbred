@@ -49,8 +49,8 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
     @NotNull
     private final DefaultTypeConversionRegistry typeConversionRegistry = new DefaultTypeConversionRegistry();
 
-    @NotNull
-    private final InstantiationListeners instantiationListeners = new InstantiationListeners();
+    @Nullable
+    private InstantiationListeners instantiationListeners;
 
     @NotNull
     private static final Logger log = Logger.getLogger(DefaultInstantiatorRegistry.class.getName());
@@ -252,7 +252,10 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
      */
     @Override
     public void addInstantiationListener(@NotNull InstantiationListener instantiationListener) {
-        instantiationListeners.add(instantiationListener);
+        if (instantiationListeners == null) {
+            instantiationListeners = new InstantiationListeners();
+            instantiationListeners.add(instantiationListener);
+        }
     }
 
     private static final class InstantiationListeners implements InstantiationListener {

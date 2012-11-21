@@ -35,13 +35,13 @@ final class CoercionInstantiator<T> implements Instantiator<T> {
     @NotNull
     private final TypeConversion<Object, ? extends T> coercion;
 
-    @NotNull
+    @Nullable
     private final InstantiationListener instantiationListener;
 
     CoercionInstantiator(@NotNull TypeConversion<Object, ? extends T> coercion,
-                         @NotNull InstantiationListener instantiationListener) {
+                         @Nullable InstantiationListener instantiationListener) {
         this.coercion = requireNonNull(coercion);
-        this.instantiationListener = requireNonNull(instantiationListener);
+        this.instantiationListener = instantiationListener;
     }
 
     @Nullable
@@ -52,7 +52,8 @@ final class CoercionInstantiator<T> implements Instantiator<T> {
         Object value = arguments.getValues().get(0);
         if (value != null) {
             T result = coercion.convert(value);
-            instantiationListener.onInstantiation(result);
+            if (instantiationListener != null)
+                instantiationListener.onInstantiation(result);
             return result;
         } else
             return null;

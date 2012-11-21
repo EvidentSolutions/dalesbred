@@ -1010,7 +1010,7 @@
       <option name="m_minLength" value="3" />
       <option name="m_maxLength" value="99" />
     </inspection_tool>
-    <inspection_tool class="InstanceVariableInitialization" enabled="true" level="WARNING" enabled_by_default="true">
+    <inspection_tool class="InstanceVariableInitialization" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="m_ignorePrimitives" value="false" />
     </inspection_tool>
     <inspection_tool class="InstanceVariableNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">

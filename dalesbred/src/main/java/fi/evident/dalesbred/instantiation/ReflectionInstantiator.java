@@ -23,6 +23,7 @@
 package fi.evident.dalesbred.instantiation;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
@@ -44,7 +45,7 @@ final class ReflectionInstantiator<T> implements Instantiator<T> {
     @NotNull
     private final PropertyAccessor[] accessors;
 
-    @NotNull
+    @Nullable
     private final InstantiationListener instantiationListener;
 
     private final int constructorParameterCount;
@@ -52,11 +53,11 @@ final class ReflectionInstantiator<T> implements Instantiator<T> {
     ReflectionInstantiator(@NotNull Constructor<T> constructor,
                            @NotNull TypeConversion<Object, ?>[] conversions,
                            @NotNull PropertyAccessor[] accessors,
-                           @NotNull InstantiationListener instantiationListener) {
+                           @Nullable InstantiationListener instantiationListener) {
         this.constructor = requireNonNull(constructor);
         this.conversions = requireNonNull(conversions);
         this.accessors = requireNonNull(accessors);
-        this.instantiationListener = requireNonNull(instantiationListener);
+        this.instantiationListener = instantiationListener;
         this.constructorParameterCount = constructor.getParameterTypes().length;
     }
 
@@ -66,7 +67,8 @@ final class ReflectionInstantiator<T> implements Instantiator<T> {
         try {
             T value = constructor.newInstance(constructorArguments(arguments.getValues()));
             bindRemainingProperties(value, arguments);
-            instantiationListener.onInstantiation(value);
+            if (instantiationListener != null)
+                instantiationListener.onInstantiation(value);
             return value;
         } catch (Exception e) {
             throw propagate(e);
