@@ -28,8 +28,8 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
 
 public class InstantiatorArgumentsTest {
 
@@ -47,5 +47,12 @@ public class InstantiatorArgumentsTest {
     public void sizesOfArgumentListsDiffer() {
         NamedTypeList types = NamedTypeList.builder(2).add("foo", String.class).add("bar", int.class).build();
         new InstantiatorArguments(types, singletonList("bar"));
+    }
+
+    @Test
+    public void argumentsSize() {
+        NamedTypeList types = NamedTypeList.builder(2).add("foo", String.class).add("bar", int.class).build();
+        InstantiatorArguments arguments = new InstantiatorArguments(types, asList("bar", 4));
+        assertThat(arguments.size(), is(2));
     }
 }

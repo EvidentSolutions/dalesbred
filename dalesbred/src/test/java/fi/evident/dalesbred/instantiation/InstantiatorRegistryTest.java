@@ -111,6 +111,7 @@ public class InstantiatorRegistryTest {
     public static class TestClass {
         private final int calledConstructor;
 
+        @Reflective
         public String publicField = "";
 
         private String propertyWithAccessors = "";
