@@ -23,9 +23,9 @@
 package fi.evident.dalesbred.results;
 
 import fi.evident.dalesbred.UnexpectedResultException;
+import fi.evident.dalesbred.instantiation.DefaultInstantiatorRegistry;
 import fi.evident.dalesbred.instantiation.Instantiator;
 import fi.evident.dalesbred.instantiation.InstantiatorArguments;
-import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
 import fi.evident.dalesbred.instantiation.NamedTypeList;
 import fi.evident.dalesbred.utils.ResultSetUtils;
 import org.jetbrains.annotations.NotNull;
@@ -47,9 +47,9 @@ public final class ReflectionResultSetProcessor<T> implements ResultSetProcessor
     private final Class<T> cl;
 
     @NotNull
-    private final InstantiatorRegistry instantiatorRegistry;
+    private final DefaultInstantiatorRegistry instantiatorRegistry;
 
-    public ReflectionResultSetProcessor(@NotNull Class<T> cl, @NotNull InstantiatorRegistry instantiatorRegistry) {
+    public ReflectionResultSetProcessor(@NotNull Class<T> cl, @NotNull DefaultInstantiatorRegistry instantiatorRegistry) {
         this.cl = requireNonNull(cl);
         this.instantiatorRegistry = requireNonNull(instantiatorRegistry);
     }

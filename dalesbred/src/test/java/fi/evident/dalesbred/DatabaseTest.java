@@ -23,6 +23,7 @@
 package fi.evident.dalesbred;
 
 import fi.evident.dalesbred.dialects.PostgreSQLDialect;
+import fi.evident.dalesbred.instantiation.InstantiationListener;
 import fi.evident.dalesbred.results.ResultSetProcessor;
 import fi.evident.dalesbred.results.RowMapper;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +33,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -240,6 +242,28 @@ public class DatabaseTest {
         db.findUnique(Integer.class, "insert into department (name) values ('bar') returning id");
 
         assertThat(db.update("update department set name=name || 'suffix'"), is(2));
+    }
+
+    @Test
+    public void instantiationListener() {
+        final List<Department> instantiations = new ArrayList<Department>();
+        db.getInstantiatorRegistry().addInstantiationListener(new InstantiationListener() {
+            @Override
+            public void onInstantiation(@NotNull Object object) {
+                if (object instanceof Department)
+                    instantiations.add((Department) object);
+            }
+        });
+
+        db.update("drop table if exists department");
+
+        db.update("create table department (id serial primary key, name varchar(64) not null)");
+        db.findUnique(Integer.class, "insert into department (name) values ('foo') returning id");
+        db.findUnique(Integer.class, "insert into department (name) values ('bar') returning id");
+
+        List<Department> departments = db.findAll(Department.class, "select id, name from department");
+
+        assertEquals(departments, instantiations);
     }
 
     enum Mood {

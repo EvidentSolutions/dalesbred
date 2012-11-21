@@ -25,6 +25,7 @@ package fi.evident.dalesbred;
 import fi.evident.dalesbred.connection.DataSourceConnectionProvider;
 import fi.evident.dalesbred.connection.DriverManagerConnectionProvider;
 import fi.evident.dalesbred.dialects.Dialect;
+import fi.evident.dalesbred.instantiation.DefaultInstantiatorRegistry;
 import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
 import fi.evident.dalesbred.instantiation.TypeConversionRegistry;
 import fi.evident.dalesbred.results.*;
@@ -91,7 +92,7 @@ public final class Database {
 
     /** Contains the instantiators and data-converters */
     @NotNull
-    private final InstantiatorRegistry instantiatorRegistry;
+    private final DefaultInstantiatorRegistry instantiatorRegistry;
 
     /**
      * Returns a new Database that uses given {@link DataSource} to retrieve connections.
@@ -134,7 +135,7 @@ public final class Database {
     public Database(@NotNull Provider<Connection> connectionProvider, @NotNull Dialect dialect) {
         this.connectionProvider = requireNonNull(connectionProvider);
         this.dialect = requireNonNull(dialect);
-        this.instantiatorRegistry = new InstantiatorRegistry(dialect);
+        this.instantiatorRegistry = new DefaultInstantiatorRegistry(dialect);
     }
 
     /**
@@ -516,6 +517,14 @@ public final class Database {
     @NotNull
     public TypeConversionRegistry getTypeConversionRegistry() {
         return instantiatorRegistry.getTypeConversionRegistry();
+    }
+
+    /**
+     * Returns {@link InstantiatorRegistry} that can be used to configure instantiation issues.
+     */
+    @NotNull
+    public InstantiatorRegistry getInstantiatorRegistry() {
+        return instantiatorRegistry;
     }
 
     /**

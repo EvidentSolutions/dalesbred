@@ -23,7 +23,7 @@
 package fi.evident.dalesbred.results;
 
 import fi.evident.dalesbred.UnexpectedResultException;
-import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
+import fi.evident.dalesbred.instantiation.DefaultInstantiatorRegistry;
 import fi.evident.dalesbred.instantiation.NamedTypeList;
 import fi.evident.dalesbred.instantiation.TypeConversion;
 import fi.evident.dalesbred.utils.ResultSetUtils;
@@ -48,11 +48,11 @@ public final class MapResultSetProcessor<K,V> implements ResultSetProcessor<Map<
     private final Class<V> valueType;
 
     @NotNull
-    private final InstantiatorRegistry instantiatorRegistry;
+    private final DefaultInstantiatorRegistry instantiatorRegistry;
 
     public MapResultSetProcessor(@NotNull Class<K> keyType,
                                  @NotNull Class<V> valueType,
-                                 @NotNull InstantiatorRegistry instantiatorRegistry) {
+                                 @NotNull DefaultInstantiatorRegistry instantiatorRegistry) {
         this.keyType = requireNonNull(keyType);
         this.valueType = requireNonNull(valueType);
         this.instantiatorRegistry = requireNonNull(instantiatorRegistry);

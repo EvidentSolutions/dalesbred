@@ -39,9 +39,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class InstantiatorRegistryTest {
+public class DefaultInstantiatorRegistryTest {
 
-    private final InstantiatorRegistry instantiatorRegistry = new InstantiatorRegistry(new DefaultDialect());
+    private final DefaultInstantiatorRegistry instantiatorRegistry = new DefaultInstantiatorRegistry(new DefaultDialect());
 
     @Test
     public void everyClassIsAssignableFromItself() {
