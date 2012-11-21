@@ -38,21 +38,26 @@ final class ReflectionInstantiator<T> implements Instantiator<T> {
     @NotNull
     private final Constructor<T> constructor;
 
-    private final int constructorParameterCount;
-
     @NotNull
     private final TypeConversion<Object, ?>[] conversions;
 
     @NotNull
     private final PropertyAccessor[] accessors;
 
+    @NotNull
+    private final InstantiationListener instantiationListener;
+
+    private final int constructorParameterCount;
+
     ReflectionInstantiator(@NotNull Constructor<T> constructor,
                            @NotNull TypeConversion<Object, ?>[] conversions,
-                           @NotNull PropertyAccessor[] accessors) {
+                           @NotNull PropertyAccessor[] accessors,
+                           @NotNull InstantiationListener instantiationListener) {
         this.constructor = requireNonNull(constructor);
         this.conversions = requireNonNull(conversions);
+        this.accessors = requireNonNull(accessors);
+        this.instantiationListener = requireNonNull(instantiationListener);
         this.constructorParameterCount = constructor.getParameterTypes().length;
-        this.accessors = accessors;
     }
 
     @Override
@@ -61,6 +66,7 @@ final class ReflectionInstantiator<T> implements Instantiator<T> {
         try {
             T value = constructor.newInstance(constructorArguments(arguments.getValues()));
             bindRemainingProperties(value, arguments);
+            instantiationListener.onInstantiation(value);
             return value;
         } catch (Exception e) {
             throw propagate(e);

@@ -23,38 +23,10 @@
 package fi.evident.dalesbred.instantiation;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
 /**
- * A simple instantiator that just applies a coercion to argument.
+ * A listener which is notified whenever an {@link Instantiator} has created a new object.
  */
-final class CoercionInstantiator<T> implements Instantiator<T> {
-
-    @NotNull
-    private final TypeConversion<Object, ? extends T> coercion;
-
-    @NotNull
-    private final InstantiationListener instantiationListener;
-
-    CoercionInstantiator(@NotNull TypeConversion<Object, ? extends T> coercion,
-                         @NotNull InstantiationListener instantiationListener) {
-        this.coercion = requireNonNull(coercion);
-        this.instantiationListener = requireNonNull(instantiationListener);
-    }
-
-    @Nullable
-    @Override
-    public T instantiate(@NotNull InstantiatorArguments arguments) {
-        assert arguments.getValues().size() == 1;
-
-        Object value = arguments.getValues().get(0);
-        if (value != null) {
-            T result = coercion.convert(value);
-            instantiationListener.onInstantiation(result);
-            return result;
-        } else
-            return null;
-    }
+public interface InstantiationListener {
+    void onInstantiation(@NotNull Object object);
 }

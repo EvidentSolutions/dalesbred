@@ -29,6 +29,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import static fi.evident.dalesbred.utils.Primitives.isAssignableByBoxing;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
@@ -106,6 +110,38 @@ public class InstantiatorRegistryTest {
         assertThat(result.calledConstructor, is(2));
         assertThat(result.getPropertyWithAccessors(), is("bar"));
         assertThat(result.publicField, is("baz"));
+    }
+
+    @Test
+    public void instantiationListenerForReflectionInstantiator() {
+        final List<Object> instantiatedObjects = new ArrayList<Object>();
+
+        instantiatorRegistry.addInstantiationListener(new InstantiationListener() {
+            @Override
+            public void onInstantiation(@NotNull Object object) {
+                instantiatedObjects.add(object);
+            }
+        });
+
+        TestClass result = instantiate(TestClass.class, Integer.class, 3);
+        assertNotNull(result);
+        assertThat(instantiatedObjects, is(Collections.<Object>singletonList(result)));
+    }
+
+    @Test
+    public void instantiationListenerForConversionInstantiator() {
+        final List<Object> instantiatedObjects = new ArrayList<Object>();
+
+        instantiatorRegistry.addInstantiationListener(new InstantiationListener() {
+            @Override
+            public void onInstantiation(@NotNull Object object) {
+                instantiatedObjects.add(object);
+            }
+        });
+
+        Integer result = instantiate(Integer.class, Integer.class, 3);
+        assertNotNull(result);
+        assertThat(instantiatedObjects, is(Collections.<Object>singletonList(result)));
     }
 
     public static class TestClass {

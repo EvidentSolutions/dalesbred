@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
@@ -47,6 +48,9 @@ public final class InstantiatorRegistry {
 
     @NotNull
     private final DefaultTypeConversionRegistry typeConversionRegistry = new DefaultTypeConversionRegistry();
+
+    @NotNull
+    private final InstantiationListeners instantiationListeners = new InstantiationListeners();
 
     @NotNull
     private static final Logger log = Logger.getLogger(InstantiatorRegistry.class.getName());
@@ -85,7 +89,7 @@ public final class InstantiatorRegistry {
         if (types.size() == 1) {
             TypeConversion<Object, ? extends T> coercion = findConversionFromDbValue(types.getType(0), cl);
             if (coercion != null)
-                return new CoercionInstantiator<T>(coercion);
+                return new CoercionInstantiator<T>(coercion, instantiationListeners);
         }
 
         if (!isPublic(cl.getModifiers()))
@@ -116,7 +120,7 @@ public final class InstantiatorRegistry {
         TypeConversion<Object, ?>[] conversions = resolveCoercions(types, targetTypes);
         if (conversions != null) {
             PropertyAccessor[] accessors = createPropertyAccessorsForValuesNotCoveredByConstructor(constructor, types.getNames());
-            return new ReflectionInstantiator<T>(constructor, conversions, accessors);
+            return new ReflectionInstantiator<T>(constructor, conversions, accessors, instantiationListeners);
         } else
             return null;
     }
@@ -171,8 +175,7 @@ public final class InstantiatorRegistry {
      * to targetTypes, or null if coercions can't be done.
      */
     @Nullable
-    private TypeConversion<Object,?>[] resolveCoercions(@NotNull NamedTypeList sourceTypes,
-                                                            @NotNull Class<?>[] targetTypes) {
+    private TypeConversion<Object,?>[] resolveCoercions(@NotNull NamedTypeList sourceTypes, @NotNull Class<?>[] targetTypes) {
         if (targetTypes.length != sourceTypes.size())
             return null;
 
@@ -242,5 +245,27 @@ public final class InstantiatorRegistry {
     @NotNull
     public TypeConversionRegistry getTypeConversionRegistry() {
         return typeConversionRegistry;
+    }
+
+    /**
+     * Adds a new listener which gets notified whenever an object is instantiated.
+     */
+    public void addInstantiationListener(@NotNull InstantiationListener instantiationListener) {
+        instantiationListeners.add(instantiationListener);
+    }
+
+    private static final class InstantiationListeners implements InstantiationListener {
+
+        private final List<InstantiationListener> listeners = new ArrayList<InstantiationListener>();
+
+        public void add(@NotNull InstantiationListener listener) {
+            listeners.add(requireNonNull(listener));
+        }
+
+        @Override
+        public void onInstantiation(@NotNull Object object) {
+            for (InstantiationListener listener : listeners)
+                listener.onInstantiation(object);
+        }
     }
 }
