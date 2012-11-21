@@ -22,49 +22,40 @@
 
 package fi.evident.dalesbred.support.guice;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Key;
+import com.google.inject.Injector;
+import com.google.inject.Provider;
 import fi.evident.dalesbred.Database;
-import fi.evident.dalesbred.connection.DataSourceConnectionProvider;
+import fi.evident.dalesbred.instantiation.InstantiationListener;
 import org.jetbrains.annotations.NotNull;
 
-import javax.inject.Singleton;
+import javax.inject.Inject;
 import java.sql.Connection;
 
-import static fi.evident.dalesbred.support.guice.GuiceSupport.bindTransactionInterceptor;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
-/**
- * A Guice module for configuring the database using a {@link javax.sql.DataSource}.
- * Assumes that a DataSource has been bound to the context.
- *
- * @see DriverManagerDatabaseModule
- */
-public final class DataSourceDatabaseModule extends AbstractModule {
+final class DatabaseProvider implements Provider<Database> {
 
     @NotNull
-    private final Key<Database> databaseKey;
+    private final Injector injector;
 
-    /**
-     * Creates a module that creates a default database instance.
-     */
-    public DataSourceDatabaseModule() {
-        this(Key.get(Database.class));
-    }
+    @NotNull
+    private final Provider<Connection> connectionProvider;
 
-    /**
-     * Creates a module that creates a database instance with given key.
-     */
-    public DataSourceDatabaseModule(@NotNull Key<Database> databaseKey) {
-        this.databaseKey = requireNonNull(databaseKey);
+    @Inject
+    DatabaseProvider(@NotNull Provider<Connection> connectionProvider, @NotNull Injector injector) {
+        this.connectionProvider = requireNonNull(connectionProvider);
+        this.injector = requireNonNull(injector);
     }
 
     @Override
-    protected void configure() {
-        bind(Connection.class).toProvider(DataSourceConnectionProvider.class);
-
-        bind(databaseKey).toProvider(DatabaseProvider.class).in(Singleton.class);
-
-        bindTransactionInterceptor(binder(), databaseKey);
+    public Database get() {
+        Database db = new Database(connectionProvider);
+        db.getInstantiatorRegistry().addInstantiationListener(new InstantiationListener() {
+            @Override
+            public void onInstantiation(@NotNull Object object) {
+                injector.injectMembers(object);
+            }
+        });
+        return db;
     }
 }

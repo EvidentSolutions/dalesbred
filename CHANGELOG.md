@@ -1,5 +1,8 @@
 ## x.y.z (yyyy-mm-dd)
 
+  - Added support for InstantiationListeners, which receive notifications whenever instantiators create new objects.
+  - When configuring the system with Guice, newly instantiated objects will automatically receive Guice injections
+    to their members.
   - More flexible reflection instantiation: if result has more column than constructor has parameters, the
     instantiator will try to set the extra columns using setters or direct fields access.
   - Pass more information about the results to instantiators.

@@ -71,10 +71,7 @@ public final class DriverManagerDatabaseModule extends AbstractModule {
     protected void configure() {
         bind(Connection.class).toProvider(DriverManagerConnectionProvider.class);
 
-        if (databaseKey.hasAttributes())
-            bind(databaseKey).to(Database.class).in(Singleton.class);
-        else
-            bind(databaseKey).in(Singleton.class);
+        bind(databaseKey).toProvider(DatabaseProvider.class).in(Singleton.class);
 
         bindTransactionInterceptor(binder(), databaseKey);
     }
