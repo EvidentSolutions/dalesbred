@@ -2,6 +2,7 @@ package fi.evident.dalesbred;
 
 import fi.evident.dalesbred.instantiation.TypeConversion;
 import org.jetbrains.annotations.NotNull;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.regex.Pattern;
@@ -12,6 +13,9 @@ import static org.junit.Assert.assertEquals;
 public class DatabaseCustomCoercionsTest {
 
     private final Database db = TestDatabaseProvider.createTestDatabase();
+
+    @Rule
+    public final TransactionalTestsRule transactionalTests = new TransactionalTestsRule(db);
 
     @Test
     public void customLoadConversions() {
@@ -25,7 +29,7 @@ public class DatabaseCustomCoercionsTest {
         db.getTypeConversionRegistry().registerConversionToDatabaseType(new EmailToStringTypeConversion());
 
         db.update("drop table if exists custom_save_conversions_test");
-        db.update("create table custom_save_conversions_test (email varchar)");
+        db.update("create temporary table custom_save_conversions_test (email varchar)");
 
         db.update("insert into custom_save_conversions_test (email) values (?)", new EmailAddress("user", "example.org"));
 

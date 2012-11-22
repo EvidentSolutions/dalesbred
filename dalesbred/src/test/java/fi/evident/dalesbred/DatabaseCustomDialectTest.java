@@ -39,7 +39,7 @@ public class DatabaseCustomDialectTest {
     @Test
     public void customDialect() {
         db.update("drop table if exists my_table");
-        db.update("create table my_table (text varchar)");
+        db.update("create temporary table my_table (text varchar)");
 
         db.update("insert into my_table values (?)", "foo");
 

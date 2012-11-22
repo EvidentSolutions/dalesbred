@@ -86,34 +86,22 @@ public class DatabaseTest {
 
     @Test
     public void constructorRowMapping() {
-        db.update("drop table if exists department");
-
-        db.update("create table department (id serial primary key, name varchar(64) not null)");
-        int id1 = db.findUniqueInt("insert into department (name) values ('foo') returning id");
-        int id2 = db.findUniqueInt("insert into department (name) values ('bar') returning id");
-
-        List<Department> departments = db.findAll(Department.class, "select id, name from department");
+        List<Department> departments = db.findAll(Department.class, "select * from (values (1, 'foo'), (2, 'bar')) d");
 
         assertThat(departments.size(), is(2));
-        assertThat(departments.get(0).id, is(id1));
+        assertThat(departments.get(0).id, is(1));
         assertThat(departments.get(0).name, is("foo"));
-        assertThat(departments.get(1).id, is(id2));
+        assertThat(departments.get(1).id, is(2));
         assertThat(departments.get(1).name, is("bar"));
     }
 
     @Test
     public void map() {
-        db.update("drop table if exists department");
-
-        db.update("create table department (id serial primary key, name varchar(64) not null)");
-        int id1 = db.findUnique(Integer.class, "insert into department (name) values ('foo') returning id");
-        int id2 = db.findUnique(Integer.class, "insert into department (name) values ('bar') returning id");
-
-        Map<Integer, String> map = db.findMap(Integer.class, String.class, "select id, name from department");
+        Map<Integer, String> map = db.findMap(Integer.class, String.class, "select * from (values (1, 'foo'), (2, 'bar')) d");
 
         assertThat(map.size(), is(2));
-        assertThat(map.get(id1), is("foo"));
-        assertThat(map.get(id2), is("bar"));
+        assertThat(map.get(1), is("foo"));
+        assertThat(map.get(2), is("bar"));
     }
 
     @Test
@@ -132,7 +120,7 @@ public class DatabaseTest {
         db.update("create type mood as enum ('SAD', 'HAPPY')");
 
         db.update("drop table if exists movie");
-        db.update("create table movie (name varchar(64) primary key, mood mood not null)");
+        db.update("create temporary table movie (name varchar(64) primary key, mood mood not null)");
 
         db.update("insert into movie (name, mood) values (?, ?)", "Amélie", Mood.HAPPY);
 
@@ -240,7 +228,7 @@ public class DatabaseTest {
     public void returnValueOfUpdate() {
         db.update("drop table if exists department");
 
-        db.update("create table department (id serial primary key, name varchar(64) not null)");
+        db.update("create temporary table department (id serial primary key, name varchar(64) not null)");
         db.findUnique(Integer.class, "insert into department (name) values ('foo') returning id");
         db.findUnique(Integer.class, "insert into department (name) values ('bar') returning id");
 
@@ -260,11 +248,7 @@ public class DatabaseTest {
 
         db.update("drop table if exists department");
 
-        db.update("create table department (id serial primary key, name varchar(64) not null)");
-        db.findUnique(Integer.class, "insert into department (name) values ('foo') returning id");
-        db.findUnique(Integer.class, "insert into department (name) values ('bar') returning id");
-
-        List<Department> departments = db.findAll(Department.class, "select id, name from department");
+        List<Department> departments = db.findAll(Department.class, "select * from (values (1, 'foo'), (2, 'bar')) d");
 
         assertEquals(departments, instantiations);
     }

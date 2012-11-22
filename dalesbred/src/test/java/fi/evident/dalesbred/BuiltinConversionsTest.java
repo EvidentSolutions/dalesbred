@@ -44,7 +44,7 @@ public class BuiltinConversionsTest {
     @Test
     public void urlsAndUris() throws Exception {
         db.update("drop table if exists url_and_uri");
-        db.update("create table url_and_uri (url varchar(64), uri varchar(64))");
+        db.update("create temporary table url_and_uri (url varchar(64), uri varchar(64))");
 
         URL url = new URL("http://example.org");
         URI uri = new URI("http://example.net");
@@ -104,7 +104,7 @@ public class BuiltinConversionsTest {
     @Test
     public void numberConversions() {
         db.update("drop table if exists numbers");
-        db.update("create table numbers (short int2, int int4, long int8, float float4, double float8, bigint numeric, bigdecimal numeric)");
+        db.update("create temporary table numbers (short int2, int int4, long int8, float float4, double float8, bigint numeric, bigdecimal numeric)");
 
         short shortValue = Short.MAX_VALUE;
         int intValue = Integer.MAX_VALUE;
