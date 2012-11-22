@@ -1,4 +1,4 @@
-## x.y.z (yyyy-mm-dd)
+## 0.3.0 (2012-11-22)
 
   - Support registering custom instantiators for types.
   - Added support for InstantiationListeners, which receive notifications whenever instantiators create new objects.
