@@ -33,4 +33,9 @@ public interface InstantiatorRegistry {
      * Adds a new InstantiationListener, which gets notified whenever one of the instantiators creates an object.
      */
     void addInstantiationListener(@NotNull InstantiationListener instantiationListener);
+
+    /**
+     * Registers an instantiator to be used when instances of {@code cl} are required.
+     */
+    <T> void registerInstantiator(@NotNull Class<T> cl, @NotNull Instantiator<T> instantiator);
 }

@@ -1,5 +1,6 @@
 ## x.y.z (yyyy-mm-dd)
 
+  - Support registering custom instantiators for types.
   - Added support for InstantiationListeners, which receive notifications whenever instantiators create new objects.
   - When configuring the system with Guice, newly instantiated objects will automatically receive Guice injections
     to their members.

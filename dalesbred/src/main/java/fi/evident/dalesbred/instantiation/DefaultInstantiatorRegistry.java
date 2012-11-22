@@ -28,9 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 import static fi.evident.dalesbred.utils.Primitives.isAssignableByBoxing;
@@ -51,6 +49,9 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
 
     @Nullable
     private InstantiationListeners instantiationListeners;
+
+    @NotNull
+    private final Map<Class<?>, Instantiator<?>> instantiators = new HashMap<Class<?>, Instantiator<?>>();
 
     @NotNull
     private static final Logger log = Logger.getLogger(DefaultInstantiatorRegistry.class.getName());
@@ -85,6 +86,11 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
      */
     @NotNull
     public <T> Instantiator<T> findInstantiator(@NotNull Class<T> cl, @NotNull NamedTypeList types) {
+        @SuppressWarnings("unchecked")
+        Instantiator<T> registeredInstantiator = (Instantiator<T>) instantiators.get(cl);
+        if (registeredInstantiator != null)
+            return registeredInstantiator;
+
         // First check if we have an immediate coercion registered. If so, we'll just use that.
         if (types.size() == 1) {
             TypeConversion<Object, ? extends T> coercion = findConversionFromDbValue(types.getType(0), cl);
@@ -256,6 +262,11 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
             instantiationListeners = new InstantiationListeners();
             instantiationListeners.add(instantiationListener);
         }
+    }
+
+    @Override
+    public <T> void registerInstantiator(@NotNull Class<T> cl, @NotNull Instantiator<T> instantiator) {
+        instantiators.put(requireNonNull(cl), requireNonNull(instantiator));
     }
 
     private static final class InstantiationListeners implements InstantiationListener {

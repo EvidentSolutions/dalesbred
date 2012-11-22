@@ -144,6 +144,19 @@ public class DefaultInstantiatorRegistryTest {
         assertThat(instantiatedObjects, is(Collections.<Object>singletonList(result)));
     }
 
+    @Test
+    public void instantiationUsingCustomInstantiator() {
+        instantiatorRegistry.registerInstantiator(Integer.class, new Instantiator<Integer>() {
+            @Nullable
+            @Override
+            public Integer instantiate(@NotNull InstantiatorArguments arguments) {
+                return arguments.getValues().get(0).toString().length();
+            }
+        });
+
+        assertThat(instantiate(Integer.class, String.class, "foobar"), is(6));
+    }
+
     public static class TestClass {
         private final int calledConstructor;
 

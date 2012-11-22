@@ -24,9 +24,12 @@ package fi.evident.dalesbred;
 
 import fi.evident.dalesbred.dialects.PostgreSQLDialect;
 import fi.evident.dalesbred.instantiation.InstantiationListener;
+import fi.evident.dalesbred.instantiation.Instantiator;
+import fi.evident.dalesbred.instantiation.InstantiatorArguments;
 import fi.evident.dalesbred.results.ResultSetProcessor;
 import fi.evident.dalesbred.results.RowMapper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -264,6 +267,19 @@ public class DatabaseTest {
         List<Department> departments = db.findAll(Department.class, "select id, name from department");
 
         assertEquals(departments, instantiations);
+    }
+
+    @Test
+    public void instantiationUsingCustomInstantiator() {
+        db.getInstantiatorRegistry().registerInstantiator(Integer.class, new Instantiator<Integer>() {
+            @Nullable
+            @Override
+            public Integer instantiate(@NotNull InstantiatorArguments arguments) {
+                return arguments.getValues().get(0).toString().length();
+            }
+        });
+
+        assertThat(db.findUnique(Integer.class, "select 'foobar'"), is(6));
     }
 
     enum Mood {
