@@ -50,7 +50,7 @@ Finding simple results consisting of just basic types is simple:
     List<Integer> newIds = db.findAll(Integer.class,
             "select id from department where created_date > ?", date);
 
-To fetch results with multiple columns, you need a class with matching constructor:
+To fetch results with multiple columns, usually you'd use a class with matching constructor:
 
     :::java
     List<Department> departments = db.findAll(Department.class,
@@ -68,6 +68,20 @@ To fetch results with multiple columns, you need a class with matching construct
         }
 
         ...
+    }
+
+If there are more columns in the result-set than can be given to a constructor, then the rest of the
+columns are set using properties or direct field access. So even the following would work:
+
+    :::java
+    List<Department> departments = db.findAll(Department.class,
+            "select id, name from department");
+
+    ...
+
+    public final class Department {
+        public int id;
+        public String name;
     }
 
 You can also convert the results directly to a map:
@@ -162,8 +176,10 @@ for annotation based transactions and can @Inject your database wherever you nee
     :::java
     Injector injector = Guice.createInjector(new DataSourceDatabaseModule(), new MyOtherModule());
 
-See the Javadoc of the modules to see what how they are configured.
+When using either of the Guice modules, you'll also get automatic support for using `@Inject` in the
+results returned from database.
 
+See the Javadoc of the modules for details of their configuration.
 
 SqlQuery vs. query parameters
 -----------------------------
@@ -258,6 +274,44 @@ you'll get support for writing transactional test cases:
         }
     }
 
+Custom instantiators
+--------------------
+
+Sometimes you have objects that you can't instantiate using just constructors and setters, but you'd
+still like to be able to build from results. You can register custom instantiators for such objects:
+
+    :::java
+    db.getInstantiatorRegistry().registerInstantiator(Foo.class, new Instantiator<Foo>() {
+        @Override
+        public Foo instantiate(@NotNull InstantiatorArguments arguments) {
+            List<?> args = arguments.getValues();
+            FooBuilder fooBuilder = new FooBuilder();
+            fooBuilder.setBar(args.get(0));
+            fooBuilder.setBaz(args.get(1));
+            return fooBuilder.build();
+        }
+    });
+
+Dalesbred will use this instantiator in place of the custom instantiator whenever it needs to build
+results of type `Foo`.
+
+InstantiationListeners
+----------------------
+
+You can configure a listener to receive notifications whenever Dalesbred creates new instances. The built-in
+Guice-support uses this feature to wire the dependencies of newly created objects, but you can use this
+callback anything you like:
+
+    :::java
+    db.getInstantiatorRegistry().addInstantiationListener(new InstantiationListener() {
+        @Override
+        public void onInstantiation(@NotNull Object object) {
+            System.out.println("instantiated " + object);
+        }
+    });
+
+Note that currently instantiation listeners are not called for objects instantiated by custom instantiators
+registered by users. This limitation could be lifted in the future.
 
 More examples
 =============
@@ -274,7 +328,7 @@ dependency to your pom.xml:
     <dependency>
         <groupId>fi.evident.dalesbred</groupId>
         <artifactId>dalesbred</artifactId>
-        <version>0.2.5</version>
+        <version>0.3.0</version>
     </dependency>
 
 For the JUnit test-support classes, add the following:
@@ -283,7 +337,7 @@ For the JUnit test-support classes, add the following:
     <dependency>
         <groupId>fi.evident.dalesbred</groupId>
         <artifactId>dalesbred-junit</artifactId>
-        <version>0.2.5</version>
+        <version>0.3.0</version>
         <scope>test</scope>
     </dependency>
 
