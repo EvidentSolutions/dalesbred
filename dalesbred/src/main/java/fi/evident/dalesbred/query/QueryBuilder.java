@@ -91,7 +91,7 @@ public final class QueryBuilder {
      * Appends given fragment and arguments to this query.
      */
     @NotNull
-    public QueryBuilder append(@NotNull String sql, Collection<?> args) {
+    public QueryBuilder append(@NotNull String sql, @NotNull Collection<?> args) {
         query.append(requireNonNull(sql));
         addArguments(args);
         return this;
