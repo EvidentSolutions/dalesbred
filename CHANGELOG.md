@@ -1,3 +1,7 @@
+## x.y.z (yyyy-mm-dd)
+
+  - Allow type conversions to be registered for interfaces in addition to concrete types.
+
 ## 0.3.0 (2012-11-22)
 
   - Support registering custom instantiators for types.

@@ -52,13 +52,27 @@ final class ConversionMap {
     @Nullable
     <S,T> TypeConversion<S,T> findConversion(@NotNull Class<S> source, @NotNull Class<T> target) {
         for (Class<?> cl = wrap(source); cl != null; cl = cl.getSuperclass()) {
-            List<TypeConversion<?,?>> candidates = mappings.get(cl);
-            if (candidates != null)
-                for (TypeConversion<?,?> coercion : candidates)
-                    if (isAssignableByBoxing(target, coercion.getTarget()))
-                        return coercion.cast(source, target);
+            TypeConversion<?,?> conversion = findConversionsRegisteredFor(cl, target);
+            if (conversion != null)
+                return conversion.cast(source, target);
         }
 
+        for (Class<?> cl : source.getInterfaces()) {
+            TypeConversion<?,?> conversion = findConversionsRegisteredFor(cl, target);
+            if (conversion != null)
+                return conversion.cast(source, target);
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private TypeConversion<?,?> findConversionsRegisteredFor(@NotNull Class<?> source, @NotNull Class<?> target) {
+        List<TypeConversion<?,?>> candidates = mappings.get(source);
+        if (candidates != null)
+            for (TypeConversion<?,?> coercion : candidates)
+                if (isAssignableByBoxing(target, coercion.getTarget()))
+                    return coercion;
         return null;
     }
 }

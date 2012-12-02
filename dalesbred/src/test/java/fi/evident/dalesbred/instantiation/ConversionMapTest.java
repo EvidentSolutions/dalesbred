@@ -69,6 +69,14 @@ public class ConversionMapTest {
         assertSame(conversion, registry.findConversion(int.class, long.class));
     }
 
+    @Test
+    public void sourceContravarianceOnInterfaces() {
+        TypeConversion<CharSequence, Long> conversion = dummyConversion(CharSequence.class, Long.class);
+        registry.register(conversion);
+
+        assertSame(conversion, registry.findConversion(String.class, Long.class));
+    }
+
     @NotNull
     private static <S, T> TypeConversion<S,T> dummyConversion(@NotNull Class<S> source, @NotNull Class<T> target) {
         return new TypeConversion<S, T>(source, target) {
