@@ -494,6 +494,32 @@ public final class Database {
         return update(query(sql, args));
     }
 
+    /**
+     * Executes a batch update against the database, returning an array of modification
+     * counts for each argument list.
+     */
+    public int[] updateBatch(@SQL @NotNull final String sql, @NotNull final List<? extends  List<?>> argumentLists) {
+        final SqlQuery query = query(sql, "<batch-update>");
+
+        return withCurrentTransaction(query, new TransactionCallback<int[]>() {
+            @Override
+            public int[] execute(@NotNull TransactionContext tx) throws SQLException {
+                logQuery(query);
+
+                PreparedStatement ps = tx.getConnection().prepareStatement(sql);
+                try {
+                    for (List<?> arguments : argumentLists) {
+                        bindArguments(ps, arguments);
+                        ps.addBatch();
+                    }
+                    return ps.executeBatch();
+                } finally {
+                    ps.close();
+                }
+            }
+        });
+    }
+
     private void logQuery(@NotNull SqlQuery query) {
         if (log.isLoggable(Level.FINE))
             log.fine("executing query " + query);

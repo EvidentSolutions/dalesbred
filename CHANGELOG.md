@@ -1,5 +1,6 @@
 ## x.y.z (yyyy-mm-dd)
 
+  - Support for batch updates.
   - Added builtin conversions for java.util.TimeZone and org.joda.time.DateTimeZone.
   - Allow type conversions to be registered for interfaces in addition to concrete types.
 
