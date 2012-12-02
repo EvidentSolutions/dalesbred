@@ -50,6 +50,7 @@ import static fi.evident.dalesbred.SqlQuery.unwrapConfidential;
 import static fi.evident.dalesbred.results.UniqueResultSetProcessor.unique;
 import static fi.evident.dalesbred.results.UniqueResultSetProcessor.uniqueOrEmpty;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
+import static java.lang.System.currentTimeMillis;
 
 /**
  * <p>
@@ -260,7 +261,9 @@ public final class Database {
                 try {
                     bindArguments(ps, query.args);
 
+                    long startTime = currentTimeMillis();
                     ResultSet resultSet = ps.executeQuery();
+                    logQueryExecution(query, currentTimeMillis() - startTime);
                     try {
                         return processor.process(resultSet);
                     } finally {
@@ -479,7 +482,10 @@ public final class Database {
                 PreparedStatement ps = tx.getConnection().prepareStatement(query.sql);
                 try {
                     bindArguments(ps, query.args);
-                    return ps.executeUpdate();
+                    long startTime = currentTimeMillis();
+                    int count = ps.executeUpdate();
+                    logQueryExecution(query, currentTimeMillis() - startTime);
+                    return count;
                 } finally {
                     ps.close();
                 }
@@ -512,7 +518,10 @@ public final class Database {
                         bindArguments(ps, arguments);
                         ps.addBatch();
                     }
-                    return ps.executeBatch();
+                    long startTime = currentTimeMillis();
+                    int[] counts = ps.executeBatch();
+                    logQueryExecution(query, currentTimeMillis() - startTime);
+                    return counts;
                 } finally {
                     ps.close();
                 }
@@ -521,8 +530,13 @@ public final class Database {
     }
 
     private void logQuery(@NotNull SqlQuery query) {
+        if (log.isLoggable(Level.FINER))
+            log.finer("executing query " + query);
+    }
+
+    private void logQueryExecution(SqlQuery query, long millis) {
         if (log.isLoggable(Level.FINE))
-            log.fine("executing query " + query);
+            log.fine("executed query in " + millis + " ms: " + query);
     }
 
     private void bindArguments(@NotNull PreparedStatement ps, @NotNull Iterable<?> args) throws SQLException {
