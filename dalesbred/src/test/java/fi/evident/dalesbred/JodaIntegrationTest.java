@@ -23,10 +23,13 @@
 package fi.evident.dalesbred;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import org.junit.Rule;
 import org.junit.Test;
+
+import java.util.TimeZone;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -76,6 +79,18 @@ public class JodaIntegrationTest {
         assertThat(db.findUnique(DateTime.class, "select timestamp from date_test"), is(dateTime));
         assertThat(db.findUnique(LocalDate.class, "select date from date_test"), is(date));
         assertThat(db.findUnique(LocalTime.class, "select time from date_test"), is(time));
+    }
+
+    @Test
+    public void timeZoneConversions() {
+        db.update("drop table if exists timezones");
+        db.update("create temporary table timezones (zone_id varchar)");
+
+        DateTimeZone helsinkiTimeZone = DateTimeZone.forID("Europe/Helsinki");
+
+        db.update("insert into timezones (zone_id) values (?)", helsinkiTimeZone);
+
+        assertThat(db.findUnique(DateTimeZone.class, "select zone_id from timezones"), is(helsinkiTimeZone));
     }
 
     public static class DateContainer {

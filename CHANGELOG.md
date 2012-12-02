@@ -1,5 +1,6 @@
 ## x.y.z (yyyy-mm-dd)
 
+  - Added builtin conversions for java.util.TimeZone and org.joda.time.DateTimeZone.
   - Allow type conversions to be registered for interfaces in addition to concrete types.
 
 ## 0.3.0 (2012-11-22)

@@ -24,11 +24,13 @@ package fi.evident.dalesbred;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.omg.CORBA.TIMEOUT;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
+import java.util.TimeZone;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -39,7 +41,6 @@ public class BuiltinConversionsTest {
 
     @Rule
     public final TransactionalTestsRule rule = new TransactionalTestsRule(db);
-
 
     @Test
     public void urlsAndUris() throws Exception {
@@ -131,6 +132,18 @@ public class BuiltinConversionsTest {
     @Test
     public void count() {
         assertThat(db.findUniqueInt("select count(*) from generate_series(1, 10) n"), is(10));
+    }
+
+    @Test
+    public void timeZoneConversions() {
+        db.update("drop table if exists timezones");
+        db.update("create temporary table timezones (zone_id varchar)");
+
+        TimeZone helsinkiTimeZone = TimeZone.getTimeZone("Europe/Helsinki");
+
+        db.update("insert into timezones (zone_id) values (?)", helsinkiTimeZone);
+
+        assertThat(db.findUnique(TimeZone.class, "select zone_id from timezones"), is(helsinkiTimeZone));
     }
 
     public static final class UrlAndUri {

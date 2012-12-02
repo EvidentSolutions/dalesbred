@@ -30,6 +30,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.TimeZone;
 
 final class DefaultTypeConversions {
 
@@ -38,6 +39,7 @@ final class DefaultTypeConversions {
     public static void register(@NotNull TypeConversionRegistry registry) {
         registry.registerConversionFromDatabaseType(new StringToUrlTypeConversion());
         registry.registerConversionFromDatabaseType(new StringToUriTypeConversion());
+        registry.registerConversionFromDatabaseType(new StringToTimeZoneTypeConversion());
         registry.registerConversionFromDatabaseType(new NumberToShortTypeConversion());
         registry.registerConversionFromDatabaseType(new NumberToIntTypeConversion());
         registry.registerConversionFromDatabaseType(new NumberToLongTypeConversion());
@@ -49,6 +51,7 @@ final class DefaultTypeConversions {
         registry.registerConversionToDatabaseType(new BigIntegerToBigDecimalTypeConversion());
         registry.registerConversionToDatabaseType(new ToStringTypeConversion<URL>(URL.class));
         registry.registerConversionToDatabaseType(new ToStringTypeConversion<URI>(URI.class));
+        registry.registerConversionToDatabaseType(new TimeZoneToStringTypeConversion());
     }
 
     private static class NumberToShortTypeConversion extends TypeConversion<Number, Short> {
@@ -209,6 +212,32 @@ final class DefaultTypeConversions {
             } catch (URISyntaxException e) {
                 throw new IllegalArgumentException(e);
             }
+        }
+    }
+
+    private static class StringToTimeZoneTypeConversion extends TypeConversion<String,TimeZone> {
+
+        StringToTimeZoneTypeConversion() {
+            super(String.class, TimeZone.class);
+        }
+
+        @NotNull
+        @Override
+        public TimeZone convert(@NotNull String value) {
+            return TimeZone.getTimeZone(value);
+        }
+    }
+
+    private static class TimeZoneToStringTypeConversion extends TypeConversion<TimeZone,String> {
+
+        TimeZoneToStringTypeConversion() {
+            super(TimeZone.class, String.class);
+        }
+
+        @NotNull
+        @Override
+        public String convert(@NotNull TimeZone value) {
+            return value.getID();
         }
     }
 }

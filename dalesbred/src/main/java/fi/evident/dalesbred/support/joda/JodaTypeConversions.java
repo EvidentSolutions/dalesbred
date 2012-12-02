@@ -58,10 +58,12 @@ public final class JodaTypeConversions {
         typeConversionRegistry.registerConversionFromDatabaseType(new DateTimeFromSqlTimestampTypeConversion());
         typeConversionRegistry.registerConversionFromDatabaseType(new LocalDateFromSqlDateTypeConversion());
         typeConversionRegistry.registerConversionFromDatabaseType(new LocalTimeFromSqlTimeTypeConversion());
+        typeConversionRegistry.registerConversionFromDatabaseType(new DateTimeZoneFromStringTypeConversion());
 
         typeConversionRegistry.registerConversionToDatabaseType(new DateTimeToSqlTimestampTypeConversion());
         typeConversionRegistry.registerConversionToDatabaseType(new LocalDateToSqlDateTypeConversion());
         typeConversionRegistry.registerConversionToDatabaseType(new LocalTimeToSqlTimeTypeConversion());
+        typeConversionRegistry.registerConversionToDatabaseType(new DateTimeToStringTypeConversion());
     }
 
     private static class DateTimeFromSqlTimestampTypeConversion extends TypeConversion<Timestamp, DateTime> {
@@ -134,6 +136,30 @@ public final class JodaTypeConversions {
         @Override
         public Time convert(@NotNull LocalTime value) {
             return new Time(value.toDateTimeToday(DateTimeZone.getDefault()).getMillis());
+        }
+    }
+
+    private static class DateTimeZoneFromStringTypeConversion extends TypeConversion<String, DateTimeZone> {
+        DateTimeZoneFromStringTypeConversion() {
+            super(String.class, DateTimeZone.class);
+        }
+
+        @NotNull
+        @Override
+        public DateTimeZone convert(@NotNull String value) {
+            return DateTimeZone.forID(value);
+        }
+    }
+
+    private static class DateTimeToStringTypeConversion extends TypeConversion<DateTimeZone, String> {
+        DateTimeToStringTypeConversion() {
+            super(DateTimeZone.class, String.class);
+        }
+
+        @NotNull
+        @Override
+        public String convert(@NotNull DateTimeZone value) {
+            return value.getID();
         }
     }
 }
