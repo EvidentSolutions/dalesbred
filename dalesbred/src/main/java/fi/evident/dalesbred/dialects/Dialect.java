@@ -103,6 +103,10 @@ public abstract class Dialect {
         if (productName.equals("PostgreSQL")) {
             log.fine("Automatically detected dialect PostgreSQL.");
             return new PostgreSQLDialect();
+
+        } else if (productName.equals("HSQL Database Engine")) {
+            log.fine("Automatically detected dialect HSQLDB.");
+            return new HsqldbDialect();
         } else {
             log.info("Could not detect dialect for product name '" + productName + "', falling back to default.");
             return new DefaultDialect();

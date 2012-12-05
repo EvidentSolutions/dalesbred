@@ -1,5 +1,6 @@
 ## x.y.z (yyyy-mm-dd)
 
+  - Added dialect for HSQLDB.
   - Log execution time of queries.
   - Support for batch updates.
   - Added builtin conversions for java.util.TimeZone and org.joda.time.DateTimeZone.
