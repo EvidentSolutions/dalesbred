@@ -36,7 +36,7 @@ import static org.junit.Assert.assertThat;
 
 public class BuiltinConversionsTest {
 
-    private final Database db = TestDatabaseProvider.createTestDatabase();
+    private final Database db = TestDatabaseProvider.createInMemoryHSQLDatabase();
 
     @Rule
     public final TransactionalTestsRule rule = new TransactionalTestsRule(db);
@@ -59,52 +59,52 @@ public class BuiltinConversionsTest {
 
     @Test
     public void shortConversions() {
-        assertThat(db.findUnique(short.class, "select 42"), is((short) 42));
-        assertThat(db.findUnique(Short.class, "select 42"), is((short) 42));
-        assertThat(db.findUnique(Short.class, "select 42::int8"), is((short) 42));
+        assertThat(db.findUnique(short.class, "values (42)"), is((short) 42));
+        assertThat(db.findUnique(Short.class, "values (42)"), is((short) 42));
+        assertThat(db.findUnique(Short.class, "values (cast(42 as bigint))"), is((short) 42));
     }
 
     @Test
     public void intConversions() {
-        assertThat(db.findUnique(int.class,    "select 42"), is(42));
-        assertThat(db.findUnique(Integer.class,"select 42"), is(42));
-        assertThat(db.findUnique(Integer.class,"select 42::int8"), is(42));
+        assertThat(db.findUnique(int.class,    "values (42)"), is(42));
+        assertThat(db.findUnique(Integer.class,"values (42)"), is(42));
+        assertThat(db.findUnique(Integer.class,"values (cast (42 as bigint))"), is(42));
     }
 
     @Test
     public void longConversions() {
-        assertThat(db.findUnique(long.class, "select 42"), is(42L));
-        assertThat(db.findUnique(Long.class, "select 42"), is(42L));
-        assertThat(db.findUniqueLong("select 42"), is(42L));
+        assertThat(db.findUnique(long.class, "values (42)"), is(42L));
+        assertThat(db.findUnique(Long.class, "values (42)"), is(42L));
+        assertThat(db.findUniqueLong("values (42)"), is(42L));
     }
 
     @Test
     public void floatConversions() {
-        assertThat(db.findUnique(float.class, "select 42"), is(42.0f));
-        assertThat(db.findUnique(Float.class, "select 42"), is(42.0f));
+        assertThat(db.findUnique(float.class, "values (42)"), is(42.0f));
+        assertThat(db.findUnique(Float.class, "values (42)"), is(42.0f));
     }
 
     @Test
     public void doubleConversions() {
-        assertThat(db.findUnique(double.class, "select 42"), is(42.0));
-        assertThat(db.findUnique(Double.class, "select 42"), is(42.0));
+        assertThat(db.findUnique(double.class, "values (42)"), is(42.0));
+        assertThat(db.findUnique(Double.class, "values (42)"), is(42.0));
     }
 
     @Test
     public void bigIntegerConversions() {
-        assertThat(db.findUnique(BigInteger.class, "select 42"), is(BigInteger.valueOf(42)));
+        assertThat(db.findUnique(BigInteger.class, "values (42)"), is(BigInteger.valueOf(42)));
     }
 
     @Test
     public void bigDecimalConversions() {
-        assertThat(db.findUnique(BigDecimal.class, "select 42"), is(BigDecimal.valueOf(42)));
-        assertThat(db.findUnique(BigDecimal.class, "select 42"), is(BigDecimal.valueOf(42)));
+        assertThat(db.findUnique(BigDecimal.class, "values (42)"), is(BigDecimal.valueOf(42)));
+        assertThat(db.findUnique(BigDecimal.class, "values (42)"), is(BigDecimal.valueOf(42)));
     }
 
     @Test
     public void numberConversions() {
         db.update("drop table if exists numbers");
-        db.update("create temporary table numbers (short int2, int int4, long int8, float float4, double float8, bigint numeric, bigdecimal numeric)");
+        db.update("create temporary table numbers (short smallint, int int, long bigint, float float, double float, bigint numeric, bigdecimal numeric(100,38))");
 
         short shortValue = Short.MAX_VALUE;
         int intValue = Integer.MAX_VALUE;
@@ -130,13 +130,13 @@ public class BuiltinConversionsTest {
 
     @Test
     public void count() {
-        assertThat(db.findUniqueInt("select count(*) from generate_series(1, 10) n"), is(10));
+        assertThat(db.findUniqueInt("select count(*) from (values (1), (2), (3)) n"), is(3));
     }
 
     @Test
     public void timeZoneConversions() {
         db.update("drop table if exists timezones");
-        db.update("create temporary table timezones (zone_id varchar)");
+        db.update("create temporary table timezones (zone_id varchar(64))");
 
         TimeZone helsinkiTimeZone = TimeZone.getTimeZone("Europe/Helsinki");
 

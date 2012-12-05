@@ -36,7 +36,7 @@ import static org.junit.Assert.assertThat;
 
 public class DatabaseTransactionRetryTest {
 
-    private final Database db = TestDatabaseProvider.createTestDatabase();
+    private final Database db = TestDatabaseProvider.createInMemoryHSQLDatabase();
 
     @Rule
     public final LoggingController loggingController = new LoggingController();

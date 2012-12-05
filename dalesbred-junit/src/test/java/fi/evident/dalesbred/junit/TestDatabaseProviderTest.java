@@ -33,9 +33,9 @@ public class TestDatabaseProviderTest {
 
     @Test
     public void customDialect() {
-        Database db = TestDatabaseProvider.databaseForProperties("connection.properties", new UppercaseDialect());
+        Database db = TestDatabaseProvider.databaseForProperties("hsqldb-connection.properties", new UppercaseDialect());
         db.update("drop table if exists my_table");
-        db.update("create table my_table (text varchar)");
+        db.update("create table my_table (text varchar(64))");
 
         db.update("insert into my_table values (?)", "foo");
 

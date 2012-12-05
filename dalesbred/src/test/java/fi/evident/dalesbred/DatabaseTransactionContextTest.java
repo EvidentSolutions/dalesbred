@@ -30,12 +30,13 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class DatabaseTransactionContextTest {
-    private final Database db = TestDatabaseProvider.createTestDatabase();
+
+    private final Database db = TestDatabaseProvider.createInMemoryHSQLDatabase();
 
     @Test
     public void rollbackOnly() {
         db.update("drop table if exists test_table");
-        db.update("create table test_table (text varchar)");
+        db.update("create table test_table (text varchar(64))");
         db.update("insert into test_table (text) values ('foo')");
 
         db.withTransaction(new TransactionCallback<Object>() {

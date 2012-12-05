@@ -43,13 +43,13 @@ public class DataSourceDatabaseModuleTest {
 
         Database db = injector.getInstance(Database.class);
 
-        assertThat(db.findUniqueInt("select 42"), is(42));
+        assertThat(db.findUniqueInt("values (42)"), is(42));
     }
 
     private static class MyDataSourceModule extends AbstractModule {
         @Override
         protected void configure() {
-            bind(DataSource.class).toInstance(TestDatabaseProvider.createDataSource());
+            bind(DataSource.class).toInstance(TestDatabaseProvider.createInMemoryHSQLDataSource());
         }
     }
 }

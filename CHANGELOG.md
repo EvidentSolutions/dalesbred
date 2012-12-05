@@ -1,5 +1,6 @@
 ## x.y.z (yyyy-mm-dd)
 
+  - Changed most of the tests to use in-memory HSQLDB.
   - Added dialect for HSQLDB.
   - Log execution time of queries.
   - Support for batch updates.

@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 
 public class DatabaseCustomCoercionsTest {
 
-    private final Database db = TestDatabaseProvider.createTestDatabase();
+    private final Database db = TestDatabaseProvider.createInMemoryHSQLDatabase();
 
     @Rule
     public final TransactionalTestsRule transactionalTests = new TransactionalTestsRule(db);
@@ -21,7 +21,7 @@ public class DatabaseCustomCoercionsTest {
     public void customLoadConversions() {
         db.getTypeConversionRegistry().registerConversionFromDatabaseType(new StringToEmailTypeConversion());
 
-        assertEquals(new EmailAddress("user", "example.org"), db.findUnique(EmailAddress.class, "select 'user@example.org'"));
+        assertEquals(new EmailAddress("user", "example.org"), db.findUnique(EmailAddress.class, "values ('user@example.org')"));
     }
 
     @Test
@@ -29,7 +29,7 @@ public class DatabaseCustomCoercionsTest {
         db.getTypeConversionRegistry().registerConversionToDatabaseType(new EmailToStringTypeConversion());
 
         db.update("drop table if exists custom_save_conversions_test");
-        db.update("create temporary table custom_save_conversions_test (email varchar)");
+        db.update("create temporary table custom_save_conversions_test (email varchar(32))");
 
         db.update("insert into custom_save_conversions_test (email) values (?)", new EmailAddress("user", "example.org"));
 

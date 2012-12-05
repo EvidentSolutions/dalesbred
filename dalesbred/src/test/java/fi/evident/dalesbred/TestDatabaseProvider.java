@@ -26,7 +26,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.name.Names;
 import fi.evident.dalesbred.connection.DriverManagerConnectionProvider;
-import fi.evident.dalesbred.dialects.Dialect;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Provider;
@@ -46,17 +45,22 @@ public final class TestDatabaseProvider {
     private TestDatabaseProvider() { }
 
     @NotNull
+    public static Database createInMemoryHSQLDatabase() {
+        return Database.forUrlAndCredentials("jdbc:hsqldb:.", "sa", "");
+    }
+
+    @NotNull
     public static Database createTestDatabase() {
         return new Database(createConnectionProvider());
     }
 
     @NotNull
-    public static Database createTestDatabase(@NotNull Dialect dialect) {
-        return new Database(createConnectionProvider(), dialect);
+    public static DataSource createInMemoryHSQLDataSource() {
+        return createDataSource(new DriverManagerConnectionProvider("jdbc:hsqldb:.", "sa", ""));
     }
 
     @NotNull
-    public static Provider<Connection> createConnectionProvider() {
+    private static Provider<Connection> createConnectionProvider() {
         Properties props = loadProperties();
         String url = props.getProperty("jdbc.url");
         String login = props.getProperty("jdbc.login");
@@ -66,16 +70,14 @@ public final class TestDatabaseProvider {
     }
 
     @NotNull
-    public static DataSource createDataSource() {
-        return createDataSource(createConnectionProvider());
-    }
-
-    @NotNull
-    public static Module propertiesModule() {
+    public static Module inMemoryDatabasePropertiesModule() {
         return new AbstractModule() {
             @Override
             protected void configure() {
-                Properties props = loadProperties();
+                Properties props = new Properties();
+                props.setProperty("jdbc.url", "jdbc:hsqldb:.");
+                props.setProperty("jdbc.login", "sa");
+                props.setProperty("jdbc.password", "");
 
                 Names.bindProperties(binder(), props);
             }
@@ -88,7 +90,7 @@ public final class TestDatabaseProvider {
 
     @NotNull
     @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
-    public static Properties loadProperties() {
+    private static Properties loadProperties() {
         try {
             InputStream in = TransactionCallback.class.getClassLoader().getResourceAsStream("connection.properties");
             assumeNotNull(in);

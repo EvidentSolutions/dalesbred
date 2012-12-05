@@ -119,7 +119,7 @@ public class AopAllianceTransactionalMethodInterceptorTest {
 
     @Before
     public void init() {
-        Injector injector = Guice.createInjector(new DriverManagerDatabaseModule(), new MyServiceModule(), TestDatabaseProvider.propertiesModule());
+        Injector injector = Guice.createInjector(new DriverManagerDatabaseModule(), new MyServiceModule(), TestDatabaseProvider.inMemoryDatabasePropertiesModule());
         injector.injectMembers(this);
     }
 

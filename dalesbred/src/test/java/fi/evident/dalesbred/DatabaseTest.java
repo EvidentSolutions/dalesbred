@@ -22,7 +22,7 @@
 
 package fi.evident.dalesbred;
 
-import fi.evident.dalesbred.dialects.PostgreSQLDialect;
+import fi.evident.dalesbred.dialects.HsqldbDialect;
 import fi.evident.dalesbred.instantiation.InstantiationListener;
 import fi.evident.dalesbred.instantiation.Instantiator;
 import fi.evident.dalesbred.instantiation.InstantiatorArguments;
@@ -48,7 +48,7 @@ import static org.junit.Assert.*;
 
 public class DatabaseTest {
 
-    private final Database db = TestDatabaseProvider.createTestDatabase();
+    private final Database db = TestDatabaseProvider.createInMemoryHSQLDatabase();
 
     @Rule
     public final TransactionalTestsRule rule = new TransactionalTestsRule(db);
@@ -57,31 +57,31 @@ public class DatabaseTest {
     public void meaningfulToString() {
         db.setDefaultIsolation(Isolation.READ_UNCOMMITTED);
         db.setAllowImplicitTransactions(true);
-        assertEquals("Database [dialect=" + new PostgreSQLDialect().toString() + ", allowImplicitTransactions=true, defaultIsolation=READ_UNCOMMITTED, defaultPropagation=DEFAULT]", db.toString());
+        assertEquals("Database [dialect=" + new HsqldbDialect().toString() + ", allowImplicitTransactions=true, defaultIsolation=READ_UNCOMMITTED, defaultPropagation=DEFAULT]", db.toString());
     }
 
     @Test
     public void primitivesQueries() {
-        assertThat(db.findUniqueInt("select 42"), is(42));
-        assertThat(db.findUnique(Integer.class, "select 42"), is(42));
-        assertThat(db.findUnique(Long.class, "select 42::int8"), is(42L));
-        assertThat(db.findUnique(Float.class, "select 42.0::float4"), is(42.0f));
-        assertThat(db.findUnique(Double.class, "select 42.0::float8"), is(42.0));
-        assertThat(db.findUnique(String.class, "select 'foo'"), is("foo"));
-        assertThat(db.findUnique(Boolean.class, "select true"), is(true));
-        assertThat(db.findUnique(Boolean.class, "select null::boolean"), is(nullValue()));
+        assertThat(db.findUniqueInt("values (42)"), is(42));
+        assertThat(db.findUnique(Integer.class, "values (42)"), is(42));
+        assertThat(db.findUnique(Long.class, "values (cast(42 as bigint))"), is(42L));
+        assertThat(db.findUnique(Float.class, "values (42.0)"), is(42.0f));
+        assertThat(db.findUnique(Double.class, "values (42.0)"), is(42.0));
+        assertThat(db.findUnique(String.class, "values ('foo')"), is("foo"));
+        assertThat(db.findUnique(Boolean.class, "values (true)"), is(true));
+        assertThat(db.findUnique(Boolean.class, "values (cast(null as boolean))"), is(nullValue()));
     }
 
     @Test
     public void bigNumbers() {
-        assertThat(db.findUnique(BigDecimal.class, "select 4242242848428484848484848"), is(new BigDecimal("4242242848428484848484848")));
+        assertThat(db.findUnique(BigDecimal.class, "values (4242242848428484848484848)"), is(new BigDecimal("4242242848428484848484848")));
     }
 
     @Test
     public void autoDetectingTypes() {
-        assertThat(db.findUnique(Object.class, "select 42"), is((Object) 42));
-        assertThat(db.findUnique(Object.class, "select 'foo'"), is((Object) "foo"));
-        assertThat(db.findUnique(Object.class, "select true"), is((Object) true));
+        assertThat(db.findUnique(Object.class, "values (42)"), is((Object) 42));
+        assertThat(db.findUnique(Object.class, "values ('foo')"), is((Object) "foo"));
+        assertThat(db.findUnique(Object.class, "values (true)"), is((Object) true));
     }
 
     @Test
@@ -105,58 +105,33 @@ public class DatabaseTest {
     }
 
     @Test
-    public void enumsAsPrimitives() {
-        db.update("drop type if exists mood cascade");
-        db.update("create type mood as enum ('SAD', 'HAPPY')");
-
-        db.findUnique(Mood.class, "select 'SAD'::mood").getClass();
-        assertThat(db.findUnique(Mood.class, "select 'SAD'::mood"), is(Mood.SAD));
-        assertThat(db.findUnique(Mood.class, "select null::mood"), is(nullValue()));
-    }
-
-    @Test
-    public void enumsAsConstructorParameters() {
-        db.update("drop type if exists mood cascade");
-        db.update("create type mood as enum ('SAD', 'HAPPY')");
-
-        db.update("drop table if exists movie");
-        db.update("create temporary table movie (name varchar(64) primary key, mood mood not null)");
-
-        db.update("insert into movie (name, mood) values (?, ?)", "Amélie", Mood.HAPPY);
-
-        Movie movie = db.findUnique(Movie.class, "select name, mood from movie");
-        assertThat(movie.name, is("Amélie"));
-        assertThat(movie.mood, is(Mood.HAPPY));
-    }
-
-    @Test
     public void findUnique_singleResult() {
-        assertThat(db.findUnique(Integer.class, "select 42"), is(42));
+        assertThat(db.findUnique(Integer.class, "values (42)"), is(42));
     }
 
     @Test(expected = NonUniqueResultException.class)
     public void findUnique_nonUniqueResult() {
-        db.findUnique(Integer.class, "select generate_series(1, 2)");
+        db.findUnique(Integer.class, "values (1), (2)");
     }
 
     @Test(expected = NonUniqueResultException.class)
     public void findUnique_emptyResult() {
-        db.findUnique(Integer.class, "select generate_series(0,-1)");
+        db.findUnique(Integer.class, "select * from (values (1)) n where false");
     }
 
     @Test
     public void findUniqueOrNull_singleResult() {
-        assertThat(db.findUniqueOrNull(Integer.class, "select 42"), is(42));
+        assertThat(db.findUniqueOrNull(Integer.class, "values (42)"), is(42));
     }
 
     @Test(expected = NonUniqueResultException.class)
     public void findUniqueOrNull_nonUniqueResult() {
-        db.findUniqueOrNull(Integer.class, "select generate_series(1, 2)");
+        db.findUniqueOrNull(Integer.class, "values (1), (2)");
     }
 
     @Test
     public void findUniqueOrNull_emptyResult() {
-        assertThat(db.findUniqueOrNull(Integer.class, "select generate_series(0,-1)"), is(nullValue()));
+        assertThat(db.findUniqueOrNull(Integer.class, "select * from (values (1)) n where false"), is(nullValue()));
     }
 
     @Test
@@ -170,9 +145,9 @@ public class DatabaseTest {
             }
         };
 
-        assertThat(db.findAll(squaringRowMapper, "select generate_series(1, 3)"), is(asList(1, 4, 9)));
-        assertThat(db.findUnique(squaringRowMapper, "select 7"), is(49));
-        assertThat(db.findUniqueOrNull(squaringRowMapper, "select generate_series(0,-1)"), is(nullValue()));
+        assertThat(db.findAll(squaringRowMapper, "values (1), (2), (3)"), is(asList(1, 4, 9)));
+        assertThat(db.findUnique(squaringRowMapper, "values (7)"), is(49));
+        assertThat(db.findUniqueOrNull(squaringRowMapper, "select * from (values (1)) n where false"), is(nullValue()));
     }
 
     @Test
@@ -186,7 +161,7 @@ public class DatabaseTest {
             }
         };
 
-        assertThat(db.executeQuery(rowCounter, "select generate_series(1, 10)"), is(10));
+        assertThat(db.executeQuery(rowCounter, "values (1), (2), (3)"), is(3));
     }
 
     @Test(expected = DatabaseException.class)
@@ -196,7 +171,7 @@ public class DatabaseTest {
 
     @Test
     public void confidentialValuesWorkLikeNormals() {
-        assertThat(db.findUnique(String.class, "select ?", confidential("foo")), is("foo"));
+        assertThat(db.findUnique(String.class, "values (?)", confidential("foo")), is("foo"));
     }
 
     @Test
@@ -222,17 +197,6 @@ public class DatabaseTest {
 
         db.setAllowImplicitTransactions(true);
         assertTrue(db.isAllowImplicitTransactions());
-    }
-
-    @Test
-    public void returnValueOfUpdate() {
-        db.update("drop table if exists department");
-
-        db.update("create temporary table department (id serial primary key, name varchar(64) not null)");
-        db.findUnique(Integer.class, "insert into department (name) values ('foo') returning id");
-        db.findUnique(Integer.class, "insert into department (name) values ('bar') returning id");
-
-        assertThat(db.update("update department set name=name || 'suffix'"), is(2));
     }
 
     @Test
@@ -263,12 +227,7 @@ public class DatabaseTest {
             }
         });
 
-        assertThat(db.findUnique(Integer.class, "select 'foobar'"), is(6));
-    }
-
-    enum Mood {
-        SAD,
-        HAPPY
+        assertThat(db.findUnique(Integer.class, "values ('foobar')"), is(6));
     }
 
     public static class Department {
@@ -279,17 +238,6 @@ public class DatabaseTest {
         public Department(int id, String name) {
             this.id = id;
             this.name = name;
-        }
-    }
-
-    public static class Movie {
-        final String name;
-        final Mood mood;
-
-        @Reflective
-        public Movie(String name, Mood mood) {
-            this.name = name;
-            this.mood = mood;
         }
     }
 }

@@ -25,47 +25,55 @@ package fi.evident.dalesbred;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
-public class DatabaseBatchUpdatesTest {
+public class DatabaseEnumTest {
 
-    private final Database db = TestDatabaseProvider.createInMemoryHSQLDatabase();
+    private final Database db = TestDatabaseProvider.createTestDatabase();
 
     @Rule
     public final TransactionalTestsRule rule = new TransactionalTestsRule(db);
 
     @Test
-    public void batchUpdate() {
-        db.update("drop table if exists dictionary");
-        db.update("create temporary table dictionary (word varchar(64) primary key)");
+    public void enumsAsPrimitives() {
+        db.update("drop type if exists mood cascade");
+        db.update("create type mood as enum ('SAD', 'HAPPY')");
 
-        List<List<String>> data = new ArrayList<List<String>>();
-        data.add(singletonList("foo"));
-        data.add(singletonList("bar"));
-        data.add(singletonList("baz"));
-        int[] result = db.updateBatch("insert into dictionary (word) values (?)", data);
-
-        assertThat(result, is(new int[] { 1, 1, 1 }));
-        assertThat(db.findAll(String.class, "select word from dictionary order by word"), is(asList("bar", "baz", "foo")));
+        db.findUnique(Mood.class, "select 'SAD'::mood").getClass();
+        assertThat(db.findUnique(Mood.class, "select 'SAD'::mood"), is(Mood.SAD));
+        assertThat(db.findUnique(Mood.class, "select null::mood"), is(nullValue()));
     }
 
     @Test
-    public void exceptionsContainReferenceToOriginalQuery() {
-        List<List<String>> data = new ArrayList<List<String>>();
-        data.add(singletonList("foo"));
+    public void enumsAsConstructorParameters() {
+        db.update("drop type if exists mood cascade");
+        db.update("create type mood as enum ('SAD', 'HAPPY')");
 
-        try {
-            db.updateBatch("insert into nonexistent_table (foo) values (?)", data);
-            fail("Expected DatabaseException");
-        } catch (DatabaseException e) {
-            assertThat(e.getQuery(), is(SqlQuery.query("insert into nonexistent_table (foo) values (?)", "<batch-update>")));
+        db.update("drop table if exists movie");
+        db.update("create temporary table movie (name varchar(64) primary key, mood mood not null)");
+
+        db.update("insert into movie (name, mood) values (?, ?)", "Amélie", Mood.HAPPY);
+
+        Movie movie = db.findUnique(Movie.class, "select name, mood from movie");
+        assertThat(movie.name, is("Amélie"));
+        assertThat(movie.mood, is(Mood.HAPPY));
+    }
+
+    enum Mood {
+        SAD,
+        HAPPY
+    }
+
+    public static class Movie {
+        final String name;
+        final Mood mood;
+
+        @Reflective
+        public Movie(String name, Mood mood) {
+            this.name = name;
+            this.mood = mood;
         }
     }
 }

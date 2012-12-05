@@ -38,11 +38,11 @@ public class GuiceAutomaticInjectionTest {
     @Test
     public void testCreation() {
         TestDatabaseProvider.assumeConfigurationExists();
-        Injector injector = Guice.createInjector(new DriverManagerDatabaseModule(), TestDatabaseProvider.propertiesModule());
+        Injector injector = Guice.createInjector(new DriverManagerDatabaseModule(), TestDatabaseProvider.inMemoryDatabasePropertiesModule());
 
         Database db = injector.getInstance(Database.class);
 
-        Employee employee = db.findUnique(Employee.class, "select 42, 'Fred Foo'");
+        Employee employee = db.findUnique(Employee.class, "values (42, 'Fred Foo')");
         assertThat(employee.id, is(42));
         assertThat(employee.name, is("Fred Foo"));
         assertThat(employee.db, is(db));

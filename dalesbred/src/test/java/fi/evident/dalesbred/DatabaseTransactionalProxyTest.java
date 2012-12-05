@@ -35,7 +35,7 @@ import static org.junit.Assert.fail;
 
 public class DatabaseTransactionalProxyTest {
 
-    private final Database db = TestDatabaseProvider.createTestDatabase();
+    private final Database db = TestDatabaseProvider.createInMemoryHSQLDatabase();
 
     @Rule
     public final LoggingController loggingController = new LoggingController();

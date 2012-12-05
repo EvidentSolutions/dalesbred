@@ -36,7 +36,7 @@ import static org.junit.Assert.assertEquals;
 
 public class TransactionalTestsWithProviderTest {
 
-    private final Database db = TestDatabaseProvider.databaseForProperties("connection.properties");
+    private final Database db = Database.forUrlAndCredentials("jdbc:hsqldb:.", "sa", "");
 
     @Rule
     public final TransactionalTests transactionalTests = new TransactionalTests(new Provider<Database>() {

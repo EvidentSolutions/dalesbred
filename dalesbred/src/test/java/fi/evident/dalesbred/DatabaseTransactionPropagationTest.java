@@ -74,7 +74,7 @@ public class DatabaseTransactionPropagationTest {
     @SuppressLogging
     public void nestedTransactions() {
         db.update("drop table if exists test_table");
-        db.update("create table test_table (text varchar)");
+        db.update("create table test_table (text varchar(64))");
 
         db.withTransaction(new TransactionCallback<Object>() {
             @Nullable
@@ -113,7 +113,7 @@ public class DatabaseTransactionPropagationTest {
         db.setDefaultIsolation(SERIALIZABLE);
 
         db.update("drop table if exists test_table");
-        db.update("create table test_table (text varchar)");
+        db.update("create table test_table (text varchar(64))");
         db.update("insert into test_table (text) values ('foo')");
 
         db.withTransaction(new TransactionCallback<Object>() {

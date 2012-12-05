@@ -24,8 +24,6 @@ package fi.evident.dalesbred;
 
 import org.junit.Test;
 
-import java.util.Properties;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -33,13 +31,8 @@ public class DatabaseCreationTest {
 
     @Test
     public void forUrlAndCredentials() {
-        Properties props = TestDatabaseProvider.loadProperties();
-        String url = props.getProperty("jdbc.url");
-        String login = props.getProperty("jdbc.login");
-        String password = props.getProperty("jdbc.password");
+        Database db = Database.forUrlAndCredentials("jdbc:hsqldb:.", "sa", "");
 
-        Database db = Database.forUrlAndCredentials(url, login, password);
-
-        assertThat(db.findUniqueInt("select 42"), is(42));
+        assertThat(db.findUniqueInt("values (42)"), is(42));
     }
 }

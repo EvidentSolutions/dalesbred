@@ -22,6 +22,7 @@
 
 package fi.evident.dalesbred;
 
+import fi.evident.dalesbred.connection.DriverManagerConnectionProvider;
 import fi.evident.dalesbred.dialects.DefaultDialect;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
@@ -31,7 +32,7 @@ import static org.junit.Assert.assertEquals;
 
 public class DatabaseCustomDialectTest {
 
-    private final Database db = TestDatabaseProvider.createTestDatabase(new UppercaseDialect());
+    private final Database db = new Database(new DriverManagerConnectionProvider("jdbc:hsqldb:.", "sa", ""), new UppercaseDialect());
 
     @Rule
     public final TransactionalTestsRule rule = new TransactionalTestsRule(db);
@@ -39,7 +40,7 @@ public class DatabaseCustomDialectTest {
     @Test
     public void customDialect() {
         db.update("drop table if exists my_table");
-        db.update("create temporary table my_table (text varchar)");
+        db.update("create temporary table my_table (text varchar(64))");
 
         db.update("insert into my_table values (?)", "foo");
 

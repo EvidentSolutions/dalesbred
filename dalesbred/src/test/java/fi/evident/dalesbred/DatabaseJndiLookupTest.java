@@ -43,10 +43,10 @@ public class DatabaseJndiLookupTest {
 
     @Test
     public void createDatabaseByFetchingDataSourceFromJndi() throws NamingException {
-        MyInitialFactory.initialContext.bind("java:comp/env/foo", TestDatabaseProvider.createDataSource());
+        MyInitialFactory.initialContext.bind("java:comp/env/foo", TestDatabaseProvider.createInMemoryHSQLDataSource());
 
         Database db = Database.forJndiDataSource("java:comp/env/foo");
-        assertThat(db.findUniqueInt("select 42"), is(42));
+        assertThat(db.findUniqueInt("values (42)"), is(42));
     }
 
     public static class MyInitialFactory implements InitialContextFactory {

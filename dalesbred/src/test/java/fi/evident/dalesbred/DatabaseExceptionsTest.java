@@ -31,14 +31,14 @@ import static org.junit.Assert.fail;
 
 public class DatabaseExceptionsTest {
 
-    private final Database db = TestDatabaseProvider.createTestDatabase();
+    private final Database db = TestDatabaseProvider.createInMemoryHSQLDatabase();
 
     @Rule
     public final TransactionalTestsRule rule = new TransactionalTestsRule(db);
 
     @Test
     public void findUniqueOrNull_nonUniqueResult() {
-        SqlQuery query = query("select generate_series(1, 2)");
+        SqlQuery query = query("values (1), (2)");
         try {
             db.findUniqueOrNull(Integer.class, query);
             fail("Expected NonUniqueResultException");
@@ -49,7 +49,7 @@ public class DatabaseExceptionsTest {
 
     @Test
     public void findUniqueInt_nullResult() {
-        SqlQuery query = query("select null::int");
+        SqlQuery query = query("values (cast(null as int))");
         try {
             db.findUniqueInt(query);
             fail("Expected UnexpectedResultException");

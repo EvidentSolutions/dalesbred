@@ -22,6 +22,7 @@
 
 package fi.evident.dalesbred;
 
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
@@ -29,36 +30,34 @@ import org.joda.time.LocalTime;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.TimeZone;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class JodaIntegrationTest {
 
-    private final Database db = TestDatabaseProvider.createTestDatabase();
+    private final Database db = TestDatabaseProvider.createInMemoryHSQLDatabase();
 
     @Rule
     public final TransactionalTestsRule rule = new TransactionalTestsRule(db);
 
     @Test
     public void fetchJodaDateTimes() {
-        assertThat(db.findUnique(DateTime.class, "select '2012-10-09 11:29:25'::timestamp"), is(new DateTime(2012, 10, 9, 11, 29, 25)));
+        assertThat(db.findUnique(DateTime.class, "values (cast('2012-10-09 11:29:25' as timestamp))"), is(new DateTime(2012, 10, 9, 11, 29, 25)));
     }
 
     @Test
     public void fetchJodaDates() {
-        assertThat(db.findUnique(LocalDate.class, "select '2012-10-09'::date"), is(new LocalDate(2012, 10, 9)));
+        assertThat(db.findUnique(LocalDate.class, "values (cast('2012-10-09' as date))"), is(new LocalDate(2012, 10, 9)));
     }
 
     @Test
     public void fetchJodaTime() {
-        assertThat(db.findUnique(LocalTime.class, "select '11:29:25'::time"), is(new LocalTime(11, 29, 25)));
+        assertThat(db.findUnique(LocalTime.class, "values (cast('11:29:25' as time))"), is(new LocalTime(11, 29, 25)));
     }
 
     @Test
     public void jodaTypesAsParameters() {
-        DateContainer container = db.findUnique(DateContainer.class, "select '2012-10-09 11:29:25'::timestamp, '2012-10-09'::date, '11:29:25'::time");
+        DateContainer container = db.findUnique(DateContainer.class, "values (cast('2012-10-09 11:29:25' as timestamp), cast('2012-10-09' as date), cast('11:29:25' as time))");
 
         assertThat(container.dateTime, is(new DateTime(2012, 10, 9, 11, 29, 25)));
         assertThat(container.date, is(new LocalDate(2012, 10, 9)));
@@ -72,7 +71,7 @@ public class JodaIntegrationTest {
 
         DateTime dateTime = DateTime.now();
         LocalDate date = LocalDate.now();
-        LocalTime time = LocalTime.now();
+        LocalTime time = withoutMillis(LocalTime.now());
 
         db.update("insert into date_test (timestamp, date, time) values (?, ?, ?)", dateTime, date, time);
 
@@ -84,13 +83,18 @@ public class JodaIntegrationTest {
     @Test
     public void timeZoneConversions() {
         db.update("drop table if exists timezones");
-        db.update("create temporary table timezones (zone_id varchar)");
+        db.update("create temporary table timezones (zone_id varchar(64))");
 
         DateTimeZone helsinkiTimeZone = DateTimeZone.forID("Europe/Helsinki");
 
         db.update("insert into timezones (zone_id) values (?)", helsinkiTimeZone);
 
         assertThat(db.findUnique(DateTimeZone.class, "select zone_id from timezones"), is(helsinkiTimeZone));
+    }
+
+    @NotNull
+    private static LocalTime withoutMillis(@NotNull LocalTime time) {
+        return time.minusMillis(time.getMillisOfSecond());
     }
 
     public static class DateContainer {
