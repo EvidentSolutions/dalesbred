@@ -38,7 +38,6 @@ public class DataSourceDatabaseModuleTest {
 
     @Test
     public void testCreation() {
-        TestDatabaseProvider.assumeConfigurationExists();
         Injector injector = Guice.createInjector(new DataSourceDatabaseModule(), new MyDataSourceModule());
 
         Database db = injector.getInstance(Database.class);

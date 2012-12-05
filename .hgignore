@@ -10,5 +10,4 @@ out
 .idea/uiDesigner.xml
 .idea/dataSources.xml
 .idea/dataSources.ids
-dalesbred/src/test/resources/connection.properties
-dalesbred-junit/src/test/resources/connection.properties
+dalesbred/src/test/resources/postgresql-connection.properties

@@ -50,8 +50,8 @@ public final class TestDatabaseProvider {
     }
 
     @NotNull
-    public static Database createTestDatabase() {
-        return new Database(createConnectionProvider());
+    public static Database createPostgreSQLDatabase() {
+        return new Database(createConnectionProvider("postgresql-connection.properties"));
     }
 
     @NotNull
@@ -60,8 +60,8 @@ public final class TestDatabaseProvider {
     }
 
     @NotNull
-    private static Provider<Connection> createConnectionProvider() {
-        Properties props = loadProperties();
+    private static Provider<Connection> createConnectionProvider(@NotNull String name) {
+        Properties props = loadProperties(name);
         String url = props.getProperty("jdbc.url");
         String login = props.getProperty("jdbc.login");
         String password = props.getProperty("jdbc.password");
@@ -84,15 +84,11 @@ public final class TestDatabaseProvider {
         };
     }
 
-    public static void assumeConfigurationExists() {
-        loadProperties();
-    }
-
     @NotNull
     @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
-    private static Properties loadProperties() {
+    private static Properties loadProperties(@NotNull String name) {
         try {
-            InputStream in = TransactionCallback.class.getClassLoader().getResourceAsStream("connection.properties");
+            InputStream in = TransactionCallback.class.getClassLoader().getResourceAsStream(name);
             assumeNotNull(in);
             try {
                 Properties properties = new Properties();

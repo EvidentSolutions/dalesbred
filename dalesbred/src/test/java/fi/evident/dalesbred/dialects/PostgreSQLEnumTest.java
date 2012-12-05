@@ -20,8 +20,12 @@
  * THE SOFTWARE.
  */
 
-package fi.evident.dalesbred;
+package fi.evident.dalesbred.dialects;
 
+import fi.evident.dalesbred.Database;
+import fi.evident.dalesbred.Reflective;
+import fi.evident.dalesbred.TestDatabaseProvider;
+import fi.evident.dalesbred.TransactionalTestsRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -29,9 +33,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-public class DatabaseEnumTest {
+public class PostgreSQLEnumTest {
 
-    private final Database db = TestDatabaseProvider.createTestDatabase();
+    private final Database db = TestDatabaseProvider.createPostgreSQLDatabase();
 
     @Rule
     public final TransactionalTestsRule rule = new TransactionalTestsRule(db);
