@@ -24,7 +24,6 @@ package fi.evident.dalesbred;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.omg.CORBA.TIMEOUT;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
