@@ -46,7 +46,7 @@ public final class TestDatabaseProvider {
 
     @NotNull
     public static Database createInMemoryHSQLDatabase() {
-        return Database.forUrlAndCredentials("jdbc:hsqldb:.", "sa", "");
+        return Database.forUrlAndCredentials("jdbc:hsqldb:mem:test;hsqldb.tx=mvcc", "sa", "");
     }
 
     @NotNull

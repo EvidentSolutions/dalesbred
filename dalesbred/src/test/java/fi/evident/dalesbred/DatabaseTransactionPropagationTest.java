@@ -29,14 +29,13 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static fi.evident.dalesbred.Isolation.SERIALIZABLE;
 import static fi.evident.dalesbred.Propagation.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 public class DatabaseTransactionPropagationTest {
 
-    private final Database db = TestDatabaseProvider.createTestDatabase();
+    private final Database db = TestDatabaseProvider.createInMemoryHSQLDatabase();
 
     @Rule
     public final LoggingController loggingController = new LoggingController();
@@ -110,8 +109,6 @@ public class DatabaseTransactionPropagationTest {
 
     @Test
     public void requiresNewSuspendsActiveTransaction() {
-        db.setDefaultIsolation(SERIALIZABLE);
-
         db.update("drop table if exists test_table");
         db.update("create table test_table (text varchar(64))");
         db.update("insert into test_table (text) values ('foo')");

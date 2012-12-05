@@ -33,8 +33,8 @@ import static fi.evident.dalesbred.Isolation.SERIALIZABLE;
 
 public class DatabaseTransactionIsolationTest {
 
-    private final Database db1 = TestDatabaseProvider.createTestDatabase();
-    private final Database db2 = TestDatabaseProvider.createTestDatabase();
+    private final Database db1 = TestDatabaseProvider.createInMemoryHSQLDatabase();
+    private final Database db2 = TestDatabaseProvider.createInMemoryHSQLDatabase();
 
     @Rule
     public final LoggingController loggingController = new LoggingController();
