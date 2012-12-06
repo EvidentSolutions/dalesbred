@@ -22,21 +22,24 @@
 
 package fi.evident.dalesbred.dialects;
 
-import fi.evident.dalesbred.Database;
-import fi.evident.dalesbred.TransactionCallback;
-import fi.evident.dalesbred.TransactionContext;
+import fi.evident.dalesbred.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.sql.SQLException;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class HsqldbDialectTest {
 
     private final Database db = Database.forUrlAndCredentials("jdbc:hsqldb:.", "sa", "");
+
+    @Rule
+    public final TransactionalTestsRule rule = new TransactionalTestsRule(db);
 
     @Test
     public void simpleQuery() {
@@ -55,5 +58,39 @@ public class HsqldbDialectTest {
                 return null;
             }
         });
+    }
+
+    @Test
+    public void enumsAsPrimitives() {
+        assertThat(db.findUnique(Mood.class, "values ('SAD')"), is(Mood.SAD));
+        assertThat(db.findUnique(Mood.class, "values (cast(null as varchar(20)))"), is(nullValue()));
+    }
+
+    @Test
+    public void enumsAsConstructorParameters() {
+        db.update("drop table if exists movie");
+        db.update("create temporary table movie (name varchar(64) primary key, mood varchar(20) not null)");
+
+        db.update("insert into movie (name, mood) values (?, ?)", "Amélie", Mood.HAPPY);
+
+        Movie movie = db.findUnique(Movie.class, "select name, mood from movie");
+        assertThat(movie.name, is("Amélie"));
+        assertThat(movie.mood, is(Mood.HAPPY));
+    }
+
+    enum Mood {
+        SAD,
+        HAPPY
+    }
+
+    public static class Movie {
+        final String name;
+        final Mood mood;
+
+        @Reflective
+        public Movie(String name, Mood mood) {
+            this.name = name;
+            this.mood = mood;
+        }
     }
 }

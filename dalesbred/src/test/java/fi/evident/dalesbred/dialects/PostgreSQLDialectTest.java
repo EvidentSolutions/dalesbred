@@ -33,7 +33,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-public class PostgreSQLEnumTest {
+public class PostgreSQLDialectTest {
 
     private final Database db = TestDatabaseProvider.createPostgreSQLDatabase();
 
