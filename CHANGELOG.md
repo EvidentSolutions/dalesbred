@@ -1,9 +1,9 @@
-## x.y.z (yyyy-mm-dd)
+## 0.3.1 (2012-12-07)
 
+  - Support for batch updates.
+  - Log execution time of queries.
   - Changed most of the tests to use in-memory HSQLDB.
   - Added dialect for HSQLDB.
-  - Log execution time of queries.
-  - Support for batch updates.
   - Added builtin conversions for java.util.TimeZone and org.joda.time.DateTimeZone.
   - Allow type conversions to be registered for interfaces in addition to concrete types.
 
