@@ -341,6 +341,13 @@ For the JUnit test-support classes, add the following:
         <scope>test</scope>
     </dependency>
 
+Using without Maven
+===================
+
+To use Dalesbred without Maven, you'll need to [download the latest jar for Dalesbred](https://bitbucket.org/evidentsolutions/dalesbred/downloads),
+but you'll also need to download [javax.inject-1.jar](http://repo1.maven.org/maven2/javax/inject/javax.inject/1/javax.inject-1.jar)
+and it it to your classpath.
+
 Attributions
 ============
 
