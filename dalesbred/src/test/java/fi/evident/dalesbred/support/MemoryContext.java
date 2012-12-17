@@ -39,7 +39,7 @@ public final class MemoryContext implements Context {
     }
 
     @Override
-    public Object lookup(String name) {
+    public Object lookup(@NotNull String name) {
         return map.get(name);
     }
 
@@ -49,7 +49,7 @@ public final class MemoryContext implements Context {
     }
 
     @Override
-    public void bind(String name, Object obj) {
+    public void bind(@NotNull String name, Object obj) {
         map.put(name, obj);
     }
 
@@ -59,7 +59,7 @@ public final class MemoryContext implements Context {
     }
 
     @Override
-    public void rebind(String name, Object obj) {
+    public void rebind(@NotNull String name, Object obj) {
         map.put(name, obj);
     }
 
@@ -69,7 +69,7 @@ public final class MemoryContext implements Context {
     }
 
     @Override
-    public void unbind(String name) {
+    public void unbind(@NotNull String name) {
         map.remove(name);
     }
 
@@ -79,81 +79,81 @@ public final class MemoryContext implements Context {
     }
 
     @Override
-    public void rename(String oldName, String newName) {
+    public void rename(@NotNull String oldName, String newName) {
         throw new UnsupportedOperationException();
     }
 
     @NotNull
     @Override
-    public NamingEnumeration<NameClassPair> list(Name name) {
+    public NamingEnumeration<NameClassPair> list(@NotNull Name name) {
         throw new UnsupportedOperationException();
     }
 
     @NotNull
     @Override
-    public NamingEnumeration<NameClassPair> list(String name) {
+    public NamingEnumeration<NameClassPair> list(@NotNull String name) {
         throw new UnsupportedOperationException();
     }
 
     @NotNull
     @Override
-    public NamingEnumeration<Binding> listBindings(Name name) {
+    public NamingEnumeration<Binding> listBindings(@NotNull Name name) {
         throw new UnsupportedOperationException();
     }
 
     @NotNull
     @Override
-    public NamingEnumeration<Binding> listBindings(String name) {
+    public NamingEnumeration<Binding> listBindings(@NotNull String name) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void destroySubcontext(Name name) {
+    public void destroySubcontext(@NotNull Name name) {
     }
 
     @Override
-    public void destroySubcontext(String name) {
-    }
-
-    @NotNull
-    @Override
-    public Context createSubcontext(Name name) {
-        throw new UnsupportedOperationException();
+    public void destroySubcontext(@NotNull String name) {
     }
 
     @NotNull
     @Override
-    public Context createSubcontext(String name) {
+    public Context createSubcontext(@NotNull Name name) {
         throw new UnsupportedOperationException();
     }
 
     @NotNull
     @Override
-    public Object lookupLink(Name name) {
+    public Context createSubcontext(@NotNull String name) {
         throw new UnsupportedOperationException();
     }
 
     @NotNull
     @Override
-    public Object lookupLink(String name) {
+    public Object lookupLink(@NotNull Name name) {
         throw new UnsupportedOperationException();
     }
 
     @NotNull
     @Override
-    public NameParser getNameParser(Name name) {
+    public Object lookupLink(@NotNull String name) {
         throw new UnsupportedOperationException();
     }
 
     @NotNull
     @Override
-    public NameParser getNameParser(String name) {
+    public NameParser getNameParser(@NotNull Name name) {
         throw new UnsupportedOperationException();
     }
 
     @NotNull
     @Override
-    public Name composeName(Name name, Name prefix) {
+    public NameParser getNameParser(@NotNull String name) {
+        throw new UnsupportedOperationException();
+    }
+
+    @NotNull
+    @Override
+    public Name composeName(@NotNull Name name, Name prefix) {
         throw new UnsupportedOperationException();
     }
 
@@ -165,7 +165,7 @@ public final class MemoryContext implements Context {
 
     @NotNull
     @Override
-    public Object addToEnvironment(String propName, Object propVal) {
+    public Object addToEnvironment(String propName, @NotNull Object propVal) {
         throw new UnsupportedOperationException();
     }
 

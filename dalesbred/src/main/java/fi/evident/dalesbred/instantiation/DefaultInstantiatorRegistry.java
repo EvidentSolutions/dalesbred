@@ -237,7 +237,7 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
 
         sort(constructors, new Comparator<Constructor<T>>() {
             @Override
-            public int compare(Constructor<T> o1, Constructor<T> o2) {
+            public int compare(@NotNull Constructor<T> o1, @NotNull Constructor<T> o2) {
                 int c1 = o1.getParameterTypes().length;
                 int c2 = o2.getParameterTypes().length;
                 return (c1 < c2) ? 1
