@@ -24,15 +24,14 @@ package fi.evident.dalesbred.junit;
 
 import fi.evident.dalesbred.Database;
 import fi.evident.dalesbred.TransactionCallback;
-import fi.evident.dalesbred.connection.DriverManagerConnectionProvider;
+import fi.evident.dalesbred.connection.DriverManagerDataSource;
 import fi.evident.dalesbred.dialects.Dialect;
 import org.jetbrains.annotations.NotNull;
 import org.junit.internal.AssumptionViolatedException;
 
-import javax.inject.Provider;
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
 import java.util.Properties;
 
 /**
@@ -59,7 +58,7 @@ public final class TestDatabaseProvider {
      */
     @NotNull
     public static Database databaseForProperties(@NotNull String propertiesPath) {
-        return new Database(createConnectionProvider(propertiesPath));
+        return new Database(createDataSource(propertiesPath));
     }
 
     /**
@@ -69,11 +68,11 @@ public final class TestDatabaseProvider {
      */
     @NotNull
     public static Database databaseForProperties(@NotNull String propertiesPath, @NotNull Dialect dialect) {
-        return new Database(createConnectionProvider(propertiesPath), dialect);
+        return new Database(createDataSource(propertiesPath), dialect);
     }
 
     @NotNull
-    private static Provider<Connection> createConnectionProvider(@NotNull String propertiesPath) {
+    private static DataSource createDataSource(@NotNull String propertiesPath) {
         Properties props = loadConnectionProperties(propertiesPath);
 
         String url = props.getProperty("jdbc.url");
@@ -83,7 +82,7 @@ public final class TestDatabaseProvider {
         String login = props.getProperty("jdbc.login");
         String password = props.getProperty("jdbc.password");
 
-        return new DriverManagerConnectionProvider(url, login, password);
+        return DriverManagerDataSource.createDataSource(url, login, password);
     }
 
     @NotNull

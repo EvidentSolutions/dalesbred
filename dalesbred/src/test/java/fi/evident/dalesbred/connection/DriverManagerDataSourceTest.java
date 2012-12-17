@@ -27,11 +27,11 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class DriverManagerConnectionProviderTest {
+public class DriverManagerDataSourceTest {
 
     @Test
     public void defaultConstructorLeavesUserAndPasswordAsNull() {
-        DriverManagerConnectionProvider provider = new DriverManagerConnectionProvider("jdbc:example");
+        DriverManagerDataSource provider = new DriverManagerDataSource("jdbc:example", null, null);
 
         assertEquals("jdbc:example", provider.getUrl());
         assertNull(provider.getUser());

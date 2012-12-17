@@ -29,7 +29,7 @@ import fi.evident.dalesbred.TransactionSerializationException;
 import fi.evident.dalesbred.instantiation.TypeConversion;
 import org.jetbrains.annotations.NotNull;
 
-import javax.inject.Provider;
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Logger;
@@ -83,9 +83,9 @@ public abstract class Dialect {
     }
 
     @NotNull
-    public static Dialect detect(@NotNull Provider<Connection> connectionProvider) {
+    public static Dialect detect(@NotNull DataSource dataSource) {
         try {
-            Connection connection = connectionProvider.get();
+            Connection connection = dataSource.getConnection();
             try {
                 return detect(connection);
             } finally {
