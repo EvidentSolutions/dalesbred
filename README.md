@@ -162,7 +162,7 @@ Guice-integration
 -----------------
 
 Dalesbred has support for integration with Guice 3. You can just pass in `DataSourceDatabaseModule`
-or `DriverManagerConnectionModule` when constructing your injector and you'll get automatic support
+or `DriverManagerDatabaseModule` when constructing your injector and you'll get automatic support
 for annotation based transactions and can @Inject your database wherever you need it.
 
     :::java
