@@ -22,8 +22,7 @@
 
 package fi.evident.dalesbred;
 
-import fi.evident.dalesbred.connection.DataSourceConnectionProvider;
-import fi.evident.dalesbred.connection.DriverManagerDataSource;
+import fi.evident.dalesbred.connection.DriverManagerDataSourceProvider;
 import fi.evident.dalesbred.dialects.Dialect;
 import fi.evident.dalesbred.instantiation.DefaultInstantiatorRegistry;
 import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
@@ -33,6 +32,8 @@ import fi.evident.dalesbred.support.proxy.TransactionalProxyFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -105,18 +106,31 @@ public final class Database {
      */
     @NotNull
     public static Database forJndiDataSource(@NotNull String jndiName) {
-        return new Database(DataSourceConnectionProvider.lookupDataSourceFromJndi(jndiName));
+        try {
+            InitialContext ctx = new InitialContext();
+            try {
+                DataSource dataSource = (DataSource) ctx.lookup(jndiName);
+                if (dataSource != null)
+                    return new Database(dataSource);
+                else
+                    throw new DatabaseException("Could not find DataSource '" + jndiName + '\'');
+            } finally {
+                ctx.close();
+            }
+        } catch (NamingException e) {
+            throw new DatabaseException("Error when looking up DataSource '" + jndiName + "': " + e, e);
+        }
     }
 
     /**
      * Returns a new Database that uses given connection options to open connection. The database
-     * uses {@link fi.evident.dalesbred.connection.DriverManagerDataSource} so it performs no connection pooling.
+     * uses {@link fi.evident.dalesbred.connection.DriverManagerDataSourceProvider} so it performs no connection pooling.
      *
-     * @see fi.evident.dalesbred.connection.DriverManagerDataSource
+     * @see fi.evident.dalesbred.connection.DriverManagerDataSourceProvider
      */
     @NotNull
     public static Database forUrlAndCredentials(@NotNull String url, @Nullable String username, @Nullable String password) {
-        return new Database(DriverManagerDataSource.createDataSource(url, username, password));
+        return new Database(DriverManagerDataSourceProvider.createDataSource(url, username, password));
     }
 
     /**

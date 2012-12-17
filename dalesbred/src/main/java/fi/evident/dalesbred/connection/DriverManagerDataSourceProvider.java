@@ -22,7 +22,6 @@
 
 package fi.evident.dalesbred.connection;
 
-import fi.evident.dalesbred.DatabaseSQLException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,79 +29,29 @@ import javax.sql.DataSource;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
-
-import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
 /**
- * A simple provider for connections that simply fetches the connection from {@link DriverManager} without
+ * Creates simple {@link DataSource} that simply fetches the connection from {@link DriverManager} without
  * providing any pooling.
  */
-public final class DriverManagerDataSource {
+public final class DriverManagerDataSourceProvider {
 
-    @NotNull
-    private final String url;
-
-    @Nullable
-    private String user;
-
-    @Nullable
-    private String password;
-
-    DriverManagerDataSource(@NotNull String url, @Nullable String user, @Nullable String password) {
-        this.url = requireNonNull(url);
-        this.user = user;
-        this.password = password;
+    private DriverManagerDataSourceProvider() {
     }
 
     @NotNull
-    public Connection openConnection() {
-        try {
-            return DriverManager.getConnection(url, user, password);
-        } catch (SQLException e) {
-            throw new DatabaseSQLException(e);
-        }
-    }
-
-    @NotNull
-    public String getUrl() {
-        return url;
-    }
-
-    @Nullable
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(@Nullable String user) {
-        this.user = user;
-    }
-
-    @Nullable
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(@Nullable String password) {
-        this.password = password;
-    }
-
-    @NotNull
-    public static DataSource createDataSource(@NotNull String url, @Nullable String user, @Nullable String password) {
-        return createDataSource(new DriverManagerDataSource(url, user, password));
-    }
-
-    private static DataSource createDataSource(@NotNull final DriverManagerDataSource driverManagerDataSource) {
+    public static DataSource createDataSource(@NotNull final String url,
+                                              @Nullable final String user,
+                                              @Nullable final String password) {
         // Different versions of JDK have differing amount of methods in DataSource-interface, which
         // makes it hard for us to implement. Therefore we'll use the following hack to implement
         // the interface dynamically:
-        return (DataSource) Proxy.newProxyInstance(DriverManagerDataSource.class.getClassLoader(), new Class<?>[]{DataSource.class}, new InvocationHandler() {
+        return (DataSource) Proxy.newProxyInstance(DriverManagerDataSourceProvider.class.getClassLoader(), new Class<?>[]{DataSource.class}, new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, @NotNull Method method, Object[] args) throws Throwable {
                 if (method.getName().equals("getConnection"))
-                    return driverManagerDataSource.openConnection();
+                    return DriverManager.getConnection(url, user, password);
                 else
                     throw new UnsupportedOperationException("unsupported operation: " + method);
             }

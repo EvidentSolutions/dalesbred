@@ -24,7 +24,7 @@ package fi.evident.dalesbred.junit;
 
 import fi.evident.dalesbred.Database;
 import fi.evident.dalesbred.TransactionCallback;
-import fi.evident.dalesbred.connection.DriverManagerDataSource;
+import fi.evident.dalesbred.connection.DriverManagerDataSourceProvider;
 import fi.evident.dalesbred.dialects.Dialect;
 import org.jetbrains.annotations.NotNull;
 import org.junit.internal.AssumptionViolatedException;
@@ -82,7 +82,7 @@ public final class TestDatabaseProvider {
         String login = props.getProperty("jdbc.login");
         String password = props.getProperty("jdbc.password");
 
-        return DriverManagerDataSource.createDataSource(url, login, password);
+        return DriverManagerDataSourceProvider.createDataSource(url, login, password);
     }
 
     @NotNull

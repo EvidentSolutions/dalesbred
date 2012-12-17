@@ -26,7 +26,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Key;
 import com.google.inject.Provides;
 import fi.evident.dalesbred.Database;
-import fi.evident.dalesbred.connection.DriverManagerDataSource;
+import fi.evident.dalesbred.connection.DriverManagerDataSourceProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,9 +78,9 @@ public final class DriverManagerDatabaseModule extends AbstractModule {
     }
 
     @Provides @Singleton
-    DataSource createDataSource(@NotNull @Named("jdbc.url") String url,
-                                @Nullable @Named("jdbc.login") String user,
-                                @Nullable @Named("jdbc.password") String password) {
-        return DriverManagerDataSource.createDataSource(url, user, password);
+    DataSource dataSourceFromParameters(@NotNull @Named("jdbc.url") String url,
+                                        @Nullable @Named("jdbc.login") String user,
+                                        @Nullable @Named("jdbc.password") String password) {
+        return DriverManagerDataSourceProvider.createDataSource(url, user, password);
     }
 }

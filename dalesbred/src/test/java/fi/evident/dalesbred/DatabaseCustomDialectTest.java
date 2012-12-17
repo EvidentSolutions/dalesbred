@@ -22,7 +22,7 @@
 
 package fi.evident.dalesbred;
 
-import fi.evident.dalesbred.connection.DriverManagerDataSource;
+import fi.evident.dalesbred.connection.DriverManagerDataSourceProvider;
 import fi.evident.dalesbred.dialects.DefaultDialect;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
@@ -32,7 +32,7 @@ import static org.junit.Assert.assertEquals;
 
 public class DatabaseCustomDialectTest {
 
-    private final Database db = new Database(DriverManagerDataSource.createDataSource("jdbc:hsqldb:.", "sa", ""), new UppercaseDialect());
+    private final Database db = new Database(DriverManagerDataSourceProvider.createDataSource("jdbc:hsqldb:.", "sa", ""), new UppercaseDialect());
 
     @Rule
     public final TransactionalTestsRule rule = new TransactionalTestsRule(db);

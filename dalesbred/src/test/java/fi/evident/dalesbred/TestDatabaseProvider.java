@@ -25,7 +25,7 @@ package fi.evident.dalesbred;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.name.Names;
-import fi.evident.dalesbred.connection.DriverManagerDataSource;
+import fi.evident.dalesbred.connection.DriverManagerDataSourceProvider;
 import org.jetbrains.annotations.NotNull;
 
 import javax.sql.DataSource;
@@ -51,7 +51,7 @@ public final class TestDatabaseProvider {
 
     @NotNull
     public static DataSource createInMemoryHSQLDataSource() {
-        return DriverManagerDataSource.createDataSource("jdbc:hsqldb:.", "sa", "");
+        return DriverManagerDataSourceProvider.createDataSource("jdbc:hsqldb:.", "sa", "");
     }
 
     @NotNull
@@ -61,7 +61,7 @@ public final class TestDatabaseProvider {
         String login = props.getProperty("jdbc.login");
         String password = props.getProperty("jdbc.password");
 
-        return DriverManagerDataSource.createDataSource(url, login, password);
+        return DriverManagerDataSourceProvider.createDataSource(url, login, password);
     }
 
     @NotNull
