@@ -129,6 +129,16 @@ public class BuiltinConversionsTest {
     }
 
     @Test
+    public void updateCounts() {
+        db.update("drop table if exists update_count_test_table");
+        db.update("create temporary table update_count_test_table (id int primary key)");
+
+        assertThat(db.update("insert into update_count_test_table (id) values (1), (2), (3)"), is(3));
+
+        assertThat(db.update("delete from update_count_test_table where id > 1"), is(2));
+    }
+
+    @Test
     public void count() {
         assertThat(db.findUniqueInt("select count(*) from (values (1), (2), (3)) n"), is(3));
     }

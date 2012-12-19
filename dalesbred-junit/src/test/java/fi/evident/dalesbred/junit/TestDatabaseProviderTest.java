@@ -32,6 +32,13 @@ import static org.junit.Assert.assertEquals;
 public class TestDatabaseProviderTest {
 
     @Test
+    public void defaultDialect() {
+        Database db = TestDatabaseProvider.databaseForProperties("hsqldb-connection.properties");
+
+        assertEquals("foo", db.findUnique(String.class, "values ('foo')"));
+    }
+
+    @Test
     public void customDialect() {
         Database db = TestDatabaseProvider.databaseForProperties("hsqldb-connection.properties", new UppercaseDialect());
         db.update("drop table if exists my_table");
