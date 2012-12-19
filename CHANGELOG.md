@@ -1,3 +1,7 @@
+## x.y.z (yyyy-mm-dd)
+
+  - Removed required dependency to javax.inject. Now Dalesbred has no required dependencies to third-party libraries.
+
 ## 0.3.1 (2012-12-07)
 
   - Support for batch updates.
