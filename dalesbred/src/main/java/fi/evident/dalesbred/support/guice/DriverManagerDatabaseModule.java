@@ -24,12 +24,15 @@ package fi.evident.dalesbred.support.guice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Key;
+import com.google.inject.Provides;
 import fi.evident.dalesbred.Database;
-import fi.evident.dalesbred.connection.DriverManagerConnectionProvider;
+import fi.evident.dalesbred.connection.DriverManagerDataSourceProvider;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
-import java.sql.Connection;
+import javax.sql.DataSource;
 
 import static fi.evident.dalesbred.support.guice.GuiceSupport.bindTransactionInterceptor;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
@@ -69,10 +72,15 @@ public final class DriverManagerDatabaseModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(Connection.class).toProvider(DriverManagerConnectionProvider.class);
-
         bind(databaseKey).toProvider(DatabaseProvider.class).in(Singleton.class);
 
         bindTransactionInterceptor(binder(), databaseKey);
+    }
+
+    @Provides @Singleton
+    DataSource dataSourceFromParameters(@NotNull @Named("jdbc.url") String url,
+                                        @Nullable @Named("jdbc.login") String user,
+                                        @Nullable @Named("jdbc.password") String password) {
+        return DriverManagerDataSourceProvider.createDataSource(url, user, password);
     }
 }

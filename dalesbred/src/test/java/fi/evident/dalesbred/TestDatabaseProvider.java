@@ -25,17 +25,12 @@ package fi.evident.dalesbred;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.name.Names;
-import fi.evident.dalesbred.connection.DriverManagerConnectionProvider;
+import fi.evident.dalesbred.connection.DriverManagerDataSourceProvider;
 import org.jetbrains.annotations.NotNull;
 
-import javax.inject.Provider;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.sql.Connection;
 import java.util.Properties;
 
 import static org.junit.Assume.assumeNotNull;
@@ -51,22 +46,22 @@ public final class TestDatabaseProvider {
 
     @NotNull
     public static Database createPostgreSQLDatabase() {
-        return new Database(createConnectionProvider("postgresql-connection.properties"));
+        return new Database(createDataSource("postgresql-connection.properties"));
     }
 
     @NotNull
     public static DataSource createInMemoryHSQLDataSource() {
-        return createDataSource(new DriverManagerConnectionProvider("jdbc:hsqldb:.", "sa", ""));
+        return DriverManagerDataSourceProvider.createDataSource("jdbc:hsqldb:.", "sa", "");
     }
 
     @NotNull
-    private static Provider<Connection> createConnectionProvider(@NotNull String name) {
+    private static DataSource createDataSource(@NotNull String name) {
         Properties props = loadProperties(name);
         String url = props.getProperty("jdbc.url");
         String login = props.getProperty("jdbc.login");
         String password = props.getProperty("jdbc.password");
 
-        return new DriverManagerConnectionProvider(url, login, password);
+        return DriverManagerDataSourceProvider.createDataSource(url, login, password);
     }
 
     @NotNull
@@ -100,24 +95,5 @@ public final class TestDatabaseProvider {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-
-    /**
-     * Creates a simple DataSource that can only return connections from the provider. This is implemented
-     * reflectively because new versions of JDK have added new methods to DataSource and we want to be able
-     * to run the test on all versions.
-     */
-    @NotNull
-    private static DataSource createDataSource(@NotNull final Provider<Connection> connection) {
-        return (DataSource) Proxy.newProxyInstance(DatabaseJndiLookupTest.class.getClassLoader(), new Class<?>[]{DataSource.class}, new InvocationHandler() {
-            @Override
-            public Object invoke(Object proxy, @NotNull Method method, Object[] args) throws Throwable {
-                if (method.getName().equals("getConnection"))
-                    return connection.get();
-                else
-                    throw new UnsupportedOperationException("unsupported operation: " + method);
-            }
-        });
     }
 }

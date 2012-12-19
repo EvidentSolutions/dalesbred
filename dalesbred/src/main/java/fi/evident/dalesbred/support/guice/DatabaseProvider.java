@@ -29,7 +29,7 @@ import fi.evident.dalesbred.instantiation.InstantiationListener;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
-import java.sql.Connection;
+import javax.sql.DataSource;
 
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
@@ -39,17 +39,17 @@ final class DatabaseProvider implements Provider<Database> {
     private final Injector injector;
 
     @NotNull
-    private final Provider<Connection> connectionProvider;
+    private final DataSource dataSource;
 
     @Inject
-    DatabaseProvider(@NotNull Provider<Connection> connectionProvider, @NotNull Injector injector) {
-        this.connectionProvider = requireNonNull(connectionProvider);
+    DatabaseProvider(@NotNull DataSource dataSource, @NotNull Injector injector) {
+        this.dataSource = requireNonNull(dataSource);
         this.injector = requireNonNull(injector);
     }
 
     @Override
     public Database get() {
-        Database db = new Database(connectionProvider);
+        Database db = new Database(dataSource);
         db.getInstantiatorRegistry().addInstantiationListener(new InstantiationListener() {
             @Override
             public void onInstantiation(@NotNull Object object) {

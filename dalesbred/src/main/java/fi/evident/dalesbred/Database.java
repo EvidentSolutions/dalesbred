@@ -22,8 +22,7 @@
 
 package fi.evident.dalesbred;
 
-import fi.evident.dalesbred.connection.DataSourceConnectionProvider;
-import fi.evident.dalesbred.connection.DriverManagerConnectionProvider;
+import fi.evident.dalesbred.connection.DriverManagerDataSourceProvider;
 import fi.evident.dalesbred.dialects.Dialect;
 import fi.evident.dalesbred.instantiation.DefaultInstantiatorRegistry;
 import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
@@ -33,10 +32,9 @@ import fi.evident.dalesbred.support.proxy.TransactionalProxyFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -66,7 +64,7 @@ public final class Database {
 
     /** Provides us with connections whenever we need one */
     @NotNull
-    private final Provider<Connection> connectionProvider;
+    private final DataSource dataSource;
 
     /** The current active transaction of this thread, or null */
     @NotNull
@@ -100,7 +98,7 @@ public final class Database {
      */
     @NotNull
     public static Database forDataSource(@NotNull DataSource dataSource) {
-        return new Database(new DataSourceConnectionProvider(dataSource));
+        return new Database(dataSource);
     }
 
     /**
@@ -108,33 +106,45 @@ public final class Database {
      */
     @NotNull
     public static Database forJndiDataSource(@NotNull String jndiName) {
-        return new Database(DataSourceConnectionProvider.fromJndi(jndiName));
+        try {
+            InitialContext ctx = new InitialContext();
+            try {
+                DataSource dataSource = (DataSource) ctx.lookup(jndiName);
+                if (dataSource != null)
+                    return new Database(dataSource);
+                else
+                    throw new DatabaseException("Could not find DataSource '" + jndiName + '\'');
+            } finally {
+                ctx.close();
+            }
+        } catch (NamingException e) {
+            throw new DatabaseException("Error when looking up DataSource '" + jndiName + "': " + e, e);
+        }
     }
 
     /**
      * Returns a new Database that uses given connection options to open connection. The database
-     * uses {@link DriverManagerConnectionProvider} so it performs no connection pooling.
+     * uses {@link fi.evident.dalesbred.connection.DriverManagerDataSourceProvider} so it performs no connection pooling.
      *
-     * @see DriverManagerConnectionProvider
+     * @see fi.evident.dalesbred.connection.DriverManagerDataSourceProvider
      */
     @NotNull
     public static Database forUrlAndCredentials(@NotNull String url, @Nullable String username, @Nullable String password) {
-        return new Database(new DriverManagerConnectionProvider(url, username, password));
+        return new Database(DriverManagerDataSourceProvider.createDataSource(url, username, password));
     }
 
     /**
-     * Constructs a new Database that uses given connection-provider and auto-detects the dialect to use.
+     * Constructs a new Database that uses given {@link DataSource} and auto-detects the dialect to use.
      */
-    @Inject
-    public Database(@NotNull Provider<Connection> connectionProvider) {
-        this(connectionProvider, Dialect.detect(connectionProvider));
+    public Database(@NotNull DataSource dataSource) {
+        this(dataSource, Dialect.detect(dataSource));
     }
 
     /**
-     * Constructs a new Database that uses given connection-provider and dialect.
+     * Constructs a new Database that uses given {@link DataSource} and {@link Dialect}.
      */
-    public Database(@NotNull Provider<Connection> connectionProvider, @NotNull Dialect dialect) {
-        this.connectionProvider = requireNonNull(connectionProvider);
+    public Database(@NotNull DataSource dataSource, @NotNull Dialect dialect) {
+        this.dataSource = requireNonNull(dataSource);
         this.dialect = requireNonNull(dialect);
         this.instantiatorRegistry = new DefaultInstantiatorRegistry(dialect);
     }
@@ -193,7 +203,7 @@ public final class Database {
             if (propagation == Propagation.MANDATORY)
                 throw new NoActiveTransactionException("Transaction propagation was MANDATORY, but there was no existing transaction.");
 
-            DatabaseTransaction newTransaction = new DatabaseTransaction(connectionProvider, dialect, isolation);
+            DatabaseTransaction newTransaction = new DatabaseTransaction(dataSource, dialect, isolation);
             try {
                 activeTransaction.set(newTransaction);
                 return newTransaction.execute(retries, callback);

@@ -33,14 +33,6 @@ just create a `Database` out of that:
     :::java
     Database db = Database.forDataSource(myDataSource);
 
-Finally, for  _javax.inject_-compatible dependency injection container (e.g. Guice
-or Java EE 6), you can just make sure that there's a
-[Provider](http://docs.oracle.com/javaee/6/api/javax/inject/Provider.html)
-for `DataSource` around and then just inject your `Database`:
-
-    :::java
-    @Inject Database db;
-
 Finding stuff
 -------------
 
@@ -170,7 +162,7 @@ Guice-integration
 -----------------
 
 Dalesbred has support for integration with Guice 3. You can just pass in `DataSourceDatabaseModule`
-or `DriverManagerConnectionModule` when constructing your injector and you'll get automatic support
+or `DriverManagerDatabaseModule` when constructing your injector and you'll get automatic support
 for annotation based transactions and can @Inject your database wherever you need it.
 
     :::java

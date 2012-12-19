@@ -54,6 +54,7 @@ public class DatabaseException extends RuntimeException {
         return query;
     }
 
+    @NotNull
     @Override
     public String toString() {
         String basicToString = super.toString();

@@ -25,11 +25,9 @@ package fi.evident.dalesbred.support.guice;
 import com.google.inject.AbstractModule;
 import com.google.inject.Key;
 import fi.evident.dalesbred.Database;
-import fi.evident.dalesbred.connection.DataSourceConnectionProvider;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Singleton;
-import java.sql.Connection;
 
 import static fi.evident.dalesbred.support.guice.GuiceSupport.bindTransactionInterceptor;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
@@ -61,8 +59,6 @@ public final class DataSourceDatabaseModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(Connection.class).toProvider(DataSourceConnectionProvider.class);
-
         bind(databaseKey).toProvider(DatabaseProvider.class).in(Singleton.class);
 
         bindTransactionInterceptor(binder(), databaseKey);

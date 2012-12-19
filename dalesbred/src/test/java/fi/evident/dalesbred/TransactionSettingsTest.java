@@ -84,6 +84,7 @@ public class TransactionSettingsTest {
             return retries;
         }
 
+        @NotNull
         @Override
         public Class<? extends Annotation> annotationType() {
             return Transactional.class;
