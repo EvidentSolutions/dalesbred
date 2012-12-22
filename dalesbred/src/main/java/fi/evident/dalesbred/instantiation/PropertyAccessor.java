@@ -29,7 +29,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import static fi.evident.dalesbred.utils.Throwables.propagate;
-import static java.lang.Character.toUpperCase;
 import static java.lang.reflect.Modifier.isPublic;
 
 abstract class PropertyAccessor {
@@ -54,23 +53,22 @@ abstract class PropertyAccessor {
 
     @Nullable
     private static Field findField(@NotNull Class<?> cl, @NotNull String name) {
-        try {
-            Field field = cl.getField(name);
-            return isPublic(field.getModifiers()) ? field : null;
-        } catch (NoSuchFieldException e) {
-            return null;
-        }
+        for (Field field : cl.getFields())
+            if (isPublic(field.getModifiers()) && field.getName().equalsIgnoreCase(name))
+                return field;
+
+        return null;
     }
 
     @Nullable
     private static Method findSetter(@NotNull Class<?> cl, @NotNull String name) {
         Method result = null;
 
-        String methodName = "set" + toUpperCase(name.charAt(0)) + name.substring(1);
+        String methodName = "set" + name;
         for (Method method : cl.getMethods())
-            if (methodName.equals(method.getName()) && isPublic(method.getModifiers()) && method.getParameterTypes().length == 1) {
+            if (methodName.equalsIgnoreCase(method.getName()) && isPublic(method.getModifiers()) && method.getParameterTypes().length == 1) {
                 if (result != null)
-                    throw new InstantiationException("Conflicting setters for property: " + result + " - " + methodName);
+                    throw new InstantiationException("Conflicting setters for property: " + result + " - " + name);
                 result = method;
             }
 

@@ -1,5 +1,7 @@
 ## x.y.z (yyyy-mm-dd)
 
+  - Since many databases will uppercase or lowercase column names, ignore the case differences in names when finding
+    setters or fields matching the result-set.
   - Removed required dependency to javax.inject. Now Dalesbred has no required dependencies to third-party libraries.
 
 ## 0.3.1 (2012-12-07)
