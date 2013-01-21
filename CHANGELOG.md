@@ -1,4 +1,4 @@
-## x.y.z (yyyy-mm-dd)
+## 0.3.2 (2013-01-21)
 
   - Since many databases will uppercase or lowercase column names, ignore the case differences in names when finding
     setters or fields matching the result-set.
