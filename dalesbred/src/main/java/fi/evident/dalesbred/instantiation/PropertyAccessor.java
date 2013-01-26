@@ -43,11 +43,12 @@ abstract class PropertyAccessor {
     @Nullable
     static PropertyAccessor findAccessor(@NotNull Class<?> cl, @NotNull String name) {
         String nameWithoutUnderscore = UNDERSCORE_PATTERN.matcher(name).replaceAll("");
-        Method setter = findSetter(cl, name, nameWithoutUnderscore);
+        String[] names = nameWithoutUnderscore.equals(name) ? new String[] { name } : new String[] { name, nameWithoutUnderscore };
+        Method setter = findSetter(cl, names);
         if (setter != null) {
             return new SetterPropertyAccessor(setter);
         } else {
-            Field field = findField(cl, name, nameWithoutUnderscore);
+            Field field = findField(cl, names);
             if (field != null)
                 return new FieldPropertyAccessor(field);
             else
@@ -56,7 +57,7 @@ abstract class PropertyAccessor {
     }
 
     @Nullable
-    private static Field findField(@NotNull Class<?> cl, @NotNull String... names) {
+    private static Field findField(@NotNull Class<?> cl, @NotNull String[] names) {
         Field result = null;
 
         for (Field field : cl.getFields())
@@ -71,7 +72,7 @@ abstract class PropertyAccessor {
     }
 
     @Nullable
-    private static Method findSetter(@NotNull Class<?> cl, @NotNull String... names) {
+    private static Method findSetter(@NotNull Class<?> cl, @NotNull String[] names) {
         Method result = null;
 
         for (Method method : cl.getMethods())
