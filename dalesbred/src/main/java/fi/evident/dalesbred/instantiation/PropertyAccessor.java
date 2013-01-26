@@ -27,11 +27,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.regex.Pattern;
 
 import static fi.evident.dalesbred.utils.Throwables.propagate;
 import static java.lang.reflect.Modifier.isPublic;
 
 abstract class PropertyAccessor {
+
+    private static final Pattern UNDERSCORE_PATTERN = Pattern.compile("_");
 
     abstract void set(Object object, Object value);
 
@@ -39,11 +42,12 @@ abstract class PropertyAccessor {
 
     @Nullable
     static PropertyAccessor findAccessor(@NotNull Class<?> cl, @NotNull String name) {
-        Method setter = findSetter(cl, name);
+        String nameWithoutUnderscore = UNDERSCORE_PATTERN.matcher(name).replaceAll("");
+        Method setter = findSetter(cl, name, nameWithoutUnderscore);
         if (setter != null) {
             return new SetterPropertyAccessor(setter);
         } else {
-            Field field = findField(cl, name);
+            Field field = findField(cl, name, nameWithoutUnderscore);
             if (field != null)
                 return new FieldPropertyAccessor(field);
             else
@@ -52,24 +56,32 @@ abstract class PropertyAccessor {
     }
 
     @Nullable
-    private static Field findField(@NotNull Class<?> cl, @NotNull String name) {
-        for (Field field : cl.getFields())
-            if (isPublic(field.getModifiers()) && field.getName().equalsIgnoreCase(name))
-                return field;
+    private static Field findField(@NotNull Class<?> cl, @NotNull String... names) {
+        Field result = null;
 
-        return null;
+        for (Field field : cl.getFields())
+            for (String name : names)
+                if (isPublic(field.getModifiers()) && field.getName().equalsIgnoreCase(name)) {
+                    if (result != null)
+                        throw new InstantiationException("Conflicting fields for property: " + result + " - " + names[0]);
+                    result = field;
+                }
+
+        return result;
     }
 
     @Nullable
-    private static Method findSetter(@NotNull Class<?> cl, @NotNull String name) {
+    private static Method findSetter(@NotNull Class<?> cl, @NotNull String... names) {
         Method result = null;
 
-        String methodName = "set" + name;
         for (Method method : cl.getMethods())
-            if (methodName.equalsIgnoreCase(method.getName()) && isPublic(method.getModifiers()) && method.getParameterTypes().length == 1) {
-                if (result != null)
-                    throw new InstantiationException("Conflicting setters for property: " + result + " - " + name);
-                result = method;
+            for (String name : names) {
+                String methodName = "set" + name;
+                if (methodName.equalsIgnoreCase(method.getName()) && isPublic(method.getModifiers()) && method.getParameterTypes().length == 1) {
+                    if (result != null)
+                        throw new InstantiationException("Conflicting setters for property: " + result + " - " + names[0]);
+                    result = method;
+                }
             }
 
         return result;
