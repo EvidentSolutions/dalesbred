@@ -28,7 +28,10 @@ import org.jetbrains.annotations.Nullable;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import static fi.evident.dalesbred.NamedParameterValueProviders.providerForBean;
+import static fi.evident.dalesbred.NamedParameterValueProviders.providerForMap;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
@@ -55,6 +58,22 @@ public final class SqlQuery implements Serializable {
     @NotNull
     public static SqlQuery query(@NotNull @SQL String sql, @NotNull List<?> args) {
         return new SqlQuery(sql, args);
+    }
+
+    @NotNull
+    public static SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull Map<String, ?> valueMap) {
+        return namedQuery(sql, providerForMap(valueMap));
+    }
+
+    @NotNull
+    public static SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull Object valueBean) {
+        return namedQuery(sql, providerForBean(valueBean));
+    }
+
+    @NotNull
+    public static SqlQuery namedQuery(@NotNull @SQL String namedSql, @NotNull NamedParameterValueProvider valueProvider) {
+        NamedParameterSql parsed = NamedParameterSqlParser.parseSqlStatement(namedSql);
+        return query(parsed.getTraditionalSql(), parsed.toParameterValues(valueProvider));
     }
 
     @NotNull
