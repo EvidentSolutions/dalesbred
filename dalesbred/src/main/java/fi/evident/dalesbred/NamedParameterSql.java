@@ -46,7 +46,7 @@ final class NamedParameterSql {
             try {
                 result.add(parameterSource.getValue(namedParameter));
             } catch (IllegalArgumentException e) {
-                throw new RuntimeException("No value supplied for the SQL parameter '" + namedParameter + "': " + e.getMessage(), e);
+                throw new IllegalArgumentException("No value supplied for the SQL parameter '" + namedParameter + '\'', e);
             }
         }
         return result;

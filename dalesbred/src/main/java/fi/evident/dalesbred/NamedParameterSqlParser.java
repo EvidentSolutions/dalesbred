@@ -76,7 +76,7 @@ final class NamedParameterSqlParser {
                     else
                         return offset; // actual named parameter start
                 else
-                    throw new IllegalStateException("SQL cannot end to named parameter without name");
+                    throw new IllegalArgumentException("SQL cannot end to named parameter without name");
             else {
                 SkippableBlock skippableBlock = findStartingSkippableBlock(sql, offset);
                 if (skippableBlock != null)
@@ -109,7 +109,7 @@ final class NamedParameterSqlParser {
             if (skippableBlock.blockEndsWhenStreamRunsOut)
                 return sql.length();
             else
-                throw new IllegalStateException("Block end not found: \"" + skippableBlock.end + "\". [" + sql + ']');
+                throw new IllegalArgumentException("Block end not found: \"" + skippableBlock.end + "\". [" + sql + ']');
     }
 
     private static boolean isNotAtEnd(String sql, int index) {
