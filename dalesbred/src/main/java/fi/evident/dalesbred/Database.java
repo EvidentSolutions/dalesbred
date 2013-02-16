@@ -233,10 +233,10 @@ public final class Database {
 
     /**
      * Executes the block of code within context of current transaction. If there's no transaction in progress
-     * throws {@link IllegalStateException} unless implicit transaction are allowed: in this case, starts a new
+     * throws {@link NoActiveTransactionException} unless implicit transaction are allowed: in this case, starts a new
      * transaction.
      *
-     * @throws IllegalStateException if there's no active transaction.
+     * @throws NoActiveTransactionException if there's no active transaction.
      * @see #setAllowImplicitTransactions(boolean)
      */
     private <T> T withCurrentTransaction(@NotNull SqlQuery query, @NotNull TransactionCallback<T> callback) {
