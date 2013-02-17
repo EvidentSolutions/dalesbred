@@ -34,7 +34,7 @@ final class NamedParameterSqlParser {
                                                                new SkippableBlock("/*", "*/", false),
                                                                new SkippableBlock("--", "\n", true) };
 
-    public static NamedParameterSql parseSqlStatement(@NotNull @SQL String sql) {
+    public static NamedParameterSql parseSqlStatement(@NotNull @SQL String sql) throws IllegalArgumentException {
 
         StringBuilder traditionalSqlBuilder = new StringBuilder(sql.length());
         List<String> namedParameters = new ArrayList<String>();
@@ -67,9 +67,7 @@ final class NamedParameterSqlParser {
     private static int skipSkippableSequences(@NotNull @SQL String sql, int offset) {
         while (isNotAtEnd(sql, offset)) {
             char c = sql.charAt(offset);
-            if (c == '?') {
-                throw new IllegalArgumentException("SQL cannot contain traditional ? placeholders. [" + sql + ']');
-            } else if (c == ':')
+            if (c == ':')
                 if (isNotAtEnd(sql, offset+1))
                     if (sql.charAt(offset+1) == ':')
                         offset += 2; // skip postgresql cast special case
@@ -77,15 +75,20 @@ final class NamedParameterSqlParser {
                         return offset; // actual named parameter start
                 else
                     throw new IllegalArgumentException("SQL cannot end to named parameter without name");
-            else {
-                SkippableBlock skippableBlock = findStartingSkippableBlock(sql, offset);
-                if (skippableBlock != null)
-                    offset = findIndexOfFirstOccurrenceOfBlockEnd(sql, offset, skippableBlock);
-                else
-                    offset++;
-            }
+            else if (c == '?')
+                throw new IllegalArgumentException("SQL cannot contain traditional ? placeholders. [" + sql + ']');
+            else
+                offset = skipCharacterOrBlock(sql, offset);
         }
         return sql.length();
+    }
+
+    private static int skipCharacterOrBlock(@SQL @NotNull String sql, int offset) {
+        SkippableBlock skippableBlock = findStartingSkippableBlock(sql, offset);
+        if (skippableBlock != null)
+            return skipToBlockEnd(sql, offset, skippableBlock);
+        else
+            return offset+1;
     }
 
     @Nullable
@@ -97,7 +100,7 @@ final class NamedParameterSqlParser {
         return null;
     }
 
-    private static int findIndexOfFirstOccurrenceOfBlockEnd(@NotNull @SQL String sql, int offset, SkippableBlock skippableBlock) {
+    private static int skipToBlockEnd(@NotNull @SQL String sql, int offset, SkippableBlock skippableBlock) {
         offset += skippableBlock.start.length();
 
         while(isNotAtEnd(sql, offset) && !sql.startsWith(skippableBlock.end, offset))
