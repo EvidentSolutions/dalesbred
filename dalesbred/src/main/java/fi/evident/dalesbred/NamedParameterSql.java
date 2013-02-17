@@ -33,13 +33,14 @@ final class NamedParameterSql {
     private final String traditionalSql;
     private final List<String> namedParameters;
 
-    NamedParameterSql(String originalSql, String traditionalSql, List<String> namedParameters) {
+    NamedParameterSql(@NotNull String originalSql, @NotNull String traditionalSql, @NotNull List<String> namedParameters) {
         this.originalSql = originalSql;
         this.traditionalSql = traditionalSql;
         this.namedParameters = namedParameters;
     }
 
-    @NotNull List<?> toParameterValues(@NotNull NamedParameterValueProvider parameterSource) {
+    @NotNull
+    List<?> toParameterValues(@NotNull NamedParameterValueProvider parameterSource) throws IllegalArgumentException {
         List<Object> result = new ArrayList<Object>(namedParameters.size());
 
         for (String namedParameter : namedParameters) {
@@ -52,10 +53,12 @@ final class NamedParameterSql {
         return result;
     }
 
+    @NotNull
     String getTraditionalSql() {
         return traditionalSql;
     }
 
+    @NotNull
     public List<String> getNamedParameters() {
         return namedParameters;
     }

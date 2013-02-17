@@ -32,6 +32,7 @@ import java.util.Map;
 import static java.lang.reflect.Modifier.isPublic;
 
 final class NamedParameterValueProviders {
+    @NotNull
     static NamedParameterValueProvider providerForMap(@NotNull final Map<String, ?> valueMap) {
         return new NamedParameterValueProvider() {
             @NotNull
@@ -45,6 +46,7 @@ final class NamedParameterValueProviders {
         };
     }
 
+    @NotNull
     static NamedParameterValueProvider providerForBean(@NotNull final Object object) {
         return new NamedParameterValueProvider() {
             @NotNull
