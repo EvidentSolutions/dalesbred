@@ -19,6 +19,7 @@
       <w>evidentsolutions</w>
       <w>fixme</w>
       <w>flickr</w>
+      <w>foobaz</w>
       <w>frobnicate</w>
       <w>guice</w>
       <w>hamcrest</w>
@@ -35,13 +36,19 @@
       <w>junit</w>
       <w>komu</w>
       <w>komulainen</w>
+      <w>laalaa</w>
       <w>mockito</w>
       <w>mojo</w>
       <w>mvcc</w>
       <w>noninfringement</w>
+      <w>notanamedparameter</w>
+      <w>notnamedparameter</w>
+      <w>notparameter</w>
       <w>postgre</w>
       <w>postgresql</w>
+      <w>puppa</w>
       <w>scpexe</w>
+      <w>skippable</w>
       <w>sonatype</w>
       <w>sunrsasign</w>
       <w>testdb</w>

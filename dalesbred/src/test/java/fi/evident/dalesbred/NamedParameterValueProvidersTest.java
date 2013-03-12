@@ -61,6 +61,7 @@ public class NamedParameterValueProvidersTest {
         assertEquals(bean.baz, namedParameterValueProvider.getValue("baz"));
     }
 
+    @SuppressWarnings({"UnusedDeclaration", "FieldMayBeFinal"})
     private static class TestBean {
         public Object foo = new Object();
         private boolean bar = true;

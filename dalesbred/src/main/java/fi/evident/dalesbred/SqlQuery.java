@@ -60,26 +60,26 @@ public final class SqlQuery implements Serializable {
         return new SqlQuery(sql, args);
     }
 
-    @NotNull
     /**
      * @throws IllegalArgumentException if sql cannot be parsed or valueProvider cannot provide values for named parameters
      */
+    @NotNull
     public static SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull Map<String, ?> valueMap) {
         return namedQuery(sql, providerForMap(valueMap));
     }
 
-    @NotNull
     /**
      * @throws IllegalArgumentException if sql cannot be parsed or valueProvider cannot provide values for named parameters
      */
+    @NotNull
     public static SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull Object valueBean) {
         return namedQuery(sql, providerForBean(valueBean));
     }
 
-    @NotNull
     /**
      * @throws IllegalArgumentException if sql cannot be parsed or valueProvider cannot provide values for named parameters
      */
+    @NotNull
     public static SqlQuery namedQuery(@NotNull @SQL String namedSql, @NotNull NamedParameterValueProvider valueProvider) {
         NamedParameterSql parsed = NamedParameterSqlParser.parseSqlStatement(namedSql);
         return query(parsed.getTraditionalSql(), parsed.toParameterValues(valueProvider));

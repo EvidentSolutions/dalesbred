@@ -185,7 +185,7 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
         if (targetTypes.length != sourceTypes.size())
             return null;
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({"unchecked", "rawtypes"})
         TypeConversion<Object,?>[] conversions = new TypeConversion[targetTypes.length];
 
         for (int i = 0; i < targetTypes.length; i++) {
