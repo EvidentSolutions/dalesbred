@@ -23,7 +23,10 @@
 package fi.evident.dalesbred;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface NamedParameterValueProvider {
-    @NotNull Object getValue(@NotNull String parameterName) throws IllegalArgumentException;
+
+    @Nullable
+    Object getValue(@NotNull String parameterName);
 }

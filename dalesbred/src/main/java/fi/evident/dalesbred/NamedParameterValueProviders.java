@@ -35,7 +35,7 @@ final class NamedParameterValueProviders {
     @NotNull
     static NamedParameterValueProvider providerForMap(@NotNull final Map<String, ?> valueMap) {
         return new NamedParameterValueProvider() {
-            @NotNull
+            @Nullable
             @Override
             public Object getValue(@NotNull String parameterName) throws IllegalArgumentException {
                 if (!valueMap.containsKey(parameterName)) {
@@ -49,7 +49,7 @@ final class NamedParameterValueProviders {
     @NotNull
     static NamedParameterValueProvider providerForBean(@NotNull final Object object) {
         return new NamedParameterValueProvider() {
-            @NotNull
+            @Nullable
             @Override
             public Object getValue(@NotNull String parameterName) throws IllegalArgumentException {
                 try {
