@@ -38,10 +38,11 @@ final class NamedParameterValueProviders {
             @Nullable
             @Override
             public Object getValue(@NotNull String parameterName) throws IllegalArgumentException {
-                if (!valueMap.containsKey(parameterName)) {
+                Object value = valueMap.get(parameterName);
+                if (value != null || valueMap.containsKey(parameterName))
+                    return value;
+                else
                     throw new IllegalArgumentException("No value registered for key '" + parameterName + '\'');
-                }
-                return valueMap.get(parameterName);
             }
         };
     }
