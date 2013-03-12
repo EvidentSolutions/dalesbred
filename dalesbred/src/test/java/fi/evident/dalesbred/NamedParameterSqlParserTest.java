@@ -84,6 +84,13 @@ public class NamedParameterSqlParserTest {
         assertNamedParameters(NamedParameterSqlParser.parseSqlStatement(sql), traditionalSql, "id", "bar", "test");
     }
 
+    @Test
+    public void quotedStrings() {
+        @SQL String sql = "select 'foo '' :bar'";
+
+        assertNamedParameters(NamedParameterSqlParser.parseSqlStatement(sql), sql);
+    }
+
     private static void assertNamedParameters(NamedParameterSql namedParameterSql, String traditionalSql, Object... parameters) {
         assertEquals(traditionalSql, namedParameterSql.getTraditionalSql());
         assertEquals(parameters.length, namedParameterSql.getNamedParameters().size());
