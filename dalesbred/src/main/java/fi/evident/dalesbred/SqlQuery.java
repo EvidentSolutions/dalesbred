@@ -61,7 +61,8 @@ public final class SqlQuery implements Serializable {
     }
 
     /**
-     * @throws IllegalArgumentException if sql cannot be parsed or valueProvider cannot provide values for named parameters
+     * @throws SqlSyntaxException if SQL is malformed
+     * @throws IllegalArgumentException if valueMap does not have values for the query
      */
     @NotNull
     public static SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull Map<String, ?> valueMap) {
@@ -69,7 +70,8 @@ public final class SqlQuery implements Serializable {
     }
 
     /**
-     * @throws IllegalArgumentException if sql cannot be parsed or valueProvider cannot provide values for named parameters
+     * @throws SqlSyntaxException if SQL is malformed
+     * @throws IllegalArgumentException if bean does not have values matching values
      */
     @NotNull
     public static SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull Object valueBean) {
@@ -77,7 +79,8 @@ public final class SqlQuery implements Serializable {
     }
 
     /**
-     * @throws IllegalArgumentException if sql cannot be parsed or valueProvider cannot provide values for named parameters
+     * @throws SqlSyntaxException if SQL is malformed
+     * @throws IllegalArgumentException if valueProvider cannot provide values for named parameters
      */
     @NotNull
     public static SqlQuery namedQuery(@NotNull @SQL String namedSql, @NotNull NamedParameterValueProvider valueProvider) {

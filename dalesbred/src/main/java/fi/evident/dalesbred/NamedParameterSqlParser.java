@@ -26,97 +26,73 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 final class NamedParameterSqlParser {
 
     private static final SkippableBlock[] SKIPPABLE_BLOCKS = { new SkippableBlock("'",  "'",  false),
                                                                new SkippableBlock("\"", "\"", false),
                                                                new SkippableBlock("/*", "*/", false),
+                                                               new SkippableBlock("::", "", false),
                                                                new SkippableBlock("--", "\n", true) };
 
-    public static NamedParameterSql parseSqlStatement(@NotNull @SQL String sql) throws IllegalArgumentException {
+    private static final Pattern IDENTIFIER_PATTERN = Pattern.compile("\\w+");
 
-        StringBuilder traditionalSqlBuilder = new StringBuilder(sql.length());
-        List<String> namedParameters = new ArrayList<String>();
+    @NotNull
+    private final Lexer lexer;
+    private final StringBuilder traditionalSqlBuilder;
+    private final List<String> namedParameters = new ArrayList<String>();
 
-        int offset = 0;
-        while (isNotAtEnd(sql, offset)) {
-            int skippableOffset = skipSkippableSequences(sql, offset);
-            if (skippableOffset != offset) {
-                traditionalSqlBuilder.append(sql.substring(offset, skippableOffset));
-                offset = skippableOffset;
-            } else {
-                traditionalSqlBuilder.append('?');
-                int namedParameterOffset = skipNamedParameter(sql, offset);
-                namedParameters.add(sql.substring(offset+1, namedParameterOffset));
-                offset = namedParameterOffset;
-            }
+    private NamedParameterSqlParser(@SQL @NotNull String sql) {
+        this.lexer = new Lexer(sql);
+        this.traditionalSqlBuilder = new StringBuilder(sql.length());
+    }
+
+    public static NamedParameterSql parseSqlStatement(@NotNull @SQL String sql) {
+        return new NamedParameterSqlParser(sql).parse();
+    }
+
+    private NamedParameterSql parse() {
+        while (lexer.hasMore())
+            parseNext();
+
+        return new NamedParameterSql(lexer.sql, traditionalSqlBuilder.toString(), namedParameters);
+    }
+
+    private void parseNext() {
+        SkippableBlock skippableBlock = findSkippableBlock();
+        if (skippableBlock != null) {
+            traditionalSqlBuilder.append(lexer.readBlock(skippableBlock));
+
+        } else if (lexer.lookingAt(":")) {
+            traditionalSqlBuilder.append('?');
+            namedParameters.add(parseName());
+
+        } else if (lexer.lookingAt("?")) {
+            throw new SqlSyntaxException("SQL cannot contain traditional ? placeholders.", lexer.sql);
+
+        } else {
+            traditionalSqlBuilder.append(lexer.readChar());
         }
-        return new NamedParameterSql(sql, traditionalSqlBuilder.toString(), namedParameters);
     }
 
-    private static int skipNamedParameter(@NotNull @SQL String sql, int offset) {
-        offset++; // skip leading ':'
-
-        while(isNotAtEnd(sql, offset) && Character.isLetter(sql.charAt(offset)))
-            offset++;
-
-        return offset;
-    }
-
-    private static int skipSkippableSequences(@NotNull @SQL String sql, int offset) {
-        while (isNotAtEnd(sql, offset)) {
-            char c = sql.charAt(offset);
-            if (c == ':')
-                if (isNotAtEnd(sql, offset+1))
-                    if (sql.charAt(offset+1) == ':')
-                        offset += 2; // skip postgresql cast special case
-                    else
-                        return offset; // actual named parameter start
-                else
-                    throw new IllegalArgumentException("SQL cannot end to named parameter without name");
-            else if (c == '?')
-                throw new IllegalArgumentException("SQL cannot contain traditional ? placeholders. [" + sql + ']');
-            else
-                offset = skipCharacterOrBlock(sql, offset);
-        }
-        return sql.length();
-    }
-
-    private static int skipCharacterOrBlock(@SQL @NotNull String sql, int offset) {
-        SkippableBlock skippableBlock = findStartingSkippableBlock(sql, offset);
-        if (skippableBlock != null)
-            return skipToBlockEnd(sql, offset, skippableBlock);
+    private String parseName() {
+        lexer.expect(":");
+        String name = lexer.readRegexp(IDENTIFIER_PATTERN);
+        if (name != null)
+            return name;
         else
-            return offset+1;
+            throw new SqlSyntaxException("SQL cannot end to named parameter without name", lexer.sql);
     }
 
     @Nullable
-    private static SkippableBlock findStartingSkippableBlock(@NotNull @SQL String sql, int offset) {
+    private SkippableBlock findSkippableBlock() {
         for (SkippableBlock block : SKIPPABLE_BLOCKS)
-            if (sql.startsWith(block.start, offset))
+            if (lexer.lookingAt(block.start))
                 return block;
 
         return null;
-    }
-
-    private static int skipToBlockEnd(@NotNull @SQL String sql, int offset, SkippableBlock skippableBlock) {
-        offset += skippableBlock.start.length();
-
-        while(isNotAtEnd(sql, offset) && !sql.startsWith(skippableBlock.end, offset))
-            offset++;
-
-        if (isNotAtEnd(sql, offset))
-            return offset + skippableBlock.end.length();
-        else
-            if (skippableBlock.blockEndsWhenStreamRunsOut)
-                return sql.length();
-            else
-                throw new IllegalArgumentException("Block end not found: \"" + skippableBlock.end + "\". [" + sql + ']');
-    }
-
-    private static boolean isNotAtEnd(String sql, int index) {
-        return index < sql.length();
     }
 
     private static class SkippableBlock {
@@ -131,5 +107,65 @@ final class NamedParameterSqlParser {
         }
     }
 
-    private NamedParameterSqlParser() {}
+    private static final class Lexer {
+        private final String sql;
+        private int offset;
+
+        public Lexer(String sql) {
+            this.sql = sql;
+        }
+
+        private boolean hasMore() {
+            return offset < sql.length();
+        }
+
+        private boolean lookingAt(@NotNull String prefix) {
+            return sql.startsWith(prefix, offset);
+        }
+
+        private void expect(@NotNull String prefix) {
+            if (lookingAt(prefix))
+                offset += prefix.length();
+            else
+                throw new SqlSyntaxException("expected '" + prefix + '\'', sql);
+        }
+
+        @Nullable
+        private String readRegexp(@NotNull Pattern pattern) {
+            Matcher matcher = pattern.matcher(sql.substring(offset));
+            if (matcher.lookingAt()) {
+                String result = matcher.group(0);
+                offset += result.length();
+                return result;
+            } else {
+                return null;
+            }
+        }
+
+        private String readBlock(SkippableBlock skippableBlock) {
+            int startOffset = offset;
+
+            expect(skippableBlock.start);
+
+            int nextHit = findNext(skippableBlock.end);
+            if (nextHit != -1) {
+                offset = nextHit + skippableBlock.end.length();
+            } else {
+                if (skippableBlock.blockEndsWhenStreamRunsOut)
+                    offset = sql.length();
+                else
+                    throw new SqlSyntaxException("Block end not found: \"" + skippableBlock.end + "\".", sql);
+            }
+
+            return sql.substring(startOffset, offset);
+        }
+
+        private int findNext(@NotNull String substring) {
+            return sql.indexOf(substring, offset);
+        }
+
+        public char readChar() {
+            return sql.charAt(offset++);
+        }
+    }
 }
