@@ -100,10 +100,10 @@ public class NamedParameterSqlParserTest {
     }
 
     private static void assertNamedParameters(NamedParameterSql namedParameterSql, String traditionalSql, Object... parameters) {
-        assertEquals(traditionalSql, namedParameterSql.getTraditionalSql());
-        assertEquals(parameters.length, namedParameterSql.getNamedParameters().size());
+        assertEquals(traditionalSql, namedParameterSql.getSql());
+        assertEquals(parameters.length, namedParameterSql.getParameterNames().size());
         for (int i = 0; i < parameters.length; i++) {
-            assertEquals(parameters[i], namedParameterSql.getNamedParameters().get(i));
+            assertEquals(parameters[i], namedParameterSql.getParameterNames().get(i));
         }
     }
 }

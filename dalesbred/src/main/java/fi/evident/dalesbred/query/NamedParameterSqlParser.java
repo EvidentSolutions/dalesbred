@@ -43,12 +43,12 @@ final class NamedParameterSqlParser {
 
     @NotNull
     private final Lexer lexer;
-    private final StringBuilder traditionalSqlBuilder;
-    private final List<String> namedParameters = new ArrayList<String>();
+    private final StringBuilder sqlBuilder;
+    private final List<String> parameterNames = new ArrayList<String>();
 
     private NamedParameterSqlParser(@SQL @NotNull String sql) {
         this.lexer = new Lexer(sql);
-        this.traditionalSqlBuilder = new StringBuilder(sql.length());
+        this.sqlBuilder = new StringBuilder(sql.length());
     }
 
     public static NamedParameterSql parseSqlStatement(@NotNull @SQL String sql) {
@@ -59,23 +59,23 @@ final class NamedParameterSqlParser {
         while (lexer.hasMore())
             parseNext();
 
-        return new NamedParameterSql(lexer.sql, traditionalSqlBuilder.toString(), namedParameters);
+        return new NamedParameterSql(sqlBuilder.toString(), parameterNames);
     }
 
     private void parseNext() {
         SkippableBlock skippableBlock = findSkippableBlock();
         if (skippableBlock != null) {
-            traditionalSqlBuilder.append(lexer.readBlock(skippableBlock));
+            sqlBuilder.append(lexer.readBlock(skippableBlock));
 
         } else if (lexer.lookingAt(":")) {
-            traditionalSqlBuilder.append('?');
-            namedParameters.add(parseName());
+            sqlBuilder.append('?');
+            parameterNames.add(parseName());
 
         } else if (lexer.lookingAt("?")) {
             throw new SqlSyntaxException("SQL cannot contain traditional ? placeholders.", lexer.sql);
 
         } else {
-            traditionalSqlBuilder.append(lexer.readChar());
+            sqlBuilder.append(lexer.readChar());
         }
     }
 

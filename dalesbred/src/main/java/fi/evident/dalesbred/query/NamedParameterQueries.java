@@ -36,7 +36,6 @@ public final class NamedParameterQueries {
      */
     @NotNull
     public static SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull NamedParameterValueProvider valueProvider) {
-        NamedParameterSql parsed = NamedParameterSqlParser.parseSqlStatement(sql);
-        return SqlQuery.query(parsed.getTraditionalSql(), parsed.toParameterValues(valueProvider));
+        return NamedParameterSqlParser.parseSqlStatement(sql).toQuery(valueProvider);
     }
 }

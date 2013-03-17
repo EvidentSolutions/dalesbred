@@ -22,49 +22,58 @@
 
 package fi.evident.dalesbred.query;
 
+import fi.evident.dalesbred.SQL;
+import fi.evident.dalesbred.SqlQuery;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 
 import java.util.ArrayList;
 import java.util.List;
 
 final class NamedParameterSql {
 
-    private final String originalSql;
-    private final String traditionalSql;
-    private final List<String> namedParameters;
+    @NotNull
+    @SQL
+    private final String sql;
 
-    NamedParameterSql(@NotNull String originalSql, @NotNull String traditionalSql, @NotNull List<String> namedParameters) {
-        this.originalSql = originalSql;
-        this.traditionalSql = traditionalSql;
-        this.namedParameters = namedParameters;
+    @NotNull
+    private final List<String> parameterNames;
+
+    NamedParameterSql(@NotNull @SQL String sql, @NotNull List<String> parameterNames) {
+        this.sql = sql;
+        this.parameterNames = parameterNames;
     }
 
     @NotNull
-    List<?> toParameterValues(@NotNull NamedParameterValueProvider parameterSource) throws IllegalArgumentException {
-        List<Object> result = new ArrayList<Object>(namedParameters.size());
+    public SqlQuery toQuery(@NotNull NamedParameterValueProvider valueProvider) {
+        return SqlQuery.query(sql, resolveParameterValues(valueProvider));
+    }
 
-        for (String namedParameter : namedParameters) {
+    @NotNull
+    private List<?> resolveParameterValues(@NotNull NamedParameterValueProvider parameterSource) {
+        List<Object> result = new ArrayList<Object>(parameterNames.size());
+
+        for (String parameter : parameterNames) {
             try {
-                result.add(parameterSource.getValue(namedParameter));
+                result.add(parameterSource.getValue(parameter));
             } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("No value supplied for the SQL parameter '" + namedParameter + '\'', e);
+                throw new IllegalArgumentException("No value supplied for the SQL parameter '" + parameter + '\'', e);
             }
         }
+
         return result;
     }
 
     @NotNull
-    String getTraditionalSql() {
-        return traditionalSql;
+    @SQL
+    @TestOnly
+    String getSql() {
+        return sql;
     }
 
     @NotNull
-    public List<String> getNamedParameters() {
-        return namedParameters;
-    }
-
-    @Override
-    public String toString() {
-        return originalSql;
+    @TestOnly
+    public List<String> getParameterNames() {
+        return parameterNames;
     }
 }
