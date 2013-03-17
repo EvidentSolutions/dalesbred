@@ -199,6 +199,25 @@ the query dynamically:
     :::java
     db.findAll(Department.class, buildDepartmentQuery(form));
 
+Named queries
+-------------
+
+In addition to using positional parameters in your SQL statements, you can also you named parameters:
+
+    :::java
+    import static fi.evident.dalesbred.SqlQuery.namedQuery;
+
+    Map<String,Object> values = new HashMap<String,Object>();
+    values.put("firstName", "John");
+    values.put("lastName", "Doe");
+
+    SqlQuery query = namedQuery("select id from employee where first_name = :firstName and last_name = :lastName", values);
+    db.findAll(Department.class, query);
+
+Instead of Maps, you can also pass just regular objects to namedQuery as the source of values. The parameter names
+are mapped to properties or fields of the objects. Finally, if you want detailed control, you can pass your own
+implementation of `NamedParameterValueProvider` to resolve the variables.
+
 Building queries dynamically
 ----------------------------
 
