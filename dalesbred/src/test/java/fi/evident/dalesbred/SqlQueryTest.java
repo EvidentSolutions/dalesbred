@@ -82,13 +82,17 @@ public class SqlQueryTest {
 
     @Test
     public void namedQueryFromBean() {
-        Object bean = new Object() {
-            @SuppressWarnings({"FieldMayBeStatic", "UnusedDeclaration"})
-            public final String name = "bar";
-        };
-        SqlQuery query = namedQuery("select * from foo where name = :name", bean);
+        SqlQuery query = namedQuery("select * from foo where name = :name", new ExampleNamed("bar"));
 
         assertEquals("select * from foo where name = ?", query.getSql());
         assertEquals(singletonList("bar"), query.getArguments());
+    }
+
+    public static final class ExampleNamed {
+        public final String name;
+
+        public ExampleNamed(String name) {
+            this.name = name;
+        }
     }
 }
