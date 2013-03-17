@@ -1,0 +1,11 @@
+.DS_Store
+*~
+bin
+target
+out
+.idea/workspace.xml
+.idea/ant.xml
+.idea/uiDesigner.xml
+.idea/dataSources.xml
+.idea/dataSources.ids
+dalesbred/src/test/resources/postgresql-connection.properties
