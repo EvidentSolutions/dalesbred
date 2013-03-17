@@ -73,6 +73,7 @@ public final class SqlQuery implements Serializable {
      * Constructs a query with named arguments, using given map for resolving the values of arguments.
      *
      * @see #namedQuery(String, fi.evident.dalesbred.query.VariableResolver)
+     * @see fi.evident.dalesbred.query.VariableResolvers#resolverForMap(java.util.Map)
      */
     @NotNull
     public static SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull Map<String, ?> valueMap) {
@@ -83,6 +84,7 @@ public final class SqlQuery implements Serializable {
      * Constructs a query with named arguments, using the properties/fields of given bean for resolving arguments.
      *
      * @see #namedQuery(String, fi.evident.dalesbred.query.VariableResolver)
+     * @see fi.evident.dalesbred.query.VariableResolvers#resolverForBean(Object)
      */
     @NotNull
     public static SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull Object bean) {

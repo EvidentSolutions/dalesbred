@@ -31,19 +31,25 @@ import java.util.Map;
 
 import static java.lang.reflect.Modifier.isPublic;
 
+/**
+ * Some useful {@link VariableResolver} implementations.
+ */
 public final class VariableResolvers {
 
     private VariableResolvers() {
     }
 
+    /**
+     * Returns a {@link VariableResolver} that is backed by given map.
+     */
     @NotNull
-    public static VariableResolver resolverForMap(@NotNull final Map<String, ?> valueMap) {
+    public static VariableResolver resolverForMap(@NotNull final Map<String, ?> variables) {
         return new VariableResolver() {
             @Nullable
             @Override
             public Object getValue(@NotNull String variable) {
-                Object value = valueMap.get(variable);
-                if (value != null || valueMap.containsKey(variable))
+                Object value = variables.get(variable);
+                if (value != null || variables.containsKey(variable))
                     return value;
                 else
                     throw new VariableResolutionException("No value registered for key '" + variable + '\'');
@@ -51,6 +57,10 @@ public final class VariableResolvers {
         };
     }
 
+    /**
+     * Returns a {@link VariableResolver} that is backed by given bean. When variables are looked up,
+     * tries to find a matching getter or accessible field for the variable and returns its value.
+     */
     @NotNull
     public static VariableResolver resolverForBean(@NotNull final Object object) {
         return new VariableResolver() {
