@@ -20,16 +20,23 @@
  * THE SOFTWARE.
  */
 
-package fi.evident.dalesbred;
+package fi.evident.dalesbred.query;
 
+import fi.evident.dalesbred.SQL;
+import fi.evident.dalesbred.SqlQuery;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Exception thrown when parsing SQL fails.
- */
-public class SqlSyntaxException extends DatabaseException {
+public final class NamedParameterQueries {
 
-    public SqlSyntaxException(@NotNull String message, @NotNull String sql) {
-        super(message + " [" + sql + ']');
+    private NamedParameterQueries() {
+    }
+
+    /**
+     * @see SqlQuery#namedQuery(String, NamedParameterValueProvider)
+     */
+    @NotNull
+    public static SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull NamedParameterValueProvider valueProvider) {
+        NamedParameterSql parsed = NamedParameterSqlParser.parseSqlStatement(sql);
+        return SqlQuery.query(parsed.getTraditionalSql(), parsed.toParameterValues(valueProvider));
     }
 }

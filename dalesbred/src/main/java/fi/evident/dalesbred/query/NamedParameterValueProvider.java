@@ -20,16 +20,13 @@
  * THE SOFTWARE.
  */
 
-package fi.evident.dalesbred;
+package fi.evident.dalesbred.query;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-/**
- * Exception thrown when parsing SQL fails.
- */
-public class SqlSyntaxException extends DatabaseException {
+public interface NamedParameterValueProvider {
 
-    public SqlSyntaxException(@NotNull String message, @NotNull String sql) {
-        super(message + " [" + sql + ']');
-    }
+    @Nullable
+    Object getValue(@NotNull String parameterName);
 }

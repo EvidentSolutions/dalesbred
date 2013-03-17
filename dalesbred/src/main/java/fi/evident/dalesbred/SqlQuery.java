@@ -22,6 +22,8 @@
 
 package fi.evident.dalesbred;
 
+import fi.evident.dalesbred.query.NamedParameterQueries;
+import fi.evident.dalesbred.query.NamedParameterValueProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,8 +32,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static fi.evident.dalesbred.NamedParameterValueProviders.providerForBean;
-import static fi.evident.dalesbred.NamedParameterValueProviders.providerForMap;
+import static fi.evident.dalesbred.query.NamedParameterValueProviders.providerForBean;
+import static fi.evident.dalesbred.query.NamedParameterValueProviders.providerForMap;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
@@ -70,7 +72,7 @@ public final class SqlQuery implements Serializable {
     /**
      * Constructs a query with named arguments, using given map for resolving the values of arguments.
      *
-     * @see #namedQuery(String, NamedParameterValueProvider)
+     * @see #namedQuery(String, fi.evident.dalesbred.query.NamedParameterValueProvider)
      */
     @NotNull
     public static SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull Map<String, ?> valueMap) {
@@ -80,7 +82,7 @@ public final class SqlQuery implements Serializable {
     /**
      * Constructs a query with named arguments, using the properties/fields of given bean for resolving arguments.
      *
-     * @see #namedQuery(String, NamedParameterValueProvider)
+     * @see #namedQuery(String, fi.evident.dalesbred.query.NamedParameterValueProvider)
      */
     @NotNull
     public static SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull Object bean) {
@@ -95,9 +97,8 @@ public final class SqlQuery implements Serializable {
      * @throws IllegalArgumentException if valueProvider cannot provide values for named parameters
      */
     @NotNull
-    public static SqlQuery namedQuery(@NotNull @SQL String namedSql, @NotNull NamedParameterValueProvider valueProvider) {
-        NamedParameterSql parsed = NamedParameterSqlParser.parseSqlStatement(namedSql);
-        return query(parsed.getTraditionalSql(), parsed.toParameterValues(valueProvider));
+    public static SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull NamedParameterValueProvider valueProvider) {
+        return NamedParameterQueries.namedQuery(sql, valueProvider);
     }
 
     /**
