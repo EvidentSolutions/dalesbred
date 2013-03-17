@@ -1,7 +1,7 @@
-## x.y.z (yyyy-mm-dd)
+## 0.4.0 (2013-03-17)
 
   - Support for named parameters in SQL-queries.
-  - Ignore underscores in database column names when mapping them to properties (ie. 'foo_bar' matches 'fooBar').
+  - Remove underscores from database column names when mapping them to properties (ie. 'foo_bar' matches 'fooBar').
 
 ## 0.3.2 (2013-01-21)
 
