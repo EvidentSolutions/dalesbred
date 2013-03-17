@@ -89,6 +89,8 @@ public class SqlQueryTest {
     }
 
     public static final class ExampleNamed {
+
+        @Reflective
         public final String name;
 
         public ExampleNamed(String name) {

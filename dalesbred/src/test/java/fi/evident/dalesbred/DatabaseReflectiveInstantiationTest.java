@@ -54,6 +54,8 @@ public class DatabaseReflectiveInstantiationTest {
 
     public static class MyResult {
         public final int constructor;
+
+        @Reflective
         public int field;
         public int propertyBackingField;
 
