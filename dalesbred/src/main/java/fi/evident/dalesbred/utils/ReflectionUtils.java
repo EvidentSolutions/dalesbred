@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Evident Solutions Oy
+ * Copyright (c) 2013 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,46 +23,39 @@
 package fi.evident.dalesbred.utils;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import static java.lang.Character.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
-/**
- * Utilities for strings.
- */
-public final class StringUtils {
+import static fi.evident.dalesbred.utils.StringUtils.capitalize;
 
-    private StringUtils() { }
+public final class ReflectionUtils {
 
-    /**
-     * Converts words <em>CamelCasedWords</em> to <em>underscore_separated_words.</em>
-     */
-    @NotNull
-    public static String upperCamelToLowerUnderscore(@NotNull CharSequence cs) {
-        StringBuilder sb = new StringBuilder(cs.length() + 5);
-
-        boolean candidateWordEnd = false;
-        for (int i = 0, len = cs.length(); i < len; i++) {
-            char ch = cs.charAt(i);
-
-            if (isUpperCase(ch) && candidateWordEnd) {
-                sb.append('_');
-                candidateWordEnd = false;
-
-            } else if (!isUpperCase(ch) && ch != '_') {
-                candidateWordEnd = true;
-            }
-
-            sb.append(toLowerCase(ch));
-        }
-
-        return sb.toString();
+    private ReflectionUtils() {
     }
 
-    /**
-     * Returns given string with its first letter in uppercase.
-     */
-    @NotNull
-    public static String capitalize(@NotNull String s) {
-        return s.isEmpty() ? s : (toUpperCase(s.charAt(0)) + s.substring(1));
+    @Nullable
+    public static Field findField(@NotNull Class<?> cl, @NotNull String name) {
+        try {
+            return cl.getField(name);
+        } catch (NoSuchFieldException e) {
+            return null;
+        }
+    }
+
+    @Nullable
+    public static Method findGetter(@NotNull Class<?> cl, @NotNull String propertyName) {
+        String capitalizedName = capitalize(propertyName);
+
+        try {
+            return cl.getMethod("get" + capitalizedName);
+        } catch (NoSuchMethodException e) {
+            try {
+                return cl.getMethod("is" + capitalizedName);
+            } catch (NoSuchMethodException e1) {
+                return null;
+            }
+        }
     }
 }

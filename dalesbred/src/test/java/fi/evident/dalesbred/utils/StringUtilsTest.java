@@ -24,6 +24,7 @@ package fi.evident.dalesbred.utils;
 
 import org.junit.Test;
 
+import static fi.evident.dalesbred.utils.StringUtils.capitalize;
 import static fi.evident.dalesbred.utils.StringUtils.upperCamelToLowerUnderscore;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -61,5 +62,13 @@ public class StringUtilsTest {
     public void consecutiveUpperCaseLettersDoNotBeginNewWord() {
         assertThat(upperCamelToLowerUnderscore("FOO"), is("foo"));
         assertThat(upperCamelToLowerUnderscore("fooBAR"), is("foo_bar"));
+    }
+
+    @Test
+    public void capitalization() {
+        assertThat(capitalize(""), is(""));
+        assertThat(capitalize("Foo"), is("Foo"));
+        assertThat(capitalize("foo"), is("Foo"));
+        assertThat(capitalize("fooBar"), is("FooBar"));
     }
 }

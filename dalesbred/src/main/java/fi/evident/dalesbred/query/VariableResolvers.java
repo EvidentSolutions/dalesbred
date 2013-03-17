@@ -26,10 +26,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import static java.lang.reflect.Modifier.isPublic;
+import static fi.evident.dalesbred.utils.ReflectionUtils.findField;
+import static fi.evident.dalesbred.utils.ReflectionUtils.findGetter;
 
 /**
  * Some useful {@link VariableResolver} implementations.
@@ -76,33 +78,14 @@ public final class VariableResolvers {
                         if (field != null)
                             return field.get(object);
                         else
-                            throw new VariableResolutionException("Accessor not found for: " + variable);
+                            throw new VariableResolutionException("No accessor found for '" + variable + '\'');
                     }
-                } catch (Exception e) {
-                    throw new VariableResolutionException("Failed to resolve variable: " + variable, e);
+                } catch (InvocationTargetException e) {
+                    throw new VariableResolutionException("Failed to resolve variable '" + variable + "': " + e.getTargetException(), e.getTargetException());
+                } catch (IllegalAccessException e) {
+                    throw new VariableResolutionException("Could not access variable'" + variable + '\'', e);
                 }
             }
         };
-    }
-
-    @Nullable
-    private static Field findField(@NotNull Class<?> cl, @NotNull String name) {
-        for (Field field : cl.getFields())
-            if (isPublic(field.getModifiers()) && field.getName().equalsIgnoreCase(name))
-                return field;
-
-        return null;
-    }
-
-    @Nullable
-    private static Method findGetter(@NotNull Class<?> cl, @NotNull String name) {
-        String[] methodNames =  { "get" + name, "is" + name };
-
-        for (Method method : cl.getMethods())
-            for (String methodName : methodNames)
-                if (methodName.equalsIgnoreCase(method.getName()) && isPublic(method.getModifiers()) && method.getParameterTypes().length == 0)
-                    return method;
-
-        return null;
     }
 }
