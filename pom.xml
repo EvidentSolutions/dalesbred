@@ -242,7 +242,7 @@
     <scm>
         <url>https://bitbucket.org/evidentsolutions/dalesbred</url>
         <connection>scm:git:https://bitbucket.org/evidentsolutions/dalesbred.git</connection>
-        <developerConnection>scm:git:git@bitbucket.org/evidentsolutions/dalesbred.git</developerConnection>
+        <developerConnection>scm:git:ssh://git@bitbucket.org/evidentsolutions/dalesbred.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 </project>
