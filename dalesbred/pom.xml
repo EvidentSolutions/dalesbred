@@ -6,7 +6,7 @@
     <parent>
         <groupId>fi.evident.dalesbred</groupId>
         <artifactId>dalesbred-root</artifactId>
-        <version>0.3.3-SNAPSHOT</version>
+        <version>0.4.0</version>
     </parent>
 
     <artifactId>dalesbred</artifactId>
