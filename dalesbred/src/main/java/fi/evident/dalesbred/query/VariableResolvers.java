@@ -96,7 +96,7 @@ public final class VariableResolvers {
 
     @Nullable
     private static Method findGetter(@NotNull Class<?> cl, @NotNull String name) {
-        String[] methodNames =  { "is" + name, "get" + name };
+        String[] methodNames =  { "get" + name, "is" + name };
 
         for (Method method : cl.getMethods())
             for (String methodName : methodNames)
