@@ -22,11 +22,22 @@
 
 package fi.evident.dalesbred.query;
 
+import fi.evident.dalesbred.DatabaseException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public interface NamedParameterValueProvider {
+import java.lang.String;
+import java.lang.Throwable;
 
-    @Nullable
-    Object getValue(@NotNull String parameterName);
+/**
+ * Exception thrown when a variable could not be resolved.
+ */
+public class VariableResolutionException extends DatabaseException {
+
+    public VariableResolutionException(@NotNull String message) {
+        super(message);
+    }
+
+    public VariableResolutionException(@NotNull String message, @NotNull Throwable cause) {
+        super(message, cause);
+    }
 }

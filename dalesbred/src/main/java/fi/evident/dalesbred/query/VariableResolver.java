@@ -22,20 +22,19 @@
 
 package fi.evident.dalesbred.query;
 
-import fi.evident.dalesbred.SQL;
-import fi.evident.dalesbred.SqlQuery;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public final class NamedParameterQueries {
-
-    private NamedParameterQueries() {
-    }
+/**
+ * Resolves values for variables appearing in SQL queries with named parameters.
+ */
+public interface VariableResolver {
 
     /**
-     * @see SqlQuery#namedQuery(String, VariableResolver)
+     * Returns the value of given variable, which could be null.
+     *
+     * @throws VariableResolutionException if resolution fails
      */
-    @NotNull
-    public static SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull VariableResolver variableResolver) {
-        return NamedParameterSqlParser.parseSqlStatement(sql).toQuery(variableResolver);
-    }
+    @Nullable
+    Object getValue(@NotNull String variable);
 }

@@ -45,20 +45,16 @@ final class NamedParameterSql {
     }
 
     @NotNull
-    public SqlQuery toQuery(@NotNull NamedParameterValueProvider valueProvider) {
-        return SqlQuery.query(sql, resolveParameterValues(valueProvider));
+    public SqlQuery toQuery(@NotNull VariableResolver variableResolver) {
+        return SqlQuery.query(sql, resolveParameterValues(variableResolver));
     }
 
     @NotNull
-    private List<?> resolveParameterValues(@NotNull NamedParameterValueProvider parameterSource) {
+    private List<?> resolveParameterValues(@NotNull VariableResolver variableResolver) {
         List<Object> result = new ArrayList<Object>(parameterNames.size());
 
         for (String parameter : parameterNames) {
-            try {
-                result.add(parameterSource.getValue(parameter));
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("No value supplied for the SQL parameter '" + parameter + '\'', e);
-            }
+            result.add(variableResolver.getValue(parameter));
         }
 
         return result;

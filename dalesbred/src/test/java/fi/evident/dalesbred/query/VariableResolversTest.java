@@ -29,7 +29,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class NamedParameterValueProvidersTest {
+public class VariableResolversTest {
 
     @Test
     public void testProviderForMap() {
@@ -43,22 +43,22 @@ public class NamedParameterValueProvidersTest {
         parameterMap.put("bar", bar);
         parameterMap.put("baz", baz);
 
-        NamedParameterValueProvider namedParameterValueProvider = NamedParameterValueProviders.providerForMap(parameterMap);
+        VariableResolver variableResolver = VariableResolvers.resolverForMap(parameterMap);
 
-        assertEquals(foo, namedParameterValueProvider.getValue("foo"));
-        assertEquals(bar, namedParameterValueProvider.getValue("bar"));
-        assertEquals(baz, namedParameterValueProvider.getValue("baz"));
+        assertEquals(foo, variableResolver.getValue("foo"));
+        assertEquals(bar, variableResolver.getValue("bar"));
+        assertEquals(baz, variableResolver.getValue("baz"));
     }
 
     @Test
     public void testProviderForBean() {
 
         TestBean bean = new TestBean();
-        NamedParameterValueProvider namedParameterValueProvider = NamedParameterValueProviders.providerForBean(bean);
+        VariableResolver variableResolver = VariableResolvers.resolverForBean(bean);
 
-        assertEquals(bean.foo, namedParameterValueProvider.getValue("foo"));
-        assertEquals(bean.bar, namedParameterValueProvider.getValue("bar"));
-        assertEquals(bean.baz, namedParameterValueProvider.getValue("baz"));
+        assertEquals(bean.foo, variableResolver.getValue("foo"));
+        assertEquals(bean.bar, variableResolver.getValue("bar"));
+        assertEquals(bean.baz, variableResolver.getValue("baz"));
     }
 
     @SuppressWarnings({"UnusedDeclaration", "FieldMayBeFinal"})

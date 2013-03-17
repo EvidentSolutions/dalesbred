@@ -31,41 +31,45 @@ import java.util.Map;
 
 import static java.lang.reflect.Modifier.isPublic;
 
-public final class NamedParameterValueProviders {
+public final class VariableResolvers {
+
+    private VariableResolvers() {
+    }
+
     @NotNull
-    public static NamedParameterValueProvider providerForMap(@NotNull final Map<String, ?> valueMap) {
-        return new NamedParameterValueProvider() {
+    public static VariableResolver resolverForMap(@NotNull final Map<String, ?> valueMap) {
+        return new VariableResolver() {
             @Nullable
             @Override
-            public Object getValue(@NotNull String parameterName) throws IllegalArgumentException {
-                Object value = valueMap.get(parameterName);
-                if (value != null || valueMap.containsKey(parameterName))
+            public Object getValue(@NotNull String variable) {
+                Object value = valueMap.get(variable);
+                if (value != null || valueMap.containsKey(variable))
                     return value;
                 else
-                    throw new IllegalArgumentException("No value registered for key '" + parameterName + '\'');
+                    throw new VariableResolutionException("No value registered for key '" + variable + '\'');
             }
         };
     }
 
     @NotNull
-    public static NamedParameterValueProvider providerForBean(@NotNull final Object object) {
-        return new NamedParameterValueProvider() {
+    public static VariableResolver resolverForBean(@NotNull final Object object) {
+        return new VariableResolver() {
             @Nullable
             @Override
-            public Object getValue(@NotNull String parameterName) throws IllegalArgumentException {
+            public Object getValue(@NotNull String variable) {
                 try {
-                    Method getter = findGetter(object.getClass(), parameterName);
+                    Method getter = findGetter(object.getClass(), variable);
                     if (getter != null) {
                         return getter.invoke(object);
                     } else {
-                        Field field = findField(object.getClass(), parameterName);
+                        Field field = findField(object.getClass(), variable);
                         if (field != null)
                             return field.get(object);
                         else
-                            throw new IllegalArgumentException("Accessor not found for: " + parameterName);
+                            throw new VariableResolutionException("Accessor not found for: " + variable);
                     }
                 } catch (Exception e) {
-                    throw new IllegalArgumentException(e);
+                    throw new VariableResolutionException("Failed to resolve variable: " + variable, e);
                 }
             }
         };
@@ -91,6 +95,4 @@ public final class NamedParameterValueProviders {
 
         return null;
     }
-
-    private NamedParameterValueProviders() {}
 }

@@ -216,7 +216,7 @@ In addition to using positional parameters in your SQL statements, you can also 
 
 Instead of Maps, you can also pass just regular objects to namedQuery as the source of values. The parameter names
 are mapped to properties or fields of the objects. Finally, if you want detailed control, you can pass your own
-implementation of `NamedParameterValueProvider` to resolve the variables.
+implementation of `VariableResolver` to resolve the variables.
 
 Building queries dynamically
 ----------------------------
