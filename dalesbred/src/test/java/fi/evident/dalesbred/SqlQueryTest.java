@@ -24,9 +24,11 @@ package fi.evident.dalesbred;
 
 import org.junit.Test;
 
-import static fi.evident.dalesbred.SqlQuery.confidential;
-import static fi.evident.dalesbred.SqlQuery.query;
+import java.util.Collections;
+
+import static fi.evident.dalesbred.SqlQuery.*;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
@@ -68,5 +70,25 @@ public class SqlQueryTest {
         SqlQuery query = query("select * from foo where login=? and password=?", "foo", confidential("bar"));
 
         assertEquals("select * from foo where login=? and password=? [foo, ****]", query.toString());
+    }
+
+    @Test
+    public void namedQueryFromMap() {
+        SqlQuery query = namedQuery("select * from foo where name = :name", Collections.singletonMap("name", "bar"));
+
+        assertEquals("select * from foo where name = ?", query.getSql());
+        assertEquals(singletonList("bar"), query.getArguments());
+    }
+
+    @Test
+    public void namedQueryFromBean() {
+        Object bean = new Object() {
+            @SuppressWarnings({"FieldMayBeStatic", "UnusedDeclaration"})
+            public final String name = "bar";
+        };
+        SqlQuery query = namedQuery("select * from foo where name = :name", bean);
+
+        assertEquals("select * from foo where name = ?", query.getSql());
+        assertEquals(singletonList("bar"), query.getArguments());
     }
 }

@@ -50,19 +50,27 @@ public final class SqlQuery implements Serializable {
         this.args = unmodifiableList(args);
     }
 
+    /**
+     * Creates a new {@link SqlQuery} consisting of given SQL statement and arguments.
+     * '?' characters act as placeholders for arguments in the query.
+     */
     @NotNull
     public static SqlQuery query(@NotNull @SQL String sql, Object... args) {
         return new SqlQuery(sql, asList(args));
     }
 
+    /**
+     * @see #query(String, Object...)
+     */
     @NotNull
     public static SqlQuery query(@NotNull @SQL String sql, @NotNull List<?> args) {
         return new SqlQuery(sql, args);
     }
 
     /**
-     * @throws SqlSyntaxException if SQL is malformed
-     * @throws IllegalArgumentException if valueMap does not have values for the query
+     * Constructs a query with named arguments, using given map for resolving the values of arguments.
+     *
+     * @see #namedQuery(String, NamedParameterValueProvider)
      */
     @NotNull
     public static SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull Map<String, ?> valueMap) {
@@ -70,15 +78,19 @@ public final class SqlQuery implements Serializable {
     }
 
     /**
-     * @throws SqlSyntaxException if SQL is malformed
-     * @throws IllegalArgumentException if bean does not have values matching values
+     * Constructs a query with named arguments, using the properties/fields of given bean for resolving arguments.
+     *
+     * @see #namedQuery(String, NamedParameterValueProvider)
      */
     @NotNull
-    public static SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull Object valueBean) {
-        return namedQuery(sql, providerForBean(valueBean));
+    public static SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull Object bean) {
+        return namedQuery(sql, providerForBean(bean));
     }
 
     /**
+     * Creates a new {@link SqlQuery} consisting of given SQL statement and a provider for named arguments.
+     * The argument names in SQL should be prefixed by a colon, e.g. ":argument".
+     *
      * @throws SqlSyntaxException if SQL is malformed
      * @throws IllegalArgumentException if valueProvider cannot provide values for named parameters
      */
@@ -88,11 +100,18 @@ public final class SqlQuery implements Serializable {
         return query(parsed.getTraditionalSql(), parsed.toParameterValues(valueProvider));
     }
 
+    /**
+     * Returns the SQL that is to be execute at the database. If the original query was a named query,
+     * the variable placeholders will have been replaced by positinal placeholders in this query.
+     */
     @NotNull
     public String getSql() {
         return sql;
     }
 
+    /**
+     * Returns the list of arguments this query has.
+     */
     @NotNull
     public List<?> getArguments() {
         return args;
