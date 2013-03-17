@@ -102,7 +102,7 @@ public final class SqlQuery implements Serializable {
 
     /**
      * Returns the SQL that is to be execute at the database. If the original query was a named query,
-     * the variable placeholders will have been replaced by positinal placeholders in this query.
+     * the variable placeholders will have been replaced by positional placeholders in this query.
      */
     @NotNull
     public String getSql() {
