@@ -27,6 +27,7 @@ import fi.evident.dalesbred.DatabaseSQLException;
 import fi.evident.dalesbred.TransactionRollbackException;
 import fi.evident.dalesbred.TransactionSerializationException;
 import fi.evident.dalesbred.instantiation.TypeConversion;
+import fi.evident.dalesbred.instantiation.TypeConversionRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import javax.sql.DataSource;
@@ -125,5 +126,9 @@ public abstract class Dialect {
             return new TransactionRollbackException(e);
         else
             return new DatabaseSQLException(e);
+    }
+
+    public void registerTypeConversions(@NotNull TypeConversionRegistry typeConversionRegistry) {
+
     }
 }

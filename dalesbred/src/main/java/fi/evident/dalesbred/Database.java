@@ -147,6 +147,8 @@ public final class Database {
         this.dataSource = requireNonNull(dataSource);
         this.dialect = requireNonNull(dialect);
         this.instantiatorRegistry = new DefaultInstantiatorRegistry(dialect);
+
+        dialect.registerTypeConversions(instantiatorRegistry.getTypeConversionRegistry());
     }
 
     /**

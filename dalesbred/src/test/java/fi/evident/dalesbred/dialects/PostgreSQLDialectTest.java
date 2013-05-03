@@ -29,6 +29,8 @@ import fi.evident.dalesbred.TransactionalTestsRule;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.util.Date;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -63,6 +65,13 @@ public class PostgreSQLDialectTest {
         Movie movie = db.findUnique(Movie.class, "select name, mood from movie");
         assertThat(movie.name, is("Amélie"));
         assertThat(movie.mood, is(Mood.HAPPY));
+    }
+
+    @Test
+    public void dates() {
+        Date date = new Date();
+
+        assertThat(db.findUnique(Date.class, "select ?::timestamp", date), is(date));
     }
 
     enum Mood {

@@ -22,10 +22,14 @@
 
 package fi.evident.dalesbred.dialects;
 
+import fi.evident.dalesbred.instantiation.TypeConversion;
+import fi.evident.dalesbred.instantiation.TypeConversionRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.postgresql.util.PGobject;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Date;
 
 import static fi.evident.dalesbred.utils.StringUtils.upperCamelToLowerUnderscore;
 
@@ -45,5 +49,16 @@ public class PostgreSQLDialect extends Dialect {
         } catch (SQLException e) {
             throw convertException(e);
         }
+    }
+
+    @Override
+    public void registerTypeConversions(@NotNull TypeConversionRegistry typeConversionRegistry) {
+        typeConversionRegistry.registerConversionToDatabaseType(new TypeConversion<Date, Timestamp>(Date.class, Timestamp.class) {
+            @NotNull
+            @Override
+            public Timestamp convert(@NotNull Date value) {
+                return new Timestamp(value.getTime());
+            }
+        });
     }
 }
