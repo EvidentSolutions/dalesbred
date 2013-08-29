@@ -22,6 +22,8 @@
 
 package fi.evident.dalesbred;
 
+import fi.evident.dalesbred.connection.ConnectionProvider;
+import fi.evident.dalesbred.connection.DataSourceConnectionProvider;
 import fi.evident.dalesbred.connection.DriverManagerDataSourceProvider;
 import fi.evident.dalesbred.dialects.Dialect;
 import fi.evident.dalesbred.instantiation.DefaultInstantiatorRegistry;
@@ -64,7 +66,7 @@ public final class Database {
 
     /** Provides us with connections whenever we need one */
     @NotNull
-    private final DataSource dataSource;
+    private final ConnectionProvider connectionProvider;
 
     /** The current active transaction of this thread, or null */
     @NotNull
@@ -98,7 +100,7 @@ public final class Database {
      */
     @NotNull
     public static Database forDataSource(@NotNull DataSource dataSource) {
-        return new Database(dataSource);
+        return new Database(new DataSourceConnectionProvider(dataSource));
     }
 
     /**
@@ -111,7 +113,7 @@ public final class Database {
             try {
                 DataSource dataSource = (DataSource) ctx.lookup(jndiName);
                 if (dataSource != null)
-                    return new Database(dataSource);
+                    return forDataSource(dataSource);
                 else
                     throw new DatabaseException("Could not find DataSource '" + jndiName + '\'');
             } finally {
@@ -130,25 +132,45 @@ public final class Database {
      */
     @NotNull
     public static Database forUrlAndCredentials(@NotNull String url, @Nullable String username, @Nullable String password) {
-        return new Database(DriverManagerDataSourceProvider.createDataSource(url, username, password));
+        return forDataSource(DriverManagerDataSourceProvider.createDataSource(url, username, password));
     }
 
     /**
-     * Constructs a new Database that uses given {@link DataSource} and auto-detects the dialect to use.
+     * Constructs a new Database that uses given {@link ConnectionProvider} and auto-detects the dialect to use.
      */
-    public Database(@NotNull DataSource dataSource) {
-        this(dataSource, Dialect.detect(dataSource));
+    public Database(@NotNull ConnectionProvider connectionProvider) {
+        this(connectionProvider, Dialect.detect(connectionProvider));
     }
 
     /**
-     * Constructs a new Database that uses given {@link DataSource} and {@link Dialect}.
+     * Constructs a new Database that uses given {@link ConnectionProvider} and {@link Dialect}.
      */
-    public Database(@NotNull DataSource dataSource, @NotNull Dialect dialect) {
-        this.dataSource = requireNonNull(dataSource);
+    public Database(@NotNull ConnectionProvider connectionProvider, @NotNull Dialect dialect) {
+        this.connectionProvider = requireNonNull(connectionProvider);
         this.dialect = requireNonNull(dialect);
         this.instantiatorRegistry = new DefaultInstantiatorRegistry(dialect);
 
         dialect.registerTypeConversions(instantiatorRegistry.getTypeConversionRegistry());
+    }
+
+    /**
+     * Constructs a new Database that uses given {@link DataSource} and auto-detects the dialect to use.
+     *
+     * @deprecated use {@link #Database(fi.evident.dalesbred.connection.ConnectionProvider)}
+     */
+    @Deprecated
+    public Database(@NotNull DataSource dataSource) {
+        this(new DataSourceConnectionProvider(dataSource));
+    }
+
+    /**
+     * Constructs a new Database that uses given {@link DataSource} and {@link Dialect}.
+     *
+     * @deprecated use {@link #Database(fi.evident.dalesbred.connection.ConnectionProvider, fi.evident.dalesbred.dialects.Dialect)}
+     */
+    @Deprecated
+    public Database(@NotNull DataSource dataSource, @NotNull Dialect dialect) {
+        this(new DataSourceConnectionProvider(dataSource), dialect);
     }
 
     /**
@@ -205,7 +227,7 @@ public final class Database {
             if (propagation == Propagation.MANDATORY)
                 throw new NoActiveTransactionException("Transaction propagation was MANDATORY, but there was no existing transaction.");
 
-            DatabaseTransaction newTransaction = new DatabaseTransaction(dataSource, dialect, isolation);
+            DatabaseTransaction newTransaction = new DatabaseTransaction(connectionProvider, dialect, isolation);
             try {
                 activeTransaction.set(newTransaction);
                 return newTransaction.execute(retries, callback);

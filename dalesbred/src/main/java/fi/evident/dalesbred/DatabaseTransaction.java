@@ -22,10 +22,10 @@
 
 package fi.evident.dalesbred;
 
+import fi.evident.dalesbred.connection.ConnectionProvider;
 import fi.evident.dalesbred.dialects.Dialect;
 import org.jetbrains.annotations.NotNull;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Savepoint;
@@ -44,13 +44,17 @@ final class DatabaseTransaction {
     private final Connection connection;
 
     @NotNull
+    private final ConnectionProvider connectionProvider;
+
+    @NotNull
     private final Dialect dialect;
     private static final Logger log = Logger.getLogger(DatabaseTransaction.class.getName());
 
     @SuppressWarnings("JDBCResourceOpenedButNotSafelyClosed")
-    DatabaseTransaction(@NotNull DataSource dataSource, @NotNull Dialect dialect, @NotNull Isolation isolation) {
+    DatabaseTransaction(@NotNull ConnectionProvider connectionProvider, @NotNull Dialect dialect, @NotNull Isolation isolation) {
         try {
-            this.connection = dataSource.getConnection();
+            this.connectionProvider = requireNonNull(connectionProvider);
+            this.connection = connectionProvider.getConnection();
             this.dialect = requireNonNull(dialect);
 
             connection.setAutoCommit(false);
@@ -132,7 +136,7 @@ final class DatabaseTransaction {
 
     void close() {
         try {
-            connection.close();
+            connectionProvider.releaseConnection(connection);
         } catch (SQLException e) {
             throw dialect.convertException(e);
         }

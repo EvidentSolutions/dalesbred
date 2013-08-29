@@ -26,6 +26,8 @@ import fi.evident.dalesbred.DatabaseException;
 import fi.evident.dalesbred.DatabaseSQLException;
 import fi.evident.dalesbred.TransactionRollbackException;
 import fi.evident.dalesbred.TransactionSerializationException;
+import fi.evident.dalesbred.connection.ConnectionProvider;
+import fi.evident.dalesbred.connection.DataSourceConnectionProvider;
 import fi.evident.dalesbred.instantiation.TypeConversion;
 import fi.evident.dalesbred.instantiation.TypeConversionRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -85,12 +87,17 @@ public abstract class Dialect {
 
     @NotNull
     public static Dialect detect(@NotNull DataSource dataSource) {
+        return detect(new DataSourceConnectionProvider(dataSource));
+    }
+
+    @NotNull
+    public static Dialect detect(@NotNull ConnectionProvider connectionProvider) {
         try {
-            Connection connection = dataSource.getConnection();
+            Connection connection = connectionProvider.getConnection();
             try {
                 return detect(connection);
             } finally {
-                connection.close();
+                connectionProvider.releaseConnection(connection);
             }
         } catch (SQLException e) {
             throw new DatabaseSQLException("Failed to auto-detect database dialect: " + e, e);
