@@ -26,7 +26,9 @@ import fi.evident.dalesbred.DatabaseException;
 import fi.evident.dalesbred.DatabaseSQLException;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -34,6 +36,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.TimeZone;
@@ -56,6 +59,7 @@ final class DefaultTypeConversions {
         registry.registerConversionFromDatabaseType(new NumberToBigIntegerTypeConversion());
         registry.registerConversionFromDatabaseType(new NumberToBigDecimalTypeConversion());
         registry.registerConversionFromDatabaseType(new ClobToStringTypeConversion());
+        registry.registerConversionFromDatabaseType(new BlobToByteArrayTypeConversion());
 
         registry.registerConversionToDatabaseType(new BigIntegerToBigDecimalTypeConversion());
         registry.registerConversionToDatabaseType(new ToStringTypeConversion<URL>(URL.class));
@@ -279,6 +283,39 @@ final class DefaultTypeConversions {
                 throw new DatabaseSQLException(e);
             } catch (IOException e) {
                 throw new DatabaseException("failed to convert Clob to String", e);
+            }
+        }
+    }
+
+    private static class BlobToByteArrayTypeConversion extends TypeConversion<Blob,byte[]> {
+
+        BlobToByteArrayTypeConversion() {
+            super(Blob.class, byte[].class);
+        }
+
+        @NotNull
+        @Override
+        public byte[] convert(@NotNull Blob value) {
+            try {
+                InputStream in = value.getBinaryStream();
+                try {
+                    ByteArrayOutputStream out = new ByteArrayOutputStream((int) value.length());
+
+                    byte[] buf = new byte[BUFFER_SIZE];
+                    int n;
+
+                    while ((n = in.read(buf)) != -1)
+                        out.write(buf, 0, n);
+
+                    return out.toByteArray();
+
+                } finally {
+                    in.close();
+                }
+            } catch (SQLException e) {
+                throw new DatabaseSQLException(e);
+            } catch (IOException e) {
+                throw new DatabaseException("failed to convert Blob to byte-array", e);
             }
         }
     }

@@ -17,4 +17,11 @@ public class DatabaseLargeObjectsTest {
     public void clobColumnsCanBeCoercedToStrings() {
         assertThat(db.findUnique(String.class, "values (cast ('foo' as clob))"), is("foo"));
     }
+
+    @Test
+    @SuppressWarnings("PrimitiveArrayArgumentToVariableArgMethod")
+    public void blobColumnsCanBeCoercedToStrings() {
+        byte[] data = { 1, 2, 3 };
+        assertThat(db.findUnique(byte[].class, "values (cast (? as blob))", data), is(data));
+    }
 }
