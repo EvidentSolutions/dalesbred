@@ -48,11 +48,17 @@ public final class DriverManagerDataSourceProvider {
         // makes it hard for us to implement. Therefore we'll use the following hack to implement
         // the interface dynamically:
         return (DataSource) Proxy.newProxyInstance(DriverManagerDataSourceProvider.class.getClassLoader(), new Class<?>[]{DataSource.class}, new InvocationHandler() {
-            @SuppressWarnings("ConstantConditions")
+            @SuppressWarnings({"ConstantConditions", "ObjectEquality"})
             @Override
             public Object invoke(Object proxy, @NotNull Method method, Object[] args) throws Throwable {
                 if (method.getName().equals("getConnection"))
                     return DriverManager.getConnection(url, user, password);
+                else if (method.getName().equals("hashCode"))
+                    return System.identityHashCode(proxy);
+                else if (method.getName().equals("equals"))
+                    return proxy == args[0];
+                else if (method.getName().equals("toString"))
+                    return "DataSource for " + url;
                 else
                     throw new UnsupportedOperationException("unsupported operation: " + method);
             }
