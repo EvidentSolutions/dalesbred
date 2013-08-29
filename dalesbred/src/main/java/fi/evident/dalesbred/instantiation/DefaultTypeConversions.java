@@ -22,17 +22,25 @@
 
 package fi.evident.dalesbred.instantiation;
 
+import fi.evident.dalesbred.DatabaseException;
+import fi.evident.dalesbred.DatabaseSQLException;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.sql.Clob;
+import java.sql.SQLException;
 import java.util.TimeZone;
 
 final class DefaultTypeConversions {
+
+    private static final int BUFFER_SIZE = 1024;
 
     private DefaultTypeConversions() { }
 
@@ -47,6 +55,7 @@ final class DefaultTypeConversions {
         registry.registerConversionFromDatabaseType(new NumberToDoubleTypeConversion());
         registry.registerConversionFromDatabaseType(new NumberToBigIntegerTypeConversion());
         registry.registerConversionFromDatabaseType(new NumberToBigDecimalTypeConversion());
+        registry.registerConversionFromDatabaseType(new ClobToStringTypeConversion());
 
         registry.registerConversionToDatabaseType(new BigIntegerToBigDecimalTypeConversion());
         registry.registerConversionToDatabaseType(new ToStringTypeConversion<URL>(URL.class));
@@ -238,6 +247,39 @@ final class DefaultTypeConversions {
         @Override
         public String convert(@NotNull TimeZone value) {
             return value.getID();
+        }
+    }
+
+    private static class ClobToStringTypeConversion extends TypeConversion<Clob,String> {
+
+        ClobToStringTypeConversion() {
+            super(Clob.class, String.class);
+        }
+
+        @NotNull
+        @Override
+        public String convert(@NotNull Clob value) {
+            try {
+                Reader reader = value.getCharacterStream();
+                try {
+                    StringBuilder sb = new StringBuilder((int) value.length());
+
+                    char[] buf = new char[BUFFER_SIZE];
+                    int n;
+
+                    while ((n = reader.read(buf)) != -1)
+                        sb.append(buf, 0, n);
+
+                    return sb.toString();
+
+                } finally {
+                    reader.close();
+                }
+            } catch (SQLException e) {
+                throw new DatabaseSQLException(e);
+            } catch (IOException e) {
+                throw new DatabaseException("failed to convert Clob to String", e);
+            }
         }
     }
 }
