@@ -50,6 +50,11 @@ public final class TestDatabaseProvider {
     }
 
     @NotNull
+    public static Database createMySQLDatabase() {
+        return new Database(createDataSource("mysql-connection.properties"));
+    }
+
+    @NotNull
     public static DataSource createInMemoryHSQLDataSource() {
         return DriverManagerDataSourceProvider.createDataSource("jdbc:hsqldb:.", "sa", "");
     }

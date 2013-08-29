@@ -634,6 +634,14 @@ public final class Database {
     }
 
     /**
+     * Returns the dialect that the database is using.
+     */
+    @NotNull
+    public Dialect getDialect() {
+        return dialect;
+    }
+
+    /**
      * Returns a string containing useful debug information about the state of this object.
      */
     @Override

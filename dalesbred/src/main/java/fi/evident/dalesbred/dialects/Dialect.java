@@ -108,6 +108,15 @@ public abstract class Dialect {
         } else if (productName.equals("HSQL Database Engine")) {
             log.fine("Automatically detected dialect HSQLDB.");
             return new HsqldbDialect();
+
+        } else if (productName.equals("MySQL")) {
+            log.fine("Automatically detected dialect MySQL.");
+            return new MySQLDialect();
+
+        } else if (productName.equals("Oracle")) {
+            log.fine("Automatically detected dialect Oracle.");
+            return new OracleDialect();
+
         } else {
             log.info("Could not detect dialect for product name '" + productName + "', falling back to default.");
             return new DefaultDialect();
