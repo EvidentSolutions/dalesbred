@@ -1,3 +1,7 @@
+## x.y.z (yyyy-mm-dd)
+
+  - Support converting Clobs to Strings and Blobs to byte-arrays.
+
 ## 0.4.0 (2013-03-17)
 
   - Support for named parameters in SQL-queries.
