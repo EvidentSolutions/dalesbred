@@ -97,5 +97,15 @@
                 </testResources>
             </build>
         </profile>
+        <profile>
+            <id>droneio</id>
+            <build>
+                <testResources>
+                    <testResource>
+                        <directory>profiles/droneio/src/test/resources</directory>
+                    </testResource>
+                </testResources>
+            </build>
+        </profile>
     </profiles>
 </project>
