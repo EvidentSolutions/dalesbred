@@ -25,7 +25,6 @@ import fi.evident.dalesbred.*;
 import fi.evident.dalesbred.connection.ConnectionProvider;
 import fi.evident.dalesbred.dialects.Dialect;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
@@ -36,7 +35,7 @@ public final class DefaultTransactionManager implements TransactionManager {
 
     /** The current active transaction of this thread, or null */
     @NotNull
-    private final ThreadLocal<DatabaseTransaction> activeTransaction = new ThreadLocal<DatabaseTransaction>();
+    private final ThreadLocal<DefaultTransaction> activeTransaction = new ThreadLocal<DefaultTransaction>();
 
     @NotNull
     private final ConnectionProvider connectionProvider;
@@ -60,7 +59,7 @@ public final class DefaultTransactionManager implements TransactionManager {
         Isolation isolation = settings.getIsolation().normalize(defaultIsolation);
         int retries = settings.getRetries();
 
-        DatabaseTransaction existingTransaction = activeTransaction.get();
+        DefaultTransaction existingTransaction = activeTransaction.get();
 
         if (existingTransaction != null) {
             if (propagation == Propagation.REQUIRES_NEW)
@@ -74,7 +73,7 @@ public final class DefaultTransactionManager implements TransactionManager {
             if (propagation == Propagation.MANDATORY)
                 throw new NoActiveTransactionException("Transaction propagation was MANDATORY, but there was no existing transaction.");
 
-            DatabaseTransaction newTransaction = new DefaultDatabaseTransaction(connectionProvider, dialect, isolation);
+            DefaultTransaction newTransaction = new DefaultTransaction(connectionProvider, dialect, isolation);
             try {
                 activeTransaction.set(newTransaction);
                 return newTransaction.execute(retries, callback);
@@ -86,18 +85,21 @@ public final class DefaultTransactionManager implements TransactionManager {
     }
 
     @Override
+    public <T> T withCurrentTransaction(@NotNull TransactionCallback<T> callback, @NotNull Dialect dialect) {
+        DefaultTransaction transaction = activeTransaction.get();
+        if (transaction != null)
+            return transaction.join(callback);
+        else
+            throw new NoActiveTransactionException("Tried to perform database operation without active transaction. Database accesses should be bracketed with Database.withTransaction(...) or implicit transactions should be enabled.");
+    }
+
+    @Override
     public boolean hasActiveTransaction() {
         return activeTransaction.get() != null;
     }
 
-    @Nullable
-    @Override
-    public DatabaseTransaction getActiveTransaction() {
-        return activeTransaction.get();
-    }
-
     private <T> T withSuspendedTransaction(@NotNull Isolation isolation, @NotNull TransactionCallback<T> callback, @NotNull Dialect dialect) {
-        DatabaseTransaction suspended = activeTransaction.get();
+        DefaultTransaction suspended = activeTransaction.get();
         try {
             activeTransaction.set(null);
 

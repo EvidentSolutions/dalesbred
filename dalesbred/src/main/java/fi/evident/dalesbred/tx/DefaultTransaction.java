@@ -38,7 +38,7 @@ import java.util.logging.Logger;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 import static fi.evident.dalesbred.utils.Throwables.propagate;
 
-final class DefaultDatabaseTransaction implements DatabaseTransaction {
+final class DefaultTransaction {
 
     @NotNull
     private final Connection connection;
@@ -48,10 +48,10 @@ final class DefaultDatabaseTransaction implements DatabaseTransaction {
 
     @NotNull
     private final Dialect dialect;
-    private static final Logger log = Logger.getLogger(DatabaseTransaction.class.getName());
+    private static final Logger log = Logger.getLogger(DefaultTransaction.class.getName());
 
     @SuppressWarnings("JDBCResourceOpenedButNotSafelyClosed")
-    public DefaultDatabaseTransaction(@NotNull ConnectionProvider connectionProvider, @NotNull Dialect dialect, @NotNull Isolation isolation) {
+    DefaultTransaction(@NotNull ConnectionProvider connectionProvider, @NotNull Dialect dialect, @NotNull Isolation isolation) {
         try {
             this.connectionProvider = requireNonNull(connectionProvider);
             this.connection = connectionProvider.getConnection();
@@ -67,8 +67,7 @@ final class DefaultDatabaseTransaction implements DatabaseTransaction {
         }
     }
 
-    @Override
-    public <T> T execute(int retries, @NotNull TransactionCallback<T> callback) {
+    <T> T execute(int retries, @NotNull TransactionCallback<T> callback) {
         int tries = 1;
         while (true) {
             try {
@@ -97,8 +96,7 @@ final class DefaultDatabaseTransaction implements DatabaseTransaction {
         }
     }
 
-    @Override
-    public <T> T nested(int retries, @NotNull TransactionCallback<T> callback) {
+    <T> T nested(int retries, @NotNull TransactionCallback<T> callback) {
         int tries = 1;
         while (true) {
             try {
@@ -128,8 +126,7 @@ final class DefaultDatabaseTransaction implements DatabaseTransaction {
         }
     }
 
-    @Override
-    public <T> T join(@NotNull TransactionCallback<T> callback) {
+    <T> T join(@NotNull TransactionCallback<T> callback) {
         try {
             return callback.execute(new DefaultTransactionContext(connection));
         } catch (SQLException e) {
@@ -137,8 +134,7 @@ final class DefaultDatabaseTransaction implements DatabaseTransaction {
         }
     }
 
-    @Override
-    public void close() {
+    void close() {
         try {
             connectionProvider.releaseConnection(connection);
         } catch (SQLException e) {

@@ -1,5 +1,6 @@
 ## x.y.z (yyyy-mm-dd)
 
+  - Integration with Spring Framework.
   - Support for pluggable transaction management strategies.
   - Added dialects for Oracle and MySQL.
   - Support converting Clobs to Strings and Blobs to byte-arrays.

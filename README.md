@@ -158,7 +158,34 @@ a simple support for building transactional proxies for services:
     MyService myService = db.createTransactionalProxyFor(MyService.class, new MyRealService());
     service.frobnicate(); // this call will have a transaction wrapped around it
 
-If you are using Guice, Dalesbred can integrate with its interceptor support, see section below.
+If you are using Spring Framework or Guice, see the sections below.
+
+Spring-integration
+------------------
+
+Dalesbred has support for integration with Spring Framework and its transaction management.
+To integrate Dalesbred, create a configuration class inheriting from `DalesbredConfigurationSupport`
+and specify beans for `DataSource` and `PlatformTransactionManager`. A minimal configuration would
+therefore be something like the following:
+
+    :::java
+
+    @Configuration
+    @EnableTransactionManagement
+    public class MyDatabaseConfiguration extends DalesbredConfigurationSupport {
+
+        @Bean
+        public DataSource dataSource() {
+            return new JndiDataSourceLookup().getDataSource("jdbc/my-database");
+        }
+
+        @Bean
+        public PlatformTransactionManager transactionManager() {
+            return new DataSourceTransactionManager(dataSource());
+        }
+    }
+
+After this you can inject `Database` normally in your beans.
 
 Guice-integration
 -----------------

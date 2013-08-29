@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Evident Solutions Oy
+ * Copyright (c) 2013 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,21 +20,42 @@
  * THE SOFTWARE.
  */
 
-package fi.evident.dalesbred.tx;
+package fi.evident.dalesbred.support.spring;
 
-import fi.evident.dalesbred.TransactionCallback;
+import fi.evident.dalesbred.TransactionContext;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.transaction.TransactionStatus;
 
-/**
- * Represents the active database-transaction.
- */
-public interface DatabaseTransaction {
+import java.sql.Connection;
 
-    <T> T execute(int retries, @NotNull TransactionCallback<T> callback);
+import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
-    <T> T nested(int retries, @NotNull TransactionCallback<T> callback);
+final class SpringTransactionContext extends TransactionContext {
 
-    <T> T join(@NotNull TransactionCallback<T> callback);
+    @NotNull
+    private final TransactionStatus status;
 
-    void close();
+    @NotNull
+    private final Connection connection;
+
+    SpringTransactionContext(@NotNull TransactionStatus status, @NotNull Connection connection) {
+        this.status = requireNonNull(status);
+        this.connection = requireNonNull(connection);
+    }
+
+    @NotNull
+    @Override
+    public Connection getConnection() {
+        return connection;
+    }
+
+    @Override
+    public void setRollbackOnly() {
+        status.setRollbackOnly();
+    }
+
+    @Override
+    public boolean isRollbackOnly() {
+        return status.isRollbackOnly();
+    }
 }

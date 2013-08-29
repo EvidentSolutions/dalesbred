@@ -31,7 +31,6 @@ import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
 import fi.evident.dalesbred.instantiation.TypeConversionRegistry;
 import fi.evident.dalesbred.results.*;
 import fi.evident.dalesbred.support.proxy.TransactionalProxyFactory;
-import fi.evident.dalesbred.tx.DatabaseTransaction;
 import fi.evident.dalesbred.tx.DefaultTransactionManager;
 import fi.evident.dalesbred.tx.TransactionManager;
 import org.jetbrains.annotations.NotNull;
@@ -239,11 +238,7 @@ public final class Database {
             if (allowImplicitTransactions) {
                 return withTransaction(callback);
             } else {
-                DatabaseTransaction transaction = transactionManager.getActiveTransaction();
-                if (transaction != null)
-                    return transaction.join(callback);
-                else
-                    throw new NoActiveTransactionException("Tried to perform database operation without active transaction. Database accesses should be bracketed with Database.withTransaction(...) or implicit transactions should be enabled.");
+                return transactionManager.withCurrentTransaction(callback, dialect);
             }
         } finally {
             DebugContext.setCurrentQuery(oldQuery);

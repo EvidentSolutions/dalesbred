@@ -27,18 +27,26 @@ import fi.evident.dalesbred.TransactionCallback;
 import fi.evident.dalesbred.TransactionSettings;
 import fi.evident.dalesbred.dialects.Dialect;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Abstract the mechanism in which transactions are handled.
  */
 public interface TransactionManager {
+
+    /**
+     * Executes given callback with given transaction settings.
+     */
     <T> T withTransaction(@NotNull TransactionSettings settings, @NotNull TransactionCallback<T> callback, @NotNull Dialect dialect);
 
-    boolean hasActiveTransaction();
+    /**
+     * Executes given callback within current transaction.
+     */
+    <T> T withCurrentTransaction(@NotNull TransactionCallback<T> callback, @NotNull Dialect dialect);
 
-    @Nullable
-    DatabaseTransaction getActiveTransaction();
+    /**
+     * Returns true if the code is executing inside transaction.
+     */
+    boolean hasActiveTransaction();
 
     /**
      * Returns the used transaction isolation level.
