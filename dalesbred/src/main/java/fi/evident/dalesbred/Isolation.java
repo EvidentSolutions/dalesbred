@@ -46,10 +46,10 @@ public enum Isolation {
     /** @see Connection#TRANSACTION_SERIALIZABLE */
     SERIALIZABLE(Connection.TRANSACTION_SERIALIZABLE);
 
-    final int level;
+    private final int jdbcLevel;
 
-    Isolation(int level) {
-        this.level = level;
+    Isolation(int jdbcLevel) {
+        this.jdbcLevel = jdbcLevel;
     }
 
     /**
@@ -58,10 +58,17 @@ public enum Isolation {
     @NotNull
     public static Isolation forJdbcCode(int code) {
         for (Isolation isolation : values())
-            if (isolation.level == code)
+            if (isolation.jdbcLevel == code)
                 return isolation;
 
         throw new IllegalArgumentException("invalid code: " + code);
+    }
+
+    /**
+     * Returns the JDBC level for this isolation.
+     */
+    public int getJdbcLevel() {
+        return jdbcLevel;
     }
 
     @NotNull

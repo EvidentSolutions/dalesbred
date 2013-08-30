@@ -38,10 +38,10 @@ public class IsolationTest {
 
     @Test
     public void levelsMatchJdbcLevels() {
-        assertThat(READ_UNCOMMITTED.level, is(Connection.TRANSACTION_READ_UNCOMMITTED));
-        assertThat(READ_COMMITTED.level, is(Connection.TRANSACTION_READ_COMMITTED));
-        assertThat(REPEATABLE_READ.level, is(Connection.TRANSACTION_REPEATABLE_READ));
-        assertThat(SERIALIZABLE.level, is(Connection.TRANSACTION_SERIALIZABLE));
+        assertThat(READ_UNCOMMITTED.getJdbcLevel(), is(Connection.TRANSACTION_READ_UNCOMMITTED));
+        assertThat(READ_COMMITTED.getJdbcLevel(), is(Connection.TRANSACTION_READ_COMMITTED));
+        assertThat(REPEATABLE_READ.getJdbcLevel(), is(Connection.TRANSACTION_REPEATABLE_READ));
+        assertThat(SERIALIZABLE.getJdbcLevel(), is(Connection.TRANSACTION_SERIALIZABLE));
     }
 
     @Test

@@ -60,7 +60,7 @@ final class DatabaseTransaction {
             connection.setAutoCommit(false);
 
             if (isolation != Isolation.DEFAULT)
-                connection.setTransactionIsolation(isolation.level);
+                connection.setTransactionIsolation(isolation.getJdbcLevel());
 
         } catch (SQLException e) {
             throw dialect.convertException(e);
