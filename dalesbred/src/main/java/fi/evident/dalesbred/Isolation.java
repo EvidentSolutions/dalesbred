@@ -72,7 +72,7 @@ public enum Isolation {
     }
 
     @NotNull
-    Isolation normalize(@NotNull Isolation defaultValue) {
+    public Isolation normalize(@NotNull Isolation defaultValue) {
         return (this == DEFAULT) ? defaultValue : this;
     }
 }

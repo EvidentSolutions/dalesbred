@@ -22,14 +22,12 @@
 
 package fi.evident.dalesbred.dialects;
 
-import fi.evident.dalesbred.DatabaseException;
-import fi.evident.dalesbred.DatabaseSQLException;
-import fi.evident.dalesbred.TransactionRollbackException;
-import fi.evident.dalesbred.TransactionSerializationException;
+import fi.evident.dalesbred.*;
 import fi.evident.dalesbred.connection.ConnectionProvider;
 import fi.evident.dalesbred.connection.DataSourceConnectionProvider;
 import fi.evident.dalesbred.instantiation.TypeConversion;
 import fi.evident.dalesbred.instantiation.TypeConversionRegistry;
+import fi.evident.dalesbred.tx.TransactionManager;
 import org.jetbrains.annotations.NotNull;
 
 import javax.sql.DataSource;
@@ -88,6 +86,16 @@ public abstract class Dialect {
     @NotNull
     public static Dialect detect(@NotNull DataSource dataSource) {
         return detect(new DataSourceConnectionProvider(dataSource));
+    }
+
+    @NotNull
+    public static Dialect detect(@NotNull TransactionManager transactionManager) {
+        return transactionManager.withTransaction(new TransactionSettings(), new TransactionCallback<Dialect>() {
+            @Override
+            public Dialect execute(@NotNull TransactionContext tx) throws SQLException {
+                return detect(tx.getConnection());
+            }
+        }, new DefaultDialect());
     }
 
     @NotNull

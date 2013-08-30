@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Evident Solutions Oy
+ * Copyright (c) 2013 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,9 +19,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package fi.evident.dalesbred.tx;
 
-package fi.evident.dalesbred;
-
+import fi.evident.dalesbred.Isolation;
+import fi.evident.dalesbred.TransactionCallback;
+import fi.evident.dalesbred.TransactionContext;
+import fi.evident.dalesbred.TransactionSerializationException;
 import fi.evident.dalesbred.connection.ConnectionProvider;
 import fi.evident.dalesbred.dialects.Dialect;
 import org.jetbrains.annotations.NotNull;
@@ -35,10 +38,7 @@ import java.util.logging.Logger;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 import static fi.evident.dalesbred.utils.Throwables.propagate;
 
-/**
- * Represents the active database-transaction.
- */
-final class DatabaseTransaction {
+final class DefaultDatabaseTransaction implements DatabaseTransaction {
 
     @NotNull
     private final Connection connection;
@@ -51,7 +51,7 @@ final class DatabaseTransaction {
     private static final Logger log = Logger.getLogger(DatabaseTransaction.class.getName());
 
     @SuppressWarnings("JDBCResourceOpenedButNotSafelyClosed")
-    DatabaseTransaction(@NotNull ConnectionProvider connectionProvider, @NotNull Dialect dialect, @NotNull Isolation isolation) {
+    public DefaultDatabaseTransaction(@NotNull ConnectionProvider connectionProvider, @NotNull Dialect dialect, @NotNull Isolation isolation) {
         try {
             this.connectionProvider = requireNonNull(connectionProvider);
             this.connection = connectionProvider.getConnection();
@@ -67,12 +67,13 @@ final class DatabaseTransaction {
         }
     }
 
-    <T> T execute(int retries, @NotNull TransactionCallback<T> callback) {
+    @Override
+    public <T> T execute(int retries, @NotNull TransactionCallback<T> callback) {
         int tries = 1;
         while (true) {
             try {
                 try {
-                    TransactionContext ctx = new TransactionContext(connection);
+                    TransactionContext ctx = new DefaultTransactionContext(connection);
                     T value = callback.execute(ctx);
                     if (ctx.isRollbackOnly())
                         connection.rollback();
@@ -96,13 +97,14 @@ final class DatabaseTransaction {
         }
     }
 
-    <T> T nested(int retries, @NotNull TransactionCallback<T> callback) {
+    @Override
+    public <T> T nested(int retries, @NotNull TransactionCallback<T> callback) {
         int tries = 1;
         while (true) {
             try {
                 Savepoint savepoint = connection.setSavepoint();
                 try {
-                    TransactionContext ctx = new TransactionContext(connection);
+                    TransactionContext ctx = new DefaultTransactionContext(connection);
                     T value = callback.execute(ctx);
                     if (ctx.isRollbackOnly())
                         connection.rollback(savepoint);
@@ -126,15 +128,17 @@ final class DatabaseTransaction {
         }
     }
 
-    <T> T join(@NotNull TransactionCallback<T> callback) {
+    @Override
+    public <T> T join(@NotNull TransactionCallback<T> callback) {
         try {
-            return callback.execute(new TransactionContext(connection));
+            return callback.execute(new DefaultTransactionContext(connection));
         } catch (SQLException e) {
             throw dialect.convertException(e);
         }
     }
 
-    void close() {
+    @Override
+    public void close() {
         try {
             connectionProvider.releaseConnection(connection);
         } catch (SQLException e) {

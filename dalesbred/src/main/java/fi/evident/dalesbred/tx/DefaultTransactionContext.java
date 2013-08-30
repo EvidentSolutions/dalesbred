@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Evident Solutions Oy
+ * Copyright (c) 2013 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,35 +19,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package fi.evident.dalesbred.tx;
 
-package fi.evident.dalesbred;
-
+import fi.evident.dalesbred.TransactionContext;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Transaction propagation types.
- */
-public enum Propagation {
+import java.sql.Connection;
 
-    /** Use the default propagation level that is configured */
-    DEFAULT,
+import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
-    /** Join existing transaction if there is one, otherwise create a new one. */
-    REQUIRED,
-
-    /** Join existing transaction if there is one, otherwise throw an exception. */
-    MANDATORY,
-
-    /** Always create a new transaction. Existing transaction is suspended for the duration of this transaction. */
-    REQUIRES_NEW,
-
-    /** Start a nested transaction if there is a current transaction, otherwise start a new normal transaction. */
-    NESTED,;
+final class DefaultTransactionContext extends TransactionContext {
 
     @NotNull
-    public Propagation normalize(@NotNull Propagation defaultValue) {
-        return (this != DEFAULT)         ? this
-             : (defaultValue != DEFAULT) ? defaultValue
-             : REQUIRED;
+    private final Connection connection;
+    private boolean rollbackOnly = false;
+
+    DefaultTransactionContext(@NotNull Connection connection) {
+        this.connection = requireNonNull(connection);
+    }
+
+    /**
+     * Returns the raw JDBC-connection for this transaction.
+     */
+    @Override
+    @NotNull
+    public Connection getConnection() {
+        return connection;
+    }
+
+    /**
+     * Requests that this transaction will be rolled back.
+     */
+    @Override
+    public void setRollbackOnly() {
+        rollbackOnly = true;
+    }
+
+    @Override
+    public boolean isRollbackOnly() {
+        return rollbackOnly;
     }
 }

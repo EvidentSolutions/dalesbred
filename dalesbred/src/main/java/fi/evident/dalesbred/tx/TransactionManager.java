@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Evident Solutions Oy
+ * Copyright (c) 2013 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,28 +19,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package fi.evident.dalesbred.tx;
 
-package fi.evident.dalesbred;
-
+import fi.evident.dalesbred.Isolation;
+import fi.evident.dalesbred.Propagation;
+import fi.evident.dalesbred.TransactionCallback;
+import fi.evident.dalesbred.TransactionSettings;
+import fi.evident.dalesbred.dialects.Dialect;
 import org.jetbrains.annotations.NotNull;
-
-import java.sql.Connection;
+import org.jetbrains.annotations.Nullable;
 
 /**
- * Provides transactions with access to the context.
+ * Abstract the mechanism in which transactions are handled.
  */
-public abstract class TransactionContext {
+public interface TransactionManager {
+    <T> T withTransaction(@NotNull TransactionSettings settings, @NotNull TransactionCallback<T> callback, @NotNull Dialect dialect);
+
+    boolean hasActiveTransaction();
+
+    @Nullable
+    DatabaseTransaction getActiveTransaction();
 
     /**
-     * Returns the raw JDBC-connection for this transaction.
+     * Returns the used transaction isolation level.
      */
     @NotNull
-    public abstract Connection getConnection();
+    Isolation getDefaultIsolation();
 
     /**
-     * Requests that this transaction will be rolled back.
+     * Sets the transaction isolation level to use.
      */
-    public abstract void setRollbackOnly();
+    void setDefaultIsolation(@NotNull Isolation isolation);
 
-    public abstract boolean isRollbackOnly();
+    /**
+     * Returns the default transaction propagation to use.
+     */
+    @NotNull
+    Propagation getDefaultPropagation();
+
+    /**
+     * Returns the default transaction propagation to use.
+     */
+    void setDefaultPropagation(@NotNull Propagation propagation);
 }

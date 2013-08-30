@@ -20,34 +20,21 @@
  * THE SOFTWARE.
  */
 
-package fi.evident.dalesbred;
+package fi.evident.dalesbred.tx;
 
+import fi.evident.dalesbred.TransactionCallback;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Transaction propagation types.
+ * Represents the active database-transaction.
  */
-public enum Propagation {
+public interface DatabaseTransaction {
 
-    /** Use the default propagation level that is configured */
-    DEFAULT,
+    <T> T execute(int retries, @NotNull TransactionCallback<T> callback);
 
-    /** Join existing transaction if there is one, otherwise create a new one. */
-    REQUIRED,
+    <T> T nested(int retries, @NotNull TransactionCallback<T> callback);
 
-    /** Join existing transaction if there is one, otherwise throw an exception. */
-    MANDATORY,
+    <T> T join(@NotNull TransactionCallback<T> callback);
 
-    /** Always create a new transaction. Existing transaction is suspended for the duration of this transaction. */
-    REQUIRES_NEW,
-
-    /** Start a nested transaction if there is a current transaction, otherwise start a new normal transaction. */
-    NESTED,;
-
-    @NotNull
-    public Propagation normalize(@NotNull Propagation defaultValue) {
-        return (this != DEFAULT)         ? this
-             : (defaultValue != DEFAULT) ? defaultValue
-             : REQUIRED;
-    }
+    void close();
 }

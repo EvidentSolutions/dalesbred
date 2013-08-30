@@ -31,6 +31,9 @@ import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
 import fi.evident.dalesbred.instantiation.TypeConversionRegistry;
 import fi.evident.dalesbred.results.*;
 import fi.evident.dalesbred.support.proxy.TransactionalProxyFactory;
+import fi.evident.dalesbred.tx.DatabaseTransaction;
+import fi.evident.dalesbred.tx.DefaultTransactionManager;
+import fi.evident.dalesbred.tx.TransactionManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,25 +67,13 @@ import static java.lang.System.currentTimeMillis;
  */
 public final class Database {
 
-    /** Provides us with connections whenever we need one */
+    /** Class responsible for transaction handling */
     @NotNull
-    private final ConnectionProvider connectionProvider;
-
-    /** The current active transaction of this thread, or null */
-    @NotNull
-    private final ThreadLocal<DatabaseTransaction> activeTransaction = new ThreadLocal<DatabaseTransaction>();
+    private final TransactionManager transactionManager;
 
     /** Logger in which we log actions */
     @NotNull
     private final Logger log = Logger.getLogger(getClass().getName());
-
-    /** The isolation level to use for transactions that have not specified an explicit level. */
-    @NotNull
-    private Isolation defaultIsolation = Isolation.DEFAULT;
-
-    /** The default propagation for transactions */
-    @NotNull
-    private Propagation defaultPropagation = Propagation.DEFAULT;
 
     /** Default propagation for new transactions */
     private boolean allowImplicitTransactions = true;
@@ -146,7 +137,21 @@ public final class Database {
      * Constructs a new Database that uses given {@link ConnectionProvider} and {@link Dialect}.
      */
     public Database(@NotNull ConnectionProvider connectionProvider, @NotNull Dialect dialect) {
-        this.connectionProvider = requireNonNull(connectionProvider);
+        this(new DefaultTransactionManager(connectionProvider), dialect);
+    }
+
+    /**
+     * Constructs a new Database that uses given {@link TransactionManager} and auto-detects the dialect to use.
+     */
+    public Database(@NotNull TransactionManager transactionManager) {
+        this(transactionManager, Dialect.detect(transactionManager));
+    }
+
+    /**
+     * Constructs a new Database that uses given {@link TransactionManager} and {@link Dialect}.
+     */
+    public Database(@NotNull TransactionManager transactionManager, @NotNull Dialect dialect) {
+        this.transactionManager = requireNonNull(transactionManager);
         this.dialect = requireNonNull(dialect);
         this.instantiatorRegistry = new DefaultInstantiatorRegistry(dialect);
 
@@ -209,50 +214,14 @@ public final class Database {
     public <T> T withTransaction(@NotNull TransactionSettings settings,
                                  @NotNull TransactionCallback<T> callback) {
 
-        Propagation propagation = settings.getPropagation().normalize(defaultPropagation);
-        Isolation isolation = settings.getIsolation().normalize(defaultIsolation);
-        int retries = settings.getRetries();
-
-        DatabaseTransaction existingTransaction = activeTransaction.get();
-
-        if (existingTransaction != null) {
-            if (propagation == Propagation.REQUIRES_NEW)
-                return withSuspendedTransaction(isolation, callback);
-            else if (propagation == Propagation.NESTED)
-                return existingTransaction.nested(retries, callback);
-            else
-                return existingTransaction.join(callback);
-
-        } else {
-            if (propagation == Propagation.MANDATORY)
-                throw new NoActiveTransactionException("Transaction propagation was MANDATORY, but there was no existing transaction.");
-
-            DatabaseTransaction newTransaction = new DatabaseTransaction(connectionProvider, dialect, isolation);
-            try {
-                activeTransaction.set(newTransaction);
-                return newTransaction.execute(retries, callback);
-            } finally {
-                activeTransaction.set(null);
-                newTransaction.close();
-            }
-        }
+        return transactionManager.withTransaction(settings, callback, dialect);
     }
 
     /**
      * Returns true if and only if the current thread has an active transaction for this database.
      */
     public boolean hasActiveTransaction() {
-        return activeTransaction.get() != null;
-    }
-
-    private <T> T withSuspendedTransaction(@NotNull Isolation isolation, @NotNull TransactionCallback<T> callback) {
-        DatabaseTransaction suspended = activeTransaction.get();
-        try {
-            activeTransaction.set(null);
-            return withTransaction(Propagation.REQUIRED, isolation, callback);
-        } finally {
-            activeTransaction.set(suspended);
-        }
+        return transactionManager.hasActiveTransaction();
     }
 
     /**
@@ -270,7 +239,7 @@ public final class Database {
             if (allowImplicitTransactions) {
                 return withTransaction(callback);
             } else {
-                DatabaseTransaction transaction = activeTransaction.get();
+                DatabaseTransaction transaction = transactionManager.getActiveTransaction();
                 if (transaction != null)
                     return transaction.join(callback);
                 else
@@ -614,14 +583,14 @@ public final class Database {
      */
     @NotNull
     public Isolation getDefaultIsolation() {
-        return defaultIsolation;
+        return transactionManager.getDefaultIsolation();
     }
 
     /**
      * Sets the transaction isolation level to use.
      */
     public void setDefaultIsolation(@NotNull Isolation isolation) {
-        this.defaultIsolation = isolation;
+        transactionManager.setDefaultIsolation(isolation);
     }
 
     /**
@@ -629,14 +598,14 @@ public final class Database {
      */
     @NotNull
     public Propagation getDefaultPropagation() {
-        return defaultPropagation;
+        return transactionManager.getDefaultPropagation();
     }
 
     /**
      * Returns the default transaction propagation to use.
      */
     public void setDefaultPropagation(@NotNull Propagation propagation) {
-        defaultPropagation = propagation;
+        transactionManager.setDefaultPropagation(propagation);
     }
 
     /**
@@ -669,6 +638,6 @@ public final class Database {
     @Override
     @NotNull
     public String toString() {
-        return "Database [dialect=" + dialect + ", allowImplicitTransactions=" + allowImplicitTransactions + ", defaultIsolation=" + defaultIsolation + ", defaultPropagation=" + defaultPropagation + ']';
+        return "Database [dialect=" + dialect + ", allowImplicitTransactions=" + allowImplicitTransactions + ", defaultIsolation=" + transactionManager.getDefaultIsolation() + ", defaultPropagation=" + transactionManager.getDefaultPropagation() + ']';
     }
 }
