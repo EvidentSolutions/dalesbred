@@ -1,4 +1,4 @@
-## x.y.z (yyyy-mm-dd)
+## 0.5.0 (2013-09-02)
 
   - Integration with Spring Framework.
   - Support for pluggable transaction management strategies.
