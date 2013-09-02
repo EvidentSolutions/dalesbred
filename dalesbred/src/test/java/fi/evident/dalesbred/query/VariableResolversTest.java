@@ -24,6 +24,7 @@ package fi.evident.dalesbred.query;
 
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,7 +53,6 @@ public class VariableResolversTest {
 
     @Test
     public void testProviderForBean() {
-
         TestBean bean = new TestBean();
         VariableResolver variableResolver = VariableResolvers.resolverForBean(bean);
 
@@ -61,11 +61,40 @@ public class VariableResolversTest {
         assertEquals(bean.baz, variableResolver.getValue("baz"));
     }
 
+    @Test(expected = VariableResolutionException.class)
+    public void resolvingUnknownVariableThrowsException() {
+        VariableResolver variableResolver = VariableResolvers.resolverForBean(new TestBean());
+
+        variableResolver.getValue("unknown");
+    }
+
+    @Test(expected = VariableResolutionException.class)
+    public void resolvingPrivateVariableThrowsException() {
+        VariableResolver variableResolver = VariableResolvers.resolverForBean(new TestBean());
+
+        variableResolver.getValue("privateVariable");
+    }
+
+    @Test(expected = VariableResolutionException.class)
+    public void variableThrowingIsWrappedInVariableResolutionException() {
+        VariableResolver variableResolver = VariableResolvers.resolverForBean(new TestBean());
+
+        variableResolver.getValue("throwingVariable");
+    }
+
+    @Test(expected = VariableResolutionException.class)
+    public void mapResolverForUnknownMapKey() {
+        VariableResolver variableResolver = VariableResolvers.resolverForMap(Collections.<String,Object>emptyMap());
+
+        variableResolver.getValue("unknown");
+    }
+
     @SuppressWarnings({"UnusedDeclaration", "FieldMayBeFinal"})
     private static class TestBean {
         public Object foo = new Object();
         private boolean bar = true;
         private String baz = "qwerty";
+        private String privateVariable = "foo";
 
         public boolean isBar() {
             return bar;
@@ -73,6 +102,10 @@ public class VariableResolversTest {
 
         public String getBaz() {
             return baz;
+        }
+
+        public String getThrowingVariable() {
+            throw new RuntimeException();
         }
     }
 }
