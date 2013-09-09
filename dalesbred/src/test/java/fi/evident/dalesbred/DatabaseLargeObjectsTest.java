@@ -3,6 +3,8 @@ package fi.evident.dalesbred;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -23,5 +25,17 @@ public class DatabaseLargeObjectsTest {
     public void blobColumnsCanBeCoercedToStrings() {
         byte[] data = { 1, 2, 3 };
         assertThat(db.findUnique(byte[].class, "values (cast (? as blob))", data), is(data));
+    }
+
+    @Test
+    public void streamBlobToDatabase() throws Exception {
+        db.update("drop table if exists blob_test");
+        db.update("create temporary table blob_test (id int, blob_data blob)");
+
+        byte[] originalData = { 25, 35, 3 };
+        db.update("insert into blob_test values (1, ?)", new ByteArrayInputStream(originalData));
+
+        byte[] data = db.findUnique(byte[].class, "select blob_data from blob_test where id=1");
+        assertThat(data, is(originalData));
     }
 }

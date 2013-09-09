@@ -39,6 +39,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+import java.io.InputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -535,7 +536,15 @@ public final class Database {
         int i = 1;
 
         for (Object arg : args)
-            ps.setObject(i++, instantiatorRegistry.valueToDatabase(unwrapConfidential(arg)));
+            bindArgument(ps, i++, instantiatorRegistry.valueToDatabase(unwrapConfidential(arg)));
+    }
+
+    private static void bindArgument(@NotNull PreparedStatement ps, int index, @Nullable Object value) throws SQLException {
+        if (value instanceof InputStream) {
+            ps.setBinaryStream(index, (InputStream) value);
+        } else {
+            ps.setObject(index, value);
+        }
     }
 
     @NotNull
