@@ -4,6 +4,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
+import java.io.StringReader;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -25,6 +26,18 @@ public class DatabaseLargeObjectsTest {
     public void blobColumnsCanBeCoercedToStrings() {
         byte[] data = { 1, 2, 3 };
         assertThat(db.findUnique(byte[].class, "values (cast (? as blob))", data), is(data));
+    }
+
+    @Test
+    public void streamClobToDatabase() throws Exception {
+        db.update("drop table if exists clob_test");
+        db.update("create temporary table clob_test (id int, clob_data clob)");
+
+        String originalData = "foobar";
+        db.update("insert into clob_test values (1, ?)", new StringReader(originalData));
+
+        String data = db.findUnique(String.class, "select clob_data from clob_test where id=1");
+        assertThat(data, is(originalData));
     }
 
     @Test
