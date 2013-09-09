@@ -261,8 +261,8 @@ public final class Database {
 
                     long startTime = currentTimeMillis();
                     ResultSet resultSet = ps.executeQuery();
-                    logQueryExecution(query, currentTimeMillis() - startTime);
                     try {
+                        logQueryExecution(query, currentTimeMillis() - startTime);
                         return processor.process(resultSet);
                     } finally {
                         resultSet.close();
