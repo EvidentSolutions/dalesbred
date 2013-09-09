@@ -45,6 +45,9 @@ public abstract class Dialect {
     private static final Logger log = Logger.getLogger(Dialect.class.getName());
 
     @NotNull
+    private EnumMode enumMode = EnumMode.NATIVE;
+
+    @NotNull
     public Object valueToDatabase(@NotNull Object value) {
         if (value instanceof Enum<?>)
             return createDatabaseEnum((Enum<?>) value);
@@ -56,17 +59,59 @@ public abstract class Dialect {
      * Returns a database representation for given enum-value.
      */
     @NotNull
-    protected Object createDatabaseEnum(@NotNull Enum<?> value) {
+    private Object createDatabaseEnum(@NotNull Enum<?> value) {
+        switch (enumMode) {
+            case NAME:
+                return value.name();
+            case ORDINAL:
+                return value.ordinal();
+            case NATIVE:
+                return createNativeDatabaseEnum(value);
+        }
+
+        throw new IllegalStateException("unknown enumMode: " + enumMode);
+    }
+
+    @NotNull
+    private <T extends Enum<T>> T parseDatabaseEnum(@NotNull Class<T> enumType, @NotNull Object value) {
+        switch (enumMode) {
+            case NAME:
+                return Enum.valueOf(enumType, value.toString());
+            case ORDINAL:
+                return enumByOrdinal(enumType, ((Number) value).intValue());
+            case NATIVE:
+                return parseNativeDatabaseEnum(enumType, value);
+        }
+
+        throw new IllegalStateException("unknown enumMode: " + enumMode);
+    }
+
+    @NotNull
+    private static <T extends Enum<T>> T enumByOrdinal(@NotNull Class<T> enumType, int ordinal) {
+        Enum<?>[] constants = enumType.getEnumConstants();
+        if (ordinal >= 0 && ordinal < constants.length)
+            return enumType.cast(constants[ordinal]);
+        else
+            throw new DatabaseException("invalid ordinal " + ordinal + " for enum type " + enumType.getName());
+    }
+
+    @NotNull
+    protected Object createNativeDatabaseEnum(@NotNull Enum<?> value) {
         return value.name();
     }
 
     @NotNull
-    public <T extends Enum<T>> TypeConversion<Object,T> getEnumCoercion(@NotNull final Class<T> enumType) {
+    protected <T extends Enum<T>> T parseNativeDatabaseEnum(@NotNull Class<T> enumType, @NotNull Object value) {
+        return Enum.valueOf(enumType, value.toString());
+    }
+
+    @NotNull
+    public <T extends Enum<T>> TypeConversion<Object, T> getEnumCoercion(@NotNull final Class<T> enumType) {
         return new TypeConversion<Object, T>(Object.class, enumType) {
             @NotNull
             @Override
             public T convert(@NotNull Object value) {
-                return Enum.valueOf(enumType, value.toString());
+                return parseDatabaseEnum(enumType, value);
             }
 
             @NotNull
@@ -154,5 +199,20 @@ public abstract class Dialect {
 
     public void registerTypeConversions(@NotNull TypeConversionRegistry typeConversionRegistry) {
 
+    }
+
+    /**
+     * Sets the way enumerations are persisted.
+     */
+    public void setEnumMode(@NotNull EnumMode enumMode) {
+        this.enumMode = enumMode;
+    }
+
+    /**
+     * Gets the way enumerations are persisted.
+     */
+    @NotNull
+    public EnumMode getEnumMode() {
+        return enumMode;
     }
 }

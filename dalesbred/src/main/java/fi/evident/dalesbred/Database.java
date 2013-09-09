@@ -620,6 +620,21 @@ public final class Database {
     }
 
     /**
+     * Sets the way enumerations are persisted.
+     */
+    public void setEnumMode(@NotNull EnumMode enumMode) {
+        dialect.setEnumMode(enumMode);
+    }
+
+    /**
+     * Gets the way enumerations are persisted.
+     */
+    @NotNull
+    public EnumMode getEnumMode() {
+        return dialect.getEnumMode();
+    }
+
+    /**
      * Returns the dialect that the database is using.
      */
     @NotNull

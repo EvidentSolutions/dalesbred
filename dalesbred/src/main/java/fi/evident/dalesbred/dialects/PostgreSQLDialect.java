@@ -40,7 +40,7 @@ public class PostgreSQLDialect extends Dialect {
 
     @NotNull
     @Override
-    protected Object createDatabaseEnum(@NotNull Enum<?> value) {
+    protected Object createNativeDatabaseEnum(@NotNull Enum<?> value) {
         try {
             PGobject object = new PGobject();
             object.setType(upperCamelToLowerUnderscore(value.getClass().getSimpleName()));

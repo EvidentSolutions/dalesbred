@@ -1,5 +1,6 @@
 ## x.y.z (yyyy-mm-dd)
 
+  - Support configuring the way that enums are stored to database.
   - Fixed handling of null result values in MapResultSetProcessor.
 
 ## 0.5.0 (2013-09-02)
