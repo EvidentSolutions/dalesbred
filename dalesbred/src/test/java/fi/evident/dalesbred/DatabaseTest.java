@@ -105,6 +105,15 @@ public class DatabaseTest {
     }
 
     @Test
+    public void mapWithNullCoercion() {
+        Map<String, String> map = db.findMap(String.class, String.class, "values ('foo', cast (null as clob)), (cast (null as clob), 'bar')");
+
+        assertThat(map.size(), is(2));
+        assertThat(map.get("foo"), is(nullValue()));
+        assertThat(map.get(null), is("bar"));
+    }
+
+    @Test
     public void findUnique_singleResult() {
         assertThat(db.findUnique(Integer.class, "values (42)"), is(42));
     }

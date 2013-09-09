@@ -28,6 +28,7 @@ import fi.evident.dalesbred.instantiation.NamedTypeList;
 import fi.evident.dalesbred.instantiation.TypeConversion;
 import fi.evident.dalesbred.utils.ResultSetUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -67,16 +68,24 @@ public final class MapResultSetProcessor<K,V> implements ResultSetProcessor<Map<
         if (types.size() != 2)
             throw new UnexpectedResultException("Expected ResultSet with 2 columns, but got " + types.size() + " columns.");
 
-        TypeConversion<Object, K> keyCoercion = getConversion(types.getType(0), keyType);
-        TypeConversion<Object, V> valueCoercion = getConversion(types.getType(1), valueType);
+        TypeConversion<Object, K> keyConversion = getConversion(types.getType(0), keyType);
+        TypeConversion<Object, V> valueConversion = getConversion(types.getType(1), valueType);
 
         while (resultSet.next()) {
-            K key = keyCoercion.convert(resultSet.getObject(1));
-            V value = valueCoercion.convert(resultSet.getObject(2));
+            K key = convert(keyConversion, resultSet.getObject(1));
+            V value = convert(valueConversion, resultSet.getObject(2));
             result.put(key, value);
         }
 
         return result;
+    }
+
+    @Nullable
+    private static <T> T convert(TypeConversion<Object, T> conversion, @Nullable Object value) {
+        if (value != null)
+            return conversion.convert(value);
+        else
+            return null;
     }
 
     @NotNull

@@ -1,3 +1,7 @@
+## x.y.z (yyyy-mm-dd)
+
+  - Fixed handling of null result values in MapResultSetProcessor.
+
 ## 0.5.0 (2013-09-02)
 
   - Integration with Spring Framework.
