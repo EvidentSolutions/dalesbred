@@ -77,6 +77,16 @@ public class ConversionMapTest {
         assertSame(conversion, registry.findConversion(String.class, Long.class));
     }
 
+    @Test
+    public void laterAdditionsOverrideEarlierOnes() {
+        TypeConversion<String, Long> conversion1 = dummyConversion(String.class, Long.class);
+        TypeConversion<String, Long> conversion2 = dummyConversion(String.class, Long.class);
+        registry.register(conversion1);
+        registry.register(conversion2);
+
+        assertSame(conversion2, registry.findConversion(String.class, Long.class));
+    }
+
     @NotNull
     private static <S, T> TypeConversion<S,T> dummyConversion(@NotNull Class<S> source, @NotNull Class<T> target) {
         return new TypeConversion<S, T>(source, target) {

@@ -69,10 +69,13 @@ final class ConversionMap {
     @Nullable
     private TypeConversion<?,?> findConversionsRegisteredFor(@NotNull Class<?> source, @NotNull Class<?> target) {
         List<TypeConversion<?,?>> candidates = mappings.get(source);
-        if (candidates != null)
-            for (TypeConversion<?,?> coercion : candidates)
-                if (isAssignableByBoxing(target, coercion.getTarget()))
-                    return coercion;
+        if (candidates != null) {
+            for (int i = candidates.size() - 1; i >= 0; i--) {
+                TypeConversion<?, ?> conversion = candidates.get(i);
+                if (isAssignableByBoxing(target, conversion.getTarget()))
+                    return conversion;
+            }
+        }
         return null;
     }
 }
