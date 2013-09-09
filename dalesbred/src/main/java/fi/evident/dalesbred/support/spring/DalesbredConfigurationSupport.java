@@ -23,6 +23,9 @@ package fi.evident.dalesbred.support.spring;
 
 import fi.evident.dalesbred.Database;
 import fi.evident.dalesbred.dialects.Dialect;
+import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
+import fi.evident.dalesbred.instantiation.TypeConversionRegistry;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -35,19 +38,39 @@ import javax.sql.DataSource;
  */
 public abstract class DalesbredConfigurationSupport {
 
-    @Autowired
-    private DataSource dataSource;
-
-    @Autowired
-    private PlatformTransactionManager platformTransactionManager;
-
     @Bean
-    public Database dalesbredDatabase() {
+    @Autowired
+    public Database dalesbredDatabase(DataSource dataSource, PlatformTransactionManager transactionManager) {
         Dialect dialect = dialect();
         if (dialect == null)
             dialect = Dialect.detect(dataSource);
 
-        return new Database(new SpringTransactionManager(dataSource, platformTransactionManager), dialect);
+        Database db = new Database(new SpringTransactionManager(dataSource, transactionManager), dialect);
+        registerInstantiators(db.getInstantiatorRegistry());
+        registerTypeConversions(db.getTypeConversionRegistry());
+        setupDatabase(db);
+        return db;
+    }
+
+    /**
+     * Can be overridden by subclasses to register custom instantiators.
+     */
+    @SuppressWarnings("UnusedParameters")
+    protected void registerInstantiators(@NotNull InstantiatorRegistry registry) {
+    }
+
+    /**
+     * Can be overridden by subclasses to register custom type conversions.
+     */
+    @SuppressWarnings("UnusedParameters")
+    protected void registerTypeConversions(@NotNull TypeConversionRegistry registry) {
+    }
+
+    /**
+     * Can be overridden by subclasses to perform custom database setup.
+     */
+    @SuppressWarnings("UnusedParameters")
+    protected void setupDatabase(@NotNull Database db) {
     }
 
     /**

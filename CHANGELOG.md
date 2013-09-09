@@ -1,5 +1,6 @@
 ## x.y.z (yyyy-mm-dd)
 
+  - Improved initialization hooks for Spring DalesbredConfigurationSupport.
   - Support configuring the way that enums are stored to database.
   - Fixed handling of null result values in MapResultSetProcessor.
 
