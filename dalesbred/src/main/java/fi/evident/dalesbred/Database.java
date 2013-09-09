@@ -29,6 +29,8 @@ import fi.evident.dalesbred.dialects.Dialect;
 import fi.evident.dalesbred.instantiation.DefaultInstantiatorRegistry;
 import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
 import fi.evident.dalesbred.instantiation.TypeConversionRegistry;
+import fi.evident.dalesbred.lob.InputStreamWithSize;
+import fi.evident.dalesbred.lob.ReaderWithSize;
 import fi.evident.dalesbred.results.*;
 import fi.evident.dalesbred.support.proxy.TransactionalProxyFactory;
 import fi.evident.dalesbred.tx.DefaultTransactionManager;
@@ -543,8 +545,22 @@ public final class Database {
     private void bindArgument(@NotNull PreparedStatement ps, int index, @Nullable Object arg) throws SQLException {
         Object value = instantiatorRegistry.valueToDatabase(unwrapConfidential(arg));
 
-        if (value instanceof InputStream) {
+        if (value instanceof InputStreamWithSize) {
+            InputStreamWithSize stream = (InputStreamWithSize) value;
+            long size = stream.getSize();
+            if (size <= Integer.MAX_VALUE)
+                ps.setBinaryStream(index, stream, (int) size);
+            else
+                ps.setBinaryStream(index, stream, size);
+        } else if (value instanceof InputStream) {
             ps.setBinaryStream(index, (InputStream) value);
+        } else if (value instanceof ReaderWithSize) {
+            ReaderWithSize reader = (ReaderWithSize) value;
+            long size = reader.getSize();
+            if (size <= Integer.MAX_VALUE)
+                ps.setCharacterStream(index, reader, (int) size);
+            else
+                ps.setCharacterStream(index, reader, size);
         } else if (value instanceof Reader) {
             ps.setCharacterStream(index, (Reader) value);
         } else {
