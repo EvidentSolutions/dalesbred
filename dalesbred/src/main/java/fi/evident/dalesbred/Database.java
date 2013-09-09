@@ -528,7 +528,7 @@ public final class Database {
             log.finer("executing query " + query);
     }
 
-    private void logQueryExecution(SqlQuery query, long millis) {
+    private void logQueryExecution(@NotNull SqlQuery query, long millis) {
         if (log.isLoggable(Level.FINE))
             log.fine("executed query in " + millis + " ms: " + query);
     }
@@ -537,10 +537,12 @@ public final class Database {
         int i = 1;
 
         for (Object arg : args)
-            bindArgument(ps, i++, instantiatorRegistry.valueToDatabase(unwrapConfidential(arg)));
+            bindArgument(ps, i++, arg);
     }
 
-    private static void bindArgument(@NotNull PreparedStatement ps, int index, @Nullable Object value) throws SQLException {
+    private void bindArgument(@NotNull PreparedStatement ps, int index, @Nullable Object arg) throws SQLException {
+        Object value = instantiatorRegistry.valueToDatabase(unwrapConfidential(arg));
+
         if (value instanceof InputStream) {
             ps.setBinaryStream(index, (InputStream) value);
         } else if (value instanceof Reader) {
