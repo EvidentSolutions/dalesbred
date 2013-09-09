@@ -59,7 +59,9 @@ final class DefaultTypeConversions {
         registry.registerConversionFromDatabaseType(new NumberToBigIntegerTypeConversion());
         registry.registerConversionFromDatabaseType(new NumberToBigDecimalTypeConversion());
         registry.registerConversionFromDatabaseType(new ClobToStringTypeConversion());
+        registry.registerConversionFromDatabaseType(new ClobToReaderTypeConversion());
         registry.registerConversionFromDatabaseType(new BlobToByteArrayTypeConversion());
+        registry.registerConversionFromDatabaseType(new BlobToInputStreamTypeConversion());
 
         registry.registerConversionToDatabaseType(new BigIntegerToBigDecimalTypeConversion());
         registry.registerConversionToDatabaseType(new ToStringTypeConversion<URL>(URL.class));
@@ -319,4 +321,39 @@ final class DefaultTypeConversions {
             }
         }
     }
+
+    private static class BlobToInputStreamTypeConversion extends TypeConversion<Blob,InputStream> {
+
+        BlobToInputStreamTypeConversion() {
+            super(Blob.class, InputStream.class);
+        }
+
+        @NotNull
+        @Override
+        public InputStream convert(@NotNull Blob value) {
+            try {
+                return value.getBinaryStream();
+            } catch (SQLException e) {
+                throw new DatabaseSQLException(e);
+            }
+        }
+    }
+
+    private static class ClobToReaderTypeConversion extends TypeConversion<Clob,Reader> {
+
+        ClobToReaderTypeConversion() {
+            super(Clob.class, Reader.class);
+        }
+
+        @NotNull
+        @Override
+        public Reader convert(@NotNull Clob value) {
+            try {
+                return value.getCharacterStream();
+            } catch (SQLException e) {
+                throw new DatabaseSQLException(e);
+            }
+        }
+    }
+
 }
