@@ -1,4 +1,4 @@
-## x.y.z (yyyy-mm-dd)
+## 0.5.1 (2013-09-14)
 
   - Improved initialization hooks for Spring DalesbredConfigurationSupport.
   - Support configuring the way that enums are stored to database.
