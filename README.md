@@ -202,6 +202,14 @@ results returned from database.
 
 See the Javadoc of the modules for details of their configuration.
 
+IDEA-integration
+----------------
+
+If you're using [IntelliJ IDEA](https://www.jetbrains.com/idea/), check out
+[Dalesbred IDEA Plugin](https://bitbucket.org/evidentsolutions/dalesbred-idea-plugin),
+which provides inspections for common errors (e.g. mismatch between query parameters
+and query).
+
 SqlQuery vs. query parameters
 -----------------------------
 
