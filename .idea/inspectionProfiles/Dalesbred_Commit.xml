@@ -484,6 +484,8 @@
     <inspection_tool class="CyclomaticComplexityJS" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="m_limit" value="10" />
     </inspection_tool>
+    <inspection_tool class="DalesbredIncorrectParameterCount" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="DalesbredUninstantiableResult" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="DangerousCatchAll" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="DartGlobalInspectionTool" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="DartUnresolvedImport" enabled="false" level="WARNING" enabled_by_default="false" />
