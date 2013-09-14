@@ -66,6 +66,7 @@ public class DatabaseEnumModeTest {
         assertThat(result, is(MyEnum.FOO));
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public enum MyEnum {
         FOO, BAR, BAZ
     }

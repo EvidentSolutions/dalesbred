@@ -159,20 +159,14 @@ public final class Database {
 
     /**
      * Constructs a new Database that uses given {@link DataSource} and auto-detects the dialect to use.
-     *
-     * @deprecated use {@link #Database(fi.evident.dalesbred.connection.ConnectionProvider)}
      */
-    @Deprecated
     public Database(@NotNull DataSource dataSource) {
         this(new DataSourceConnectionProvider(dataSource));
     }
 
     /**
      * Constructs a new Database that uses given {@link DataSource} and {@link Dialect}.
-     *
-     * @deprecated use {@link #Database(fi.evident.dalesbred.connection.ConnectionProvider, fi.evident.dalesbred.dialects.Dialect)}
      */
-    @Deprecated
     public Database(@NotNull DataSource dataSource, @NotNull Dialect dialect) {
         this(new DataSourceConnectionProvider(dataSource), dialect);
     }

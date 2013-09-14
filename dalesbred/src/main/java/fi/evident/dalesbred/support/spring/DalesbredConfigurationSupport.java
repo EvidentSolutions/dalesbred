@@ -55,21 +55,21 @@ public abstract class DalesbredConfigurationSupport {
     /**
      * Can be overridden by subclasses to register custom instantiators.
      */
-    @SuppressWarnings("UnusedParameters")
+    @SuppressWarnings({"UnusedParameters", "EmptyMethod"})
     protected void registerInstantiators(@NotNull InstantiatorRegistry registry) {
     }
 
     /**
      * Can be overridden by subclasses to register custom type conversions.
      */
-    @SuppressWarnings("UnusedParameters")
+    @SuppressWarnings({"UnusedParameters", "EmptyMethod"})
     protected void registerTypeConversions(@NotNull TypeConversionRegistry registry) {
     }
 
     /**
      * Can be overridden by subclasses to perform custom database setup.
      */
-    @SuppressWarnings("UnusedParameters")
+    @SuppressWarnings({"UnusedParameters", "EmptyMethod"})
     protected void setupDatabase(@NotNull Database db) {
     }
 
