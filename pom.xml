@@ -205,6 +205,19 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.4.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <nexusUrl>https://oss.sonatype.org</nexusUrl>
+                    <serverId>sonatype-nexus</serverId>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 
     <profiles>
