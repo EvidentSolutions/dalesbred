@@ -26,11 +26,14 @@ import fi.evident.dalesbred.lob.InputStreamWithSize;
 import fi.evident.dalesbred.lob.ReaderWithSize;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.w3c.dom.Document;
 
+import javax.xml.transform.dom.DOMResult;
 import java.io.InputStream;
 import java.io.Reader;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.SQLXML;
 
 final class ArgumentBinder {
 
@@ -44,6 +47,8 @@ final class ArgumentBinder {
         } else if (value instanceof Reader) {
             bindReader(ps, index, (Reader) value);
 
+        } else if (value instanceof Document) {
+            bindXmlDocument(ps, index, (Document) value);
         } else {
             ps.setObject(index, value);
         }
@@ -81,5 +86,14 @@ final class ArgumentBinder {
         } else {
             ps.setCharacterStream(index, reader);
         }
+    }
+
+    private static void bindXmlDocument(@NotNull PreparedStatement ps, int index, @NotNull Document doc) throws SQLException {
+        SQLXML sqlxml = ps.getConnection().createSQLXML();
+        // TODO: arrange for the object to be freed after the PreparedStatement has been executed
+
+        sqlxml.setResult(DOMResult.class).setNode(doc);
+
+        ps.setSQLXML(index, sqlxml);
     }
 }

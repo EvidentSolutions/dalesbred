@@ -25,7 +25,9 @@ package fi.evident.dalesbred.instantiation;
 import fi.evident.dalesbred.DatabaseException;
 import fi.evident.dalesbred.DatabaseSQLException;
 import org.jetbrains.annotations.NotNull;
+import org.w3c.dom.Document;
 
+import javax.xml.transform.dom.DOMSource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +41,7 @@ import java.net.URL;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.SQLException;
+import java.sql.SQLXML;
 import java.util.TimeZone;
 
 final class DefaultTypeConversions {
@@ -62,6 +65,7 @@ final class DefaultTypeConversions {
         registry.registerConversionFromDatabaseType(new ClobToReaderTypeConversion());
         registry.registerConversionFromDatabaseType(new BlobToByteArrayTypeConversion());
         registry.registerConversionFromDatabaseType(new BlobToInputStreamTypeConversion());
+        registry.registerConversionFromDatabaseType(new SQLXMLToDocumentConversion());
 
         registry.registerConversionToDatabaseType(new BigIntegerToBigDecimalTypeConversion());
         registry.registerConversionToDatabaseType(new ToStringTypeConversion<URL>(URL.class));
@@ -356,4 +360,20 @@ final class DefaultTypeConversions {
         }
     }
 
+    private static class SQLXMLToDocumentConversion extends TypeConversion<SQLXML, Document> {
+
+        public SQLXMLToDocumentConversion() {
+            super(SQLXML.class, Document.class);
+        }
+
+        @NotNull
+        @Override
+        public Document convert(@NotNull SQLXML value) {
+            try {
+                return (Document) value.getSource(DOMSource.class).getNode();
+            } catch (SQLException e) {
+                throw new DatabaseSQLException(e);
+            }
+        }
+    }
 }
