@@ -158,57 +158,8 @@ a simple support for building transactional proxies for services:
     MyService myService = db.createTransactionalProxyFor(MyService.class, new MyRealService());
     service.frobnicate(); // this call will have a transaction wrapped around it
 
-If you are using Spring Framework or Guice, see the sections below.
-
-Spring-integration
-------------------
-
-Dalesbred has support for integration with Spring Framework and its transaction management.
-To integrate Dalesbred, create a configuration class inheriting from `DalesbredConfigurationSupport`
-and specify beans for `DataSource` and `PlatformTransactionManager`. A minimal configuration would
-therefore be something like the following:
-
-    :::java
-
-    @Configuration
-    @EnableTransactionManagement
-    public class MyDatabaseConfiguration extends DalesbredConfigurationSupport {
-
-        @Bean
-        public DataSource dataSource() {
-            return new JndiDataSourceLookup().getDataSource("jdbc/my-database");
-        }
-
-        @Bean
-        public PlatformTransactionManager transactionManager() {
-            return new DataSourceTransactionManager(dataSource());
-        }
-    }
-
-After this you can inject `Database` normally in your beans.
-
-Guice-integration
------------------
-
-Dalesbred has support for integration with Guice 3. You can just pass in `DataSourceDatabaseModule`
-or `DriverManagerDatabaseModule` when constructing your injector and you'll get automatic support
-for annotation based transactions and can @Inject your database wherever you need it.
-
-    :::java
-    Injector injector = Guice.createInjector(new DataSourceDatabaseModule(), new MyOtherModule());
-
-When using either of the Guice modules, you'll also get automatic support for using `@Inject` in the
-results returned from database.
-
-See the Javadoc of the modules for details of their configuration.
-
-IDEA-integration
-----------------
-
-If you're using [IntelliJ IDEA](https://www.jetbrains.com/idea/), check out
-[Dalesbred IDEA Plugin](https://bitbucket.org/evidentsolutions/dalesbred-idea-plugin),
-which provides inspections for common errors (e.g. mismatch between query parameters
-and query).
+If you are using Spring Framework or Guice, Dalesbred can integrated with them for transaction
+management. Consult the _Integrations_ -section for details.
 
 SqlQuery vs. query parameters
 -----------------------------
@@ -377,6 +328,59 @@ callback anything you like:
 
 Note that currently instantiation listeners are not called for objects instantiated by custom instantiators
 registered by users. This limitation could be lifted in the future.
+
+Integrations
+============
+
+Spring-integration
+------------------
+
+Dalesbred has support for integration with Spring Framework and its transaction management.
+To integrate Dalesbred, create a configuration class inheriting from `DalesbredConfigurationSupport`
+and specify beans for `DataSource` and `PlatformTransactionManager`. A minimal configuration would
+therefore be something like the following:
+
+    :::java
+
+    @Configuration
+    @EnableTransactionManagement
+    public class MyDatabaseConfiguration extends DalesbredConfigurationSupport {
+
+        @Bean
+        public DataSource dataSource() {
+            return new JndiDataSourceLookup().getDataSource("jdbc/my-database");
+        }
+
+        @Bean
+        public PlatformTransactionManager transactionManager() {
+            return new DataSourceTransactionManager(dataSource());
+        }
+    }
+
+After this you can inject `Database` normally in your beans.
+
+Guice-integration
+-----------------
+
+Dalesbred has support for integration with Guice 3. You can just pass in `DataSourceDatabaseModule`
+or `DriverManagerDatabaseModule` when constructing your injector and you'll get automatic support
+for annotation based transactions and can @Inject your database wherever you need it.
+
+    :::java
+    Injector injector = Guice.createInjector(new DataSourceDatabaseModule(), new MyOtherModule());
+
+When using either of the Guice modules, you'll also get automatic support for using `@Inject` in the
+results returned from database.
+
+See the Javadoc of the modules for details of their configuration.
+
+IDEA-integration
+----------------
+
+If you're using [IntelliJ IDEA](https://www.jetbrains.com/idea/), check out
+[Dalesbred IDEA Plugin](https://bitbucket.org/evidentsolutions/dalesbred-idea-plugin),
+which provides inspections for common errors (e.g. mismatch between query parameters
+and query).
 
 More examples
 =============
