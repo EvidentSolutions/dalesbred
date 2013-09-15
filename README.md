@@ -286,6 +286,23 @@ There are built-in conversions from Joda Time's `DateTime`, `LocalDate` and `Loc
 `java.sql.Date` and `java.sql.Time`, respectively. These will be automatically registered if Joda Time is
 detected on classpath.
 
+Large objects
+-------------
+
+You can stream large objects (blobs and clobs) to database by just passing `InputStream` or `Reader`
+to query. Similarly you can read them by asking back for `InputStream` or `Reader`.
+
+    :::java
+    try (InputStream in = new FileInputStream(name)) {
+        db.update("insert into my_file (name, contents) values (?,?)", name, in);
+    }
+
+    try (InputStream in = db.findUnique(InputStream.class, "select contents from my_file where name=?", name)) {
+        ...
+    }
+
+Note that the returned `InputStream` or `Reader` is only valid for the duration of the active transaction.
+
 Confidential values
 -------------------
 

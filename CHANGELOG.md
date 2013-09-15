@@ -1,3 +1,7 @@
+## x.y.z (yyyy-mm-dd)
+
+  - Support converting InputStreams/Readers to and from blobs/clobs.
+
 ## 0.5.1 (2013-09-14)
 
   - Improved initialization hooks for Spring DalesbredConfigurationSupport.
