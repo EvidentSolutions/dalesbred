@@ -1,4 +1,4 @@
-## x.y.z (yyyy-mm-dd)
+## 0.5.2 (2013-09-26)
 
   - Support native XML-types of databases.
   - Support converting InputStreams/Readers to and from blobs/clobs.
