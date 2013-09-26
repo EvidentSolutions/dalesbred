@@ -2,6 +2,7 @@
 
   - Support native XML-types of databases.
   - Support converting InputStreams/Readers to and from blobs/clobs.
+  - Fixed handling null values in conjunction with conversions on reflective bindings.
 
 ## 0.5.1 (2013-09-14)
 

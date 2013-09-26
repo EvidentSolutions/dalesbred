@@ -79,7 +79,7 @@ final class ReflectionInstantiator<T> implements Instantiator<T> {
         for (int i = 0; i < accessors.length; i++) {
             int argumentIndex = i + constructorParameterCount;
             Object originalValue = arguments.getValues().get(argumentIndex);
-            Object convertedValue = conversions[argumentIndex].convert(originalValue);
+            Object convertedValue = convert(originalValue, conversions[argumentIndex]);
             accessors[i].set(result, convertedValue);
         }
     }
@@ -89,8 +89,16 @@ final class ReflectionInstantiator<T> implements Instantiator<T> {
         Object[] result = new Object[constructorParameterCount];
 
         for (int i = 0; i < result.length; i++)
-            result[i] = conversions[i].convert(arguments.get(i));
+            result[i] = convert(arguments.get(i), conversions[i]);
 
         return result;
+    }
+
+    @Nullable
+    private static Object convert(@Nullable Object value, @NotNull TypeConversion<Object, ?> conversion) {
+        if (value != null)
+            return conversion.convert(value);
+        else
+            return null;
     }
 }

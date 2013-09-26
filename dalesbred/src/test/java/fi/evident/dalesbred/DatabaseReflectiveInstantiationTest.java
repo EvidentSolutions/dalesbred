@@ -21,10 +21,12 @@
  */
 package fi.evident.dalesbred;
 
+import org.joda.time.DateTime;
 import org.junit.Rule;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class DatabaseReflectiveInstantiationTest {
@@ -52,6 +54,24 @@ public class DatabaseReflectiveInstantiationTest {
         assertThat(result.getProperty(), is(44));
     }
 
+    @Test
+    public void constructorBindingWithNullValuesAndConversions() {
+        ConstructorNeedingConversion result = db.findUnique(ConstructorNeedingConversion.class, "values (cast(null as datetime))");
+        assertThat(result.dateTime, is(nullValue()));
+    }
+
+    @Test
+    public void fieldBindingNullValuesAndConversions() {
+        FieldNeedingConversion result = db.findUnique(FieldNeedingConversion.class, "select (cast(null as datetime)) as date_time from (values (1))");
+        assertThat(result.dateTime, is(nullValue()));
+    }
+
+    @Test
+    public void setterBindingNullValuesAndConversions() {
+        SetterNeedingConversion result = db.findUnique(SetterNeedingConversion.class, "select (cast(null as datetime)) as date_time from (values (1))");
+        assertThat(result.getDateTime(), is(nullValue()));
+    }
+
     public static class MyResult {
         public final int constructor;
 
@@ -73,4 +93,28 @@ public class DatabaseReflectiveInstantiationTest {
         }
     }
 
+    public static class ConstructorNeedingConversion {
+        private final DateTime dateTime;
+
+        public ConstructorNeedingConversion(DateTime dateTime) {
+            this.dateTime = dateTime;
+        }
+    }
+
+    public static class FieldNeedingConversion {
+        public DateTime dateTime;
+    }
+
+    public static class SetterNeedingConversion {
+        private DateTime dateTime;
+
+        public DateTime getDateTime() {
+            return dateTime;
+        }
+
+        @Reflective
+        public void setDateTime(DateTime dateTime) {
+            this.dateTime = dateTime;
+        }
+    }
 }
