@@ -98,6 +98,16 @@ public final class QueryBuilder {
     }
 
     /**
+     * Appends given query and its arguments to this query.
+     */
+    @NotNull
+    public QueryBuilder append(@SuppressWarnings("ParameterHidesMemberVariable") @NotNull SqlQuery query) {
+        this.query.append(query.getSql());
+        arguments.addAll(query.getArguments());
+        return this;
+    }
+
+    /**
      * Adds a given amount of comma-separated place-holders. The amount must be at last 1.
      */
     @NotNull

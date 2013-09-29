@@ -85,4 +85,14 @@ public class QueryBuilderTest {
         SqlQuery query = new QueryBuilder("select * from user where password=?").addConfidentialArgument("foo").build();
         assertEquals("select * from user where password=? [****]", query.toString());
     }
+
+    @Test
+    public void appendQuery() {
+        SqlQuery query = query("select * from foo where bar = ? and baz = ?", 42, "foobar");
+
+        QueryBuilder qb = new QueryBuilder();
+        qb.append("select * from (").append(query).append(") where row < ?", 10);
+
+        assertEquals(query("select * from (select * from foo where bar = ? and baz = ?) where row < ?", 42, "foobar", 10), qb.build());
+    }
 }
