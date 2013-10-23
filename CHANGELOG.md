@@ -1,5 +1,6 @@
-## x.y.z (yyyy-mm-dd)
+## 0.5.3. (2013-10-23)
 
+  - Fixed building Joda LocalDates from database dates.
   - Support adding sub-queries to QueryBuilder.
 
 ## 0.5.2 (2013-09-26)

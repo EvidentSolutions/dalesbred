@@ -98,7 +98,7 @@ public final class JodaTypeConversions {
         @NotNull
         @Override
         public LocalDate convert(@NotNull Date value) {
-            return new LocalDate(value);
+            return LocalDate.fromDateFields(value);
         }
     }
 
