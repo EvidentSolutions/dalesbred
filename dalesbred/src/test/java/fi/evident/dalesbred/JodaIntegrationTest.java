@@ -69,6 +69,19 @@ public class JodaIntegrationTest {
     }
 
     @Test
+    public void localDatesFromTimestampWithTimeZoneProblems() {
+        DateTimeZone oldDefault = DateTimeZone.getDefault();
+        try {
+            DateTimeZone.setDefault(DateTimeZone.forID("UTC"));
+
+            assertThat(db.findUnique(LocalDate.class, "values (cast('2012-10-09 00:00:00' as timestamp))"), is(new LocalDate(2012, 10, 9)));
+
+        } finally {
+            DateTimeZone.setDefault(oldDefault);
+        }
+    }
+
+    @Test
     public void jodaTypesAsParameters() {
         DateContainer container = db.findUnique(DateContainer.class, "values (cast('2012-10-09 11:29:25' as timestamp), cast('2012-10-09' as date), cast('11:29:25' as time))");
 

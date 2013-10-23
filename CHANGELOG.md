@@ -1,4 +1,8 @@
-## 0.5.3. (2013-10-23)
+## 0.5.4 (2013-10-23)
+
+  - Fixed building Joda LocalDates from database timestamps.
+
+## 0.5.3 (2013-10-23)
 
   - Fixed building Joda LocalDates from database dates.
   - Support adding sub-queries to QueryBuilder.

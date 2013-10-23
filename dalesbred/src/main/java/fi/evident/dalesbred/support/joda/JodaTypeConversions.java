@@ -56,7 +56,7 @@ public final class JodaTypeConversions {
 
     public static void register(@NotNull TypeConversionRegistry typeConversionRegistry) {
         typeConversionRegistry.registerConversionFromDatabaseType(new DateTimeFromSqlTimestampTypeConversion());
-        typeConversionRegistry.registerConversionFromDatabaseType(new LocalDateFromSqlDateTypeConversion());
+        typeConversionRegistry.registerConversionFromDatabaseType(new LocalDateFromDateTypeConversion());
         typeConversionRegistry.registerConversionFromDatabaseType(new LocalTimeFromSqlTimeTypeConversion());
         typeConversionRegistry.registerConversionFromDatabaseType(new DateTimeZoneFromStringTypeConversion());
 
@@ -90,14 +90,14 @@ public final class JodaTypeConversions {
         }
     }
 
-    private static class LocalDateFromSqlDateTypeConversion extends TypeConversion<Date, LocalDate> {
-        LocalDateFromSqlDateTypeConversion() {
-            super(Date.class, LocalDate.class);
+    private static class LocalDateFromDateTypeConversion extends TypeConversion<java.util.Date, LocalDate> {
+        LocalDateFromDateTypeConversion() {
+            super(java.util.Date.class, LocalDate.class);
         }
 
         @NotNull
         @Override
-        public LocalDate convert(@NotNull Date value) {
+        public LocalDate convert(@NotNull java.util.Date value) {
             return LocalDate.fromDateFields(value);
         }
     }
