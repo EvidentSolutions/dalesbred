@@ -397,7 +397,7 @@ dependency to your pom.xml:
     <dependency>
         <groupId>fi.evident.dalesbred</groupId>
         <artifactId>dalesbred</artifactId>
-        <version>0.5.3</version>
+        <version>0.5.4</version>
     </dependency>
 
 For the JUnit test-support classes, add the following:
@@ -406,7 +406,7 @@ For the JUnit test-support classes, add the following:
     <dependency>
         <groupId>fi.evident.dalesbred</groupId>
         <artifactId>dalesbred-junit</artifactId>
-        <version>0.5.3</version>
+        <version>0.5.4</version>
         <scope>test</scope>
     </dependency>
 
