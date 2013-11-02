@@ -126,14 +126,14 @@ public final class SpringTransactionManager implements TransactionManager {
         defaultPropagation = requireNonNull(propagation);
     }
 
-    private static int springIsolationCode(@NotNull Isolation isolation) {
+    static int springIsolationCode(@NotNull Isolation isolation) {
         if (isolation == Isolation.DEFAULT)
             return TransactionDefinition.ISOLATION_DEFAULT;
         else
             return isolation.getJdbcLevel();
     }
 
-    private static int springPropagationCode(@NotNull Propagation propagation) {
+    static int springPropagationCode(@NotNull Propagation propagation) {
         switch (propagation) {
             case DEFAULT:
             case REQUIRED:
