@@ -64,6 +64,28 @@ public class SpringConfigurationTest {
     }
 
     @Test
+    public void rollbackForSpringTransactionDiscardsChangesOfDalesbred() {
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(SimpleConfiguration.class);
+        DataSource dataSource = ctx.getBean(DataSource.class);
+        final Database db = ctx.getBean(Database.class);
+
+        db.update("drop table if exists spring_tx_test");
+        db.update("create table spring_tx_test (id int)");
+
+        new TransactionTemplate(new DataSourceTransactionManager(dataSource)).execute(new org.springframework.transaction.support.TransactionCallback<Object>() {
+            @Nullable
+            @Override
+            public Object doInTransaction(TransactionStatus status) {
+                db.update("insert into spring_tx_test (id) values (1)");
+                status.setRollbackOnly();
+                return null;
+            }
+        });
+
+        assertThat(db.findUniqueInt("select count(*) from spring_tx_test"), is(0));
+    }
+
+    @Test
     public void overridingDialect() {
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(ConfigurationWithHsqlAndPostgresDialect.class);
         Database db = ctx.getBean(Database.class);
