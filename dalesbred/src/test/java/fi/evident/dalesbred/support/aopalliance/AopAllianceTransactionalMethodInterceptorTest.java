@@ -40,6 +40,7 @@ import static fi.evident.dalesbred.Isolation.SERIALIZABLE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+@SuppressWarnings("SpringJavaAutowiringInspection")
 public class AopAllianceTransactionalMethodInterceptorTest {
 
     @Inject

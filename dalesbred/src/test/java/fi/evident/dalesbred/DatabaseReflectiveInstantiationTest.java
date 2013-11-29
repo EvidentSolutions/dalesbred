@@ -102,6 +102,8 @@ public class DatabaseReflectiveInstantiationTest {
     }
 
     public static class FieldNeedingConversion {
+
+        @Reflective
         public DateTime dateTime;
     }
 

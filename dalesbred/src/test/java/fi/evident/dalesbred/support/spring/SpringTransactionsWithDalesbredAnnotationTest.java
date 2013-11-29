@@ -54,6 +54,7 @@ public class SpringTransactionsWithDalesbredAnnotationTest {
 
     public static class MyService {
 
+        @SuppressWarnings("SpringJavaAutowiringInspection")
         @Autowired
         private Database db;
 

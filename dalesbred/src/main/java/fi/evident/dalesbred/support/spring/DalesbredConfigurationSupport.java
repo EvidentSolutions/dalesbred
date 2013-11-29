@@ -27,7 +27,6 @@ import fi.evident.dalesbred.instantiation.InstantiatorRegistry;
 import fi.evident.dalesbred.instantiation.TypeConversionRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -39,7 +38,6 @@ import javax.sql.DataSource;
 public abstract class DalesbredConfigurationSupport {
 
     @Bean
-    @Autowired
     public Database dalesbredDatabase(DataSource dataSource, PlatformTransactionManager transactionManager) {
         Dialect dialect = dialect();
         if (dialect == null)

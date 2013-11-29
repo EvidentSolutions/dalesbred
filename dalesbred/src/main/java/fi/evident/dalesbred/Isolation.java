@@ -22,9 +22,12 @@
 
 package fi.evident.dalesbred;
 
+import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
+
+import static java.sql.Connection.*;
 
 /**
  * Represents the database isolation levels.
@@ -32,23 +35,24 @@ import java.sql.Connection;
 public enum Isolation {
 
     /** Use the default isolation level */
-    DEFAULT(0),
+    DEFAULT(TRANSACTION_NONE),
 
     /** @see Connection#TRANSACTION_READ_UNCOMMITTED */
-    READ_UNCOMMITTED(Connection.TRANSACTION_READ_UNCOMMITTED),
+    READ_UNCOMMITTED(TRANSACTION_READ_UNCOMMITTED),
 
     /** @see Connection#TRANSACTION_READ_COMMITTED */
-    READ_COMMITTED(Connection.TRANSACTION_READ_COMMITTED),
+    READ_COMMITTED(TRANSACTION_READ_COMMITTED),
 
     /** @see Connection#TRANSACTION_REPEATABLE_READ */
-    REPEATABLE_READ(Connection.TRANSACTION_REPEATABLE_READ),
+    REPEATABLE_READ(TRANSACTION_REPEATABLE_READ),
 
     /** @see Connection#TRANSACTION_SERIALIZABLE */
-    SERIALIZABLE(Connection.TRANSACTION_SERIALIZABLE);
+    SERIALIZABLE(TRANSACTION_SERIALIZABLE);
 
+    @JdbcIsolation
     private final int jdbcLevel;
 
-    Isolation(int jdbcLevel) {
+    Isolation(@JdbcIsolation int jdbcLevel) {
         this.jdbcLevel = jdbcLevel;
     }
 
@@ -56,7 +60,7 @@ public enum Isolation {
      * Returns the isolation value for given JDBC code.
      */
     @NotNull
-    public static Isolation forJdbcCode(int code) {
+    public static Isolation forJdbcCode(@JdbcIsolation int code) {
         for (Isolation isolation : values())
             if (isolation.jdbcLevel == code)
                 return isolation;
@@ -67,6 +71,7 @@ public enum Isolation {
     /**
      * Returns the JDBC level for this isolation.
      */
+    @JdbcIsolation
     public int getJdbcLevel() {
         return jdbcLevel;
     }
@@ -75,4 +80,7 @@ public enum Isolation {
     public Isolation normalize(@NotNull Isolation defaultValue) {
         return (this == DEFAULT) ? defaultValue : this;
     }
+
+    @MagicConstant(intValues = { TRANSACTION_NONE, TRANSACTION_READ_COMMITTED, TRANSACTION_READ_UNCOMMITTED, TRANSACTION_REPEATABLE_READ, TRANSACTION_SERIALIZABLE })
+    private @interface JdbcIsolation { }
 }

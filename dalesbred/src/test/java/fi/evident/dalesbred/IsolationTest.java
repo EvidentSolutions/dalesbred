@@ -60,6 +60,7 @@ public class IsolationTest {
         assertEquals(SERIALIZABLE,     forJdbcCode(Connection.TRANSACTION_SERIALIZABLE));
     }
 
+    @SuppressWarnings("MagicConstant")
     @Test(expected = IllegalArgumentException.class)
     public void fromInvalidJdbcIsolation() {
         forJdbcCode(525);
