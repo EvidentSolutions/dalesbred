@@ -177,6 +177,10 @@ public abstract class Dialect {
             log.fine("Automatically detected dialect Oracle.");
             return new OracleDialect();
 
+        } else if (productName.equals("Microsoft SQL Server")) {
+            log.fine("Automatically detected dialect SQLServer.");
+            return new SQLServerDialect();
+
         } else {
             log.info("Could not detect dialect for product name '" + productName + "', falling back to default.");
             return new DefaultDialect();
