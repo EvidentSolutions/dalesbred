@@ -8,4 +8,6 @@ out
 .idea/uiDesigner.xml
 .idea/dataSources.xml
 .idea/dataSources.ids
+build
+.gradle
 dalesbred/src/test/resources/postgresql-connection.properties

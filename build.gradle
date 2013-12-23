@@ -1,0 +1,50 @@
+allprojects {
+    apply plugin: 'maven'
+
+    group = 'fi.evident.dalesbred'
+    version = '0.5.5-SNAPSHOT'
+}
+
+subprojects {
+    apply plugin: 'java'
+    sourceCompatibility = 1.5
+    targetCompatibility = 1.5
+
+
+    repositories {
+        mavenCentral()
+    }
+
+    configurations.all {
+    }
+}
+
+project(':dalesbred') {
+    description = 'Dalesbred'
+
+    dependencies {
+        compile 'com.intellij:annotations:12.0'
+        compile 'postgresql:postgresql:9.1-901.jdbc4'
+        compile 'org.hsqldb:hsqldb:2.2.9'
+        compile 'mysql:mysql-connector-java:5.1.26'
+        compile 'joda-time:joda-time:2.1'
+        compile 'aopalliance:aopalliance:1.0'
+        compile 'com.google.inject:guice:3.0'
+        compile 'org.springframework:spring-context:3.2.4.RELEASE'
+        compile 'org.springframework:spring-jdbc:3.2.4.RELEASE'
+        testCompile 'junit:junit:4.10'
+        testCompile 'org.mockito:mockito-all:1.9.0'
+    }
+}
+
+project(':dalesbred-junit') {
+    description = 'Dalesbred JUnit-support'
+
+    dependencies {
+        compile project(':dalesbred')
+        compile 'javax.inject:javax.inject:1'
+        compile 'com.intellij:annotations:12.0'
+        compile 'junit:junit:4.10'
+        testCompile 'org.hsqldb:hsqldb:2.2.9'
+    }
+}
