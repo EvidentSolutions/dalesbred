@@ -1,21 +1,97 @@
 allprojects {
-    apply plugin: 'maven'
-
     group = 'fi.evident.dalesbred'
     version = '0.5.5-SNAPSHOT'
 }
 
 subprojects {
+    apply plugin: 'maven'
+    apply plugin: 'maven-publish'
     apply plugin: 'java'
+    apply plugin: 'signing'
     sourceCompatibility = 1.5
     targetCompatibility = 1.5
-
 
     repositories {
         mavenCentral()
     }
 
-    configurations.all {
+    configurations {
+        optional
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    task sourceJar(type: Jar) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    artifacts {
+        archives jar
+
+        archives javadocJar
+        archives sourceJar
+    }
+
+    signing {
+        sign configurations.archives
+    }
+
+    javadoc {
+        classpath = configurations.compile + configurations.optional
+    }
+
+    compileJava {
+        classpath = configurations.compile + configurations.optional
+    }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                repository(url: "file:/Users/komu/src/evident/dalesbred/build/repo")
+                //repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                //    authentication(userName: sonatypeUsername, password: sonatypePassword)
+                //}
+
+                pom.project {
+                    name project.name
+                    packaging 'jar'
+                    description project.description
+                    url 'https://bitbucket.org/evidentsolutions/dalesbred'
+
+                    scm {
+                        url 'https://bitbucket.org/evidentsolutions/dalesbred'
+                        connection 'scm:git:https://bitbucket.org/evidentsolutions/dalesbred.git'
+                        developerConnection 'scm:git:ssh://git@bitbucket.org/evidentsolutions/dalesbred.git'
+                    }
+
+                    licenses {
+                        license {
+                            name 'MIT License'
+                            url 'http://opensource.org/licenses/mit-license.php'
+                            distribution 'repo'
+                        }
+                    }
+
+                    organization {
+                        name 'Evident Solutions'
+                        url 'http://www.evident.fi'
+                    }
+
+                    developers {
+                        developer {
+                            id 'komu'
+                            name 'Juha Komulainen'
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -23,15 +99,15 @@ project(':dalesbred') {
     description = 'Dalesbred'
 
     dependencies {
-        compile 'com.intellij:annotations:12.0'
-        compile 'postgresql:postgresql:9.1-901.jdbc4'
-        compile 'org.hsqldb:hsqldb:2.2.9'
-        compile 'mysql:mysql-connector-java:5.1.26'
-        compile 'joda-time:joda-time:2.1'
-        compile 'aopalliance:aopalliance:1.0'
-        compile 'com.google.inject:guice:3.0'
-        compile 'org.springframework:spring-context:3.2.4.RELEASE'
-        compile 'org.springframework:spring-jdbc:3.2.4.RELEASE'
+        optional 'com.intellij:annotations:12.0'
+        optional 'postgresql:postgresql:9.1-901.jdbc4'
+        optional 'org.hsqldb:hsqldb:2.2.9'
+        optional 'mysql:mysql-connector-java:5.1.26'
+        optional 'joda-time:joda-time:2.1'
+        optional 'aopalliance:aopalliance:1.0'
+        optional 'com.google.inject:guice:3.0'
+        optional 'org.springframework:spring-context:3.2.4.RELEASE'
+        optional 'org.springframework:spring-jdbc:3.2.4.RELEASE'
         testCompile 'junit:junit:4.10'
         testCompile 'org.mockito:mockito-all:1.9.0'
     }
@@ -42,9 +118,9 @@ project(':dalesbred-junit') {
 
     dependencies {
         compile project(':dalesbred')
-        compile 'javax.inject:javax.inject:1'
-        compile 'com.intellij:annotations:12.0'
         compile 'junit:junit:4.10'
+        compile 'javax.inject:javax.inject:1'
+        optional 'com.intellij:annotations:12.0'
         testCompile 'org.hsqldb:hsqldb:2.2.9'
     }
 }
