@@ -20,8 +20,12 @@
  * THE SOFTWARE.
  */
 
-package fi.evident.dalesbred;
+package fi.evident.dalesbred.support.joda;
 
+import fi.evident.dalesbred.Database;
+import fi.evident.dalesbred.Reflective;
+import fi.evident.dalesbred.TestDatabaseProvider;
+import fi.evident.dalesbred.TransactionalTestsRule;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
