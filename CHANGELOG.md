@@ -1,5 +1,6 @@
 ## 0.5.5 (yyyy-mm-dd)
 
+  - Support java.time when running on Java 8.
   - Added withVoidTransaction method family along with VoidTransactionCallback
   - Added adapter for using Dalesbred's own @Transactional annotations with Spring.
 

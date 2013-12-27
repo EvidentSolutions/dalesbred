@@ -23,6 +23,7 @@
 package fi.evident.dalesbred.instantiation;
 
 import fi.evident.dalesbred.dialects.Dialect;
+import fi.evident.dalesbred.support.java8.JavaTimeTypeConversions;
 import fi.evident.dalesbred.support.joda.JodaTypeConversions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,6 +61,11 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
         this.dialect = requireNonNull(dialect);
 
         DefaultTypeConversions.register(typeConversionRegistry);
+
+        if (JavaTimeTypeConversions.hasJavaTime()) {
+            log.fine("Detected java.time in classpath. Registering type conversions for it.");
+            JavaTimeTypeConversions.register(typeConversionRegistry);
+        }
 
         if (JodaTypeConversions.hasJoda()) {
             log.fine("Detected Joda Time in classpath. Registering type conversions for Joda.");

@@ -246,7 +246,7 @@
                         <configuration>
                             <toolchains>
                                 <jdk>
-                                    <version>1.6</version>
+                                    <version>1.8</version>
                                     <vendor>sun</vendor>
                                 </jdk>
                             </toolchains>
