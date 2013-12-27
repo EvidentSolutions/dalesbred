@@ -75,19 +75,17 @@ public class DatabaseTransactionPropagationTest {
         db.update("drop table if exists test_table");
         db.update("create table test_table (text varchar(64))");
 
-        db.withTransaction(new TransactionCallback<Object>() {
-            @Nullable
+        db.withVoidTransaction(new VoidTransactionCallback() {
             @Override
-            public Object execute(@NotNull TransactionContext tx) {
+            public void execute(@NotNull TransactionContext tx) {
                 db.update("insert into test_table (text) values ('initial')");
 
                 assertThat(db.findUnique(String.class, "select text from test_table"), is("initial"));
 
                 try {
-                    db.withTransaction(NESTED, new TransactionCallback<Object>() {
-                        @NotNull
+                    db.withVoidTransaction(NESTED, new VoidTransactionCallback() {
                         @Override
-                        public Object execute(@NotNull TransactionContext tx) {
+                        public void execute(@NotNull TransactionContext tx) {
                             db.update("update test_table set text = 'new-value'");
 
                             assertThat(db.findUnique(String.class, "select text from test_table"), is("new-value"));
@@ -101,8 +99,6 @@ public class DatabaseTransactionPropagationTest {
                 }
 
                 assertThat(db.findUnique(String.class, "select text from test_table"), is("initial"));
-
-                return null;
             }
         });
     }

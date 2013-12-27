@@ -49,10 +49,9 @@ public class DatabaseTransactionIsolationTest {
         db1.update("create table isolation_test (value int)");
         db1.update("insert into isolation_test (value) values (1)");
 
-        db1.withTransaction(new TransactionCallback<Object>() {
-            @Nullable
+        db1.withVoidTransaction(new VoidTransactionCallback() {
             @Override
-            public Object execute(@NotNull TransactionContext tx) {
+            public void execute(@NotNull TransactionContext tx) {
                 db1.findUniqueInt("select value from isolation_test");
 
                 db2.withTransaction(new TransactionCallback<Object>() {
@@ -67,8 +66,6 @@ public class DatabaseTransactionIsolationTest {
                 });
 
                 db1.update("update isolation_test set value=3");
-
-                return null;
             }
         });
     }

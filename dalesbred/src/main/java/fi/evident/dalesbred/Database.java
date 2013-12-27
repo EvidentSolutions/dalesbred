@@ -212,6 +212,51 @@ public final class Database {
     }
 
     /**
+     * Executes a block of code within a context of a transaction, using {@link Propagation#REQUIRED} propagation.
+     */
+    public void withVoidTransaction(@NotNull VoidTransactionCallback callback) {
+        withTransaction(convertCallback(callback));
+    }
+
+    /**
+     * Executes a block of code with given propagation and configuration default isolation.
+     */
+    public void withVoidTransaction(@NotNull Propagation propagation, @NotNull VoidTransactionCallback callback) {
+        withVoidTransaction(propagation, Isolation.DEFAULT, callback);
+    }
+
+    /**
+     * Executes a block of code with given propagation and isolation.
+     */
+    public void withVoidTransaction(@NotNull Propagation propagation,
+                                    @NotNull Isolation isolation,
+                                    @NotNull VoidTransactionCallback callback) {
+        withTransaction(propagation, isolation, convertCallback(callback));
+    }
+
+    /**
+     * Executes a block of code with given transaction settings.
+     *
+     * @see TransactionSettings
+     */
+    public void withVoidTransaction(@NotNull TransactionSettings settings,
+                                    @NotNull VoidTransactionCallback callback) {
+        withTransaction(settings, convertCallback(callback));
+    }
+
+    @NotNull
+    private static TransactionCallback<Void> convertCallback(@NotNull final VoidTransactionCallback callback) {
+        return new TransactionCallback<Void>() {
+            @Nullable
+            @Override
+            public Void execute(@NotNull TransactionContext tx) throws SQLException {
+                callback.execute(tx);
+                return null;
+            }
+        };
+    }
+
+    /**
      * Returns true if and only if the current thread has an active transaction for this database.
      */
     public boolean hasActiveTransaction() {

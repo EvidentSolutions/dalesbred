@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Evident Solutions Oy
+ * Copyright (c) 2013 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,9 +29,8 @@ import java.sql.SQLException;
 /**
  * Callback for executing a block of code within a transaction.
  *
- * @see Database#withTransaction(TransactionCallback)
- * @see fi.evident.dalesbred.VoidTransactionCallback
+ * @see fi.evident.dalesbred.TransactionCallback
  */
-public interface TransactionCallback<T> {
-    T execute(@NotNull TransactionContext tx) throws SQLException;
+public interface VoidTransactionCallback {
+    void execute(@NotNull TransactionContext tx) throws SQLException;
 }

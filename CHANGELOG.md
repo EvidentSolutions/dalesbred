@@ -1,5 +1,6 @@
 ## 0.5.5 (yyyy-mm-dd)
 
+  - Added withVoidTransaction method family along with VoidTransactionCallback
   - Added adapter for using Dalesbred's own @Transactional annotations with Spring.
 
 ## 0.5.4 (2013-10-23)
