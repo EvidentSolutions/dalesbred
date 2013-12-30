@@ -33,6 +33,7 @@
       <w>instantiator</w>
       <w>instantiators</w>
       <w>intelli</w>
+      <w>javadocs</w>
       <w>jdbc</w>
       <w>jndi</w>
       <w>joda</w>
@@ -63,6 +64,7 @@
       <w>toolchains</w>
       <w>transactionally</w>
       <w>unflattening</w>
+      <w>xdoclint</w>
       <w>yyyy</w>
     </words>
   </dictionary>
