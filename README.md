@@ -237,6 +237,9 @@ There are built-in conversions from Joda Time's `DateTime`, `LocalDate` and `Loc
 `java.sql.Date` and `java.sql.Time`, respectively. These will be automatically registered if Joda Time is
 detected on classpath.
 
+When running on Java 8, conversions for `Instant`, `LocalDate`, `LocalDateTime`, `LocalTime`and `ZoneId` from
+`java.time`-package are automatically registered.
+
 Large objects
 -------------
 
