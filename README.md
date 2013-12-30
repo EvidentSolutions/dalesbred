@@ -111,14 +111,36 @@ If you plan to return stuff from updates, they are queries as far as Dalesbred i
 Transactions
 ------------
 
-To perform a bunch of operations in transaction, use `TransactionCallback`:
+To perform a bunch of operations in transaction, use `TransactionCallback` or `VoidTransactionCallback`:
 
     :::java
     db.withTransaction(new TransactionCallback<Result>() {
         public Result execute(TransactionContext tx) throws SQLException {
             // transactional operations
             ...
+            return result;
         });
+    });
+
+    db.withVoidTransaction(new VoidTransactionCallback() {
+        public void execute(TransactionContext tx) throws SQLException {
+            // transactional operations
+            ...
+        });
+    });
+
+If you are using Java 8, you can use the lighter lambda syntax:
+
+    :::java
+    db.withTransaction(tx -> {
+        // transactional operations
+        ...
+        return result;
+    });
+
+    db.withVoidTransaction(tx -> {
+        // transactional operations
+        ...
     });
 
 If you make calls to Database without and explicit transaction, by default
@@ -400,7 +422,7 @@ dependency to your pom.xml:
     <dependency>
         <groupId>fi.evident.dalesbred</groupId>
         <artifactId>dalesbred</artifactId>
-        <version>0.5.4</version>
+        <version>0.6.0-RC1</version>
     </dependency>
 
 For the JUnit test-support classes, add the following:
@@ -409,7 +431,7 @@ For the JUnit test-support classes, add the following:
     <dependency>
         <groupId>fi.evident.dalesbred</groupId>
         <artifactId>dalesbred-junit</artifactId>
-        <version>0.5.4</version>
+        <version>0.6.0-RC1</version>
         <scope>test</scope>
     </dependency>
 
