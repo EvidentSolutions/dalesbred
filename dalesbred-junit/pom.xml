@@ -4,7 +4,7 @@
     <parent>
         <artifactId>dalesbred-root</artifactId>
         <groupId>fi.evident.dalesbred</groupId>
-        <version>0.6.0-RC1</version>
+        <version>0.6.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
