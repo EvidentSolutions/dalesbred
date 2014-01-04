@@ -1,4 +1,4 @@
-## 0.5.5 (yyyy-mm-dd)
+## 0.6.0 (2014-01-04)
 
   - Support java.time when running on Java 8.
   - Added withVoidTransaction method family along with VoidTransactionCallback
