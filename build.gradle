@@ -1,6 +1,6 @@
 allprojects {
     group = 'fi.evident.dalesbred'
-    version = '0.5.5-SNAPSHOT'
+    version = '0.6.1-SNAPSHOT'
 }
 
 subprojects {
