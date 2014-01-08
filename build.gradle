@@ -42,6 +42,7 @@ subprojects {
 
     javadoc {
         classpath = configurations.compile + configurations.optional
+        options.addStringOption('Xdoclint:none', '-quiet')
     }
 
     compileJava {
