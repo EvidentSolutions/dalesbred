@@ -25,6 +25,7 @@ configure(rootProject) { project ->
         options = [
             eruby: 'erubis',
             attributes: [
+                icons: 'font',
                 toc: 'left',
                 'source-highlighter': 'prettify',
                 revnumber: project.version,
