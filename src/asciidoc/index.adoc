@@ -2,37 +2,32 @@ Dalesbred Reference Documentation
 =================================
 Juha Komulainen <juha.komulainen@evident.fi>
 
-Dalesbred
----------
+:javadocBase: https://dalesbred.evident.fi/docs/javadoc/?
+:jdkJavadocBase: http://download.java.net/jdk8/docs/api/?
+:springJavadocBase: http://docs.spring.io/spring/docs/3.2.5.RELEASE/javadoc-api/?
+:jodaJavadocBase: http://www.joda.org/joda-time/apidocs/?
 
-Dalesbred is a breed of domestic sheep originating in the United Kingdom.
-
-It is also a library that strives to make database access from Java nicer.
-Dalesbred assumes that SQL is a great way to access database, but that JDBC
-as an API causes pain. Therefore it wraps JDBC with a set of helpers
-while still providing access to low-level functionality.
-
-Get started
+Basic usage
 -----------
 
 Configuring the database connection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Most things in Dalesbred happen through an instance of `Database`. The easiest
-way to get hold of one is to specify the settings manually:
+Most things in Dalesbred happen through an instance of {javadocBase}fi/evident/dalesbred/Database.html[Database].
+The easiest way to get hold of one is to specify the settings manually:
 
 [source,java]
 Database db = Database.forUrlAndCredentials("jdbc:example-url", "login", "password");
 
 Note that this performs no connection pooling and is therefore probably not
 your preferred way of configuring the system in production. In a container
-you'll probably want to use a named `DataSource` lookup up from JNDI:
+you'll probably want to use a named {jdkJavadocBase}javax/sql/DataSource.html[DataSource] lookup up from JNDI:
 
 [source,java]
 Database db = Database.forJndiDataSource("java:comp/env/jdbc/ExampleDb");
 
-Alternatively, you might setup a `DataSource` yourself, in which case you can
-just create a `Database` out of that:
+Alternatively, you might setup a {jdkJavadocBase}javax/sql/DataSource.html[DataSource] yourself, in which case you can
+just create a {javadocBase}fi/evident/dalesbred/Database.html[Database] out of that:
 
 [source,java]
 Database db = Database.forDataSource(myDataSource);
@@ -50,7 +45,8 @@ To fetch results with multiple columns, usually you'd use a class with matching 
 
 [source,java]
 -------------------------------------------------------------------------------------------------------
-List<Department> departments = db.findAll(Department.class, "select id, name from department");
+List<Department> departments =
+    db.findAll(Department.class, "select id, name from department");
 
 public final class Department {
     private final int id;
@@ -70,7 +66,8 @@ columns are set using properties or direct field access. So even the following w
 
 [source,java]
 -------------------------------------------------------------------------------------------------------
-List<Department> departments = db.findAll(Department.class, "select id, name from department");
+List<Department> departments =
+    db.findAll(Department.class, "select id, name from department");
 
 ...
 
@@ -86,16 +83,16 @@ You can also convert the results directly to a map:
 Map<Integer,String> namesByIds = db.findMap(
         Integer.class, String.class, "select id, name from department");
 
-If for some reason you don't want to map the results into your own class, you
-can ask for a `ResultTable`, which is basically a detached representation of a
-`ResultSet`:
+If for some reason you don't want to map the results into your own class, you can ask for
+a {javadocBase}fi/evident/dalesbred/ResultTable.html[ResultTable], which is basically a detached
+representation of a {jdkJavadocBase}java/sql/ResultSet.html[ResultSet]:
 
 [source,java]
 ResultTable employees = db.findTable("select * from employee");
 
-Alternatively, you can supply your own `RowMapper` or `ResultSetProcessor`-implementation
-in place of the class and handle the result sets manually, but usually this should
-be unnecessary.
+Alternatively, you can supply your own {javadocBase}fi/evident/dalesbred/results/RowMapper.html[RowMapper] or
+{javadocBase}fi/evident/dalesbred/results/ResultSetProcessor.html[ResultSetProcessor]-implementation in place
+of the class and handle the result sets manually, but usually this should be unnecessary.
 
 Updates
 ~~~~~~~
@@ -110,94 +107,16 @@ If you plan to return stuff from updates, they are queries as far as Dalesbred i
 [source,java]
 int id = db.findUniqueInt("insert into department (name) values ('foo') returning id");
 
-Transactions
-~~~~~~~~~~~~
-
-To perform a bunch of operations in transaction, use `TransactionCallback` or `VoidTransactionCallback`:
-
-[source,java]
--------------------------------------------------------------------------------------------------------
-db.withTransaction(new TransactionCallback<Result>() {
-    public Result execute(TransactionContext tx) throws SQLException {
-        // transactional operations
-        ...
-        return result;
-    });
-});
-
-db.withVoidTransaction(new VoidTransactionCallback() {
-    public void execute(TransactionContext tx) throws SQLException {
-        // transactional operations
-        ...
-    });
-});
--------------------------------------------------------------------------------------------------------
-
-If you are using Java 8, you can use the lighter lambda syntax:
-
-[source,java]
--------------------------------------------------------------------------------------------------------
-db.withTransaction(tx -> {
-    // transactional operations
-    ...
-    return result;
-});
-
-db.withVoidTransaction(tx -> {
-    // transactional operations
-    ...
-});
--------------------------------------------------------------------------------------------------------
-
-If you make calls to Database without and explicit transaction, by default
-a new transaction is started for each call, but you can disallow this, in
-which case exceptions are thrown for calls without an active transaction:
-
-[source,java]
-db.setAllowImplicitTransactions(false);
-
-Nested transactions are supported if your database supports them:
-
-[source,java]
-db.withTransaction(Propagation.NESTED, new TransactionCallback<Result>() { ... });
-
-Annotation based transactions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The above transaction mechanism is a decent building block for implementing higher
-level abstractions, but it's quite verbose to use in Java. Therefore Dalesbred provides
-a simple support for building transactional proxies for services:
-
-[source,java]
--------------------------------------------------------------------------------------------------------
-public interface MyService {
-     void frobnicate();
-}
-
-public class MyRealService implements MyService {
-
-     @Transactional
-     public void frobnicate() {
-         ...
-     }
-}
-
-...
-
-MyService myService = db.createTransactionalProxyFor(MyService.class, new MyRealService());
-service.frobnicate(); // this call will have a transaction wrapped around it
--------------------------------------------------------------------------------------------------------
-
-If you are using Spring Framework or Guice, Dalesbred can integrated with them for transaction
-management. Consult the _Integrations_ -section for details.
+Queries
+-------
 
 SqlQuery vs. query parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All methods come in two variants: there's an implementation that takes
-an `SqlQuery` as a parameter and there's another implementation that takes
-`String` and variable arguments of parameters. The latter is just convenience
-method for the further, meaning that the following code fragments are
+an {javadocBase}fi/evident/dalesbred/SqlQuery.html[SqlQuery] as a parameter and there's another
+implementation that takes {jdkJavadocBase}java/lang/String.html[String] and variable arguments of parameters.
+The latter is just convenience method for the further, meaning that the following code fragments are
 identical in functionality:
 
 [source,java]
@@ -236,15 +155,18 @@ SqlQuery query = namedQuery("select id from employee where first_name = :firstNa
 db.findAll(Department.class, query);
 -------------------------------------------------------------------------------------------------------
 
-Instead of Maps, you can also pass just regular objects to namedQuery as the source of values. The parameter names
-are mapped to properties or fields of the objects. Finally, if you want detailed control, you can pass your own
-implementation of `VariableResolver` to resolve the variables.
+Instead of {jdkJavadocBase}java/util/Map.html[Map]s, you can also pass just regular objects to `namedQuery` as
+the source of values. The parameter names are mapped to properties or fields of the objects. Finally, if you want
+detailed control, you can pass your own implementation of
+{javadocBase}fi/evident/dalesbred/query/VariableResolver.html[VariableResolver] to resolve the variables.
 
 Building queries dynamically
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-At the moment there's no high-level API for building queries, but there is a `QueryBuilder` that
-is basically just a `StringBuilder` which remembers the query-parameters, so you can say things like:
+At the moment there's no high-level API for building queries, but there is a
+{javadocBase}fi/evident/dalesbred/query/QueryBuilder.html[QueryBuilder] that
+is basically just a {jdkJavadocBase}java/util/StringBuilder.html[StringBuilder] which remembers
+the query-parameters, so you can say things like:
 
 [source,java]
 -------------------------------------------------------------------------------------------------------
@@ -258,31 +180,101 @@ db.findAll(Document.class, qb.build());
 For all but simplest dynamic queries, you'll probably want to have a higher level API that understands
 the structure of the SQL.
 
-Custom type-conversions
-~~~~~~~~~~~~~~~~~~~~~~~
+Transactions
+------------
 
-Sometimes you need to convert database values to your own custom types and vice versa. To do that,
-you can register your own `TypeConversion`-implementations to `TypeConversionRegistry`:
+Transaction callbacks
+~~~~~~~~~~~~~~~~~~~~~
+
+To perform a bunch of operations in transaction, use {javadocBase}fi/evident/dalesbred/TransactionCallback.html[TransactionCallback]
+or {javadocBase}fi/evident/dalesbred/VoidTransactionCallback.html[VoidTransactionCallback]:
 
 [source,java]
 -------------------------------------------------------------------------------------------------------
-TypeConversionRegistry conversions = db.getTypeConversionRegistry();
-conversions.registerConversionFromDatabaseType(new StringToEmailAddressConversion());
-conversions.registerConversionToDatabaseType(new EmailAddressToStringConversion());
+db.withTransaction(new TransactionCallback<Result>() {
+    public Result execute(TransactionContext tx) throws SQLException {
+        // transactional operations
+        ...
+        return result;
+    });
+});
+
+db.withVoidTransaction(new VoidTransactionCallback() {
+    public void execute(TransactionContext tx) throws SQLException {
+        // transactional operations
+        ...
+    });
+});
 -------------------------------------------------------------------------------------------------------
 
-There are built-in conversions from Joda Time's `DateTime`, `LocalDate` and `LocalTime` to `java.sql.Timestamp`,
-`java.sql.Date` and `java.sql.Time`, respectively. These will be automatically registered if Joda Time is
-detected on classpath.
+If you are using Java 8, you can use the lighter lambda syntax:
 
-When running on Java 8, conversions for `Instant`, `LocalDate`, `LocalDateTime`, `LocalTime`and `ZoneId` from
-`java.time`-package are automatically registered.
+[source,java]
+-------------------------------------------------------------------------------------------------------
+db.withTransaction(tx -> {
+    // transactional operations
+    ...
+    return result;
+});
+
+db.withVoidTransaction(tx -> {
+    // transactional operations
+    ...
+});
+-------------------------------------------------------------------------------------------------------
+
+If you make calls to {javadocBase}fi/evident/dalesbred/Database.html[Database] without and explicit transaction, by default
+a new transaction is started for each call, but you can disallow this, in
+which case exceptions are thrown for calls without an active transaction:
+
+[source,java]
+db.setAllowImplicitTransactions(false);
+
+Nested transactions are supported if your database supports them:
+
+[source,java]
+db.withTransaction(Propagation.NESTED, new TransactionCallback<Result>() { ... });
+
+Annotation based transactions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The above transaction mechanism is a decent building block for implementing higher
+level abstractions, but it's quite verbose to use in Java. Therefore Dalesbred provides
+a simple support for building transactional proxies for services:
+
+[source,java]
+-------------------------------------------------------------------------------------------------------
+public interface MyService {
+     void frobnicate();
+}
+
+public class MyRealService implements MyService {
+
+     @Transactional
+     public void frobnicate() {
+         ...
+     }
+}
+
+...
+
+MyService myService = db.createTransactionalProxyFor(MyService.class, new MyRealService());
+service.frobnicate(); // this call will have a transaction wrapped around it
+-------------------------------------------------------------------------------------------------------
+
+If you are using http://projects.spring.io/spring-framework/[Spring Framework] or
+https://code.google.com/p/google-guice/[Guice], Dalesbred can integrated with them for transaction
+management. Consult the <<_integrations,Integrations>>-section for details.
+
+Miscellaneous features
+----------------------
 
 Large objects
 ~~~~~~~~~~~~~
 
-You can stream large objects (blobs and clobs) to database by just passing `InputStream` or `Reader`
-to query. Similarly you can read them by asking back for `InputStream` or `Reader`.
+You can stream large objects (blobs and clobs) to database by just passing {jdkJavadocBase}java/io/InputStream.html[InputStream]
+or {jdkJavadocBase}java/io/Reader.html[Reader] to query. Similarly you can read them by asking back for {jdkJavadocBase}java/io/InputStream.html[InputStream]
+or {jdkJavadocBase}java/io/Reader.html[Reader].
 
 [source,java]
 -------------------------------------------------------------------------------------------------------
@@ -295,7 +287,8 @@ try (InputStream in = db.findUnique(InputStream.class, "select contents from my_
 }
 -------------------------------------------------------------------------------------------------------
 
-Note that the returned `InputStream` or `Reader` is only valid for the duration of the active transaction.
+Note that the returned {jdkJavadocBase}java/io/InputStream.html[InputStream] or
+{jdkJavadocBase}java/io/Reader.html[Reader] is only valid for the duration of the active transaction.
 
 Confidential values
 ~~~~~~~~~~~~~~~~~~~
@@ -315,27 +308,30 @@ import static fi.evident.dalesbred.SqlQuery.confidential;
 db.update("insert into credit_card (number) values (?)", confidential(creditCardNumber));
 -------------------------------------------------------------------------------------------------------
 
-Test support
-~~~~~~~~~~~~
+Custom type-conversions
+~~~~~~~~~~~~~~~~~~~~~~~
 
-By including the _dalesbred-junit_ artifact in your project as a test dependency,
-you'll get support for writing transactional test cases:
+Sometimes you need to convert database values to your own custom types and vice versa. To do that,
+you can register your own {javadocBase}fi/evident/dalesbred/instantiation/TypeConversion.html[TypeConversion]-implementations
+to {javadocBase}fi/evident/dalesbred/instantiation/TypeConversionRegistry.html[TypeConversionRegistry]:
 
 [source,java]
 -------------------------------------------------------------------------------------------------------
-public class MyTest {
-
-    private final Database db = TestDatabaseProvider.databaseForProperties("testdb.properties");
-
-    @Rule
-    public final TransactionalTests tx = new TransactionalTests(db);
-
-    @Test
-    public void simpleTest() {
-        assertEquals("hello, world!", db.queryForUnique(String.class "select 'hello, world!'");
-    }
-}
+TypeConversionRegistry conversions = db.getTypeConversionRegistry();
+conversions.registerConversionFromDatabaseType(new StringToEmailAddressConversion());
+conversions.registerConversionToDatabaseType(new EmailAddressToStringConversion());
 -------------------------------------------------------------------------------------------------------
+
+There are built-in conversions from http://www.joda.org/joda-time/[Joda Time]'s
+{jodaJavadocBase}org/joda/time/DateTime.html[DateTime], {jodaJavadocBase}org/joda/time/LocalDate.html[LocalDate]
+and {jodaJavadocBase}org/joda/time/LocalTime.html[LocalTime] to {jdkJavadocBase}java/sql/Timestamp.html[java.sql.Timestamp],
+{jdkJavadocBase}java/sql/Date.html[java.sql.Date] and {jdkJavadocBase}java/sql/Time.html[java.sql.Time], respectively.
+These will be automatically registered if Joda Time is detected on classpath.
+
+When running on Java 8, conversions for {jdkJavadocBase}java/time/Instant.html[Instant],
+{jdkJavadocBase}java/time/LocalDate.html[LocalDate], {jdkJavadocBase}java/time/LocalDateTime.html[LocalDateTime],
+{jdkJavadocBase}java/time/LocalTime.html[LocalTime] and {jdkJavadocBase}java/time/ZoneId.html[ZoneId] from
+{jdkJavadocBase}java/time/package-summary.html[java.time]-package are automatically registered.
 
 Custom instantiators
 ~~~~~~~~~~~~~~~~~~~~
@@ -383,13 +379,15 @@ registered by users. This limitation could be lifted in the future.
 Integrations
 ------------
 
-Spring-integration
-~~~~~~~~~~~~~~~~~~
+Spring
+~~~~~~
 
-Dalesbred has support for integration with Spring Framework and its transaction management.
-To integrate Dalesbred, create a configuration class inheriting from `DalesbredConfigurationSupport`
-and specify beans for `DataSource` and `PlatformTransactionManager`. A minimal configuration would
-therefore be something like the following:
+Dalesbred has support for integration with http://projects.spring.io/spring-framework/[Spring Framework]
+and its transaction management. To integrate Dalesbred, create a configuration class inheriting from
+{javadocBase}fi/evident/dalesbred/support/spring/DalesbredConfigurationSupport.html[DalesbredConfigurationSupport]
+and specify beans for {jdkJavadocBase}javax/sql/DataSource.html[DataSource] and
+{springJavadocBase}org/springframework/transaction/PlatformTransactionManager.html[PlatformTransactionManager].
+A minimal configuration would therefore be something like the following:
 
 [source,java]
 -------------------------------------------------------------------------------------------------------
@@ -409,14 +407,16 @@ public class MyDatabaseConfiguration extends DalesbredConfigurationSupport {
 }
 -------------------------------------------------------------------------------------------------------
 
-After this you can inject `Database` normally in your beans.
+After this you can inject {javadocBase}fi/evident/dalesbred/Database.html[Database] normally in your beans.
 
-Guice-integration
-~~~~~~~~~~~~~~~~~
+Guice
+~~~~~
 
-Dalesbred has support for integration with Guice 3. You can just pass in `DataSourceDatabaseModule`
-or `DriverManagerDatabaseModule` when constructing your injector and you'll get automatic support
-for annotation based transactions and can @Inject your database wherever you need it.
+Dalesbred has support for integration with https://code.google.com/p/google-guice/[Guice 3]. You can just pass in
+{javadocBase}fi/evident/dalesbred/support/guice/DataSourceDatabaseModule.html[DataSourceDatabaseModule]
+or {javadocBase}fi/evident/dalesbred/support/guice/DriverManagerDatabaseModule.html[DriverManagerDatabaseModule]
+when constructing your injector and you'll get automatic support for annotation based transactions and can
+@Inject your database wherever you need it.
 
 [source,java]
 -------------------------------------------------------------------------------------------------------
@@ -426,26 +426,69 @@ Injector injector = Guice.createInjector(new DataSourceDatabaseModule(), new MyO
 When using either of the Guice modules, you'll also get automatic support for using `@Inject` in the
 results returned from database.
 
-See the Javadoc of the modules for details of their configuration.
+See the {javadocBase}[Javadoc] of the modules for details of their configuration.
 
-IDEA-integration
-~~~~~~~~~~~~~~~~
+IntelliJ IDEA
+~~~~~~~~~~~~~
 
 If you're using https://www.jetbrains.com/idea/[IntelliJ IDEA], check out
 https://bitbucket.org/evidentsolutions/dalesbred-idea-plugin[Dalesbred IDEA Plugin],
 which provides inspections for common errors (e.g. mismatch between query parameters
 and query).
 
+Test support
+------------
+
+By including the _dalesbred-junit_ artifact in your project as a test dependency,
+you'll get support for writing transactional test cases:
+
+[source,java]
+-------------------------------------------------------------------------------------------------------
+public class MyTest {
+
+    private final Database db = TestDatabaseProvider.databaseForProperties("testdb.properties");
+
+    @Rule
+    public final TransactionalTests tx = new TransactionalTests(db);
+
+    @Test
+    public void simpleTest() {
+        assertEquals("hello, world!", db.queryForUnique(String.class "select 'hello, world!'");
+    }
+}
+-------------------------------------------------------------------------------------------------------
+
 More examples
 -------------
 
-Check out the test cases under _dalesbred/src/test/java_ for more usage examples.
+Check out the test cases under https://bitbucket.org/evidentsolutions/dalesbred/src/master/dalesbred/src/test/java/fi/evident/dalesbred/[dalesbred/src/test/java]
+for more usage examples.
 
-Using with Maven
-----------------
+Downloading
+-----------
+
+Gradle
+~~~~~~
+
+Add the following to your project:
+
+[source,groovy]
+dependencies {
+    compile 'fi.evident.dalesbred:dalesbred:0.6.0'
+}
+
+For the JUnit test-support classes, add the following:
+
+[source,groovy]
+dependencies {
+    testCompile 'fi.evident.dalesbred:dalesbred-junit:0.6.0'
+}
+
+Maven
+~~~~~
 
 Dalesbred is available on the central Maven repository, so just add the following
-dependency to your pom.xml:
+dependency to your `pom.xml`:
 
 [source,xml]
 <dependency>
@@ -464,10 +507,11 @@ For the JUnit test-support classes, add the following:
     <scope>test</scope>
 </dependency>
 
-Using without Maven
--------------------
+Without dependency manager
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To use Dalesbred without Maven, you'll need to https://bitbucket.org/evidentsolutions/dalesbred/downloads[download the latest jar for Dalesbred]
+To use Dalesbred without a dependency management system, you'll need to
+download http://repo1.maven.org/maven2/fi/evident/dalesbred/dalesbred/{revnumber}/dalesbred-{revnumber}.jar[dalesbred-{revnumber}.jar]
 and it to your classpath. There are no other required dependencies.
 
 Attributions
