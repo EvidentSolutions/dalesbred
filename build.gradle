@@ -1,3 +1,12 @@
+buildscript {
+    repositories {
+        maven { url 'http://repo.springsource.org/plugins-release' }
+    }
+    dependencies {
+        classpath("org.springframework.build.gradle:propdeps-plugin:0.0.5")
+    }
+}
+
 allprojects {
     group = 'fi.evident.dalesbred'
     version = '0.6.1-SNAPSHOT'
@@ -8,6 +17,10 @@ subprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'java'
     apply plugin: 'signing'
+    apply plugin: 'propdeps'
+    apply plugin: 'propdeps-idea'
+    apply plugin: 'propdeps-maven'
+
     sourceCompatibility = 1.5
     targetCompatibility = 1.5
 
@@ -45,10 +58,11 @@ subprojects {
             mavenDeployer {
                 beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
+                repository(url: "file:${rootProject.projectDir}/build/repo")
                 // repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                repository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                    authentication(userName: sonatypeUsername, password: sonatypePassword)
-                }
+                //repository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                //    authentication(userName: sonatypeUsername, password: sonatypePassword)
+                //}
 
                 pom.whenConfigured { pom ->
                     pom.project {
@@ -83,14 +97,6 @@ subprojects {
                             }
                         }
                     }
-
-                    if (project.name == 'dalesbred') {
-                        pom.dependencies.findAll { dep -> dep.scope == 'compile' }*.optional = true
-                    }
-
-                    if (project.name == 'dalesbred-junit') {
-                        pom.dependencies.find { dep -> dep.artifactId == 'annotations' }.optional = true
-                    }
                 }
             }
         }
@@ -101,15 +107,15 @@ project(':dalesbred') {
     description = 'Dalesbred'
 
     dependencies {
-        compile 'com.intellij:annotations:12.0'
-        compile 'postgresql:postgresql:9.1-901.jdbc4'
-        compile 'org.hsqldb:hsqldb:2.2.9'
-        compile 'mysql:mysql-connector-java:5.1.26'
-        compile 'joda-time:joda-time:2.1'
-        compile 'aopalliance:aopalliance:1.0'
-        compile 'com.google.inject:guice:3.0'
-        compile 'org.springframework:spring-context:3.2.4.RELEASE'
-        compile 'org.springframework:spring-jdbc:3.2.4.RELEASE'
+        optional 'com.intellij:annotations:12.0'
+        optional 'postgresql:postgresql:9.1-901.jdbc4'
+        optional 'org.hsqldb:hsqldb:2.2.9'
+        optional 'mysql:mysql-connector-java:5.1.26'
+        optional 'joda-time:joda-time:2.1'
+        optional 'aopalliance:aopalliance:1.0'
+        optional 'com.google.inject:guice:3.0'
+        optional 'org.springframework:spring-context:3.2.4.RELEASE'
+        optional 'org.springframework:spring-jdbc:3.2.4.RELEASE'
         testCompile 'junit:junit:4.10'
         testCompile 'org.mockito:mockito-all:1.9.0'
     }
@@ -122,7 +128,7 @@ project(':dalesbred-junit') {
         compile project(':dalesbred')
         compile 'junit:junit:4.10'
         compile 'javax.inject:javax.inject:1'
-        compile 'com.intellij:annotations:12.0'
+        optional 'com.intellij:annotations:12.0'
         testCompile 'org.hsqldb:hsqldb:2.2.9'
     }
 }
