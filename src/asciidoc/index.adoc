@@ -90,7 +90,7 @@ If for some reason you don't want to map the results into your own class, you
 can ask for a `ResultTable`, which is basically a detached representation of a
 `ResultSet`:
 
-:::java
+[source,java]
 ResultTable employees = db.findTable("select * from employee");
 
 Alternatively, you can supply your own `RowMapper` or `ResultSetProcessor`-implementation
