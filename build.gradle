@@ -19,7 +19,7 @@ configure(subprojects) { project ->
     apply plugin: 'signing'
     apply plugin: 'propdeps'
     apply plugin: 'propdeps-idea'
-    apply plugin: 'propdeps-maven'
+    apply from: "${rootProject.projectDir}/gradle/publish-maven.gradle"
 
     ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
     ext.springVersion = '3.2.4.RELEASE'
@@ -58,66 +58,6 @@ configure(subprojects) { project ->
 
     javadoc {
         options.addStringOption('Xdoclint:none', '-quiet')
-    }
-
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-                repository(url: "file:${rootProject.projectDir}/build/repo")
-                // repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                //repository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                //    authentication(userName: sonatypeUsername, password: sonatypePassword)
-                //}
-
-                pom.whenConfigured { pom ->
-                    pom.project {
-                        name project.name
-                        packaging 'jar'
-                        description project.description
-                        url 'https://bitbucket.org/evidentsolutions/dalesbred'
-                        inceptionYear '2012'
-
-                        organization {
-                            name 'Evident Solutions'
-                            url 'http://www.evident.fi'
-                        }
-
-                        licenses {
-                            license {
-                                name 'MIT License'
-                                url 'http://opensource.org/licenses/mit-license.php'
-                                distribution 'repo'
-                            }
-                        }
-
-                        scm {
-                            url 'https://bitbucket.org/evidentsolutions/dalesbred'
-                            connection 'scm:git:https://bitbucket.org/evidentsolutions/dalesbred.git'
-                            developerConnection 'scm:git:ssh://git@bitbucket.org/evidentsolutions/dalesbred.git'
-                        }
-
-                        developers {
-                            developer {
-                                id 'komu'
-                                name 'Juha Komulainen'
-                            }
-                        }
-
-                        issueManagement {
-                            system = 'Bitbucket'
-                            url = 'https://bitbucket.org/evidentsolutions/dalesbred/issues'
-                        }
-                    }
-
-                    // Test dependencies are not needed in pom
-                    pom.dependencies.removeAll { dep ->
-                        dep.scope == "test"
-                    }
-                }
-            }
-        }
     }
 }
 
