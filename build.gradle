@@ -97,6 +97,11 @@ subprojects {
                             }
                         }
                     }
+
+                    // Test dependencies are not needed in pom
+                    pom.dependencies.removeAll { dep ->
+                        dep.scope == "test"
+                    }
                 }
             }
         }
