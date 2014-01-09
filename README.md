@@ -45,13 +45,13 @@ Insert a new row:
     db.update("insert into user (id, name) values (?, ?)", 42, "Example User");
 
 Documentation
--------------
+=============
 
   - [Reference Documentation](https://dalesbred.evident.fi/docs/current/reference/)
   - [Javadoc](https://dalesbred.evident.fi/docs/current/api/)
 
 IDEA-integration
-----------------
+================
 
 If you're using [IntelliJ IDEA](https://www.jetbrains.com/idea/), check out
 [Dalesbred IDEA Plugin](https://bitbucket.org/evidentsolutions/dalesbred-idea-plugin),
