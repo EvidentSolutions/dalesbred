@@ -70,11 +70,11 @@ subprojects {
                         packaging 'jar'
                         description project.description
                         url 'https://bitbucket.org/evidentsolutions/dalesbred'
+                        inceptionYear '2012'
 
-                        scm {
-                            url 'https://bitbucket.org/evidentsolutions/dalesbred'
-                            connection 'scm:git:https://bitbucket.org/evidentsolutions/dalesbred.git'
-                            developerConnection 'scm:git:ssh://git@bitbucket.org/evidentsolutions/dalesbred.git'
+                        organization {
+                            name 'Evident Solutions'
+                            url 'http://www.evident.fi'
                         }
 
                         licenses {
@@ -85,9 +85,10 @@ subprojects {
                             }
                         }
 
-                        organization {
-                            name 'Evident Solutions'
-                            url 'http://www.evident.fi'
+                        scm {
+                            url 'https://bitbucket.org/evidentsolutions/dalesbred'
+                            connection 'scm:git:https://bitbucket.org/evidentsolutions/dalesbred.git'
+                            developerConnection 'scm:git:ssh://git@bitbucket.org/evidentsolutions/dalesbred.git'
                         }
 
                         developers {
@@ -95,6 +96,11 @@ subprojects {
                                 id 'komu'
                                 name 'Juha Komulainen'
                             }
+                        }
+
+                        issueManagement {
+                            system = 'Bitbucket'
+                            url = 'https://bitbucket.org/evidentsolutions/dalesbred/issues'
                         }
                     }
 
