@@ -5,26 +5,39 @@ buildscript {
     }
     dependencies {
         classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.5'
+        classpath("org.asciidoctor:asciidoctor-gradle-plugin:0.7.0")
         classpath 'com.github.townsfolk:gradle-release:1.2'
     }
 }
 
-apply plugin: 'release'
-
-release {
-    requireBranch = ''
-}
-
 configure(allprojects) { project ->
     group = 'fi.evident.dalesbred'
+
+    apply plugin: 'java'
+    apply plugin: 'propdeps'
+}
+
+configure(rootProject) { project ->
+    apply plugin: 'release'
+    apply plugin: "asciidoctor"
+
+    asciidoctor {
+        baseDir = project.file('src/asciidoc')
+        options = [
+                eruby: 'erubis',
+                attributes: [
+                        doctype: 'book',
+                        revnumber: project.version,
+                        docinfo: ""
+                ]
+        ]
+    }
 }
 
 configure(subprojects) { project ->
     apply plugin: 'maven'
     apply plugin: 'maven-publish'
-    apply plugin: 'java'
     apply plugin: 'signing'
-    apply plugin: 'propdeps'
     apply plugin: 'propdeps-idea'
     apply from: "${rootProject.projectDir}/gradle/publish-maven.gradle"
 
