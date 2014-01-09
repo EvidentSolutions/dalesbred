@@ -27,7 +27,6 @@ configure(rootProject) { project ->
             attributes: [
                 toc: 'left',
                 'source-highlighter': 'coderay',
-                doctype: 'book',
                 revnumber: project.version,
                 docinfo: ""
             ]
