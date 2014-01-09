@@ -22,14 +22,15 @@ configure(rootProject) { project ->
     apply plugin: "asciidoctor"
 
     asciidoctor {
-        baseDir = project.file('src/asciidoc')
         options = [
-                eruby: 'erubis',
-                attributes: [
-                        doctype: 'book',
-                        revnumber: project.version,
-                        docinfo: ""
-                ]
+            eruby: 'erubis',
+            attributes: [
+                toc: 'left',
+                'source-highlighter': 'coderay',
+                doctype: 'book',
+                revnumber: project.version,
+                docinfo: ""
+            ]
         ]
     }
 }
