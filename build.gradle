@@ -62,7 +62,7 @@ configure(subprojects) { project ->
 }
 
 project(':dalesbred') {
-    description = 'Dalesbred'
+    description = 'Dalesbred - a database access library'
 
     dependencies {
         optional 'joda-time:joda-time:2.3'
