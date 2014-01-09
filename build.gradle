@@ -22,6 +22,10 @@ configure(subprojects) { project ->
     apply plugin: 'propdeps-maven'
 
     ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+    ext.springVersion = '3.2.4.RELEASE'
+    ext.junitVersion = '4.11'
+    ext.jetbrainsAnnotationsVersion = '13.0'
+    ext.hsqldbVersion = '2.3.1'
 
     sourceCompatibility = 1.6
     targetCompatibility = 1.6
@@ -121,17 +125,19 @@ project(':dalesbred') {
     description = 'Dalesbred'
 
     dependencies {
-        optional 'org.jetbrains:annotations:13.0'
-        optional 'postgresql:postgresql:9.1-901.jdbc4'
-        optional 'org.hsqldb:hsqldb:2.2.9'
-        optional 'mysql:mysql-connector-java:5.1.26'
-        optional 'joda-time:joda-time:2.1'
+        optional 'joda-time:joda-time:2.3'
         optional 'aopalliance:aopalliance:1.0'
         optional 'com.google.inject:guice:3.0'
-        optional 'org.springframework:spring-context:3.2.4.RELEASE'
-        optional 'org.springframework:spring-jdbc:3.2.4.RELEASE'
-        testCompile 'junit:junit:4.10'
-        testCompile 'org.mockito:mockito-all:1.9.0'
+        optional "org.springframework:spring-context:$springVersion"
+        optional "org.springframework:spring-jdbc:$springVersion"
+        optional "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
+
+        optional 'org.postgresql:postgresql:9.3-1100-jdbc41'
+
+        testCompile "org.hsqldb:hsqldb:$hsqldbVersion"
+        testCompile 'mysql:mysql-connector-java:5.1.26'
+        testCompile "junit:junit:$junitVersion"
+        testCompile 'org.mockito:mockito-core:1.9.5'
     }
 }
 
@@ -140,9 +146,11 @@ project(':dalesbred-junit') {
 
     dependencies {
         compile project(':dalesbred')
-        compile 'junit:junit:4.10'
+        compile "junit:junit:$junitVersion"
         compile 'javax.inject:javax.inject:1'
-        optional 'org.jetbrains:annotations:13.0'
-        testCompile 'org.hsqldb:hsqldb:2.2.9'
+
+        optional "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
+
+        testCompile "org.hsqldb:hsqldb:$hsqldbVersion"
     }
 }

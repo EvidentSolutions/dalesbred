@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import static fi.evident.dalesbred.utils.Throwables.propagate;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -46,7 +47,7 @@ public class ThrowablesTest {
         Exception exception = new Exception();
 
         Exception propagated = propagate(exception);
-        assertThat(propagated, is(RuntimeException.class));
+        assertThat(propagated, is(instanceOf(RuntimeException.class)));
         assertThat(propagated.getCause(), CoreMatchers.<Throwable>is(exception));
     }
 

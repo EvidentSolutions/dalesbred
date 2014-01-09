@@ -30,8 +30,7 @@ import org.junit.Test;
 
 import java.sql.SQLException;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 public class HsqldbDialectTest {
@@ -54,7 +53,7 @@ public class HsqldbDialectTest {
             public Void execute(@NotNull TransactionContext tx) throws SQLException {
                 Dialect dialect = Dialect.detect(tx.getConnection());
 
-                assertThat(dialect, is(HsqldbDialect.class));
+                assertThat(dialect, is(instanceOf(HsqldbDialect.class)));
                 return null;
             }
         });

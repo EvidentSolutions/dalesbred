@@ -38,6 +38,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -90,7 +91,7 @@ public class SpringConfigurationTest {
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(ConfigurationWithHsqlAndPostgresDialect.class);
         Database db = ctx.getBean(Database.class);
 
-        assertThat(db.getDialect(), is(PostgreSQLDialect.class));
+        assertThat(db.getDialect(), is(instanceOf(PostgreSQLDialect.class)));
     }
 
     @Configuration
