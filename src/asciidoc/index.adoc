@@ -2,7 +2,7 @@ Dalesbred Reference Documentation
 =================================
 Juha Komulainen <juha.komulainen@evident.fi>
 
-:javadocBase: https://dalesbred.evident.fi/docs/javadoc/?
+:javadocBase: https://dalesbred.evident.fi/docs/0.6.0/api/?
 :jdkJavadocBase: http://download.java.net/jdk8/docs/api/?
 :springJavadocBase: http://docs.spring.io/spring/docs/3.2.5.RELEASE/javadoc-api/?
 :jodaJavadocBase: http://www.joda.org/joda-time/apidocs/?
