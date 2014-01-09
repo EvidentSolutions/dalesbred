@@ -71,7 +71,7 @@ public class PostgreSQLDialectTest {
     public void dates() {
         Date date = new Date();
 
-        assertThat(db.findUnique(Date.class, "select ?::timestamp", date), is(date));
+        assertThat(db.findUnique(Date.class, "select ?::timestamp", date).getTime(), is(date.getTime()));
     }
 
     enum Mood {
