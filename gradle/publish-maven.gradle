@@ -5,11 +5,13 @@ uploadArchives {
         mavenDeployer {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-            repository(url: "file:${rootProject.projectDir}/build/repo")
-            // repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-            //repository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-            //    authentication(userName: sonatypeUsername, password: sonatypePassword)
-            //}
+            if (project.hasProperty('sonatypeUsername')) {
+                def repo = version.endsWith("SNAPSHOT") ? "https://oss.sonatype.org/content/repositories/snapshots/" : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+
+                repository(url: repo) {
+                    authentication(userName: sonatypeUsername, password: sonatypePassword)
+                }
+            }
 
             pom.whenConfigured { pom ->
                 pom.project {
