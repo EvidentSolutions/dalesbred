@@ -26,7 +26,7 @@ configure(rootProject) { project ->
             eruby: 'erubis',
             attributes: [
                 toc: 'left',
-                'source-highlighter': 'coderay',
+                'source-highlighter': 'prettify',
                 revnumber: project.version,
                 docinfo: ""
             ]
