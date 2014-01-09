@@ -121,7 +121,7 @@ project(':dalesbred') {
     description = 'Dalesbred'
 
     dependencies {
-        optional 'com.intellij:annotations:12.0'
+        optional 'org.jetbrains:annotations:13.0'
         optional 'postgresql:postgresql:9.1-901.jdbc4'
         optional 'org.hsqldb:hsqldb:2.2.9'
         optional 'mysql:mysql-connector-java:5.1.26'
@@ -142,7 +142,7 @@ project(':dalesbred-junit') {
         compile project(':dalesbred')
         compile 'junit:junit:4.10'
         compile 'javax.inject:javax.inject:1'
-        optional 'com.intellij:annotations:12.0'
+        optional 'org.jetbrains:annotations:13.0'
         testCompile 'org.hsqldb:hsqldb:2.2.9'
     }
 }

@@ -13,7 +13,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="Gradle: javax.inject-1" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: annotations-12.0" level="project" />
     <orderEntry type="library" exported="" name="Gradle: joda-time-2.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: hamcrest-core-1.1" level="project" />
     <orderEntry type="library" exported="" name="Gradle: postgresql-9.1-901.jdbc4" level="project" />
@@ -33,6 +32,7 @@
     <orderEntry type="library" exported="" name="Gradle: asm-3.1" level="project" />
     <orderEntry type="library" exported="" name="Gradle: spring-beans-3.2.4.RELEASE" level="project" />
     <orderEntry type="library" exported="" name="Gradle: spring-aop-3.2.4.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: annotations-13.0" level="project" />
   </component>
 </module>
 
