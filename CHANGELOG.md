@@ -1,3 +1,9 @@
+## x.y.z (yyyy-mm-dd)
+
+  - Migrated the build to use Gradle instead of Maven. (Shouldn't affect users in any way.)
+  - Updated versions of the optional dependencies.
+  - Minimum support JDK version is now 1.6.
+
 ## 0.6.0 (2014-01-04)
 
   - Support java.time when running on Java 8.
