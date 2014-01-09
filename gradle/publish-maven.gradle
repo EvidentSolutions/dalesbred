@@ -18,7 +18,7 @@ uploadArchives {
                     name project.name
                     packaging 'jar'
                     description project.description
-                    url 'https://bitbucket.org/evidentsolutions/dalesbred'
+                    url 'https://dalesbred.evident.fi/'
                     inceptionYear '2012'
 
                     organization {
