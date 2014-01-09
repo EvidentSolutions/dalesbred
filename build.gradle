@@ -7,12 +7,12 @@ buildscript {
     }
 }
 
-allprojects {
+configure(allprojects) { project ->
     group = 'fi.evident.dalesbred'
     version = '0.6.1-SNAPSHOT'
 }
 
-subprojects {
+configure(subprojects) { project ->
     apply plugin: 'maven'
     apply plugin: 'maven-publish'
     apply plugin: 'java'
@@ -20,6 +20,8 @@ subprojects {
     apply plugin: 'propdeps'
     apply plugin: 'propdeps-idea'
     apply plugin: 'propdeps-maven'
+
+    ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
     sourceCompatibility = 1.6
     targetCompatibility = 1.6
@@ -46,6 +48,7 @@ subprojects {
     }
 
     signing {
+        required { isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives") }
         sign configurations.archives
     }
 
