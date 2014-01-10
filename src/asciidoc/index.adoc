@@ -4,7 +4,7 @@ Juha Komulainen <juha.komulainen@evident.fi>
 
 :javadocBase: https://dalesbred.evident.fi/docs/0.6.0/api/?
 :jdkJavadocBase: http://download.java.net/jdk8/docs/api/?
-:springJavadocBase: http://docs.spring.io/spring/docs/3.2.5.RELEASE/javadoc-api/?
+:springJavadocBase: http://docs.spring.io/spring/docs/current/javadoc-api/?
 :jodaJavadocBase: http://www.joda.org/joda-time/apidocs/?
 
 Basic usage
@@ -31,6 +31,10 @@ just create a {javadocBase}fi/evident/dalesbred/Database.html[Database] out of t
 
 [source,java]
 Database db = Database.forDataSource(myDataSource);
+
+If you are using http://projects.spring.io/spring-framework/[Spring Framework] or
+https://code.google.com/p/google-guice/[Guice], see the <<_integrations,Integrations>>-section
+on how to integrate Dalesbred with them.
 
 Finding stuff
 ~~~~~~~~~~~~~
@@ -223,23 +227,11 @@ db.withVoidTransaction(tx -> {
 });
 -------------------------------------------------------------------------------------------------------
 
-If you make calls to {javadocBase}fi/evident/dalesbred/Database.html[Database] without and explicit transaction, by default
-a new transaction is started for each call, but you can disallow this, in
-which case exceptions are thrown for calls without an active transaction:
-
-[source,java]
-db.setAllowImplicitTransactions(false);
-
-Nested transactions are supported if your database supports them:
-
-[source,java]
-db.withTransaction(Propagation.NESTED, new TransactionCallback<Result>() { ... });
-
 Annotation based transactions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The above transaction mechanism is a decent building block for implementing higher
-level abstractions, but it's quite verbose to use in Java. Therefore Dalesbred provides
+If you are not using Java 8, the anonymous inner classes required by transaction callbacks
+are quite verbose. Therefore Dalesbred provides
 a simple support for building transactional proxies for services:
 
 [source,java]
@@ -262,9 +254,34 @@ MyService myService = db.createTransactionalProxyFor(MyService.class, new MyReal
 service.frobnicate(); // this call will have a transaction wrapped around it
 -------------------------------------------------------------------------------------------------------
 
+External transaction manager
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 If you are using http://projects.spring.io/spring-framework/[Spring Framework] or
 https://code.google.com/p/google-guice/[Guice], Dalesbred can integrated with them for transaction
 management. Consult the <<_integrations,Integrations>>-section for details.
+
+Implicit transactions
+~~~~~~~~~~~~~~~~~~~~~
+
+If you make calls to {javadocBase}fi/evident/dalesbred/Database.html[Database] without and explicit transaction, by default
+a new transaction is started for each call, but you can disallow this, in
+which case exceptions are thrown for calls without an active transaction:
+
+[source,java]
+db.setAllowImplicitTransactions(false);
+
+Nested transactions
+~~~~~~~~~~~~~~~~~~~
+
+Nested transactions are supported if your database supports them:
+
+[source,java]
+-------------------------------------------------------------------------------------------------------
+db.withTransaction(Propagation.NESTED, new TransactionCallback<Result>() {
+    ...
+});
+-------------------------------------------------------------------------------------------------------
 
 Miscellaneous features
 ----------------------
@@ -287,7 +304,7 @@ try (InputStream in = db.findUnique(InputStream.class, "select contents from my_
 }
 -------------------------------------------------------------------------------------------------------
 
-Note that the returned {jdkJavadocBase}java/io/InputStream.html[InputStream] or
+WARNING: Note that the returned {jdkJavadocBase}java/io/InputStream.html[InputStream] or
 {jdkJavadocBase}java/io/Reader.html[Reader] is only valid for the duration of the active transaction.
 
 Confidential values
@@ -349,7 +366,7 @@ InstantiationListeners
 ~~~~~~~~~~~~~~~~~~~~~~
 
 You can configure a listener to receive notifications whenever Dalesbred creates new instances. The built-in
-Guice-support uses this feature to wire the dependencies of newly created objects, but you can use this
+<<_guice,Guice-support>> uses this feature to wire the dependencies of newly created objects, but you can use this
 callback anything you like:
 
 [source,java]
@@ -479,9 +496,15 @@ Gradle
 Add the following to your project:
 
 [source,groovy]
+-------------------------------------------------------------------------------------------------------
 dependencies {
     compile 'fi.evident.dalesbred:dalesbred:0.6.0'
 }
+
+repositories {
+    mavenCentral()
+}
+-------------------------------------------------------------------------------------------------------
 
 For the JUnit test-support classes, add the following:
 
