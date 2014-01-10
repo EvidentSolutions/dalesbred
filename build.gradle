@@ -47,7 +47,8 @@ configure(rootProject) { project ->
                         toc: 'left',
                         'source-highlighter': 'prettify',
                         revnumber: project.version,
-                        docinfo: ""
+                        docinfo: "",
+                        javadocBase: "https://dalesbred.evident.fi/docs/${project.version}/api/?"
                 ]
         ]
     }
