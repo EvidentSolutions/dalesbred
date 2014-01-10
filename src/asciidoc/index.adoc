@@ -2,7 +2,7 @@ Dalesbred Reference Documentation
 =================================
 Juha Komulainen <juha.komulainen@evident.fi>
 
-:javadocBase: https://dalesbred.evident.fi/docs/0.6.0/api/?
+:javadocBase: https://dalesbred.evident.fi/docs/{revnumber}/api/?
 :jdkJavadocBase: http://download.java.net/jdk8/docs/api/?
 :springJavadocBase: http://docs.spring.io/spring/docs/current/javadoc-api/?
 :jodaJavadocBase: http://www.joda.org/joda-time/apidocs/?
@@ -155,8 +155,9 @@ Map<String,Object> values = new HashMap<String,Object>();
 values.put("firstName", "John");
 values.put("lastName", "Doe");
 
-SqlQuery query = namedQuery("select id from employee where first_name = :firstName and last_name = :lastName", values);
-db.findAll(Department.class, query);
+db.findAll(Department.class, namedQuery("select id from employee " +
+                                        " where first_name = :firstName " +
+                                        "   and last_name = :lastName", values));
 -------------------------------------------------------------------------------------------------------
 
 Instead of {jdkJavadocBase}java/util/Map.html[Map]s, you can also pass just regular objects to `namedQuery` as
@@ -299,7 +300,8 @@ try (InputStream in = new FileInputStream(name)) {
     db.update("insert into my_file (name, contents) values (?,?)", name, in);
 }
 
-try (InputStream in = db.findUnique(InputStream.class, "select contents from my_file where name=?", name)) {
+try (InputStream in = db.findUnique(InputStream.class,
+                        "select contents from my_file where name=?", name)) {
     ...
 }
 -------------------------------------------------------------------------------------------------------
@@ -469,14 +471,16 @@ you'll get support for writing transactional test cases:
 -------------------------------------------------------------------------------------------------------
 public class MyTest {
 
-    private final Database db = TestDatabaseProvider.databaseForProperties("testdb.properties");
+    private final Database db =
+        TestDatabaseProvider.databaseForProperties("testdb.properties");
 
     @Rule
     public final TransactionalTests tx = new TransactionalTests(db);
 
     @Test
     public void simpleTest() {
-        assertEquals("hello, world!", db.queryForUnique(String.class "select 'hello, world!'");
+        assertEquals("hello, world!",
+            db.queryForUnique(String.class "select 'hello, world!'");
     }
 }
 -------------------------------------------------------------------------------------------------------
