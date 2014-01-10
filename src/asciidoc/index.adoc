@@ -322,17 +322,6 @@ conversions.registerConversionFromDatabaseType(new StringToEmailAddressConversio
 conversions.registerConversionToDatabaseType(new EmailAddressToStringConversion());
 -------------------------------------------------------------------------------------------------------
 
-There are built-in conversions from http://www.joda.org/joda-time/[Joda Time]'s
-{jodaJavadocBase}org/joda/time/DateTime.html[DateTime], {jodaJavadocBase}org/joda/time/LocalDate.html[LocalDate]
-and {jodaJavadocBase}org/joda/time/LocalTime.html[LocalTime] to {jdkJavadocBase}java/sql/Timestamp.html[java.sql.Timestamp],
-{jdkJavadocBase}java/sql/Date.html[java.sql.Date] and {jdkJavadocBase}java/sql/Time.html[java.sql.Time], respectively.
-These will be automatically registered if Joda Time is detected on classpath.
-
-When running on Java 8, conversions for {jdkJavadocBase}java/time/Instant.html[Instant],
-{jdkJavadocBase}java/time/LocalDate.html[LocalDate], {jdkJavadocBase}java/time/LocalDateTime.html[LocalDateTime],
-{jdkJavadocBase}java/time/LocalTime.html[LocalTime] and {jdkJavadocBase}java/time/ZoneId.html[ZoneId] from
-{jdkJavadocBase}java/time/package-summary.html[java.time]-package are automatically registered.
-
 Custom instantiators
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -378,6 +367,23 @@ registered by users. This limitation could be lifted in the future.
 
 Integrations
 ------------
+
+Joda-Time
+~~~~~~~~~
+
+If from http://www.joda.org/joda-time/[Joda-Time] is detected on classpath, Dalesbred will automatically
+register <<_custom_type_conversions,type-conversions>> between http://www.joda.org/joda-time/[Joda-Time]'s
+{jodaJavadocBase}org/joda/time/DateTime.html[DateTime], {jodaJavadocBase}org/joda/time/LocalDate.html[LocalDate]
+and {jodaJavadocBase}org/joda/time/LocalTime.html[LocalTime] to {jdkJavadocBase}java/sql/Timestamp.html[java.sql.Timestamp],
+{jdkJavadocBase}java/sql/Date.html[java.sql.Date] and {jdkJavadocBase}java/sql/Time.html[java.sql.Time].
+
+Java 8
+~~~~~~
+
+When running on Java 8, <<_custom_type_conversions,type-conversions>> for {jdkJavadocBase}java/time/Instant.html[Instant],
+{jdkJavadocBase}java/time/LocalDate.html[LocalDate], {jdkJavadocBase}java/time/LocalDateTime.html[LocalDateTime],
+{jdkJavadocBase}java/time/LocalTime.html[LocalTime] and {jdkJavadocBase}java/time/ZoneId.html[ZoneId] from
+{jdkJavadocBase}java/time/package-summary.html[java.time]-package are automatically registered.
 
 Spring
 ~~~~~~
