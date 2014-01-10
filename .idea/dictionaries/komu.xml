@@ -41,6 +41,7 @@
       <w>jdbc</w>
       <w>jndi</w>
       <w>joda</w>
+      <w>jsch</w>
       <w>jsse</w>
       <w>juha</w>
       <w>junit</w>
@@ -63,13 +64,16 @@
       <w>scpexe</w>
       <w>skippable</w>
       <w>sonatype</w>
+      <w>sshexec</w>
       <w>sunrsasign</w>
+      <w>taskdefs</w>
       <w>testdb</w>
       <w>throwables</w>
       <w>toolchain</w>
       <w>toolchains</w>
       <w>transactionally</w>
       <w>unflattening</w>
+      <w>uuhi</w>
       <w>xdoclint</w>
       <w>yyyy</w>
     </words>

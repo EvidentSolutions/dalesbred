@@ -10,6 +10,7 @@ buildscript {
     }
 }
 
+
 configure(allprojects) { project ->
     group = 'fi.evident.dalesbred'
 
@@ -20,27 +21,69 @@ configure(allprojects) { project ->
         group 'documentation'
         description 'Builds all documentation.'
     }
+
+    repositories {
+        mavenCentral()
+    }
 }
 
 configure(rootProject) { project ->
     apply plugin: 'release'
-    apply plugin: "asciidoctor"
+    apply plugin: 'asciidoctor'
+
+    configurations {
+        sshAntTask
+    }
 
     buildDocs.dependsOn asciidoctor
 
     asciidoctor {
         options = [
-            eruby: 'erubis',
-            attributes: [
-                icons: 'font',
-                'iconfont-cdn': 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/css/font-awesome.min.css',
-                prettifydir: 'https://cdnjs.cloudflare.com/ajax/libs/prettify/r298',
-                toc: 'left',
-                'source-highlighter': 'prettify',
-                revnumber: project.version,
-                docinfo: ""
-            ]
+                eruby: 'erubis',
+                attributes: [
+                        icons: 'font',
+                        'iconfont-cdn': 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/css/font-awesome.min.css',
+                        prettifydir: 'https://cdnjs.cloudflare.com/ajax/libs/prettify/r298',
+                        toc: 'left',
+                        'source-highlighter': 'prettify',
+                        revnumber: project.version,
+                        docinfo: ""
+                ]
         ]
+    }
+
+    task publishReferenceDocumentation {
+        group 'publishing'
+        description 'Publishes the reference documentation to dalesbred.evident.fi'
+        dependsOn buildDocs
+
+        doLast {
+            ant.taskdef(name: 'scp', classname: 'org.apache.tools.ant.taskdefs.optional.ssh.Scp',
+                    classpath: configurations.sshAntTask.asPath)
+
+            ant.taskdef(name: 'sshexec', classname: 'org.apache.tools.ant.taskdefs.optional.ssh.SSHExec',
+                    classpath: configurations.sshAntTask.asPath)
+
+            ant.sshexec(host: 'uuhi.evident.fi',
+                        username: 'evident',
+                        command: "mkdir -p /var/www/dalesbred/docs/${project.version}/reference",
+                        keyfile: '${user.home}/.ssh/id_rsa',
+                        trust: true)
+
+            ant.scp(todir: "evident@uuhi.evident.fi:/var/www/dalesbred/docs/${project.version}/reference",
+                    keyfile: '${user.home}/.ssh/id_rsa',
+                    trust: true) {
+                fileset(dir: "${project.projectDir}/build/asciidoc") {
+                    include(name: '**/**')
+                }
+            }
+        }
+    }
+
+    //publish.dependsOn publishReferenceDocumentation
+
+    dependencies {
+        sshAntTask 'org.apache.ant:ant-jsch:1.9.3', 'com.jcraft:jsch:0.1.50'
     }
 }
 
@@ -61,10 +104,6 @@ configure(subprojects) { project ->
 
     sourceCompatibility = 1.6
     targetCompatibility = 1.6
-
-    repositories {
-        mavenCentral()
-    }
 
     task javadocJar(type: Jar, dependsOn: javadoc) {
         classifier = 'javadoc'
@@ -92,8 +131,8 @@ configure(subprojects) { project ->
         options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
         options.header = project.name
         options.links('http://download.java.net/jdk8/docs/api/',
-                      'http://docs.spring.io/spring/docs/current/javadoc-api/',
-                      'http://www.joda.org/joda-time/apidocs/')
+                'http://docs.spring.io/spring/docs/current/javadoc-api/',
+                'http://www.joda.org/joda-time/apidocs/')
         options.addStringOption('Xdoclint:none', '-quiet')
     }
 }
