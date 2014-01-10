@@ -499,9 +499,10 @@ Gradle
 Add the following to your project:
 
 [source,groovy]
+[subs="verbatim,attributes"]
 -------------------------------------------------------------------------------------------------------
 dependencies {
-    compile 'fi.evident.dalesbred:dalesbred:0.6.0'
+    compile 'fi.evident.dalesbred:dalesbred:{revnumber}'
 }
 
 repositories {
@@ -512,8 +513,9 @@ repositories {
 For the JUnit test-support classes, add the following:
 
 [source,groovy]
+[subs="verbatim,attributes"]
 dependencies {
-    testCompile 'fi.evident.dalesbred:dalesbred-junit:0.6.0'
+    testCompile 'fi.evident.dalesbred:dalesbred-junit:{revnumber}'
 }
 
 Maven
@@ -523,19 +525,23 @@ Dalesbred is available on the central Maven repository, so just add the followin
 dependency to your `pom.xml`:
 
 [source,xml]
+[subs="verbatim,quotes,attributes"]
+----
 <dependency>
     <groupId>fi.evident.dalesbred</groupId>
     <artifactId>dalesbred</artifactId>
-    <version>0.6.0</version>
+    <version>{revnumber}</version>
 </dependency>
+----
 
 For the JUnit test-support classes, add the following:
 
 [source,xml]
+[subs="verbatim,quotes,attributes"]
 <dependency>
     <groupId>fi.evident.dalesbred</groupId>
     <artifactId>dalesbred-junit</artifactId>
-    <version>0.6.0</version>
+    <version>{revnumber}</version>
     <scope>test</scope>
 </dependency>
 
