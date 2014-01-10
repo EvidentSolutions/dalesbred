@@ -15,11 +15,18 @@ configure(allprojects) { project ->
 
     apply plugin: 'java'
     apply plugin: 'propdeps'
+
+    task buildDocs {
+        group 'documentation'
+        description 'Builds all documentation.'
+    }
 }
 
 configure(rootProject) { project ->
     apply plugin: 'release'
     apply plugin: "asciidoctor"
+
+    buildDocs.dependsOn asciidoctor
 
     asciidoctor {
         options = [
@@ -41,6 +48,8 @@ configure(subprojects) { project ->
     apply plugin: 'signing'
     apply plugin: 'propdeps-idea'
     apply from: "${rootProject.projectDir}/gradle/publish-maven.gradle"
+
+    buildDocs.dependsOn javadoc
 
     ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
     ext.springVersion = '3.2.4.RELEASE'
