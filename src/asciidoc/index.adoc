@@ -304,8 +304,8 @@ Large objects
 ~~~~~~~~~~~~~
 
 You can stream large objects (blobs and clobs) to database by just passing {jdkJavadocBase}java/io/InputStream.html[InputStream]
-or {jdkJavadocBase}java/io/Reader.html[Reader] to query. Similarly you can read them by asking back for {jdkJavadocBase}java/io/InputStream.html[InputStream]
-or {jdkJavadocBase}java/io/Reader.html[Reader].
+or {jdkJavadocBase}java/io/Reader.html[Reader] to query. Similarly you can read them by asking back for InputStream
+or Reader.
 
 [source,java,indent=0]
 ----
@@ -319,8 +319,7 @@ or {jdkJavadocBase}java/io/Reader.html[Reader].
         }
 ----
 
-WARNING: Note that the returned {jdkJavadocBase}java/io/InputStream.html[InputStream] or
-{jdkJavadocBase}java/io/Reader.html[Reader] is only valid for the duration of the active transaction.
+WARNING: Note that the returned InputStream or Reader is only valid for the duration of the active transaction.
 
 Confidential values
 ~~~~~~~~~~~~~~~~~~~
