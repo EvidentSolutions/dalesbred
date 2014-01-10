@@ -44,7 +44,7 @@ configure(rootProject) { project ->
                         icons: 'font',
                         'iconfont-cdn': 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/css/font-awesome.min.css',
                         prettifydir: 'https://cdnjs.cloudflare.com/ajax/libs/prettify/r298',
-                        toc: 'left',
+                        toc: 'right',
                         'source-highlighter': 'prettify',
                         revnumber: project.version,
                         docinfo: "",
