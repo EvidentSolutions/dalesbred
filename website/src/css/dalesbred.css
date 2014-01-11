@@ -41,7 +41,9 @@ footer {
     .carousel .item .carousel-caption {
       z-index: 10; }
       .carousel .item .carousel-caption img {
-        margin: 15px auto; }
+        margin: 15px auto;
+        border: 1px solid #f5f5f5;
+        border-radius: 5px; }
 
 @media (min-width: 768px) {
   .navbar-wrapper {
