@@ -1,0 +1,62 @@
+html, body {
+  height: 100%; }
+
+body {
+  color: #5a5a5a; }
+
+#wrap {
+  min-height: 100%;
+  height: auto;
+  margin: 0 auto -60px;
+  padding: 0 0 60px; }
+
+footer {
+  height: 60px;
+  background-color: #f5f5f5; }
+  footer > .container {
+    padding-left: 15px;
+    padding-right: 15px; }
+  footer .text-muted {
+    margin: 20px 0; }
+
+.navbar-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20; }
+  .navbar-wrapper .container {
+    padding-left: 0;
+    padding-right: 0; }
+  .navbar-wrapper .navbar {
+    padding-left: 15px;
+    padding-right: 15px; }
+
+.carousel {
+  height: 500px;
+  margin-bottom: 60px; }
+  .carousel .item {
+    height: 500px;
+    background-color: #777; }
+    .carousel .item .carousel-caption {
+      z-index: 10; }
+      .carousel .item .carousel-caption img {
+        margin: 15px auto; }
+
+@media (min-width: 768px) {
+  .navbar-wrapper {
+    margin-top: 20px; }
+    .navbar-wrapper .container {
+      padding-left: 15px;
+      padding-right: 15px; }
+    .navbar-wrapper .navbar {
+      padding-left: 0;
+      padding-right: 0;
+      border-radius: 4px; }
+      .navbar-wrapper .navbar .navbar-nav.navbar-right:last-child {
+        margin-right: 15px; }
+
+  .carousel-caption p {
+    margin-bottom: 20px;
+    font-size: 21px;
+    line-height: 1.4; } }

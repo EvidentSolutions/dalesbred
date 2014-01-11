@@ -18,32 +18,112 @@
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
     <link rel="stylesheet" href="css/dalesbred.css">
 </head>
 <body>
 <div id="wrap">
-    <section class="container">
-        <div class="page-header">
-            <h1>Dalesbred <small>pure SQL - no pain</small></h1>
-        </div>
 
+    <div class="navbar-wrapper">
+        <div class="container">
+
+            <div class="navbar navbar-inverse navbar-static-top" role="navigation">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="#">Dalesbred</a>
+                    </div>
+                    <div class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Documentation <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="/docs/current/reference"><i class="fa fa-fw fa-book"></i> Reference Documentation</a></li>
+                                    <li><a href="/docs/current/api"><i class="fa fa-fw fa-puzzle-piece"></i> Javadoc</a></li>
+                                    <li><a href="https://bitbucket.org/evidentsolutions/dalesbred/src/master/CHANGELOG.md"><i class="fa fa-fw fa-list"></i> Changelog</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="myCarousel" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+            <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+            <li data-target="#myCarousel" data-slide-to="1"></li>
+            <li data-target="#myCarousel" data-slide-to="2"></li>
+            <li data-target="#myCarousel" data-slide-to="3"></li>
+        </ol>
+        <div class="carousel-inner">
+            <div class="item active">
+                <div class="container">
+                    <div class="carousel-caption">
+                        <h1>Pure SQL - no pain</h1>
+
+                        <img class="img-responsive" src="images/initial.png" alt="">
+
+                        <p><a class="btn btn-lg btn-primary" href="https://dalesbred.evident.fi/docs/current/reference/" role="button">Learn more</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="item">
+                <div class="container">
+                    <div class="carousel-caption">
+                        <h1>Optional integration</h1>
+
+                        <img class="img-responsive" src="images/integrations.png" alt="">
+                        <p>
+                            Dalesbred has no required dependencies, but integrates smoothly with Spring Framework, Guice and Joda-Time.
+                        </p>
+                        <p><a class="btn btn-lg btn-primary" href="https://dalesbred.evident.fi/docs/current/reference/#_integrations" role="button">Study Integrations</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="item">
+                <div class="container">
+                    <div class="carousel-caption">
+                        <h1>Ready for Java 8</h1>
+
+                        <img class="img-responsive" src="images/java8.png" alt="">
+                        <p>
+                            Dalesbred supports <em>java.time</em> automatically when running on
+                            Java 8. The APIs have been designed to work well with lambdas.
+                        </p>
+                        <p><a class="btn btn-lg btn-primary" href="https://dalesbred.evident.fi/docs/current/reference/" role="button">Learn more</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="item">
+                <div class="container">
+                    <div class="carousel-caption">
+                        <h1>Plugin for IntelliJ IDEA</h1>
+
+                        <img class="img-responsive" src="images/idea-plugin.png" alt="">
+                        <p>
+                            Dalesbred plugin for IntelliJ IDEA analyzes your classes and SQL queries to provide
+                            errors right in the editor.
+                        </p>
+                        <p><a class="btn btn-lg btn-primary" href="https://bitbucket.org/evidentsolutions/dalesbred-idea-plugin" role="button">Install the Plugin</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a class="left carousel-control" href="#myCarousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+        <a class="right carousel-control" href="#myCarousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+    </div><!-- /.carousel -->
+
+    <section class="container">
         <p>
             Dalesbred is a library that strives to make database access from Java nicer. Dalesbred assumes that SQL is a great way to access database, but that JDBC as an API causes pain. Therefore it wraps JDBC with a set of helpers while still providing access to low-level functionality.
         </p>
-
-      <pre class="prettyprint java language-java hidden-xs"><code>Database db = Database.forUrlAndCredentials("jdbc:my-database", "login", "password");
-
-List&lt;User&gt; users = db.findAll(User.class,
-                              "select id, name, birthday from user where birthday < ?",
-                              LocalDate.of(1950, 8, 42));
-
-public class User {
-    public int id;
-    public String name;
-    public LocalDate birthday;
-}
-</code></pre>
 
         <hr>
 
@@ -71,7 +151,8 @@ public class User {
     </div>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
+<script src="https://code.jquery.com/jquery-2.0.3.min.js"></script>
+<script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
 <script>document.addEventListener('DOMContentLoaded', prettyPrint)</script>
 </body>
 </html>

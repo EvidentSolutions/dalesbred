@@ -1056,7 +1056,9 @@
     <inspection_tool class="HtmlUnknownAttribute" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="myValues">
         <value>
-          <list size="0" />
+          <list size="1">
+            <item index="0" class="java.lang.String" itemvalue="role" />
+          </list>
         </value>
       </option>
       <option name="myCustomValuesEnabled" value="true" />
