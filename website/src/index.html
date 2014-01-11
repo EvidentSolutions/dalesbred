@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Dalesbred - a database access library">
+    <meta name="author" content="Juha Komulainen">
+
+    <title>Dalesbred</title>
+
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
+    <link rel="stylesheet" href="css/dalesbred.css">
+</head>
+<body>
+<div id="wrap">
+    <section class="container">
+        <div class="page-header">
+            <h1>Dalesbred <small>pure SQL - no pain</small></h1>
+        </div>
+
+        <p>
+            Dalesbred is a library that strives to make database access from Java nicer. Dalesbred assumes that SQL is a great way to access database, but that JDBC as an API causes pain. Therefore it wraps JDBC with a set of helpers while still providing access to low-level functionality.
+        </p>
+
+      <pre class="prettyprint java language-java hidden-xs"><code>Database db = Database.forUrlAndCredentials("jdbc:my-database", "login", "password");
+
+List&lt;User&gt; users = db.findAll(User.class,
+                              "select id, name, birthday from user where birthday < ?",
+                              LocalDate.of(1950, 8, 42));
+
+public class User {
+    public int id;
+    public String name;
+    public LocalDate birthday;
+}
+</code></pre>
+
+        <hr>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <ul class="fa-ul">
+                    <li><i class="fa-li fa fa-book"></i> <a href="/docs/current/reference">Reference Documentation</a></li>
+                    <li><i class="fa-li fa fa-puzzle-piece"></i> <a href="/docs/current/api">Javadoc</a></li>
+                    <li><i class="fa-li fa fa-list"></i> <a href="https://bitbucket.org/evidentsolutions/dalesbred/src/master/CHANGELOG.md">Changelog</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-6">
+                <ul class="fa-ul col-sm-6">
+                    <li><i class="fa-li fa fa-bitbucket"></i> <a href="https://bitbucket.org/evidentsolutions/dalesbred">Version Control</a></li>
+                    <li><i class="fa-li fa fa-bug"></i> <a href="https://bitbucket.org/evidentsolutions/dalesbred/issues">Issue Tracker</a></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+</div>
+
+<footer>
+    <div class="container">
+        <p class="text-muted">&copy <a href="http://www.evident.fi">Evident Solutions Oy</a> 2012&mdash;2014</p>
+    </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
+<script>document.addEventListener('DOMContentLoaded', prettyPrint)</script>
+</body>
+</html>

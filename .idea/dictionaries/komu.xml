@@ -22,6 +22,7 @@
       <w>database's</w>
       <w>droneio</w>
       <w>endian</w>
+      <w>endif</w>
       <w>enum's</w>
       <w>erubis</w>
       <w>evidentsolutions</w>
@@ -48,6 +49,7 @@
       <w>komu</w>
       <w>komulainen</w>
       <w>laalaa</w>
+      <w>maxcdn</w>
       <w>mockito</w>
       <w>mojo</w>
       <w>mvcc</w>
@@ -58,6 +60,7 @@
       <w>pluggable</w>
       <w>postgre</w>
       <w>postgresql</w>
+      <w>prettyprint</w>
       <w>propdeps</w>
       <w>puppa</w>
       <w>revnumber</w>
