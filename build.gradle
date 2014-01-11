@@ -30,10 +30,7 @@ configure(allprojects) { project ->
 configure(rootProject) { project ->
     apply plugin: 'release'
     apply plugin: 'asciidoctor'
-
-    configurations {
-        sshAntTask
-    }
+    apply from: "${rootProject.projectDir}/gradle/ssh-support.gradle"
 
     buildDocs.dependsOn asciidoctor
 
@@ -53,23 +50,33 @@ configure(rootProject) { project ->
         ]
     }
 
+    task publishWebsite {
+        group 'publishing'
+        description 'Publishes the website to dalesbred.evident.fi'
+        dependsOn installShhTasks
+
+        doLast {
+            ant.scp(todir: "evident@uuhi.evident.fi:/var/www/dalesbred",
+                    keyfile: '${user.home}/.ssh/id_rsa',
+                    trust: true) {
+                fileset(dir: "${project.projectDir}/website/src") {
+                    include(name: '**/**')
+                }
+            }
+        }
+    }
+
     task publishReferenceDocumentation {
         group 'publishing'
         description 'Publishes the reference documentation to dalesbred.evident.fi'
-        dependsOn buildDocs
+        dependsOn installShhTasks, buildDocs
 
         doLast {
-            ant.taskdef(name: 'scp', classname: 'org.apache.tools.ant.taskdefs.optional.ssh.Scp',
-                    classpath: configurations.sshAntTask.asPath)
-
-            ant.taskdef(name: 'sshexec', classname: 'org.apache.tools.ant.taskdefs.optional.ssh.SSHExec',
-                    classpath: configurations.sshAntTask.asPath)
-
             ant.sshexec(host: 'uuhi.evident.fi',
-                        username: 'evident',
-                        command: "mkdir -p /var/www/dalesbred/docs/${project.version}/reference",
-                        keyfile: '${user.home}/.ssh/id_rsa',
-                        trust: true)
+                    username: 'evident',
+                    command: "mkdir -p /var/www/dalesbred/docs/${project.version}/reference",
+                    keyfile: '${user.home}/.ssh/id_rsa',
+                    trust: true)
 
             ant.scp(todir: "evident@uuhi.evident.fi:/var/www/dalesbred/docs/${project.version}/reference",
                     keyfile: '${user.home}/.ssh/id_rsa',
@@ -83,9 +90,6 @@ configure(rootProject) { project ->
 
     //publish.dependsOn publishReferenceDocumentation
 
-    dependencies {
-        sshAntTask 'org.apache.ant:ant-jsch:1.9.3', 'com.jcraft:jsch:0.1.50'
-    }
 }
 
 configure(subprojects) { project ->
