@@ -8,6 +8,8 @@ Dalesbred assumes that SQL is a great way to access database, but that JDBC
 as an API causes pain. Therefore it wraps JDBC with a set of helpers
 while still providing access to low-level functionality.
 
+Visit the [Dalesbred website](https://dalesbred.evident.fi/) for details.
+
 [![Build Status](https://drone.io/bitbucket.org/evidentsolutions/dalesbred/status.png)](https://drone.io/bitbucket.org/evidentsolutions/dalesbred/latest)
 
 Quick-start
