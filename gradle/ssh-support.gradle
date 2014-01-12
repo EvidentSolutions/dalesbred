@@ -2,7 +2,7 @@ configurations {
     sshAntTask
 }
 
-task installShhTasks << {
+task installSshTasks << {
     ant.taskdef(name: 'scp', classname: 'org.apache.tools.ant.taskdefs.optional.ssh.Scp',
             classpath: configurations.sshAntTask.asPath)
 
@@ -11,5 +11,5 @@ task installShhTasks << {
 }
 
 dependencies {
-    sshAntTask 'org.apache.ant:ant-jsch:1.9.3', 'com.jcraft:jsch:0.1.50'
+    sshAntTask 'org.apache.ant:ant-jsch:1.9.3'
 }
