@@ -49,7 +49,7 @@ configure(rootProject) { project ->
         ]
     }
 
-    task publishWebsite(type: SshCopyTask) {
+    task publishWebsite(type: fi.evident.dalesbred.build.SshCopyTask) {
         group 'publishing'
         description 'Publishes the website to dalesbred.evident.fi'
         dependsOn installSshTasks
@@ -58,7 +58,7 @@ configure(rootProject) { project ->
         targetDirectory = "/var/www/dalesbred"
     }
 
-    task publishReferenceDocumentation(type: SshCopyTask) {
+    task publishReferenceDocumentation(type: fi.evident.dalesbred.build.SshCopyTask) {
         group 'publishing'
         description 'Publishes the reference documentation to dalesbred.evident.fi'
         dependsOn installSshTasks, buildDocs
@@ -149,32 +149,5 @@ project(':dalesbred-junit') {
         optional "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
 
         testCompile "org.hsqldb:hsqldb:$hsqldbVersion"
-    }
-}
-
-
-class SshCopyTask extends DefaultTask {
-
-    String targetDirectory;
-    String sourceDirectory;
-    String host = 'uuhi.evident.fi';
-    String username = 'evident';
-    String keyfile = '${user.home}/.ssh/id_rsa';
-
-    @TaskAction
-    def copy() {
-        ant.sshexec(host: host,
-                username: username,
-                command: "mkdir -p $targetDirectory",
-                keyfile: keyfile,
-                trust: true)
-
-        ant.scp(todir: "${username}@${host}:${targetDirectory}",
-                keyfile: keyfile,
-                trust: true) {
-            fileset(dir: sourceDirectory) {
-                include(name: '**/**')
-            }
-        }
     }
 }

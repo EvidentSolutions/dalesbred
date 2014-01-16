@@ -1,2 +1,3 @@
 rootProject.name = 'dalesbred-root'
 include ':dalesbred', ':dalesbred-junit'
+include ':buildSrc'
