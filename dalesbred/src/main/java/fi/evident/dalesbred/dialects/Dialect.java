@@ -137,7 +137,7 @@ public abstract class Dialect {
     public static Dialect detect(@NotNull TransactionManager transactionManager) {
         return transactionManager.withTransaction(new TransactionSettings(), new TransactionCallback<Dialect>() {
             @Override
-            public Dialect execute(@NotNull TransactionContext tx) throws SQLException {
+            public Dialect execute(@NotNull TransactionContext tx) {
                 return detect(tx.getConnection());
             }
         }, new DefaultDialect());
@@ -158,32 +158,36 @@ public abstract class Dialect {
     }
 
     @NotNull
-    public static Dialect detect(@NotNull Connection connection) throws SQLException {
-        String productName = connection.getMetaData().getDatabaseProductName();
+    public static Dialect detect(@NotNull Connection connection) {
+        try {
+            String productName = connection.getMetaData().getDatabaseProductName();
 
-        if (productName.equals("PostgreSQL")) {
-            log.fine("Automatically detected dialect PostgreSQL.");
-            return new PostgreSQLDialect();
+            if (productName.equals("PostgreSQL")) {
+                log.fine("Automatically detected dialect PostgreSQL.");
+                return new PostgreSQLDialect();
 
-        } else if (productName.equals("HSQL Database Engine")) {
-            log.fine("Automatically detected dialect HSQLDB.");
-            return new HsqldbDialect();
+            } else if (productName.equals("HSQL Database Engine")) {
+                log.fine("Automatically detected dialect HSQLDB.");
+                return new HsqldbDialect();
 
-        } else if (productName.equals("MySQL")) {
-            log.fine("Automatically detected dialect MySQL.");
-            return new MySQLDialect();
+            } else if (productName.equals("MySQL")) {
+                log.fine("Automatically detected dialect MySQL.");
+                return new MySQLDialect();
 
-        } else if (productName.equals("Oracle")) {
-            log.fine("Automatically detected dialect Oracle.");
-            return new OracleDialect();
+            } else if (productName.equals("Oracle")) {
+                log.fine("Automatically detected dialect Oracle.");
+                return new OracleDialect();
 
-        } else if (productName.equals("Microsoft SQL Server")) {
-            log.fine("Automatically detected dialect SQLServer.");
-            return new SQLServerDialect();
+            } else if (productName.equals("Microsoft SQL Server")) {
+                log.fine("Automatically detected dialect SQLServer.");
+                return new SQLServerDialect();
 
-        } else {
-            log.info("Could not detect dialect for product name '" + productName + "', falling back to default.");
-            return new DefaultDialect();
+            } else {
+                log.info("Could not detect dialect for product name '" + productName + "', falling back to default.");
+                return new DefaultDialect();
+            }
+        } catch (SQLException e) {
+            throw new DatabaseSQLException("Failed to auto-detect database dialect: " + e, e);
         }
     }
 
