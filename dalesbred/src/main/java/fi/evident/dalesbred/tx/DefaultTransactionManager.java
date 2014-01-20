@@ -21,10 +21,14 @@
  */
 package fi.evident.dalesbred.tx;
 
-import fi.evident.dalesbred.*;
+import fi.evident.dalesbred.Isolation;
+import fi.evident.dalesbred.Propagation;
+import fi.evident.dalesbred.TransactionCallback;
+import fi.evident.dalesbred.TransactionSettings;
 import fi.evident.dalesbred.connection.ConnectionProvider;
 import fi.evident.dalesbred.dialects.Dialect;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -34,58 +38,60 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
 /**
  * Default transaction manager that handles all transactions by itself.
  */
-public final class DefaultTransactionManager implements TransactionManager {
+public final class DefaultTransactionManager extends AbstractTransactionManager {
 
-    /** The current active transaction of this thread, or null */
+    /**
+     * The current active transaction of this thread, or null
+     */
     @NotNull
     private final ThreadLocal<DefaultTransaction> activeTransaction = new ThreadLocal<DefaultTransaction>();
 
     @NotNull
     private final ConnectionProvider connectionProvider;
 
-    /** The isolation level to use for transactions that have not specified an explicit level. */
-    @NotNull
-    private Isolation defaultIsolation = Isolation.DEFAULT;
-
-    /** The default propagation for transactions */
-    @NotNull
-    private Propagation defaultPropagation = Propagation.DEFAULT;
-
     public DefaultTransactionManager(@NotNull ConnectionProvider connectionProvider) {
         this.connectionProvider = requireNonNull(connectionProvider);
     }
 
     @Override
-    public <T> T withTransaction(@NotNull TransactionSettings settings, @NotNull TransactionCallback<T> callback, @NotNull Dialect dialect) {
-
-        Propagation propagation = settings.getPropagation().normalize(defaultPropagation);
-        Isolation isolation = settings.getIsolation().normalize(defaultIsolation);
-        int retries = settings.getRetries();
-
-        DefaultTransaction existingTransaction = activeTransaction.get();
-
-        if (existingTransaction != null) {
-            if (propagation == Propagation.REQUIRES_NEW)
-                return withSuspendedTransaction(isolation, callback, dialect);
-            else if (propagation == Propagation.NESTED)
-                return existingTransaction.nested(retries, callback);
-            else
-                return existingTransaction.join(callback);
-
-        } else {
-            if (propagation == Propagation.MANDATORY)
-                throw new NoActiveTransactionException("Transaction propagation was MANDATORY, but there was no existing transaction.");
-
-            Connection connection = openConnection(isolation, dialect);
-            try {
-                DefaultTransaction newTransaction = new DefaultTransaction(connection, dialect);
-                activeTransaction.set(newTransaction);
-                return newTransaction.execute(retries, callback);
-            } finally {
-                activeTransaction.set(null);
-                releaseConnection(connection, dialect);
-            }
+    protected <T> T withNewTransaction(@NotNull TransactionCallback<T> callback,
+                                       @NotNull Dialect dialect,
+                                       @NotNull Isolation isolation,
+                                       int retries) {
+        Connection connection = openConnection(isolation, dialect);
+        try {
+            DefaultTransaction newTransaction = new DefaultTransaction(connection);
+            activeTransaction.set(newTransaction);
+            return newTransaction.execute(retries, callback, dialect);
+        } finally {
+            activeTransaction.set(null);
+            releaseConnection(connection, dialect);
         }
+    }
+
+    @Override
+    protected <T> T withSuspendedTransaction(@NotNull TransactionCallback<T> callback,
+                                             @NotNull Isolation isolation,
+                                             @NotNull Dialect dialect,
+                                             int retries) {
+        DefaultTransaction suspended = getActiveTransaction();
+        try {
+            activeTransaction.set(null);
+
+            TransactionSettings settings = new TransactionSettings();
+            settings.setRetries(retries);
+            settings.setPropagation(Propagation.REQUIRED);
+            settings.setIsolation(isolation);
+            return withTransaction(settings, callback, dialect);
+        } finally {
+            activeTransaction.set(suspended);
+        }
+    }
+
+    @Override
+    @Nullable
+    protected DefaultTransaction getActiveTransaction() {
+        return activeTransaction.get();
     }
 
     @NotNull
@@ -108,55 +114,5 @@ public final class DefaultTransactionManager implements TransactionManager {
         } catch (SQLException e) {
             throw dialect.convertException(e);
         }
-    }
-
-    @Override
-    public <T> T withCurrentTransaction(@NotNull TransactionCallback<T> callback, @NotNull Dialect dialect) {
-        DefaultTransaction transaction = activeTransaction.get();
-        if (transaction != null)
-            return transaction.join(callback);
-        else
-            throw new NoActiveTransactionException("Tried to perform database operation without active transaction. Database accesses should be bracketed with Database.withTransaction(...) or implicit transactions should be enabled.");
-    }
-
-    @Override
-    public boolean hasActiveTransaction() {
-        return activeTransaction.get() != null;
-    }
-
-    private <T> T withSuspendedTransaction(@NotNull Isolation isolation, @NotNull TransactionCallback<T> callback, @NotNull Dialect dialect) {
-        DefaultTransaction suspended = activeTransaction.get();
-        try {
-            activeTransaction.set(null);
-
-            TransactionSettings settings = new TransactionSettings();
-            settings.setPropagation(Propagation.REQUIRED);
-            settings.setIsolation(isolation);
-            return withTransaction(settings, callback, dialect);
-        } finally {
-            activeTransaction.set(suspended);
-        }
-    }
-
-    @Override
-    @NotNull
-    public Isolation getDefaultIsolation() {
-        return defaultIsolation;
-    }
-
-    @Override
-    public void setDefaultIsolation(@NotNull Isolation isolation) {
-        this.defaultIsolation = isolation;
-    }
-
-    @Override
-    @NotNull
-    public Propagation getDefaultPropagation() {
-        return defaultPropagation;
-    }
-
-    @Override
-    public void setDefaultPropagation(@NotNull Propagation propagation) {
-        this.defaultPropagation = propagation;
     }
 }

@@ -42,17 +42,13 @@ final class DefaultTransaction {
     private final Connection connection;
 
     @NotNull
-    private final Dialect dialect;
-
-    @NotNull
     private static final Logger log = Logger.getLogger(DefaultTransaction.class.getName());
 
-    DefaultTransaction(@NotNull Connection connection, @NotNull Dialect dialect) {
+    DefaultTransaction(@NotNull Connection connection) {
         this.connection = requireNonNull(connection);
-        this.dialect = requireNonNull(dialect);
     }
 
-    <T> T execute(int retries, @NotNull TransactionCallback<T> callback) {
+    <T> T execute(int retries, @NotNull TransactionCallback<T> callback, @NotNull Dialect dialect) {
         int tries = 1;
         while (true) {
             try {
@@ -81,7 +77,7 @@ final class DefaultTransaction {
         }
     }
 
-    <T> T nested(int retries, @NotNull TransactionCallback<T> callback) {
+    <T> T nested(int retries, @NotNull TransactionCallback<T> callback, @NotNull Dialect dialect) {
         int tries = 1;
         while (true) {
             try {
@@ -111,7 +107,7 @@ final class DefaultTransaction {
         }
     }
 
-    <T> T join(@NotNull TransactionCallback<T> callback) {
+    <T> T join(@NotNull TransactionCallback<T> callback, @NotNull Dialect dialect) {
         try {
             return callback.execute(new DefaultTransactionContext(connection));
         } catch (SQLException e) {
