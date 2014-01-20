@@ -21,11 +21,9 @@
  */
 package fi.evident.dalesbred.tx;
 
-import fi.evident.dalesbred.Isolation;
 import fi.evident.dalesbred.TransactionCallback;
 import fi.evident.dalesbred.TransactionContext;
 import fi.evident.dalesbred.TransactionSerializationException;
-import fi.evident.dalesbred.connection.ConnectionProvider;
 import fi.evident.dalesbred.dialects.Dialect;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,27 +42,14 @@ final class DefaultTransaction {
     private final Connection connection;
 
     @NotNull
-    private final ConnectionProvider connectionProvider;
+    private final Dialect dialect;
 
     @NotNull
-    private final Dialect dialect;
     private static final Logger log = Logger.getLogger(DefaultTransaction.class.getName());
 
-    @SuppressWarnings("JDBCResourceOpenedButNotSafelyClosed")
-    DefaultTransaction(@NotNull ConnectionProvider connectionProvider, @NotNull Dialect dialect, @NotNull Isolation isolation) {
-        try {
-            this.connectionProvider = requireNonNull(connectionProvider);
-            this.connection = connectionProvider.getConnection();
-            this.dialect = requireNonNull(dialect);
-
-            connection.setAutoCommit(false);
-
-            if (isolation != Isolation.DEFAULT)
-                connection.setTransactionIsolation(isolation.getJdbcLevel());
-
-        } catch (SQLException e) {
-            throw dialect.convertException(e);
-        }
+    DefaultTransaction(@NotNull Connection connection, @NotNull Dialect dialect) {
+        this.connection = requireNonNull(connection);
+        this.dialect = requireNonNull(dialect);
     }
 
     <T> T execute(int retries, @NotNull TransactionCallback<T> callback) {
@@ -129,14 +114,6 @@ final class DefaultTransaction {
     <T> T join(@NotNull TransactionCallback<T> callback) {
         try {
             return callback.execute(new DefaultTransactionContext(connection));
-        } catch (SQLException e) {
-            throw dialect.convertException(e);
-        }
-    }
-
-    void close() {
-        try {
-            connectionProvider.releaseConnection(connection);
         } catch (SQLException e) {
             throw dialect.convertException(e);
         }

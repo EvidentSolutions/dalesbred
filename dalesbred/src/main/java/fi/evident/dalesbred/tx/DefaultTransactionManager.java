@@ -26,6 +26,9 @@ import fi.evident.dalesbred.connection.ConnectionProvider;
 import fi.evident.dalesbred.dialects.Dialect;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 
 /**
@@ -73,14 +76,37 @@ public final class DefaultTransactionManager implements TransactionManager {
             if (propagation == Propagation.MANDATORY)
                 throw new NoActiveTransactionException("Transaction propagation was MANDATORY, but there was no existing transaction.");
 
-            DefaultTransaction newTransaction = new DefaultTransaction(connectionProvider, dialect, isolation);
+            Connection connection = openConnection(isolation, dialect);
             try {
+                DefaultTransaction newTransaction = new DefaultTransaction(connection, dialect);
                 activeTransaction.set(newTransaction);
                 return newTransaction.execute(retries, callback);
             } finally {
                 activeTransaction.set(null);
-                newTransaction.close();
+                releaseConnection(connection, dialect);
             }
+        }
+    }
+
+    @NotNull
+    private Connection openConnection(@NotNull Isolation isolation, @NotNull Dialect dialect) {
+        try {
+            Connection connection = connectionProvider.getConnection();
+            connection.setAutoCommit(false);
+            if (isolation != Isolation.DEFAULT)
+                connection.setTransactionIsolation(isolation.getJdbcLevel());
+
+            return connection;
+        } catch (SQLException e) {
+            throw dialect.convertException(e);
+        }
+    }
+
+    private void releaseConnection(@NotNull Connection connection, @NotNull Dialect dialect) {
+        try {
+            connectionProvider.releaseConnection(connection);
+        } catch (SQLException e) {
+            throw dialect.convertException(e);
         }
     }
 
