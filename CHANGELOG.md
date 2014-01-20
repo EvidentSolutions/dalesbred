@@ -1,5 +1,6 @@
 ## x.y.z (yyyy-mm-dd)
 
+  - Added SingleConnectionTransactionManager for third-party integration.
   - Migrated the build to use Gradle instead of Maven. (Shouldn't affect users in any way.)
   - Updated versions of the optional dependencies.
   - Minimum support JDK version is now 1.6.
