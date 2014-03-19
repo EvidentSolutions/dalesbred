@@ -1,6 +1,5 @@
 <component name="CopyrightManager">
   <settings default="MIT">
-    <module2copyright />
     <LanguageOptions name="Properties">
       <option name="fileTypeOverride" value="1" />
     </LanguageOptions>
