@@ -136,6 +136,21 @@ project(':dalesbred') {
         testCompile "junit:junit:$junitVersion"
         testCompile 'org.mockito:mockito-core:1.9.5'
     }
+
+    apply plugin: 'osgi'
+
+    jar {
+        manifest {
+            instruction 'Import-Package', '' +
+                    'com.google.inject.*;resolution:=optional,' +
+                    'javax.inject.*;resolution:=optional,' +
+                    'org.aopalliance.intercept.*;resolution:=optional,' +
+                    'org.joda.time.*;resolution:=optional,' +
+                    'org.springframework.*;resolution:=optional,' +
+                    'org.postgresql.*;resolution:=optional,' +
+                    '*'
+        }
+    }
 }
 
 project(':dalesbred-junit') {
