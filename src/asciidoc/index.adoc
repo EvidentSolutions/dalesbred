@@ -569,6 +569,11 @@ To use Dalesbred without a dependency management system, you'll need to
 download http://repo1.maven.org/maven2/fi/evident/dalesbred/dalesbred/{revnumber}/dalesbred-{revnumber}.jar[dalesbred-{revnumber}.jar]
 and it to your classpath. There are no other required dependencies.
 
+Contributors
+------------
+
+- https://bitbucket.org/christophgr[Christoph Gritschenberger]
+
 Attributions
 ------------
 
