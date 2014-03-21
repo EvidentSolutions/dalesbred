@@ -62,10 +62,8 @@ public final class ResultTableResultSetProcessor implements ResultSetProcessor<R
         int columnCount = metaData.getColumnCount();
         ColumnMetadata[] result = new ColumnMetadata[columnCount];
 
-
-
         for (int i = 0; i < columnCount; i++)
-            result[i] = new ColumnMetadata(i, metaData.getColumnName(i+1), getColumnType(metaData, i+1), metaData.getColumnType(i+1), metaData.getColumnTypeName(i+1));
+            result[i] = new ColumnMetadata(i, metaData.getColumnLabel(i + 1), getColumnType(metaData, i+1), metaData.getColumnType(i+1), metaData.getColumnTypeName(i+1));
 
         return ResultTable.builder(asList(result));
     }
