@@ -1,9 +1,13 @@
 ## x.y.z (yyyy-mm-dd)
 
+  - Use `ResultSetMetadata.getColumnLabel` instead of `ResultSetMetadata.getColumnName` to fetch
+    names of columns in results as the latter didn't use column aliases on some databases.
+    (Thanks to Christoph Gritschenberger.)
+  - Added OSGi-headers to jar. (Thanks to Christoph Gritschenberger.)
   - Added SingleConnectionTransactionManager for third-party integration.
   - Migrated the build to use Gradle instead of Maven. (Shouldn't affect users in any way.)
   - Updated versions of the optional dependencies.
-  - Minimum support JDK version is now 1.6.
+  - Minimum supported JDK version is now 1.6.
 
 ## 0.6.0 (2014-01-04)
 
