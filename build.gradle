@@ -4,7 +4,6 @@ buildscript {
         maven { url 'http://repo.springsource.org/plugins-release' }
     }
     dependencies {
-        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.5'
         classpath("org.asciidoctor:asciidoctor-gradle-plugin:0.7.0")
         classpath 'com.github.townsfolk:gradle-release:1.2'
     }
@@ -14,7 +13,6 @@ configure(allprojects) { project ->
     group = 'fi.evident.dalesbred'
 
     apply plugin: 'java'
-    apply plugin: 'propdeps'
 
     task buildDocs {
         group 'documentation'
@@ -72,7 +70,6 @@ configure(subprojects) { project ->
     apply plugin: 'maven'
     apply plugin: 'maven-publish'
     apply plugin: 'signing'
-    apply plugin: 'propdeps-idea'
     apply from: "${rootProject.projectDir}/gradle/publish-maven.gradle"
 
     buildDocs.dependsOn javadoc
@@ -122,14 +119,14 @@ project(':dalesbred') {
     description = 'Dalesbred - a database access library'
 
     dependencies {
-        optional 'joda-time:joda-time:2.3'
-        optional 'aopalliance:aopalliance:1.0'
-        optional 'com.google.inject:guice:3.0'
-        optional "org.springframework:spring-context:$springVersion"
-        optional "org.springframework:spring-jdbc:$springVersion"
-        optional "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
+        compile 'joda-time:joda-time:2.3'
+        compile 'aopalliance:aopalliance:1.0'
+        compile 'com.google.inject:guice:3.0'
+        compile "org.springframework:spring-context:$springVersion"
+        compile "org.springframework:spring-jdbc:$springVersion"
+        compile "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
 
-        optional 'org.postgresql:postgresql:9.3-1100-jdbc41'
+        compile 'org.postgresql:postgresql:9.3-1100-jdbc41'
 
         testCompile "org.hsqldb:hsqldb:$hsqldbVersion"
         testCompile 'mysql:mysql-connector-java:5.1.26'
@@ -161,7 +158,7 @@ project(':dalesbred-junit') {
         compile "junit:junit:$junitVersion"
         compile 'javax.inject:javax.inject:1'
 
-        optional "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
+        compile "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
 
         testCompile "org.hsqldb:hsqldb:$hsqldbVersion"
     }
