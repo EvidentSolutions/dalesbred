@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: gradle-messaging-1.11">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/wrapper/dists/gradle-1.11-all/37jl2epf9827mk9e29i5rv3agb/gradle-1.11/lib/gradle-messaging-1.11.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$USER_HOME$/.gradle/wrapper/dists/gradle-1.11-all/37jl2epf9827mk9e29i5rv3agb/gradle-1.11/src/messaging" />
+    </SOURCES>
+  </library>
+</component>

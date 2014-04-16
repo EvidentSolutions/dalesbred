@@ -75,10 +75,10 @@ configure(subprojects) { project ->
     buildDocs.dependsOn javadoc
 
     ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
-    ext.springVersion = '3.2.4.RELEASE'
+    ext.springVersion = '4.0.3.RELEASE'
     ext.junitVersion = '4.11'
     ext.jetbrainsAnnotationsVersion = '13.0'
-    ext.hsqldbVersion = '2.3.1'
+    ext.hsqldbVersion = '2.3.2'
 
     sourceCompatibility = 1.6
     targetCompatibility = 1.6
@@ -126,10 +126,10 @@ project(':dalesbred') {
         compile "org.springframework:spring-jdbc:$springVersion"
         compile "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
 
-        compile 'org.postgresql:postgresql:9.3-1100-jdbc41'
+        compile 'org.postgresql:postgresql:9.3-1101-jdbc41'
 
         testCompile "org.hsqldb:hsqldb:$hsqldbVersion"
-        testCompile 'mysql:mysql-connector-java:5.1.26'
+        testCompile 'mysql:mysql-connector-java:5.1.30'
         testCompile "junit:junit:$junitVersion"
         testCompile 'org.mockito:mockito-core:1.9.5'
     }
