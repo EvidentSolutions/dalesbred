@@ -108,7 +108,7 @@ configure(subprojects) { project ->
     javadoc {
         options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
         options.header = project.name
-        options.links('http://download.java.net/jdk8/docs/api/',
+        options.links('http://docs.oracle.com/javase/8/docs/api/',
                 'http://docs.spring.io/spring/docs/current/javadoc-api/',
                 'http://www.joda.org/joda-time/apidocs/')
         options.addStringOption('Xdoclint:none', '-quiet')
