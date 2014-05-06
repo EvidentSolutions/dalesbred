@@ -1,65 +1,51 @@
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+modifyPom {
+    project {
+        name project.name
+        packaging 'jar'
+        description project.description
+        url 'https://dalesbred.evident.fi/'
+        inceptionYear '2012'
 
-            if (project.hasProperty('sonatypeUsername')) {
-                def repo = version.endsWith("SNAPSHOT") ? "https://oss.sonatype.org/content/repositories/snapshots/" : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+        organization {
+            name 'Evident Solutions'
+            url 'http://www.evident.fi'
+        }
 
-                repository(url: repo) {
-                    authentication(userName: sonatypeUsername, password: sonatypePassword)
-                }
+        licenses {
+            license {
+                name 'MIT License'
+                url 'http://opensource.org/licenses/mit-license.php'
+                distribution 'repo'
             }
+        }
 
-            pom.whenConfigured { pom ->
-                pom.project {
-                    name project.name
-                    packaging 'jar'
-                    description project.description
-                    url 'https://dalesbred.evident.fi/'
-                    inceptionYear '2012'
+        scm {
+            url 'https://bitbucket.org/evidentsolutions/dalesbred'
+            connection 'scm:git:https://bitbucket.org/evidentsolutions/dalesbred.git'
+            developerConnection 'scm:git:ssh://git@bitbucket.org/evidentsolutions/dalesbred.git'
+        }
 
-                    organization {
-                        name 'Evident Solutions'
-                        url 'http://www.evident.fi'
-                    }
-
-                    licenses {
-                        license {
-                            name 'MIT License'
-                            url 'http://opensource.org/licenses/mit-license.php'
-                            distribution 'repo'
-                        }
-                    }
-
-                    scm {
-                        url 'https://bitbucket.org/evidentsolutions/dalesbred'
-                        connection 'scm:git:https://bitbucket.org/evidentsolutions/dalesbred.git'
-                        developerConnection 'scm:git:ssh://git@bitbucket.org/evidentsolutions/dalesbred.git'
-                    }
-
-                    developers {
-                        developer {
-                            id 'komu'
-                            name 'Juha Komulainen'
-                        }
-                    }
-
-                    issueManagement {
-                        system = 'Bitbucket'
-                        url = 'https://bitbucket.org/evidentsolutions/dalesbred/issues'
-                    }
-                }
-
-                // Test dependencies are not needed in pom
-                pom.dependencies.removeAll { dep ->
-                    dep.scope == "test"
-                }
-
-                // Mark all other dependencies as optional
-                for (dep in pom.dependencies)
-                    dep.optional = true
+        developers {
+            developer {
+                id 'komu'
+                name 'Juha Komulainen'
             }
+        }
+
+        issueManagement {
+            system = 'Bitbucket'
+            url = 'https://bitbucket.org/evidentsolutions/dalesbred/issues'
+        }
+
+        // Test dependencies are not needed in pom
+        dependencies.removeAll { dep ->
+            dep.scope == "test"
+        }
+
+        // For the main project we'll mark all dependencies as optional
+        if (name == 'dalesbred') {
+            for (dep in dependencies)
+                dep.optional = true
         }
     }
 }
