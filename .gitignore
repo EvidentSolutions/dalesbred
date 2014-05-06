@@ -8,6 +8,9 @@ out
 .idea/uiDesigner.xml
 .idea/dataSources.xml
 .idea/dataSources.ids
+.idea/libraries
+.idea/modules.xml
+*.iml
 /build
 /*/build
 .gradle
