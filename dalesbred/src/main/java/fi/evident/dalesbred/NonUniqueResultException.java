@@ -31,7 +31,17 @@ package fi.evident.dalesbred;
  */
 public class NonUniqueResultException extends UnexpectedResultException {
 
+    private final int count;
+
     public NonUniqueResultException(int count) {
         super("Expected unique result but got " + count + " rows.");
+        this.count = count;
+    }
+
+    /**
+     * Returns the number of rows actually returned.
+     */
+    public int getCount() {
+        return count;
     }
 }
