@@ -64,7 +64,7 @@ configure(rootProject) { project ->
         dependsOn installSshTasks, buildDocs
 
         sourceDirectory = "${project.projectDir}/build/asciidoc"
-        targetDirectory = "/var/www/dalesbred/docs/${project.version}/reference"
+        targetDirectory = { "/var/www/dalesbred/docs/${project.version}/reference" }
     }
 }
 

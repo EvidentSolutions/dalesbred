@@ -21,32 +21,55 @@
  */
 
 package fi.evident.dalesbred.build
-
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
+import java.util.concurrent.Callable
+
 public class SshCopyTask extends DefaultTask {
 
-    String targetDirectory;
+    def targetDirectory;
     String sourceDirectory;
     String host = 'uuhi.evident.fi';
     String username = 'evident';
     String keyfile = '${user.home}/.ssh/id_rsa';
 
+    private String getTargetDirectory() {
+        return unpack(targetDirectory)
+    }
+
     @TaskAction
     def copy() {
+        def target = getTargetDirectory()
+
         ant.sshexec(host: host,
                 username: username,
-                command: "mkdir -p $targetDirectory",
+                command: "mkdir -p $target",
                 keyfile: keyfile,
                 trust: true)
 
-        ant.scp(todir: "${username}@${host}:${targetDirectory}",
+        ant.scp(todir: "${username}@${host}:${target}",
                 keyfile: keyfile,
                 trust: true) {
             fileset(dir: sourceDirectory) {
                 include(name: '**/**')
             }
         }
+    }
+
+    private static Object unpack(Object obj) {
+        Object current = obj;
+        while (current != null) {
+            if (current instanceof Closure) {
+                current = ((Closure) current).call();
+            } else if (current instanceof Callable) {
+                current = ((Callable) current).call();
+            } else if (current instanceof org.gradle.internal.Factory) {
+                return ((org.gradle.internal.Factory) current).create();
+            } else {
+                return current;
+            }
+        }
+        return null;
     }
 }
