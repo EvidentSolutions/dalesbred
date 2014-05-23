@@ -36,8 +36,10 @@ configure(rootProject) { project ->
     def releaseVersion
     release {
         grgit = Grgit.open(project.file('.'))
-        useBuildMetadataForStage = { stage -> stage != 'final' && stage != 'rc' }
         releaseVersion = version
+        version {
+            useBuildMetadataForStage = { stage -> stage != 'final' && stage != 'rc' }
+        }
     }
 
     // workaround for https://github.com/ajoberstar/gradle-git/issues/54
