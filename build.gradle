@@ -1,3 +1,5 @@
+import org.ajoberstar.grgit.*
+
 buildscript {
     repositories {
         mavenCentral()
@@ -5,9 +7,9 @@ buildscript {
         maven { url 'http://repo.springsource.org/plugins-release' }
     }
     dependencies {
-        classpath("org.asciidoctor:asciidoctor-gradle-plugin:0.7.0")
-        classpath 'com.github.townsfolk:gradle-release:1.2'
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:0.7.0'
         classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.7'
+        classpath 'org.ajoberstar:gradle-git:0.8.0'
     }
 }
 
@@ -27,9 +29,21 @@ configure(allprojects) { project ->
 }
 
 configure(rootProject) { project ->
-    apply plugin: 'release'
+    apply plugin: 'grgit-release'
     apply plugin: 'asciidoctor'
     apply from: "${rootProject.projectDir}/gradle/ssh-support.gradle"
+
+    def releaseVersion
+    release {
+        grgit = Grgit.open(project.file('.'))
+        releaseVersion = version
+    }
+
+    // workaround for https://github.com/ajoberstar/gradle-git/issues/54
+    project.version = 'undefined'
+    gradle.taskGraph.whenReady {
+        project.version = releaseVersion
+    }
 
     buildDocs.dependsOn asciidoctor
 
@@ -75,7 +89,7 @@ configure(subprojects) { project ->
 
     buildDocs.dependsOn javadoc
 
-    ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+    ext.isReleaseVersion = { !version.endsWith("SNAPSHOT") }
     ext.springVersion = '4.0.3.RELEASE'
     ext.junitVersion = '4.11'
     ext.jetbrainsAnnotationsVersion = '13.0'
