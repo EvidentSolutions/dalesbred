@@ -35,7 +35,7 @@ configure(rootProject) { project ->
 
     asciidoctor {
         baseDir = file('src/asciidoc')
-        options = [
+        options = new fi.evident.dalesbred.build.LazyMap({[
                 eruby: 'erubis',
                 attributes: [
                         icons: 'font',
@@ -43,11 +43,11 @@ configure(rootProject) { project ->
                         prettifydir: 'https://cdnjs.cloudflare.com/ajax/libs/prettify/r298',
                         toc: 'right',
                         'source-highlighter': 'prettify',
-                        revnumber: project.version,
+                        revnumber: project.version.toString(),
                         docinfo: "",
-                        javadocBase: "https://dalesbred.evident.fi/docs/${project.version}/api/?"
+                        javadocBase: "https://dalesbred.evident.fi/docs/${project.version.toString()}/api/?"
                 ]
-        ]
+        ]})
     }
 
     task publishWebsite(type: fi.evident.dalesbred.build.SshCopyTask) {
