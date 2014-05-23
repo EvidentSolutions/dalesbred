@@ -36,6 +36,7 @@ configure(rootProject) { project ->
     def releaseVersion
     release {
         grgit = Grgit.open(project.file('.'))
+        useBuildMetadataForStage = { stage -> stage != 'final' && stage != 'rc' }
         releaseVersion = version
     }
 
