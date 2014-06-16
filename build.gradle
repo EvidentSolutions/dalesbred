@@ -87,6 +87,7 @@ configure(subprojects) { project ->
     apply plugin: 'nexus'
     apply from: "${rootProject.projectDir}/gradle/publish-maven.gradle"
 
+    project.version = rootProject.version.toString()
     buildDocs.dependsOn javadoc
 
     ext.isReleaseVersion = { !version.endsWith("SNAPSHOT") }
