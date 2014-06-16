@@ -1,4 +1,4 @@
-import org.ajoberstar.grgit.*
+import org.ajoberstar.grgit.Grgit
 
 buildscript {
     repositories {
@@ -9,7 +9,7 @@ buildscript {
     dependencies {
         classpath 'org.asciidoctor:asciidoctor-gradle-plugin:0.7.0'
         classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.7'
-        classpath 'org.ajoberstar:gradle-git:0.8.0'
+        classpath 'org.ajoberstar:gradle-git:0.9.0'
     }
 }
 
@@ -33,19 +33,11 @@ configure(rootProject) { project ->
     apply plugin: 'asciidoctor'
     apply from: "${rootProject.projectDir}/gradle/ssh-support.gradle"
 
-    def releaseVersion
     release {
         grgit = Grgit.open(project.file('.'))
-        releaseVersion = version
         version {
             useBuildMetadataForStage = { stage -> stage != 'final' && stage != 'rc' && stage != 'milestone' }
         }
-    }
-
-    // workaround for https://github.com/ajoberstar/gradle-git/issues/54
-    project.version = 'undefined'
-    gradle.taskGraph.whenReady {
-        project.version = releaseVersion
     }
 
     buildDocs.dependsOn asciidoctor
