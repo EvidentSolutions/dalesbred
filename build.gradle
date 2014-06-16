@@ -40,6 +40,11 @@ configure(rootProject) { project ->
         }
     }
 
+    // Force the version to be inferred.
+    prepare.doFirst {
+        project.version.infer()
+    }
+
     buildDocs.dependsOn asciidoctor
 
     asciidoctor {
