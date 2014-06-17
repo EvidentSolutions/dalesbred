@@ -42,6 +42,7 @@ import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -536,6 +537,46 @@ public final class Database {
      */
     public int update(@NotNull @SQL String sql, Object... args) {
         return update(query(sql, args));
+    }
+
+    /**
+     * Executes an update against the database and executes
+     *
+     * @param generatedKeysProcessor processor for handling the generated keys
+     * @param query to execute
+     * @return Result of processing the results with {@code generatedKeysProcessor}.
+     */
+    public <T> T updateAndProcessGeneratedKeys(@NotNull final ResultSetProcessor<T> generatedKeysProcessor, @NotNull final SqlQuery query) {
+        return withCurrentTransaction(query, new TransactionCallback<T>() {
+            @Override
+            public T execute(@NotNull TransactionContext tx) throws SQLException {
+                logQuery(query);
+
+                PreparedStatement ps = tx.getConnection().prepareStatement(query.sql, Statement.RETURN_GENERATED_KEYS);
+                try {
+                    bindArguments(ps, query.args);
+                    long startTime = currentTimeMillis();
+                    ps.executeUpdate();
+                    logQueryExecution(query, currentTimeMillis() - startTime);
+
+                    ResultSet rs = ps.getGeneratedKeys();
+                    try {
+                        return generatedKeysProcessor.process(rs);
+                    } finally {
+                        rs.close();
+                    }
+                } finally {
+                    ps.close();
+                }
+            }
+        });
+    }
+
+    /**
+     * @see #updateAndProcessGeneratedKeys(fi.evident.dalesbred.results.ResultSetProcessor, SqlQuery)
+     */
+    public <T> T updateAndProcessGeneratedKeys(@NotNull ResultSetProcessor<T> generatedKeysProcessor, @NotNull @SQL String sql, Object... args) {
+        return updateAndProcessGeneratedKeys(generatedKeysProcessor, query(sql, args));
     }
 
     /**

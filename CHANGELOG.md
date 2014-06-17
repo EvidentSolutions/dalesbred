@@ -1,5 +1,6 @@
 ## x.y.z (yyyy-mm-dd)
 
+  - Support for retrieving generated keys.
   - Use `ResultSetMetadata.getColumnLabel` instead of `ResultSetMetadata.getColumnName` to fetch
     names of columns in results as the latter didn't use column aliases on some databases.
     (Thanks to Christoph Gritschenberger.)
