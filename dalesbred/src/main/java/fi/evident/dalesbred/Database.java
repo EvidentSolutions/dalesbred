@@ -39,10 +39,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -543,16 +540,18 @@ public final class Database {
      * Executes an update against the database and executes
      *
      * @param generatedKeysProcessor processor for handling the generated keys
+     * @param columnNames names of columns that contain the generated keys. Can be empty, in which case the
+     *                    returned columns depend on the database
      * @param query to execute
      * @return Result of processing the results with {@code generatedKeysProcessor}.
      */
-    public <T> T updateAndProcessGeneratedKeys(@NotNull final ResultSetProcessor<T> generatedKeysProcessor, @NotNull final SqlQuery query) {
+    public <T> T updateAndProcessGeneratedKeys(@NotNull final ResultSetProcessor<T> generatedKeysProcessor, @NotNull final List<String> columnNames, @NotNull final SqlQuery query) {
         return withCurrentTransaction(query, new TransactionCallback<T>() {
             @Override
             public T execute(@NotNull TransactionContext tx) throws SQLException {
                 logQuery(query);
 
-                PreparedStatement ps = tx.getConnection().prepareStatement(query.sql, Statement.RETURN_GENERATED_KEYS);
+                PreparedStatement ps = prepareStatement(tx.getConnection(), query.sql, columnNames);
                 try {
                     bindArguments(ps, query.args);
                     long startTime = currentTimeMillis();
@@ -569,14 +568,23 @@ public final class Database {
                     ps.close();
                 }
             }
+
         });
     }
 
+    @NotNull
+    private static PreparedStatement prepareStatement(@NotNull Connection connection, @NotNull String sql, @NotNull List<String> columnNames) throws SQLException {
+        if (columnNames.isEmpty())
+            return connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        else
+            return connection.prepareStatement(sql, columnNames.toArray(new String[columnNames.size()]));
+    }
+
     /**
-     * @see #updateAndProcessGeneratedKeys(fi.evident.dalesbred.results.ResultSetProcessor, SqlQuery)
+     * @see #updateAndProcessGeneratedKeys(fi.evident.dalesbred.results.ResultSetProcessor, java.util.List, SqlQuery)
      */
-    public <T> T updateAndProcessGeneratedKeys(@NotNull ResultSetProcessor<T> generatedKeysProcessor, @NotNull @SQL String sql, Object... args) {
-        return updateAndProcessGeneratedKeys(generatedKeysProcessor, query(sql, args));
+    public <T> T updateAndProcessGeneratedKeys(@NotNull ResultSetProcessor<T> generatedKeysProcessor, @NotNull List<String> columnNames, @NotNull @SQL String sql, Object... args) {
+        return updateAndProcessGeneratedKeys(generatedKeysProcessor, columnNames, query(sql, args));
     }
 
     /**
