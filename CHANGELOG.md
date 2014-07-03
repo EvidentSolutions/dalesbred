@@ -1,4 +1,4 @@
-## x.y.z (yyyy-mm-dd)
+## 0.7.0 (2014-07-03)
 
   - Added support for ThreeTen, the backport of java.time.
   - Support for retrieving generated keys.
