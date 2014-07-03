@@ -114,6 +114,7 @@ project(':dalesbred') {
 
     dependencies {
         compile 'joda-time:joda-time:2.3'
+        compile 'org.threeten:threetenbp:1.0'
         compile 'aopalliance:aopalliance:1.0'
         compile 'com.google.inject:guice:3.0'
         compile "org.springframework:spring-context:$springVersion"

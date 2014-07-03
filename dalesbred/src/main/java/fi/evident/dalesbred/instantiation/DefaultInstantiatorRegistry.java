@@ -25,6 +25,7 @@ package fi.evident.dalesbred.instantiation;
 import fi.evident.dalesbred.dialects.Dialect;
 import fi.evident.dalesbred.support.java8.JavaTimeTypeConversions;
 import fi.evident.dalesbred.support.joda.JodaTypeConversions;
+import fi.evident.dalesbred.support.threeten.ThreeTenTypeConversions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -70,6 +71,11 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
         if (JodaTypeConversions.hasJoda()) {
             log.fine("Detected Joda Time in classpath. Registering type conversions for Joda.");
             JodaTypeConversions.register(typeConversionRegistry);
+        }
+
+        if (ThreeTenTypeConversions.hasThreeTen()) {
+            log.fine("Detected ThreeTen in classpath. Registering type conversions for it.");
+            ThreeTenTypeConversions.register(typeConversionRegistry);
         }
     }
 
