@@ -29,9 +29,11 @@ import fi.evident.dalesbred.instantiation.TypeConversion;
 import fi.evident.dalesbred.instantiation.TypeConversionRegistry;
 import fi.evident.dalesbred.tx.TransactionManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
@@ -222,5 +224,18 @@ public abstract class Dialect {
     @NotNull
     public EnumMode getEnumMode() {
         return enumMode;
+    }
+
+    /**
+     * Bind object to {@link java.sql.PreparedStatement}. Can be overridden by subclasses to
+     * implement custom argument binding.
+     *
+     * @param ps statement to bind object to
+     * @param index index of the parameter
+     * @param value to bind
+     * @throws SQLException if something fails
+     */
+    public void bindArgument(@NotNull PreparedStatement ps, int index, @Nullable Object value) throws SQLException {
+        ArgumentBinder.bindArgument(ps, index, value);
     }
 }

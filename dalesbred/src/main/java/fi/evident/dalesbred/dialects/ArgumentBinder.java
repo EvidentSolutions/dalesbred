@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package fi.evident.dalesbred;
+package fi.evident.dalesbred.dialects;
 
 import fi.evident.dalesbred.lob.InputStreamWithSize;
 import fi.evident.dalesbred.lob.ReaderWithSize;

@@ -1,3 +1,7 @@
+## 0.7.1 (yyyy-mm-dd)
+
+  - Delegate `PreparedStatement`-binding to `Dialect`s.  
+
 ## 0.7.0 (2014-07-03)
 
   - Added support for ThreeTen, the backport of java.time.

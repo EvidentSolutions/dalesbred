@@ -45,7 +45,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static fi.evident.dalesbred.ArgumentBinder.bindArgument;
 import static fi.evident.dalesbred.SqlQuery.query;
 import static fi.evident.dalesbred.SqlQuery.unwrapConfidential;
 import static fi.evident.dalesbred.results.UniqueResultSetProcessor.unique;
@@ -630,7 +629,7 @@ public final class Database {
         int i = 1;
 
         for (Object arg : args)
-            bindArgument(ps, i++, instantiatorRegistry.valueToDatabase(unwrapConfidential(arg)));
+            dialect.bindArgument(ps, i++, instantiatorRegistry.valueToDatabase(unwrapConfidential(arg)));
     }
 
     @NotNull
