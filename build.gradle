@@ -21,6 +21,8 @@ configure(allprojects) { project ->
     task buildDocs {
         group 'documentation'
         description 'Builds all documentation.'
+
+        dependsOn javadoc
     }
 
     repositories {
@@ -142,6 +144,15 @@ project(':dalesbred') {
                     'org.postgresql.*;resolution:=optional,' +
                     '*'
         }
+    }
+
+    task publishJavadocs(type: fi.evident.dalesbred.build.SshCopyTask) {
+        group 'publishing'
+        description 'Publishes the javadocs documentation to dalesbred.evident.fi'
+        dependsOn installSshTasks, javadoc
+
+        sourceDirectory = "${project.projectDir}/build/docs/javadoc"
+        targetDirectory = { "/var/www/dalesbred/docs/${project.version}/api" }
     }
 }
 
