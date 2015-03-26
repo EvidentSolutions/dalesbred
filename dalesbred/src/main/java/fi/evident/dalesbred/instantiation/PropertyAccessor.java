@@ -28,11 +28,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.regex.Pattern;
 
 import static fi.evident.dalesbred.utils.Throwables.propagate;
 import static java.lang.reflect.Modifier.isPublic;
 
 abstract class PropertyAccessor {
+
+    @NotNull
+    private static final Pattern UNDERSCORE = Pattern.compile("_+", Pattern.LITERAL);
 
     abstract void set(Object object, Object value);
 
@@ -40,7 +44,7 @@ abstract class PropertyAccessor {
 
     @Nullable
     static PropertyAccessor findAccessor(@NotNull Class<?> cl, @NotNull String name) {
-        String normalizedName = name.replace("_", "");
+        String normalizedName = UNDERSCORE.matcher(name).replaceAll("");
         Method setter = findSetter(cl, normalizedName);
         if (setter != null) {
             return new SetterPropertyAccessor(setter);
