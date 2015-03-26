@@ -1,5 +1,3 @@
-import org.ajoberstar.grgit.Grgit
-
 buildscript {
     repositories {
         mavenCentral()
@@ -11,6 +9,10 @@ buildscript {
         classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.7'
         classpath 'org.ajoberstar:gradle-git:0.9.0'
     }
+}
+
+plugins {
+    id 'net.researchgate.release' version '2.0.2'
 }
 
 configure(allprojects) { project ->
@@ -31,21 +33,8 @@ configure(allprojects) { project ->
 }
 
 configure(rootProject) { project ->
-    apply plugin: 'grgit-release'
     apply plugin: 'asciidoctor'
     apply from: "${rootProject.projectDir}/gradle/ssh-support.gradle"
-
-    release {
-        grgit = Grgit.open(project.file('.'))
-        version {
-            useBuildMetadataForStage = { stage -> stage != 'final' && stage != 'rc' && stage != 'milestone' }
-        }
-    }
-
-    // Force the version to be inferred.
-    prepare.doFirst {
-        project.version.infer()
-    }
 
     buildDocs.dependsOn asciidoctor
 
