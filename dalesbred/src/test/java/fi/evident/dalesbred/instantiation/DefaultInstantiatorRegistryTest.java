@@ -22,6 +22,7 @@
 
 package fi.evident.dalesbred.instantiation;
 
+import fi.evident.dalesbred.DalesbredIgnore;
 import fi.evident.dalesbred.Reflective;
 import fi.evident.dalesbred.dialects.DefaultDialect;
 import fi.evident.dalesbred.instantiation.test.InaccessibleClassRef;
@@ -157,6 +158,11 @@ public class DefaultInstantiatorRegistryTest {
         assertThat(instantiate(Integer.class, String.class, "foobar"), is(6));
     }
 
+    @Test(expected = InstantiationException.class)
+    public void dontUseIgnoredConstructor() {
+        instantiate(TestClass.class, createNamedTypeList(int.class, int.class), 0, 0);
+    }
+
     public static class TestClass {
         private final int calledConstructor;
 
@@ -173,6 +179,10 @@ public class DefaultInstantiatorRegistryTest {
 
         @Reflective
         public TestClass(int x) { calledConstructor = 3; }
+
+        @SuppressWarnings("unused")
+        @DalesbredIgnore
+        public TestClass(int x, int y) { calledConstructor = 4; }
 
         public String getPropertyWithAccessors() {
             return propertyWithAccessors;
@@ -196,7 +206,7 @@ public class DefaultInstantiatorRegistryTest {
         return instantiator.instantiate(arguments);
     }
 
-    private static NamedTypeList createNamedTypeList(Class<?>[] types) {
+    private static NamedTypeList createNamedTypeList(Class<?>... types) {
         NamedTypeList.Builder list = NamedTypeList.builder(types.length);
         for (int i = 0; i < types.length; i++)
             list.add("name" + i, types[i]);

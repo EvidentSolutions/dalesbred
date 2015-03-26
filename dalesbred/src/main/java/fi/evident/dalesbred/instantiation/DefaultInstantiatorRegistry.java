@@ -22,6 +22,7 @@
 
 package fi.evident.dalesbred.instantiation;
 
+import fi.evident.dalesbred.DalesbredIgnore;
 import fi.evident.dalesbred.dialects.Dialect;
 import fi.evident.dalesbred.support.java8.JavaTimeTypeConversions;
 import fi.evident.dalesbred.support.joda.JodaTypeConversions;
@@ -115,9 +116,11 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
 
         // If there was no coercion, we try to find a matching constructor, applying coercions to arguments.
         for (Constructor<T> constructor : constructorsSortedByDescendingParameterCount(cl)) {
-            Instantiator<T> instantiator = instantiatorFrom(constructor, types);
-            if (instantiator != null)
-                return instantiator;
+            if (!constructor.isAnnotationPresent(DalesbredIgnore.class)) {
+                Instantiator<T> instantiator = instantiatorFrom(constructor, types);
+                if (instantiator != null)
+                    return instantiator;
+            }
         }
 
         throw new InstantiationException("could not find a way to instantiate " + cl + " with parameters " + types);

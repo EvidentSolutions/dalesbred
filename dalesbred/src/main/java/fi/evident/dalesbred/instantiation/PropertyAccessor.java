@@ -22,6 +22,7 @@
 
 package fi.evident.dalesbred.instantiation;
 
+import fi.evident.dalesbred.DalesbredIgnore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,7 +58,7 @@ abstract class PropertyAccessor {
         Field result = null;
 
         for (Field field : cl.getFields())
-            if (isPublic(field.getModifiers()) && field.getName().equalsIgnoreCase(name)) {
+            if (isPublic(field.getModifiers()) && field.getName().equalsIgnoreCase(name) && !field.isAnnotationPresent(DalesbredIgnore.class)) {
                 if (result != null)
                     throw new InstantiationException("Conflicting fields for property: " + result + " - " + name);
                 result = field;
@@ -72,7 +73,7 @@ abstract class PropertyAccessor {
 
         String methodName = "set" + name;
         for (Method method : cl.getMethods()) {
-            if (isPublic(method.getModifiers()) && methodName.equalsIgnoreCase(method.getName()) && method.getParameterTypes().length == 1) {
+            if (isPublic(method.getModifiers()) && methodName.equalsIgnoreCase(method.getName()) && method.getParameterTypes().length == 1 && !method.isAnnotationPresent(DalesbredIgnore.class)) {
                 if (result != null)
                     throw new InstantiationException("Conflicting setters for property: " + result + " - " + name);
                 result = method;

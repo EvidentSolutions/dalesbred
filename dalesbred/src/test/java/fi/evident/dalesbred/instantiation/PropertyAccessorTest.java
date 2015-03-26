@@ -22,12 +22,15 @@
 
 package fi.evident.dalesbred.instantiation;
 
+import fi.evident.dalesbred.DalesbredIgnore;
 import fi.evident.dalesbred.Reflective;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class PropertyAccessorTest {
+
     @Test
     public void namesAreSubstitutedWithoutUnderscore() {
         PropertyAccessor departmentNameField = PropertyAccessor.findAccessor(DepartmentWithFields.class, "department_name");
@@ -35,6 +38,16 @@ public class PropertyAccessorTest {
 
         assertNotNull(departmentNameField);
         assertNotNull(departmentNameSetter);
+    }
+
+    @Test
+    public void ignoredSetters() {
+        assertNull(PropertyAccessor.findAccessor(IgnoredValues.class, "ignoredMethod"));
+    }
+
+    @Test
+    public void ignoredFields() {
+        assertNull(PropertyAccessor.findAccessor(IgnoredValues.class, "ignoredField"));
     }
 
     private static class DepartmentWithFields {
@@ -53,6 +66,18 @@ public class PropertyAccessorTest {
         @Reflective
         public void setDepartmentName(String departmentName) {
             this.departmentName = departmentName;
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static class IgnoredValues {
+
+        @DalesbredIgnore
+        public String ignoredField;
+
+        @SuppressWarnings("UnusedParameters")
+        @DalesbredIgnore
+        public void setIgnoredMethod(String s) {
         }
     }
 }
