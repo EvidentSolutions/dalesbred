@@ -39,11 +39,13 @@ Create a database connection:
 
 Fetch matching rows from table:
 
+    :::java
     List<Department> departments = db.findAll(Department.class,
             "select id, name from department where name like ?", "%foo");
 
 Insert a new row:
 
+    :::java
     db.update("insert into user (id, name) values (?, ?)", 42, "Example User");
 
 Documentation
