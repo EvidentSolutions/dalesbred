@@ -36,7 +36,7 @@ import static java.lang.reflect.Modifier.isPublic;
 abstract class PropertyAccessor {
 
     @NotNull
-    private static final Pattern UNDERSCORE = Pattern.compile("_+", Pattern.LITERAL);
+    private static final Pattern UNDERSCORE = Pattern.compile("_", Pattern.LITERAL);
 
     abstract void set(Object object, Object value);
 

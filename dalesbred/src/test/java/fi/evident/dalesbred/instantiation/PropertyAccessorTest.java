@@ -32,12 +32,13 @@ import static org.junit.Assert.assertNull;
 public class PropertyAccessorTest {
 
     @Test
-    public void namesAreSubstitutedWithoutUnderscore() {
-        PropertyAccessor departmentNameField = PropertyAccessor.findAccessor(DepartmentWithFields.class, "department_name");
-        PropertyAccessor departmentNameSetter = PropertyAccessor.findAccessor(DepartmentWithSetters.class, "department_name");
+    public void findingSetters() {
+        assertNotNull(PropertyAccessor.findAccessor(DepartmentWithSetters.class, "department_name"));
+    }
 
-        assertNotNull(departmentNameField);
-        assertNotNull(departmentNameSetter);
+    @Test
+    public void findingFields() {
+        assertNotNull(PropertyAccessor.findAccessor(DepartmentWithFields.class, "department_name"));
     }
 
     @Test
