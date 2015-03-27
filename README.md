@@ -21,7 +21,7 @@ Add dependency to your `pom.xml`:
     <dependency>
         <groupId>fi.evident.dalesbred</groupId>
         <artifactId>dalesbred</artifactId>
-        <version>0.6.0</version>
+        <version>0.7.1</version>
     </dependency>
 
 Create a class with public fields, normal JavaBean accessors or a constructor matching your SQL-query. For example:
