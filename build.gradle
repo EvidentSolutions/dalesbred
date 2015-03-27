@@ -10,10 +10,19 @@ buildscript {
 plugins {
     id 'net.researchgate.release' version '2.0.2'
     id 'org.asciidoctor.convert' version '1.5.2'
+    id 'org.hidetake.ssh' version '1.1.1'
 }
 
 release {
     // tagTemplate = 'v$version' // TODO: this is not available in release-plugin 2.0.2 but we want to use it later
+}
+
+remotes {
+    website {
+        host = 'uuhi.evident.fi'
+        user = 'evident'
+        identity = file("${System.properties['user.home']}/.ssh/id_rsa")
+    }
 }
 
 configure(allprojects) { project ->
@@ -34,8 +43,6 @@ configure(allprojects) { project ->
 }
 
 configure(rootProject) { project ->
-    apply from: "${rootProject.projectDir}/gradle/ssh-support.gradle"
-
     buildDocs.dependsOn asciidoctor
 
     asciidoctor {
@@ -53,22 +60,46 @@ configure(rootProject) { project ->
         ]
     }
 
-    task publishWebsite(type: fi.evident.dalesbred.build.SshCopyTask) {
+    task publishWebsite {
         group 'publishing'
         description 'Publishes the website to dalesbred.evident.fi'
-        dependsOn installSshTasks
 
-        sourceDirectory = "${project.projectDir}/website/src"
-        targetDirectory = "/var/www/dalesbred"
+        doLast {
+            ssh.run {
+                session(remotes.website) {
+                    put from: "${project.projectDir}/website/src", into: "/var/www/dalesbred"
+                }
+            }
+        }
     }
 
-    task publishReferenceDocumentation(type: fi.evident.dalesbred.build.SshCopyTask) {
+    task publishReferenceDocumentation {
         group 'publishing'
         description 'Publishes the reference documentation to dalesbred.evident.fi'
-        dependsOn installSshTasks, buildDocs
+        dependsOn buildDocs
 
-        sourceDirectory = "${project.projectDir}/build/asciidoc/html5"
-        targetDirectory = { "/var/www/dalesbred/docs/${project.version}/reference" }
+        doLast {
+            ssh.run {
+                session(remotes.website) {
+                    def target = "/var/www/dalesbred/docs/${project.version}/reference"
+                    execute "mkdir -p $target"
+                    put from: "${project.projectDir}/build/asciidoc/html5", into: target
+                }
+            }
+        }
+    }
+
+    task updateCurrentDocsSymlink {
+        group 'publishing'
+        description 'Updates the symlink of current docs to point to this version'
+
+        doLast {
+            ssh.run {
+                session(remotes.website) {
+                    execute "ln -sfT /var/www/dalesbred/docs/${project.version} /var/www/dalesbred/docs/current"
+                }
+            }
+        }
     }
 }
 
@@ -133,13 +164,20 @@ project(':dalesbred') {
         }
     }
 
-    task publishJavadocs(type: fi.evident.dalesbred.build.SshCopyTask) {
+    task publishJavadocs {
         group 'publishing'
         description 'Publishes the javadocs documentation to dalesbred.evident.fi'
-        dependsOn installSshTasks, javadoc
+        dependsOn javadoc
 
-        sourceDirectory = "${project.projectDir}/build/docs/javadoc"
-        targetDirectory = { "/var/www/dalesbred/docs/${project.version}/api" }
+        doLast {
+            ssh.run {
+                session(remotes.website) {
+                    def target = "/var/www/dalesbred/docs/${project.version}/api"
+                    execute "mkdir -p $target"
+                    put from: "${project.projectDir}/build/docs/javadoc", into: target
+                }
+            }
+        }
     }
 }
 
