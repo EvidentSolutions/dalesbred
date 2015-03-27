@@ -1,12 +1,9 @@
 buildscript {
     repositories {
-        mavenCentral()
         jcenter()
-        maven { url 'http://repo.springsource.org/plugins-release' }
     }
     dependencies {
         classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.7'
-        classpath 'org.ajoberstar:gradle-git:0.9.0'
     }
 }
 
