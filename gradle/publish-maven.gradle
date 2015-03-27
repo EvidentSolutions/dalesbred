@@ -20,9 +20,9 @@ modifyPom {
         }
 
         scm {
-            url 'https://bitbucket.org/evidentsolutions/dalesbred'
-            connection 'scm:git:https://bitbucket.org/evidentsolutions/dalesbred.git'
-            developerConnection 'scm:git:ssh://git@bitbucket.org/evidentsolutions/dalesbred.git'
+            url 'https://github.com/EvidentSolutions/dalesbred'
+            connection 'scm:git:https://github.com/EvidentSolutions/dalesbred.git'
+            developerConnection 'scm:git:git@github.com:EvidentSolutions/dalesbred.git'
         }
 
         developers {
@@ -33,8 +33,8 @@ modifyPom {
         }
 
         issueManagement {
-            system = 'Bitbucket'
-            url = 'https://bitbucket.org/evidentsolutions/dalesbred/issues'
+            system = 'GitHub'
+            url = 'https://github.com/EvidentSolutions/dalesbred/issues'
         }
 
         // Test dependencies are not needed in pom

@@ -10,7 +10,7 @@ while still providing access to low-level functionality.
 
 Visit the [Dalesbred website](https://dalesbred.evident.fi/) for details.
 
-[![Build Status](https://drone.io/bitbucket.org/evidentsolutions/dalesbred/status.png)](https://drone.io/bitbucket.org/evidentsolutions/dalesbred/latest)
+[![Build Status](https://drone.io/github.com/EvidentSolutions/dalesbred/status.png)](https://drone.io/github.com/EvidentSolutions/dalesbred/latest)
 
 Quick-start
 ===========

@@ -500,7 +500,7 @@ you'll get support for writing transactional test cases:
 More examples
 -------------
 
-Check out the test cases under https://bitbucket.org/evidentsolutions/dalesbred/src/master/dalesbred/src/test/java/fi/evident/dalesbred/[dalesbred/src/test/java]
+Check out the test cases under https://github.com/EvidentSolutions/dalesbred/tree/master/dalesbred/src/test/java/fi/evident/dalesbred[dalesbred/src/test/java]
 for more usage examples.
 
 Downloading
