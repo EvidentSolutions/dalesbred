@@ -17,36 +17,41 @@ Quick-start
 
 Add dependency to your `pom.xml`:
 
-    :::xml
-    <dependency>
-        <groupId>fi.evident.dalesbred</groupId>
-        <artifactId>dalesbred</artifactId>
-        <version>0.7.1</version>
-    </dependency>
+```xml
+<dependency>
+    <groupId>fi.evident.dalesbred</groupId>
+    <artifactId>dalesbred</artifactId>
+    <version>0.7.1</version>
+</dependency>
+```
 
 Create a class with public fields, normal JavaBean accessors or a constructor matching your SQL-query. For example:
 
-    :::java
-    public class Department {
-        public int id;
-        public String name;
-    }
+```java
+public class Department {
+    public int id;
+    public String name;
+}
+```
 
 Create a database connection:
 
-    :::java
-    Database db = Database.forUrlAndCredentials("jdbc:example-url", "login", "password");
+```java
+Database db = Database.forUrlAndCredentials("jdbc:example-url", "login", "password");
+```
 
 Fetch matching rows from table:
 
-    :::java
-    List<Department> departments = db.findAll(Department.class,
-            "select id, name from department where name like ?", "%foo");
+```java
+List<Department> departments = db.findAll(Department.class,
+        "select id, name from department where name like ?", "%foo");
+```
 
 Insert a new row:
 
-    :::java
-    db.update("insert into user (id, name) values (?, ?)", 42, "Example User");
+```java
+db.update("insert into user (id, name) values (?, ?)", 42, "Example User");
+```
 
 Documentation
 =============
