@@ -13,7 +13,7 @@ plugins {
 }
 
 release {
-    tagTemplate = 'v$version'
+    // tagTemplate = 'v$version' // TODO: this is not available in release-plugin 2.0.2 but we want to use it later
 }
 
 configure(allprojects) { project ->
