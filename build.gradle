@@ -12,6 +12,10 @@ plugins {
     id 'org.asciidoctor.convert' version '1.5.2'
 }
 
+release {
+    tagTemplate = 'v$version'
+}
+
 configure(allprojects) { project ->
     group = 'fi.evident.dalesbred'
 
