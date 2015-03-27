@@ -63,7 +63,7 @@ IDEA-integration
 ================
 
 If you're using [IntelliJ IDEA](https://www.jetbrains.com/idea/), check out
-[Dalesbred IDEA Plugin](https://bitbucket.org/evidentsolutions/dalesbred-idea-plugin),
+[Dalesbred IDEA Plugin](https://github.com/EvidentSolutions/dalesbred-idea-plugin),
 which provides inspections for common errors (e.g. mismatch between query parameters
 and query).
 
