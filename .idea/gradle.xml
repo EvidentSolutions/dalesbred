@@ -11,10 +11,10 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/dalesbred" />
             <option value="$PROJECT_DIR$/dalesbred-junit" />
+            <option value="$PROJECT_DIR$/website" />
           </set>
         </option>
       </GradleProjectSettings>
     </option>
   </component>
 </project>
-

@@ -28,23 +28,12 @@ remotes {
 configure(allprojects) { project ->
     group = 'fi.evident.dalesbred'
 
-    apply plugin: 'java'
-
-    task buildDocs {
-        group 'documentation'
-        description 'Builds all documentation.'
-
-        dependsOn javadoc
-    }
-
     repositories {
-        mavenCentral()
+        jcenter()
     }
 }
 
 configure(rootProject) { project ->
-    buildDocs.dependsOn asciidoctor
-
     asciidoctor {
         sourceDir = file('src/asciidoc')
         options = [
@@ -59,48 +48,6 @@ configure(rootProject) { project ->
                 javadocBase: "https://dalesbred.evident.fi/docs/${project.version.toString()}/api/?"
         ]
     }
-
-    task publishWebsite {
-        group 'publishing'
-        description 'Publishes the website to dalesbred.evident.fi'
-
-        doLast {
-            ssh.run {
-                session(remotes.website) {
-                    put from: "${project.projectDir}/website/src", into: "/var/www/dalesbred"
-                }
-            }
-        }
-    }
-
-    task publishReferenceDocumentation {
-        group 'publishing'
-        description 'Publishes the reference documentation to dalesbred.evident.fi'
-        dependsOn buildDocs
-
-        doLast {
-            ssh.run {
-                session(remotes.website) {
-                    def target = "/var/www/dalesbred/docs/${project.version}/reference"
-                    execute "mkdir -p $target"
-                    put from: "${project.projectDir}/build/asciidoc/html5", into: target
-                }
-            }
-        }
-    }
-
-    task updateCurrentDocsSymlink {
-        group 'publishing'
-        description 'Updates the symlink of current docs to point to this version'
-
-        doLast {
-            ssh.run {
-                session(remotes.website) {
-                    execute "ln -sfT /var/www/dalesbred/docs/${project.version} /var/www/dalesbred/docs/current"
-                }
-            }
-        }
-    }
 }
 
 configure(subprojects) { project ->
@@ -108,13 +55,16 @@ configure(subprojects) { project ->
     apply from: "${rootProject.projectDir}/gradle/publish-maven.gradle"
 
     project.version = rootProject.version.toString()
-    buildDocs.dependsOn javadoc
 
     ext.isReleaseVersion = { !version.endsWith("SNAPSHOT") }
     ext.springVersion = '4.0.3.RELEASE'
     ext.junitVersion = '4.11'
     ext.jetbrainsAnnotationsVersion = '13.0'
     ext.hsqldbVersion = '2.3.2'
+}
+
+configure([project(':dalesbred'), project(':dalesbred-junit')]) {
+    apply plugin: 'java'
 
     sourceCompatibility = 1.6
     targetCompatibility = 1.6
@@ -192,5 +142,44 @@ project(':dalesbred-junit') {
         compile "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
 
         testCompile "org.hsqldb:hsqldb:$hsqldbVersion"
+    }
+}
+
+project(':website') {
+
+    task copySources(type: Copy) {
+        from 'src'
+        into "build/dalesbred"
+    }
+
+    task copyApi(type: Copy) {
+        from files(tasks.findByPath(':dalesbred:javadoc'))
+        into "build/dalesbred/docs/${project.version}/api/"
+    }
+
+    task copyReference(type: Copy) {
+        dependsOn tasks.findByPath(':asciidoctor')
+        from '../build/asciidoc/html5/'
+        into "build/dalesbred/docs/${project.version}/reference/"
+    }
+
+    assemble.dependsOn copySources
+    assemble.dependsOn copyApi
+    assemble.dependsOn copyReference
+
+    task publishWebsite {
+        dependsOn assemble
+
+        group 'publishing'
+        description 'Publishes the website to dalesbred.evident.fi'
+
+        doLast {
+            ssh.run {
+                session(remotes.website) {
+                    put from: "build/dalesbred", into: "/var/www/"
+                    execute "ln -sfT /var/www/dalesbred/docs/${project.version} /var/www/dalesbred/docs/current"
+                }
+            }
+        }
     }
 }
