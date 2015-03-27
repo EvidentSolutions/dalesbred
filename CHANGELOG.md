@@ -1,4 +1,4 @@
-## 0.7.1 (yyyy-mm-dd)
+## 0.7.1 (2015-03-27)
 
   - Delegate `PreparedStatement`-binding to `Dialect`s.  
   - Added `@DalesbredIgnore` for ignoring constructors, fields and setters.
