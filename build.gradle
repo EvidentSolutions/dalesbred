@@ -5,7 +5,6 @@ buildscript {
         maven { url 'http://repo.springsource.org/plugins-release' }
     }
     dependencies {
-        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:0.7.0'
         classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.7'
         classpath 'org.ajoberstar:gradle-git:0.9.0'
     }
@@ -13,6 +12,7 @@ buildscript {
 
 plugins {
     id 'net.researchgate.release' version '2.0.2'
+    id 'org.asciidoctor.convert' version '1.5.2'
 }
 
 configure(allprojects) { project ->
@@ -33,26 +33,23 @@ configure(allprojects) { project ->
 }
 
 configure(rootProject) { project ->
-    apply plugin: 'asciidoctor'
     apply from: "${rootProject.projectDir}/gradle/ssh-support.gradle"
 
     buildDocs.dependsOn asciidoctor
 
     asciidoctor {
-        baseDir = file('src/asciidoc')
-        options = new fi.evident.dalesbred.build.LazyMap({[
-                eruby: 'erubis',
-                attributes: [
-                        icons: 'font',
-                        'iconfont-cdn': 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/css/font-awesome.min.css',
-                        prettifydir: 'https://cdnjs.cloudflare.com/ajax/libs/prettify/r298',
-                        toc: 'right',
-                        'source-highlighter': 'prettify',
-                        revnumber: project.version.toString(),
-                        docinfo: "",
-                        javadocBase: "https://dalesbred.evident.fi/docs/${project.version.toString()}/api/?"
-                ]
-        ]})
+        sourceDir = file('src/asciidoc')
+        options = [
+                eruby: 'erubis'
+        ]
+        attributes = [
+                icons: 'font',
+                toc: 'right',
+                'source-highlighter': 'prettify',
+                revnumber: project.version.toString(),
+                docinfo: "",
+                javadocBase: "https://dalesbred.evident.fi/docs/${project.version.toString()}/api/?"
+        ]
     }
 
     task publishWebsite(type: fi.evident.dalesbred.build.SshCopyTask) {
@@ -69,7 +66,7 @@ configure(rootProject) { project ->
         description 'Publishes the reference documentation to dalesbred.evident.fi'
         dependsOn installSshTasks, buildDocs
 
-        sourceDirectory = "${project.projectDir}/build/asciidoc"
+        sourceDirectory = "${project.projectDir}/build/asciidoc/html5"
         targetDirectory = { "/var/www/dalesbred/docs/${project.version}/reference" }
     }
 }
