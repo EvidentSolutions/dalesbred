@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
+import java.sql.Array;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -238,6 +239,9 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
         TypeConversion<?,?> coercion = typeConversionRegistry.findCoercionFromDbValue(source, target);
         if (coercion != null)
             return coercion.unsafeCast(target);
+
+        if (Array.class.isAssignableFrom(source) && target.isArray())
+            return new SqlArrayToArrayConversion<T>(target, this).unsafeCast(target);
 
         if (target.isEnum())
             return dialect.getEnumCoercion(target.asSubclass(Enum.class)).unsafeCast(target);
