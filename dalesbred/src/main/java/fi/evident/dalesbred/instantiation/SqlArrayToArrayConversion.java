@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static fi.evident.dalesbred.utils.SqlUtils.freeArray;
+
 /**
  * Converts database arrays to array types.
  */
@@ -98,7 +100,11 @@ final class SqlArrayToArrayConversion<T> extends TypeConversion<java.sql.Array, 
                 return result;
 
             } finally {
-                resultSet.close();
+                try {
+                    resultSet.close();
+                } finally {
+                    freeArray(array);
+                }
             }
 
         } catch (SQLException e) {
