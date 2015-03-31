@@ -24,6 +24,8 @@ package fi.evident.dalesbred.utils;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Array;
+
 /**
  * Utilities for handling primitive types and their wrappers uniformly.
  */
@@ -75,5 +77,22 @@ public final class Primitives {
 
     public static boolean isAssignableByBoxing(@NotNull Class<?> target, @NotNull Class<?> source) {
         return wrap(target).isAssignableFrom(wrap(source));
+    }
+
+    @NotNull
+    public static Object[] arrayAsObjectArray(@NotNull Object o) {
+        Class<?> type = o.getClass();
+        if (!type.isArray()) throw new IllegalArgumentException("not an array: " + o);
+
+        if (o instanceof Object[])
+            return (Object[]) o;
+
+        int length = Array.getLength(o);
+        Object[] result = (Object[]) Array.newInstance(wrap(type.getComponentType()), length);
+
+        for (int i = 0; i < length; i++)
+            result[i] = Array.get(o, i);
+
+        return result;
     }
 }

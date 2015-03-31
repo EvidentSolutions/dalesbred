@@ -26,8 +26,8 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import static fi.evident.dalesbred.utils.Primitives.unwrap;
-import static fi.evident.dalesbred.utils.Primitives.wrap;
+import static fi.evident.dalesbred.utils.Primitives.*;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class PrimitivesTest {
@@ -48,7 +48,13 @@ public class PrimitivesTest {
         assertThat(unwrap(String.class), sameClass(String.class));
     }
 
+    @Test
+    public void convertingArraysToObjectArray() {
+        assertThat(arrayAsObjectArray(new String[]{"foo", "bar"}), CoreMatchers.<Object[]>is(new String[]{"foo", "bar"}));
+        assertThat(arrayAsObjectArray(new int[]{1, 4}), CoreMatchers.<Object[]>is(new Integer[]{1, 4}));
+    }
+
     private static Matcher<Object> sameClass(Class<?> cl) {
-        return CoreMatchers.is((Object) cl);
+        return is((Object) cl);
     }
 }
