@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Evident Solutions Oy
+ * Copyright (c) 2012-2015 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,20 +25,21 @@ package fi.evident.dalesbred.instantiation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static fi.evident.dalesbred.utils.Primitives.isAssignableByBoxing;
 import static fi.evident.dalesbred.utils.Primitives.wrap;
+import static fi.evident.dalesbred.utils.TypeUtils.*;
 
 final class ConversionMap {
 
-    private final Map<Class<?>, List<TypeConversion<?,?>>> mappings = new HashMap<Class<?>, List<TypeConversion<?, ?>>>();
+    private final Map<Type, List<TypeConversion<?,?>>> mappings = new HashMap<Type, List<TypeConversion<?, ?>>>();
 
     void register(@NotNull TypeConversion<?, ?> coercion) {
-        Class<?> source = wrap(coercion.getSource());
+        Type source = wrap(coercion.getSource());
 
         List<TypeConversion<?,?>> items = mappings.get(source);
         if (items == null) {
@@ -50,29 +51,29 @@ final class ConversionMap {
     }
 
     @Nullable
-    <S,T> TypeConversion<S,T> findConversion(@NotNull Class<S> source, @NotNull Class<T> target) {
-        for (Class<?> cl = wrap(source); cl != null; cl = cl.getSuperclass()) {
+    TypeConversion<?,?> findConversion(@NotNull Type source, @NotNull Type target) {
+        for (Type cl = wrap(source); cl != null; cl = genericSuperClass(cl)) {
             TypeConversion<?,?> conversion = findConversionsRegisteredFor(cl, target);
             if (conversion != null)
-                return conversion.cast(source, target);
+                return conversion;
         }
 
-        for (Class<?> cl : source.getInterfaces()) {
+        for (Type cl : genericInterfaces(source)) {
             TypeConversion<?,?> conversion = findConversionsRegisteredFor(cl, target);
             if (conversion != null)
-                return conversion.cast(source, target);
+                return conversion;
         }
 
         return null;
     }
 
     @Nullable
-    private TypeConversion<?,?> findConversionsRegisteredFor(@NotNull Class<?> source, @NotNull Class<?> target) {
+    private TypeConversion<?,?> findConversionsRegisteredFor(@NotNull Type source, @NotNull Type target) {
         List<TypeConversion<?,?>> candidates = mappings.get(source);
         if (candidates != null) {
             for (int i = candidates.size() - 1; i >= 0; i--) {
                 TypeConversion<?, ?> conversion = candidates.get(i);
-                if (isAssignableByBoxing(target, conversion.getTarget()))
+                if (isAssignable(rawType(target), rawType(conversion.getTarget())))
                     return conversion;
             }
         }

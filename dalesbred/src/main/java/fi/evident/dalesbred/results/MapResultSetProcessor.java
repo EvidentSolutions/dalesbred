@@ -74,7 +74,7 @@ public final class MapResultSetProcessor<K,V> implements ResultSetProcessor<Map<
         while (resultSet.next()) {
             K key = convert(keyConversion, resultSet.getObject(1));
             V value = convert(valueConversion, resultSet.getObject(2));
-            //noinspection ConstantConditions
+
             result.put(key, value);
         }
 

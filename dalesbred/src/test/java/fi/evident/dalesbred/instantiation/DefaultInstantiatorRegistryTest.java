@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static fi.evident.dalesbred.utils.Primitives.isAssignableByBoxing;
+import static fi.evident.dalesbred.utils.TypeUtils.isAssignable;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
@@ -214,7 +214,7 @@ public class DefaultInstantiatorRegistryTest {
     }
 
     private static void assertAssignable(@NotNull Class<?> target, @NotNull Class<?> source) {
-        assertThat(isAssignableByBoxing(target, source), is(true));
+        assertThat(isAssignable(target, source), is(true));
     }
 
     public static class InaccessibleConstructor {

@@ -35,8 +35,8 @@ import java.sql.Array;
 import java.util.*;
 import java.util.logging.Logger;
 
-import static fi.evident.dalesbred.utils.Primitives.isAssignableByBoxing;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
+import static fi.evident.dalesbred.utils.TypeUtils.isAssignable;
 import static java.lang.reflect.Modifier.isPublic;
 import static java.util.Arrays.sort;
 
@@ -233,7 +233,7 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
      */
     @Nullable
     private <T> TypeConversion<Object, ? extends T> findConversionFromDbValue(@NotNull Class<?> source, @NotNull Class<T> target) {
-        if (isAssignableByBoxing(target, source))
+        if (isAssignable(target, source))
             return TypeConversion.identity(target).unsafeCast(target);
 
         TypeConversion<?,?> coercion = typeConversionRegistry.findCoercionFromDbValue(source, target);

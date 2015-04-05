@@ -24,9 +24,11 @@ package fi.evident.dalesbred.instantiation;
 
 import org.jetbrains.annotations.NotNull;
 
-import static fi.evident.dalesbred.utils.Primitives.isAssignableByBoxing;
+import java.lang.reflect.Type;
+
 import static fi.evident.dalesbred.utils.Primitives.wrap;
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
+import static fi.evident.dalesbred.utils.TypeUtils.isAssignable;
 
 /**
  * A conversion from S into T.
@@ -34,23 +36,23 @@ import static fi.evident.dalesbred.utils.Require.requireNonNull;
 public abstract class TypeConversion<S,T> {
 
     @NotNull
-    private final Class<S> source;
+    private final Type source;
 
     @NotNull
-    private final Class<T> target;
+    private final Type target;
 
-    public TypeConversion(@NotNull Class<S> source, @NotNull Class<T> target) {
+    public TypeConversion(@NotNull Type source, @NotNull Type target) {
         this.source = wrap(requireNonNull(source));
         this.target = wrap(requireNonNull(target));
     }
 
     @NotNull
-    public Class<S> getSource() {
+    public Type getSource() {
         return source;
     }
 
     @NotNull
-    public Class<T> getTarget() {
+    public Type getTarget() {
         return target;
     }
 
@@ -85,23 +87,24 @@ public abstract class TypeConversion<S,T> {
      * if coercion is not compatible.
      */
     @NotNull
-    public <S,T> TypeConversion<S,T> cast(@NotNull Class<S> requiredSource, @NotNull Class<T> requiredTarget) {
+    private <S,T> TypeConversion<S,T> cast(@NotNull Type requiredSource, @NotNull Type requiredTarget) {
         if (canConvert(requiredSource, requiredTarget)) {
             @SuppressWarnings("unchecked")
             TypeConversion<S,T> result = (TypeConversion<S,T>) this;
             return result;
         } else
-            throw new RuntimeException("can't cast " + this + " to coercion from " + requiredSource.getName() + " to " + requiredTarget.getName());
+            throw new RuntimeException("can't cast " + this + " to coercion from " + requiredSource + " to " + requiredTarget);
     }
 
     @NotNull
     public <R> TypeConversion<Object,R> unsafeCast(@NotNull Class<R> requiredTarget) {
         final TypeConversion<S,R> self = cast(source, requiredTarget);
         return new TypeConversion<Object, R>(Object.class, requiredTarget) {
+            @SuppressWarnings("unchecked")
             @NotNull
             @Override
             public R convert(@NotNull Object value) {
-                return self.convert(source.cast(value));
+                return self.convert((S) value);
             }
         };
     }
@@ -109,14 +112,14 @@ public abstract class TypeConversion<S,T> {
     @NotNull
     @Override
     public String toString() {
-        return getClass().getName() + " [" + source.getName() + " -> " + target.getName() + ']';
+        return getClass().getName() + " [" + source + " -> " + target + ']';
     }
 
     /**
      * Returns true if this coercion knows hows to convert instances of {@code requiredSource} to
      * instances of {@code requiredTarget}.
      */
-    private boolean canConvert(@NotNull Class<?> requiredSource, @NotNull Class<?> requiredTarget) {
-        return isAssignableByBoxing(source, requiredSource) && isAssignableByBoxing(requiredTarget, target);
+    private boolean canConvert(@NotNull Type requiredSource, @NotNull Type requiredTarget) {
+        return isAssignable(source, requiredSource) && isAssignable(requiredTarget, target);
     }
 }

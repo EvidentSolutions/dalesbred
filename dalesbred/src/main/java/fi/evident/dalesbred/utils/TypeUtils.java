@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Evident Solutions Oy
+ * Copyright (c) 2015 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,38 +20,46 @@
  * THE SOFTWARE.
  */
 
-package fi.evident.dalesbred.instantiation;
+package fi.evident.dalesbred.utils;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-/**
- * The used implementation of TypeConversionRegistry.
- */
-final class DefaultTypeConversionRegistry implements TypeConversionRegistry {
+import static fi.evident.dalesbred.utils.Primitives.wrap;
 
-    private final ConversionMap loadConversions = new ConversionMap();
-    private final ConversionMap storeConversions = new ConversionMap();
+public final class TypeUtils {
 
-    @Nullable
-    public TypeConversion<?,?> findCoercionFromDbValue(@NotNull Type source, @NotNull Type target) {
-        return loadConversions.findConversion(source, target);
+    private TypeUtils() { }
+
+    @NotNull
+    public static Class<?> rawType(@NotNull Type type) {
+        if (type instanceof Class<?>)
+            return (Class<?>) type;
+        else if (type instanceof ParameterizedType)
+            return rawType(((ParameterizedType) type).getRawType());
+        else
+            throw new IllegalArgumentException("unexpected type: " + type);
     }
 
     @Nullable
-    public TypeConversion<?,?> findCoercionToDb(@NotNull Type type) {
-        return storeConversions.findConversion(type, Object.class);
+    public static Type genericSuperClass(@NotNull Type type) {
+        return rawType(type).getGenericSuperclass();
     }
 
-    @Override
-    public void registerConversionFromDatabaseType(@NotNull TypeConversion<?, ?> conversion) {
-        loadConversions.register(conversion);
+    @NotNull
+    public static Type[] genericInterfaces(@NotNull Type type) {
+        return rawType(type).getGenericInterfaces();
     }
 
-    @Override
-    public void registerConversionToDatabaseType(@NotNull TypeConversion<?, ?> conversion) {
-        storeConversions.register(conversion);
+    public static boolean isAssignable(@NotNull Type target, @NotNull Type source) {
+        // TODO: implement proper rules for generic types
+        return isAssignableByBoxing(rawType(target), rawType(source));
+    }
+
+    private static boolean isAssignableByBoxing(@NotNull Class<?> target, @NotNull Class<?> source) {
+        return wrap(target).isAssignableFrom(wrap(source));
     }
 }

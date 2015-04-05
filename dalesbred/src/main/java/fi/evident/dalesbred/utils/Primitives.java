@@ -25,6 +25,7 @@ package fi.evident.dalesbred.utils;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 
 /**
  * Utilities for handling primitive types and their wrappers uniformly.
@@ -54,6 +55,14 @@ public final class Primitives {
         return casted;
     }
 
+    @NotNull
+    public static Type wrap(@NotNull Type type) {
+        if (type instanceof Class<?>)
+            return wrap((Class<?>) type);
+        else
+            return type;
+    }
+
     /**
      * Returns the corresponding primitive type for a wrapper type, or the type itself if it is not a wrapper.
      */
@@ -73,10 +82,6 @@ public final class Primitives {
         @SuppressWarnings("unchecked")
         Class<T> casted = (Class<T>) result;
         return casted;
-    }
-
-    public static boolean isAssignableByBoxing(@NotNull Class<?> target, @NotNull Class<?> source) {
-        return wrap(target).isAssignableFrom(wrap(source));
     }
 
     @NotNull
