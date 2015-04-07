@@ -22,6 +22,7 @@
 
 package fi.evident.dalesbred.dialects;
 
+import fi.evident.dalesbred.SqlArray;
 import fi.evident.dalesbred.lob.InputStreamWithSize;
 import fi.evident.dalesbred.lob.ReaderWithSize;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +32,7 @@ import org.w3c.dom.Document;
 import javax.xml.transform.dom.DOMResult;
 import java.io.InputStream;
 import java.io.Reader;
+import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLXML;
@@ -49,6 +51,10 @@ final class ArgumentBinder {
 
         } else if (value instanceof Document) {
             bindXmlDocument(ps, index, (Document) value);
+
+        } else if (value instanceof SqlArray) {
+            bindArray(ps, index, (SqlArray) value);
+
         } else {
             ps.setObject(index, value);
         }
@@ -95,5 +101,11 @@ final class ArgumentBinder {
         sqlxml.setResult(DOMResult.class).setNode(doc);
 
         ps.setSQLXML(index, sqlxml);
+    }
+
+    private static void bindArray(PreparedStatement ps, int index, SqlArray value) throws SQLException {
+        // TODO: arrange for the array to be freed after the PreparedStatement has been executed
+        Array array = ps.getConnection().createArrayOf(value.getType(), value.getValues().toArray());
+        ps.setArray(index, array);
     }
 }

@@ -33,6 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static fi.evident.dalesbred.SqlArray.varchars;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -88,6 +89,16 @@ public class DatabaseArraysTest {
         SetContainer object = db.findUnique(SetContainer.class, "select (cast ('{1,5,3}' as numeric array)) as intSet, (cast ('{foo, bar, baz}' as varchar array)) as stringSet");
         assertThat(object.intSet, is(setOf(1, 5, 3)));
         assertThat(object.stringSet, is(setOf("foo", "bar", "baz")));
+    }
+
+    @Test
+    public void bindArray() {
+        db.update("drop table if exists array_test");
+        db.update("create table array_test (string_array VARCHAR array)");
+
+        db.update("insert into array_test (string_array) values (?)", varchars("foo", "bar"));
+
+        assertThat(db.findUnique(String[].class, "select string_array from array_test"), is(new String[] { "foo", "bar" }));
     }
 
     public static final class ListContainer {
