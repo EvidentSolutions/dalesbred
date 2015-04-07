@@ -1,6 +1,6 @@
 ## x.y.z (not yet released)
 
-  - Support instantiating arrays of instantiable types from database arrays.
+  - Support instantiating arrays and collections of instantiable types from database arrays.
 
 ## 0.7.1 (2015-03-27)
 
