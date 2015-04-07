@@ -25,8 +25,7 @@ package fi.evident.dalesbred.utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 
 import static fi.evident.dalesbred.utils.Primitives.wrap;
 
@@ -36,12 +35,30 @@ public final class TypeUtils {
 
     @NotNull
     public static Class<?> rawType(@NotNull Type type) {
-        if (type instanceof Class<?>)
+        if (type instanceof Class<?>) {
             return (Class<?>) type;
-        else if (type instanceof ParameterizedType)
+
+        } else if (type instanceof ParameterizedType) {
             return rawType(((ParameterizedType) type).getRawType());
-        else
+
+        } else if (type instanceof TypeVariable<?>) {
+            // TODO we could return one of the bounds, but it won't work if there are multiple bounds
+            return Object.class;
+
+        } else if (type instanceof WildcardType) {
+            return rawType(((WildcardType) type).getUpperBounds()[0]);
+
+        } else if (type instanceof GenericArrayType) {
+            return arrayType(rawType(((GenericArrayType) type).getGenericComponentType()));
+
+        } else {
             throw new IllegalArgumentException("unexpected type: " + type);
+        }
+    }
+
+    @NotNull
+    public static Class<?> arrayType(@NotNull Class<?> type) {
+        return Array.newInstance(type, 0).getClass();
     }
 
     @Nullable
