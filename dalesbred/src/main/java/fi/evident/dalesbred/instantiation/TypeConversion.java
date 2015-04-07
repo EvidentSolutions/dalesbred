@@ -66,7 +66,7 @@ public abstract class TypeConversion<S,T> {
      * Returns identity-coercion, ie. a coercion that does nothing.
      */
     @NotNull
-    public static <T> TypeConversion<T,T> identity(@NotNull Class<T> type) {
+    public static <T> TypeConversion<T,T> identity(@NotNull Type type) {
         return new TypeConversion<T, T>(type, type) {
             @NotNull
             @Override

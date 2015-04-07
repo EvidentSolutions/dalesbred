@@ -47,7 +47,7 @@ final class SqlArrayToArrayConversion<T> extends TypeConversion<java.sql.Array, 
     @NotNull
     private final DefaultInstantiatorRegistry instantiatorRegistry;
 
-    public SqlArrayToArrayConversion(@NotNull Class<T> arrayType, @NotNull DefaultInstantiatorRegistry instantiatorRegistry) {
+    public SqlArrayToArrayConversion(@NotNull Class<?> arrayType, @NotNull DefaultInstantiatorRegistry instantiatorRegistry) {
         super(java.sql.Array.class, arrayType);
         this.instantiatorRegistry = instantiatorRegistry;
 

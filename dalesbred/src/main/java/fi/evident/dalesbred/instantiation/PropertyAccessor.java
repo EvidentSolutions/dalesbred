@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.regex.Pattern;
 
 import static fi.evident.dalesbred.utils.Throwables.propagate;
@@ -40,7 +41,7 @@ abstract class PropertyAccessor {
 
     abstract void set(Object object, Object value);
 
-    abstract Class<?> getType();
+    abstract Type getType();
 
     @Nullable
     static PropertyAccessor findAccessor(@NotNull Class<?> cl, @NotNull String name) {
@@ -88,7 +89,7 @@ abstract class PropertyAccessor {
     }
 
     @Nullable
-    public static Class<?> findPropertyType(@NotNull Class<?> cl, @NotNull String name) {
+    public static Type findPropertyType(@NotNull Class<?> cl, @NotNull String name) {
         PropertyAccessor accessor = findAccessor(cl, name);
         if (accessor != null)
             return accessor.getType();
@@ -106,8 +107,8 @@ abstract class PropertyAccessor {
         }
 
         @Override
-        Class<?> getType() {
-            return field.getType();
+        Type getType() {
+            return field.getGenericType();
         }
 
         @Override
@@ -130,8 +131,8 @@ abstract class PropertyAccessor {
         }
 
         @Override
-        Class<?> getType() {
-            return setter.getParameterTypes()[0];
+        Type getType() {
+            return setter.getGenericParameterTypes()[0];
         }
 
         @Override

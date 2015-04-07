@@ -27,16 +27,19 @@ import fi.evident.dalesbred.dialects.Dialect;
 import fi.evident.dalesbred.support.java8.JavaTimeTypeConversions;
 import fi.evident.dalesbred.support.joda.JodaTypeConversions;
 import fi.evident.dalesbred.support.threeten.ThreeTenTypeConversions;
+import fi.evident.dalesbred.utils.TypeUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Type;
 import java.sql.Array;
 import java.util.*;
 import java.util.logging.Logger;
 
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
 import static fi.evident.dalesbred.utils.TypeUtils.isAssignable;
+import static fi.evident.dalesbred.utils.TypeUtils.rawType;
 import static java.lang.reflect.Modifier.isPublic;
 import static java.util.Arrays.sort;
 
@@ -107,7 +110,9 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
 
         // First check if we have an immediate coercion registered. If so, we'll just use that.
         if (types.size() == 1) {
-            TypeConversion<Object, ? extends T> coercion = findConversionFromDbValue(types.getType(0), cl);
+            @SuppressWarnings("unchecked")
+            TypeConversion<Object, ? extends T> coercion =
+                    (TypeConversion<Object, ? extends T>) findConversionFromDbValue(types.getType(0), cl);
             if (coercion != null)
                 return new CoercionInstantiator<T>(coercion, instantiationListeners);
         }
@@ -135,7 +140,7 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
     private <T> Instantiator<T> instantiatorFrom(@NotNull Constructor<T> constructor, @NotNull NamedTypeList types) {
         if (!isPublic(constructor.getModifiers())) return null;
 
-        Class<?>[] targetTypes = findTargetTypes(constructor, types);
+        Type[] targetTypes = findTargetTypes(constructor, types);
         if (targetTypes == null)
             return null;
 
@@ -173,16 +178,16 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
      * parameter types as we have and then the types of properties of object as given by names of result-set.
      */
     @Nullable
-    private static Class<?>[] findTargetTypes(@NotNull Constructor<?> ctor, @NotNull NamedTypeList resultSetTypes) {
-        Class<?>[] constructorParameterTypes = ctor.getParameterTypes();
+    private static Type[] findTargetTypes(@NotNull Constructor<?> ctor, @NotNull NamedTypeList resultSetTypes) {
+        Type[] constructorParameterTypes = ctor.getGenericParameterTypes();
         if (constructorParameterTypes.length > resultSetTypes.size()) return null;
         if (constructorParameterTypes.length == resultSetTypes.size()) return constructorParameterTypes;
 
-        Class<?>[] result = new Class<?>[resultSetTypes.size()];
+        Type[] result = new Type[resultSetTypes.size()];
         System.arraycopy(constructorParameterTypes, 0, result, 0, constructorParameterTypes.length);
 
         for (int i = constructorParameterTypes.length; i < result.length; i++) {
-            Class<?> type = PropertyAccessor.findPropertyType(ctor.getDeclaringClass(), resultSetTypes.getName(i));
+            Type type = PropertyAccessor.findPropertyType(ctor.getDeclaringClass(), resultSetTypes.getName(i));
             if (type != null)
                 result[i] = type;
             else
@@ -197,33 +202,35 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
      * to targetTypes, or null if coercions can't be done.
      */
     @Nullable
-    private TypeConversion<Object,?>[] resolveCoercions(@NotNull NamedTypeList sourceTypes, @NotNull Class<?>[] targetTypes) {
+    private TypeConversion<Object,?>[] resolveCoercions(@NotNull NamedTypeList sourceTypes, @NotNull Type[] targetTypes) {
         if (targetTypes.length != sourceTypes.size())
             return null;
 
-        @SuppressWarnings({"unchecked", "rawtypes"})
-        TypeConversion<Object,?>[] conversions = new TypeConversion[targetTypes.length];
+        TypeConversion<?,?>[] conversions = new TypeConversion[targetTypes.length];
 
         for (int i = 0; i < targetTypes.length; i++) {
-            TypeConversion<Object,?> conversion = findConversionFromDbValue(sourceTypes.getType(i), targetTypes[i]);
+            TypeConversion<?,?> conversion = findConversionFromDbValue(sourceTypes.getType(i), targetTypes[i]);
             if (conversion != null)
                 conversions[i] = conversion;
             else
                 return null;
         }
 
-        return conversions;
+        @SuppressWarnings("unchecked")
+        TypeConversion<Object, ?>[] result = (TypeConversion<Object, ?>[]) conversions;
+        return result;
     }
 
     /**
      * Returns coercion for converting value of source-type to target-type, or throws exception if
      * there's no such coercion.
      */
+    @SuppressWarnings("unchecked")
     @NotNull
     public <S,T> TypeConversion<? super S, ? extends T> getCoercionFromDbValue(@NotNull Class<S> source, @NotNull Class<T> target) {
-        TypeConversion<? super S, ? extends T> coercion = findConversionFromDbValue(source, target);
+        TypeConversion<?, ?> coercion = findConversionFromDbValue(source, target);
         if (coercion != null)
-            return coercion;
+            return (TypeConversion<S,T>) coercion;
         else
             throw new InstantiationException("could not find a conversion from " + source.getName() + " to " + target.getName());
     }
@@ -232,19 +239,19 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
      * Returns coercion for converting value of source to target, or returns null if there's no such coercion.
      */
     @Nullable
-    private <T> TypeConversion<Object, ? extends T> findConversionFromDbValue(@NotNull Class<?> source, @NotNull Class<T> target) {
+    private TypeConversion<?, ?> findConversionFromDbValue(@NotNull Class<?> source, @NotNull Type target) {
         if (isAssignable(target, source))
-            return TypeConversion.identity(target).unsafeCast(target);
+            return TypeConversion.identity(target);
 
         TypeConversion<?,?> coercion = typeConversionRegistry.findCoercionFromDbValue(source, target);
         if (coercion != null)
-            return coercion.unsafeCast(target);
+            return coercion;
 
-        if (Array.class.isAssignableFrom(source) && target.isArray())
-            return new SqlArrayToArrayConversion<T>(target, this).unsafeCast(target);
+        if (Array.class.isAssignableFrom(source) && rawType(target).isArray())
+            return new SqlArrayToArrayConversion<Object>(rawType(target), this);
 
-        if (target.isEnum())
-            return dialect.getEnumCoercion(target.asSubclass(Enum.class)).unsafeCast(target);
+        if (TypeUtils.isEnum(target))
+            return dialect.getEnumCoercion(rawType(target).asSubclass(Enum.class));
 
         return null;
     }

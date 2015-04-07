@@ -56,6 +56,10 @@ public final class TypeUtils {
         }
     }
 
+    public static boolean isEnum(@NotNull Type type) {
+        return rawType(type).isEnum();
+    }
+
     @NotNull
     public static Class<?> arrayType(@NotNull Class<?> type) {
         return Array.newInstance(type, 0).getClass();
