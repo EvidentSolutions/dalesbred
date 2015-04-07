@@ -185,8 +185,8 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
             Class<?> type = PropertyAccessor.findPropertyType(ctor.getDeclaringClass(), resultSetTypes.getName(i));
             if (type != null)
                 result[i] = type;
-           else
-                 return null;
+            else
+                return null;
         }
 
         return result;
