@@ -24,34 +24,23 @@ package fi.evident.dalesbred.instantiation;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Array;
+import java.lang.reflect.Type;
+import java.util.LinkedHashSet;
 import java.util.List;
-
-import static fi.evident.dalesbred.utils.TypeUtils.arrayType;
+import java.util.Set;
 
 /**
- * Converts database arrays to array types.
+ * Converts database arrays to set types.
  */
-final class SqlArrayToArrayConversion extends AbstractSqlArrayConversion<Object> {
+final class SqlArrayToSetConversion extends AbstractSqlArrayConversion<Set<?>> {
 
-    @NotNull
-    private final Class<?> elementType;
-
-    public SqlArrayToArrayConversion(@NotNull Class<?> elementType, @NotNull DefaultInstantiatorRegistry instantiatorRegistry) {
-        super(arrayType(elementType), elementType, instantiatorRegistry);
-
-        this.elementType = elementType;
+    public SqlArrayToSetConversion(@NotNull Type elementType, @NotNull DefaultInstantiatorRegistry instantiatorRegistry) {
+        super(Set.class, elementType, instantiatorRegistry);
     }
 
     @Override
     @NotNull
-    protected Object createResult(@NotNull List<?> list) {
-        int length = list.size();
-
-        Object result = Array.newInstance(elementType, length);
-        for (int i = 0; i < length; i++)
-            Array.set(result, i, list.get(i));
-
-        return result;
+    protected Set<?> createResult(@NotNull List<?> list) {
+        return new LinkedHashSet<Object>(list);
     }
 }

@@ -56,8 +56,20 @@ public final class TypeUtils {
         }
     }
 
+    @NotNull
+    public static Type typeParameter(@NotNull Type type) {
+        if (type instanceof ParameterizedType)
+            return ((ParameterizedType) type).getActualTypeArguments()[0];
+
+        return Object.class;
+    }
+
     public static boolean isEnum(@NotNull Type type) {
-        return rawType(type).isEnum();
+        return (type instanceof Class<?>) && ((Class<?>) type).isEnum();
+    }
+
+    public static boolean isPrimitive(@NotNull Type type) {
+        return (type instanceof Class<?>) && ((Class<?>) type).isPrimitive();
     }
 
     @NotNull

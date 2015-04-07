@@ -27,7 +27,6 @@ import fi.evident.dalesbred.dialects.Dialect;
 import fi.evident.dalesbred.support.java8.JavaTimeTypeConversions;
 import fi.evident.dalesbred.support.joda.JodaTypeConversions;
 import fi.evident.dalesbred.support.threeten.ThreeTenTypeConversions;
-import fi.evident.dalesbred.utils.TypeUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,8 +37,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 import static fi.evident.dalesbred.utils.Require.requireNonNull;
-import static fi.evident.dalesbred.utils.TypeUtils.isAssignable;
-import static fi.evident.dalesbred.utils.TypeUtils.rawType;
+import static fi.evident.dalesbred.utils.TypeUtils.*;
 import static java.lang.reflect.Modifier.isPublic;
 import static java.util.Arrays.sort;
 
@@ -58,7 +56,7 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
     private InstantiationListeners instantiationListeners;
 
     @NotNull
-    private final Map<Class<?>, Instantiator<?>> instantiators = new HashMap<Class<?>, Instantiator<?>>();
+    private final Map<Type, Instantiator<?>> instantiators = new HashMap<Type, Instantiator<?>>();
 
     @NotNull
     private static final Logger log = Logger.getLogger(DefaultInstantiatorRegistry.class.getName());
@@ -102,9 +100,9 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
      * that is assignable from given types.
      */
     @NotNull
-    public <T> Instantiator<T> findInstantiator(@NotNull Class<T> cl, @NotNull NamedTypeList types) {
+    public <T> Instantiator<T> findInstantiator(@NotNull Type type, @NotNull NamedTypeList types) {
         @SuppressWarnings("unchecked")
-        Instantiator<T> registeredInstantiator = (Instantiator<T>) instantiators.get(cl);
+        Instantiator<T> registeredInstantiator = (Instantiator<T>) instantiators.get(type);
         if (registeredInstantiator != null)
             return registeredInstantiator;
 
@@ -112,15 +110,16 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
         if (types.size() == 1) {
             @SuppressWarnings("unchecked")
             TypeConversion<Object, ? extends T> coercion =
-                    (TypeConversion<Object, ? extends T>) findConversionFromDbValue(types.getType(0), cl);
+                    (TypeConversion<Object, ? extends T>) findConversionFromDbValue(types.getType(0), type);
             if (coercion != null)
                 return new CoercionInstantiator<T>(coercion, instantiationListeners);
         }
 
+        @SuppressWarnings("unchecked")
+        Class<T> cl = (Class<T>) rawType(type);
         if (!isPublic(cl.getModifiers()))
-            throw new InstantiationException(cl + " can't be instantiated reflectively because it is not public");
+            throw new InstantiationException(type + " can't be instantiated reflectively because it is not public");
 
-        // If there was no coercion, we try to find a matching constructor, applying coercions to arguments.
         for (Constructor<T> constructor : constructorsSortedByDescendingParameterCount(cl)) {
             if (!constructor.isAnnotationPresent(DalesbredIgnore.class)) {
                 Instantiator<T> instantiator = instantiatorFrom(constructor, types);
@@ -129,7 +128,7 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
             }
         }
 
-        throw new InstantiationException("could not find a way to instantiate " + cl + " with parameters " + types);
+        throw new InstantiationException("could not find a way to instantiate " + type + " with parameters " + types);
     }
 
     /**
@@ -247,10 +246,20 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
         if (coercion != null)
             return coercion;
 
-        if (Array.class.isAssignableFrom(source) && rawType(target).isArray())
-            return new SqlArrayToArrayConversion<Object>(rawType(target), this);
+        if (Array.class.isAssignableFrom(source)) {
+            Class<?> rawTarget = rawType(target);
 
-        if (TypeUtils.isEnum(target))
+            if (rawTarget.equals(Set.class))
+                return new SqlArrayToSetConversion(typeParameter(target), this);
+
+            if (rawTarget.isAssignableFrom(List.class))
+                return new SqlArrayToListConversion(typeParameter(target), this);
+
+            if (rawTarget.isArray())
+                return new SqlArrayToArrayConversion(rawTarget.getComponentType(), this);
+        }
+
+        if (isEnum(target))
             return dialect.getEnumCoercion(rawType(target).asSubclass(Enum.class));
 
         return null;

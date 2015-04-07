@@ -22,12 +22,18 @@
 
 package fi.evident.dalesbred;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -61,5 +67,46 @@ public class DatabaseArraysTest {
     @Test
     public void databaseArraysForStrings() {
         assertThat(db.findUnique(String[].class, "values (cast ('{foo,bar,baz}' as varchar array))"), is(new String[] { "foo", "bar", "baz" }));
+    }
+
+    @Test
+    public void databaseArraysAsLists() {
+        ListContainer object = db.findUnique(ListContainer.class, "select (cast ('{1,5,3}' as numeric array)) as intList, (cast ('{foo, bar, baz}' as varchar array)) as stringList");
+        assertThat(object.intList, is(asList(1, 5, 3)));
+        assertThat(object.stringList, is(asList("foo", "bar", "baz")));
+    }
+
+    @Test
+    public void databaseArraysAsCollectionss() {
+        CollectionContainer object = db.findUnique(CollectionContainer.class, "select (cast ('{1,5,3}' as numeric array)) as intCollection, (cast ('{foo, bar, baz}' as varchar array)) as stringCollection");
+        assertThat(object.intCollection, is((Collection<Integer>) asList(1, 5, 3)));
+        assertThat(object.stringCollection, is((Collection<String>) asList("foo", "bar", "baz")));
+    }
+
+    @Test
+    public void databaseArraysAsSets() {
+        SetContainer object = db.findUnique(SetContainer.class, "select (cast ('{1,5,3}' as numeric array)) as intSet, (cast ('{foo, bar, baz}' as varchar array)) as stringSet");
+        assertThat(object.intSet, is(setOf(1, 5, 3)));
+        assertThat(object.stringSet, is(setOf("foo", "bar", "baz")));
+    }
+
+    public static final class ListContainer {
+        public List<Integer> intList;
+        public List<String> stringList;
+    }
+
+    public static final class SetContainer {
+        public Set<Integer> intSet;
+        public Set<String> stringSet;
+    }
+
+    public static final class CollectionContainer {
+        public Collection<Integer> intCollection;
+        public Collection<String> stringCollection;
+    }
+
+    @NotNull
+    private static <T> Set<T> setOf(T... items) {
+        return new HashSet<T>(asList(items));
     }
 }

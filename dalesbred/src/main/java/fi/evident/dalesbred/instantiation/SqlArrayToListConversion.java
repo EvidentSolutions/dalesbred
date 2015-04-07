@@ -24,34 +24,21 @@ package fi.evident.dalesbred.instantiation;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.util.List;
 
-import static fi.evident.dalesbred.utils.TypeUtils.arrayType;
-
 /**
- * Converts database arrays to array types.
+ * Converts database arrays to list types.
  */
-final class SqlArrayToArrayConversion extends AbstractSqlArrayConversion<Object> {
+final class SqlArrayToListConversion extends AbstractSqlArrayConversion<List<?>> {
 
-    @NotNull
-    private final Class<?> elementType;
-
-    public SqlArrayToArrayConversion(@NotNull Class<?> elementType, @NotNull DefaultInstantiatorRegistry instantiatorRegistry) {
-        super(arrayType(elementType), elementType, instantiatorRegistry);
-
-        this.elementType = elementType;
+    public SqlArrayToListConversion(@NotNull Type elementType, @NotNull DefaultInstantiatorRegistry instantiatorRegistry) {
+        super(List.class, elementType, instantiatorRegistry);
     }
 
     @Override
     @NotNull
-    protected Object createResult(@NotNull List<?> list) {
-        int length = list.size();
-
-        Object result = Array.newInstance(elementType, length);
-        for (int i = 0; i < length; i++)
-            Array.set(result, i, list.get(i));
-
-        return result;
+    protected List<?> createResult(@NotNull List<?> list) {
+        return list;
     }
 }
