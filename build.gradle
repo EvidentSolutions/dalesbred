@@ -176,7 +176,7 @@ project(':website') {
         doLast {
             ssh.run {
                 session(remotes.website) {
-                    put from: "build/dalesbred", into: "/var/www/"
+                    put from: file("build/dalesbred"), into: "/var/www/"
                     execute "ln -sfT /var/www/dalesbred/docs/${project.version} /var/www/dalesbred/docs/current"
                 }
             }
