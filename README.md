@@ -21,7 +21,7 @@ Add dependency to your `pom.xml`:
 <dependency>
     <groupId>fi.evident.dalesbred</groupId>
     <artifactId>dalesbred</artifactId>
-    <version>0.7.1</version>
+    <version>0.8.0</version>
 </dependency>
 ```
 

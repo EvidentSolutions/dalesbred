@@ -1,4 +1,4 @@
-## x.y.z (not yet released)
+## 0.8.0 (2015-04-08)
 
   - Support instantiating arrays and collections of instantiable types from database arrays.
   - Support binding collections as SQL arrays.
