@@ -3,7 +3,7 @@ modifyPom {
         name project.name
         packaging 'jar'
         description project.description
-        url 'https://dalesbred.evident.fi/'
+        url 'http://dalesbred.org/'
         inceptionYear '2012'
 
         organization {

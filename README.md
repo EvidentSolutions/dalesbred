@@ -8,7 +8,7 @@ Dalesbred assumes that SQL is a great way to access database, but that JDBC
 as an API causes pain. Therefore it wraps JDBC with a set of helpers
 while still providing access to low-level functionality.
 
-Visit the [Dalesbred website](https://dalesbred.evident.fi/) for details.
+Visit the [Dalesbred website](http://dalesbred.org/) for details.
 
 [![Build Status](https://drone.io/github.com/EvidentSolutions/dalesbred/status.png)](https://drone.io/github.com/EvidentSolutions/dalesbred/latest)
 
@@ -56,8 +56,8 @@ db.update("insert into user (id, name) values (?, ?)", 42, "Example User");
 Documentation
 =============
 
-  - [Reference Documentation](https://dalesbred.evident.fi/docs/current/reference/)
-  - [Javadoc](https://dalesbred.evident.fi/docs/current/api/)
+  - [Reference Documentation](http://dalesbred.org/docs/current/reference/)
+  - [Javadoc](http://dalesbred.org/docs/current/api/)
 
 IDEA-integration
 ================

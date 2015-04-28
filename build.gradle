@@ -45,7 +45,7 @@ configure(rootProject) { project ->
                 'source-highlighter': 'prettify',
                 revnumber: project.version.toString(),
                 docinfo: "",
-                javadocBase: "https://dalesbred.evident.fi/docs/${project.version.toString()}/api/?"
+                javadocBase: "http://dalesbred.org/docs/${project.version.toString()}/api/?"
         ]
     }
 }
@@ -116,7 +116,7 @@ project(':dalesbred') {
 
     task publishJavadocs {
         group 'publishing'
-        description 'Publishes the javadocs documentation to dalesbred.evident.fi'
+        description 'Publishes the javadocs documentation to dalesbred.org'
         dependsOn javadoc
 
         doLast {
@@ -171,7 +171,7 @@ project(':website') {
         dependsOn assemble
 
         group 'publishing'
-        description 'Publishes the website to dalesbred.evident.fi'
+        description 'Publishes the website to dalesbred.org'
 
         doLast {
             ssh.run {
