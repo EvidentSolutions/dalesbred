@@ -19,7 +19,7 @@ Add dependency to your `pom.xml`:
 
 ```xml
 <dependency>
-    <groupId>fi.evident.dalesbred</groupId>
+    <groupId>org.dalesbred</groupId>
     <artifactId>dalesbred</artifactId>
     <version>0.8.0</version>
 </dependency>

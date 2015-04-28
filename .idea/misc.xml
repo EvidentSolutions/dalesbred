@@ -3,7 +3,7 @@
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
     <list size="1">
-      <item index="0" class="java.lang.String" itemvalue="fi.evident.dalesbred.Reflective" />
+      <item index="0" class="java.lang.String" itemvalue="org.dalesbred.Reflective" />
     </list>
   </component>
   <component name="FrameworkDetectionExcludesConfiguration">

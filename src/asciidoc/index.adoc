@@ -12,7 +12,7 @@ Basic usage
 Configuring the database connection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Most things in Dalesbred happen through an instance of {javadocBase}fi/evident/dalesbred/Database.html[Database].
+Most things in Dalesbred happen through an instance of {javadocBase}org/dalesbred/Database.html[Database].
 The easiest way to get hold of one is to specify the settings manually:
 
 [source,java,indent=0]
@@ -28,7 +28,7 @@ you'll probably want to use a named {jdkJavadocBase}javax/sql/DataSource.html[Da
 Database db = Database.forJndiDataSource("java:comp/env/jdbc/ExampleDb");
 
 Alternatively, you might setup a {jdkJavadocBase}javax/sql/DataSource.html[DataSource] yourself, in which case you can
-just create a {javadocBase}fi/evident/dalesbred/Database.html[Database] out of that:
+just create a {javadocBase}org/dalesbred/Database.html[Database] out of that:
 
 [source,java,indent=0]
 Database db = Database.forDataSource(myDataSource);
@@ -93,7 +93,7 @@ You can also convert the results directly to a map:
 ----
 
 If for some reason you don't want to map the results into your own class, you can ask for
-a {javadocBase}fi/evident/dalesbred/ResultTable.html[ResultTable], which is basically a detached
+a {javadocBase}org/dalesbred/ResultTable.html[ResultTable], which is basically a detached
 representation of a {jdkJavadocBase}java/sql/ResultSet.html[ResultSet]:
 
 [source,java,indent=0]
@@ -101,8 +101,8 @@ representation of a {jdkJavadocBase}java/sql/ResultSet.html[ResultSet]:
         ResultTable employees = db.findTable("select * from employee");
 ----
 
-Alternatively, you can supply your own {javadocBase}fi/evident/dalesbred/results/RowMapper.html[RowMapper] or
-{javadocBase}fi/evident/dalesbred/results/ResultSetProcessor.html[ResultSetProcessor]-implementation in place
+Alternatively, you can supply your own {javadocBase}org/dalesbred/results/RowMapper.html[RowMapper] or
+{javadocBase}org/dalesbred/results/ResultSetProcessor.html[ResultSetProcessor]-implementation in place
 of the class and handle the result sets manually, but usually this should be unnecessary.
 
 Updates
@@ -129,14 +129,14 @@ SqlQuery vs. query parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All methods come in two variants: there's an implementation that takes
-an {javadocBase}fi/evident/dalesbred/SqlQuery.html[SqlQuery] as a parameter and there's another
+an {javadocBase}org/dalesbred/SqlQuery.html[SqlQuery] as a parameter and there's another
 implementation that takes {jdkJavadocBase}java/lang/String.html[String] and variable arguments of parameters.
 The latter is just convenience method for the further, meaning that the following code fragments are
 identical in functionality:
 
 [source,java,indent=0]
 ----
-        import static fi.evident.dalesbred.SqlQuery.query;
+        import static org.dalesbred.SqlQuery.query;
 
         SqlQuery query = query("select id, name from department where update_timestamp > ?", date);
         db.findAll(Department.class, query);
@@ -162,7 +162,7 @@ In addition to using positional parameters in your SQL statements, you can also 
 
 [source,java,indent=0]
 ----
-        import static fi.evident.dalesbred.SqlQuery.namedQuery;
+        import static org.dalesbred.SqlQuery.namedQuery;
 
         Map<String,Object> values = new HashMap<String,Object>();
         values.put("firstName", "John");
@@ -176,13 +176,13 @@ In addition to using positional parameters in your SQL statements, you can also 
 Instead of {jdkJavadocBase}java/util/Map.html[Map]s, you can also pass just regular objects to `namedQuery` as
 the source of values. The parameter names are mapped to properties or fields of the objects. Finally, if you want
 detailed control, you can pass your own implementation of
-{javadocBase}fi/evident/dalesbred/query/VariableResolver.html[VariableResolver] to resolve the variables.
+{javadocBase}org/dalesbred/query/VariableResolver.html[VariableResolver] to resolve the variables.
 
 Building queries dynamically
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 At the moment there's no high-level API for building queries, but there is a
-{javadocBase}fi/evident/dalesbred/query/QueryBuilder.html[QueryBuilder] that
+{javadocBase}org/dalesbred/query/QueryBuilder.html[QueryBuilder] that
 is basically just a {jdkJavadocBase}java/util/StringBuilder.html[StringBuilder] which remembers
 the query-parameters, so you can say things like:
 
@@ -204,8 +204,8 @@ Transactions
 Transaction callbacks
 ~~~~~~~~~~~~~~~~~~~~~
 
-To perform a bunch of operations in transaction, use {javadocBase}fi/evident/dalesbred/TransactionCallback.html[TransactionCallback]
-or {javadocBase}fi/evident/dalesbred/VoidTransactionCallback.html[VoidTransactionCallback]:
+To perform a bunch of operations in transaction, use {javadocBase}org/dalesbred/TransactionCallback.html[TransactionCallback]
+or {javadocBase}org/dalesbred/VoidTransactionCallback.html[VoidTransactionCallback]:
 
 [source,java,indent=0]
 ----
@@ -278,7 +278,7 @@ management. Consult the <<_integrations,Integrations>>-section for details.
 Implicit transactions
 ~~~~~~~~~~~~~~~~~~~~~
 
-If you make calls to {javadocBase}fi/evident/dalesbred/Database.html[Database] without and explicit transaction, by default
+If you make calls to {javadocBase}org/dalesbred/Database.html[Database] without and explicit transaction, by default
 a new transaction is started for each call, but you can disallow this, in
 which case exceptions are thrown for calls without an active transaction:
 
@@ -332,7 +332,7 @@ correctly:
 
 [source,java,indent=0]
 ----
-        import static fi.evident.dalesbred.SqlQuery.confidential;
+        import static org.dalesbred.SqlQuery.confidential;
 
         ...
 
@@ -343,8 +343,8 @@ Custom type-conversions
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Sometimes you need to convert database values to your own custom types and vice versa. To do that,
-you can register your own {javadocBase}fi/evident/dalesbred/instantiation/TypeConversion.html[TypeConversion]-implementations
-to {javadocBase}fi/evident/dalesbred/instantiation/TypeConversionRegistry.html[TypeConversionRegistry]:
+you can register your own {javadocBase}org/dalesbred/instantiation/TypeConversion.html[TypeConversion]-implementations
+to {javadocBase}org/dalesbred/instantiation/TypeConversionRegistry.html[TypeConversionRegistry]:
 
 [source,java,indent=0]
 ----
@@ -421,7 +421,7 @@ Spring
 
 Dalesbred has support for integration with http://projects.spring.io/spring-framework/[Spring Framework]
 and its transaction management. To integrate Dalesbred, create a configuration class inheriting from
-{javadocBase}fi/evident/dalesbred/support/spring/DalesbredConfigurationSupport.html[DalesbredConfigurationSupport]
+{javadocBase}org/dalesbred/support/spring/DalesbredConfigurationSupport.html[DalesbredConfigurationSupport]
 and specify beans for {jdkJavadocBase}javax/sql/DataSource.html[DataSource] and
 {springJavadocBase}org/springframework/transaction/PlatformTransactionManager.html[PlatformTransactionManager].
 A minimal configuration would therefore be something like the following:
@@ -444,14 +444,14 @@ A minimal configuration would therefore be something like the following:
         }
 ----
 
-After this you can inject {javadocBase}fi/evident/dalesbred/Database.html[Database] normally in your beans.
+After this you can inject {javadocBase}org/dalesbred/Database.html[Database] normally in your beans.
 
 Guice
 ~~~~~
 
 Dalesbred has support for integration with https://code.google.com/p/google-guice/[Guice 3]. You can just pass in
-{javadocBase}fi/evident/dalesbred/support/guice/DataSourceDatabaseModule.html[DataSourceDatabaseModule]
-or {javadocBase}fi/evident/dalesbred/support/guice/DriverManagerDatabaseModule.html[DriverManagerDatabaseModule]
+{javadocBase}org/dalesbred/support/guice/DataSourceDatabaseModule.html[DataSourceDatabaseModule]
+or {javadocBase}org/dalesbred/support/guice/DriverManagerDatabaseModule.html[DriverManagerDatabaseModule]
 when constructing your injector and you'll get automatic support for annotation based transactions and can
 @Inject your database wherever you need it.
 
@@ -500,7 +500,7 @@ you'll get support for writing transactional test cases:
 More examples
 -------------
 
-Check out the test cases under https://github.com/EvidentSolutions/dalesbred/tree/master/dalesbred/src/test/java/fi/evident/dalesbred[dalesbred/src/test/java]
+Check out the test cases under https://github.com/EvidentSolutions/dalesbred/tree/master/dalesbred/src/test/java/org/dalesbred[dalesbred/src/test/java]
 for more usage examples.
 
 Downloading
@@ -515,7 +515,7 @@ Add the following to your project:
 [subs="verbatim,attributes"]
 ----
         dependencies {
-            compile 'fi.evident.dalesbred:dalesbred:{revnumber}'
+            compile 'org.dalesbred:dalesbred:{revnumber}'
         }
 
         repositories {
@@ -529,7 +529,7 @@ For the JUnit test-support classes, add the following:
 [subs="verbatim,attributes"]
 ----
         dependencies {
-            testCompile 'fi.evident.dalesbred:dalesbred-junit:{revnumber}'
+            testCompile 'org.dalesbred:dalesbred-junit:{revnumber}'
         }
 ----
 
@@ -543,7 +543,7 @@ dependency to your `pom.xml`:
 [subs="verbatim,quotes,attributes"]
 ----
         <dependency>
-            <groupId>fi.evident.dalesbred</groupId>
+            <groupId>org.dalesbred</groupId>
             <artifactId>dalesbred</artifactId>
             <version>{revnumber}</version>
         </dependency>
@@ -555,7 +555,7 @@ For the JUnit test-support classes, add the following:
 [subs="verbatim,quotes,attributes"]
 ----
         <dependency>
-            <groupId>fi.evident.dalesbred</groupId>
+            <groupId>org.dalesbred</groupId>
             <artifactId>dalesbred-junit</artifactId>
             <version>{revnumber}</version>
             <scope>test</scope>
@@ -566,7 +566,7 @@ Without dependency manager
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To use Dalesbred without a dependency management system, you'll need to
-download http://repo1.maven.org/maven2/fi/evident/dalesbred/dalesbred/{revnumber}/dalesbred-{revnumber}.jar[dalesbred-{revnumber}.jar]
+download http://repo1.maven.org/maven2/org/dalesbred/dalesbred/{revnumber}/dalesbred-{revnumber}.jar[dalesbred-{revnumber}.jar]
 and it to your classpath. There are no other required dependencies.
 
 Contributors
