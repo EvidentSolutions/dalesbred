@@ -1,0 +1,16 @@
+org.dalesbred
+org.dalesbred.connection
+org.dalesbred.dialects
+org.dalesbred.instantiation
+org.dalesbred.lob
+org.dalesbred.query
+org.dalesbred.results
+org.dalesbred.support.aopalliance
+org.dalesbred.support.guice
+org.dalesbred.support.java8
+org.dalesbred.support.joda
+org.dalesbred.support.proxy
+org.dalesbred.support.spring
+org.dalesbred.support.threeten
+org.dalesbred.tx
+org.dalesbred.utils
