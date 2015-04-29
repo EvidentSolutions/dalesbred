@@ -22,7 +22,6 @@
 
 package org.dalesbred.transaction;
 
-import org.dalesbred.*;
 import org.dalesbred.dialects.Dialect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -22,7 +22,7 @@
 
 package org.dalesbred.support.spring;
 
-import org.dalesbred.TransactionContext;
+import org.dalesbred.transaction.TransactionContext;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.transaction.TransactionStatus;
 

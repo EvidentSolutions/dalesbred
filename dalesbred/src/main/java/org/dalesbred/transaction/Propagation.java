@@ -20,27 +20,34 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred;
+package org.dalesbred.transaction;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.Connection;
-
 /**
- * Provides transactions with access to the context.
+ * Transaction propagation types.
  */
-public abstract class TransactionContext {
+public enum Propagation {
 
-    /**
-     * Returns the raw JDBC-connection for this transaction.
-     */
+    /** Use the default propagation level that is configured */
+    DEFAULT,
+
+    /** Join existing transaction if there is one, otherwise create a new one. */
+    REQUIRED,
+
+    /** Join existing transaction if there is one, otherwise throw an exception. */
+    MANDATORY,
+
+    /** Always create a new transaction. Existing transaction is suspended for the duration of this transaction. */
+    REQUIRES_NEW,
+
+    /** Start a nested transaction if there is a current transaction, otherwise start a new normal transaction. */
+    NESTED,;
+
     @NotNull
-    public abstract Connection getConnection();
-
-    /**
-     * Requests that this transaction will be rolled back.
-     */
-    public abstract void setRollbackOnly();
-
-    public abstract boolean isRollbackOnly();
+    public Propagation normalize(@NotNull Propagation defaultValue) {
+        return (this != DEFAULT)         ? this
+             : (defaultValue != DEFAULT) ? defaultValue
+             : REQUIRED;
+    }
 }

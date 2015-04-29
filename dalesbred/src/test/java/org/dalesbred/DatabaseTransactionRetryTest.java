@@ -24,6 +24,8 @@ package org.dalesbred;
 
 import org.dalesbred.testutils.LoggingController;
 import org.dalesbred.testutils.SuppressLogging;
+import org.dalesbred.transaction.TransactionSerializationException;
+import org.dalesbred.transaction.TransactionSettings;
 import org.junit.Rule;
 import org.junit.Test;
 

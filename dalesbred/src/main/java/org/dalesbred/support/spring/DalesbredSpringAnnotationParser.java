@@ -22,7 +22,7 @@
 
 package org.dalesbred.support.spring;
 
-import org.dalesbred.Transactional;
+import org.dalesbred.transaction.Transactional;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.transaction.annotation.TransactionAnnotationParser;

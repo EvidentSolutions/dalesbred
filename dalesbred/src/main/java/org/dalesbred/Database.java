@@ -31,8 +31,7 @@ import org.dalesbred.instantiation.InstantiatorRegistry;
 import org.dalesbred.instantiation.TypeConversionRegistry;
 import org.dalesbred.results.*;
 import org.dalesbred.support.proxy.TransactionalProxyFactory;
-import org.dalesbred.transaction.DefaultTransactionManager;
-import org.dalesbred.transaction.TransactionManager;
+import org.dalesbred.transaction.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

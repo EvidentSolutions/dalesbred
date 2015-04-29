@@ -24,8 +24,6 @@ package org.dalesbred.transaction;
 
 import org.dalesbred.Database;
 import org.dalesbred.DatabaseException;
-import org.dalesbred.Isolation;
-import org.dalesbred.TransactionCallback;
 import org.dalesbred.dialects.Dialect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

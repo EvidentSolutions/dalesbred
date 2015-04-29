@@ -20,19 +20,27 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred;
+package org.dalesbred.transaction;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.SQLException;
+import java.sql.Connection;
 
 /**
- * Exception thrown when transaction rolls back.
- *
- * @see TransactionSerializationException
+ * Provides transactions with access to the context.
  */
-public class TransactionRollbackException extends DatabaseSQLException {
-    public TransactionRollbackException(@NotNull SQLException cause) {
-        super(cause);
-    }
+public abstract class TransactionContext {
+
+    /**
+     * Returns the raw JDBC-connection for this transaction.
+     */
+    @NotNull
+    public abstract Connection getConnection();
+
+    /**
+     * Requests that this transaction will be rolled back.
+     */
+    public abstract void setRollbackOnly();
+
+    public abstract boolean isRollbackOnly();
 }

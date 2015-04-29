@@ -24,10 +24,11 @@ package org.dalesbred;
 
 import org.dalesbred.testutils.LoggingController;
 import org.dalesbred.testutils.SuppressLogging;
+import org.dalesbred.transaction.TransactionSerializationException;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.dalesbred.Isolation.SERIALIZABLE;
+import static org.dalesbred.transaction.Isolation.SERIALIZABLE;
 
 public class DatabaseTransactionIsolationTest {
 

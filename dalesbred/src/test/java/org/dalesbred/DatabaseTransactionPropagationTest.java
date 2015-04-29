@@ -27,7 +27,7 @@ import org.dalesbred.testutils.SuppressLogging;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.dalesbred.Propagation.*;
+import static org.dalesbred.transaction.Propagation.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 

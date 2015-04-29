@@ -20,8 +20,9 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred;
+package org.dalesbred.transaction;
 
+import org.dalesbred.Database;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;

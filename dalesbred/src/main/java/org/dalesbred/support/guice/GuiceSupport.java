@@ -27,8 +27,8 @@ import com.google.inject.Key;
 import com.google.inject.Provider;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.dalesbred.Database;
-import org.dalesbred.Transactional;
 import org.dalesbred.support.aopalliance.AopAllianceTransactionalMethodInterceptor;
+import org.dalesbred.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 
 import static com.google.inject.matcher.Matchers.annotatedWith;

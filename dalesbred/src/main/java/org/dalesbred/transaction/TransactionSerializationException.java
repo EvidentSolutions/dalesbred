@@ -20,18 +20,18 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred;
+package org.dalesbred.transaction;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
 /**
- * Callback for executing a block of code within a transaction.
- *
- * @see TransactionCallback
+ * Exception thrown when database can't achieve desired isolation level
+ * due to concurrent updates.
  */
-public interface VoidTransactionCallback {
-    @SuppressWarnings("RedundantThrows")
-    void execute(@NotNull TransactionContext tx) throws SQLException;
+public class TransactionSerializationException extends TransactionRollbackException {
+    public TransactionSerializationException(@NotNull SQLException cause) {
+        super(cause);
+    }
 }

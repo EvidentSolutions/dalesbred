@@ -22,10 +22,6 @@
 
 package org.dalesbred.transaction;
 
-import org.dalesbred.Isolation;
-import org.dalesbred.Propagation;
-import org.dalesbred.TransactionCallback;
-import org.dalesbred.TransactionSettings;
 import org.dalesbred.connection.ConnectionProvider;
 import org.dalesbred.dialects.Dialect;
 import org.jetbrains.annotations.NotNull;

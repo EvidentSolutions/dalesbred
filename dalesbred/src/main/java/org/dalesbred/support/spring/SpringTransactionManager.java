@@ -22,11 +22,11 @@
 
 package org.dalesbred.support.spring;
 
-import org.dalesbred.*;
+import org.dalesbred.DatabaseException;
 import org.dalesbred.connection.ConnectionProvider;
 import org.dalesbred.dialects.Dialect;
 import org.dalesbred.internal.utils.Require;
-import org.dalesbred.transaction.TransactionManager;
+import org.dalesbred.transaction.*;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.jdbc.datasource.ConnectionHolder;
 import org.springframework.jdbc.datasource.DataSourceUtils;

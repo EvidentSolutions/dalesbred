@@ -23,7 +23,7 @@
 package org.dalesbred.junit;
 
 import org.dalesbred.Database;
-import org.dalesbred.Propagation;
+import org.dalesbred.transaction.Propagation;
 import org.junit.Rule;
 import org.junit.Test;
 

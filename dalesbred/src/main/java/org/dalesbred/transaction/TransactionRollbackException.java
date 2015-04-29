@@ -20,18 +20,20 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred;
+package org.dalesbred.transaction;
 
+import org.dalesbred.DatabaseSQLException;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
 /**
- * Exception thrown when database can't achieve desired isolation level
- * due to concurrent updates.
+ * Exception thrown when transaction rolls back.
+ *
+ * @see TransactionSerializationException
  */
-public class TransactionSerializationException extends TransactionRollbackException {
-    public TransactionSerializationException(@NotNull SQLException cause) {
+public class TransactionRollbackException extends DatabaseSQLException {
+    public TransactionRollbackException(@NotNull SQLException cause) {
         super(cause);
     }
 }

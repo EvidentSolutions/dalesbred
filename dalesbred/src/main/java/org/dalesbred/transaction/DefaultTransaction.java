@@ -22,9 +22,6 @@
 
 package org.dalesbred.transaction;
 
-import org.dalesbred.TransactionCallback;
-import org.dalesbred.TransactionContext;
-import org.dalesbred.TransactionSerializationException;
 import org.dalesbred.dialects.Dialect;
 import org.dalesbred.internal.utils.Throwables;
 import org.jetbrains.annotations.NotNull;

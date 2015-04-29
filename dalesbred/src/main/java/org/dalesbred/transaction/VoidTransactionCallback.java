@@ -20,34 +20,18 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred;
+package org.dalesbred.transaction;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.SQLException;
+
 /**
- * Transaction propagation types.
+ * Callback for executing a block of code within a transaction.
+ *
+ * @see TransactionCallback
  */
-public enum Propagation {
-
-    /** Use the default propagation level that is configured */
-    DEFAULT,
-
-    /** Join existing transaction if there is one, otherwise create a new one. */
-    REQUIRED,
-
-    /** Join existing transaction if there is one, otherwise throw an exception. */
-    MANDATORY,
-
-    /** Always create a new transaction. Existing transaction is suspended for the duration of this transaction. */
-    REQUIRES_NEW,
-
-    /** Start a nested transaction if there is a current transaction, otherwise start a new normal transaction. */
-    NESTED,;
-
-    @NotNull
-    public Propagation normalize(@NotNull Propagation defaultValue) {
-        return (this != DEFAULT)         ? this
-             : (defaultValue != DEFAULT) ? defaultValue
-             : REQUIRED;
-    }
+public interface VoidTransactionCallback {
+    @SuppressWarnings("RedundantThrows")
+    void execute(@NotNull TransactionContext tx) throws SQLException;
 }

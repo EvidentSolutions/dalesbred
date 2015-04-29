@@ -25,8 +25,12 @@ package org.dalesbred.support.aopalliance;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import org.dalesbred.*;
+import org.dalesbred.Database;
+import org.dalesbred.TestDatabaseProvider;
 import org.dalesbred.support.guice.DriverManagerDatabaseModule;
+import org.dalesbred.transaction.Isolation;
+import org.dalesbred.transaction.Propagation;
+import org.dalesbred.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +39,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import static com.google.inject.name.Names.named;
-import static org.dalesbred.Isolation.SERIALIZABLE;
+import static org.dalesbred.transaction.Isolation.SERIALIZABLE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 

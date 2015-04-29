@@ -20,15 +20,27 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred;
+package org.dalesbred.transaction;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.annotation.*;
+
 /**
- * Exception thrown when performing an operation that requires a transaction without having an active transaction.
+ * Marks the given method or type as transactional.
  */
-public class NoActiveTransactionException extends DatabaseException {
-    public NoActiveTransactionException(@NotNull String message) {
-        super(message);
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Target({ ElementType.METHOD, ElementType.TYPE })
+@Inherited
+public @interface Transactional {
+
+    /** The propagation for transaction */
+    @NotNull Propagation propagation() default Propagation.DEFAULT;
+
+    /** Isolation for transaction */
+    @NotNull Isolation isolation() default Isolation.DEFAULT;
+
+    /** Number of automatic retries due to serialization failures, default is 0. */
+    int retries() default 0;
 }

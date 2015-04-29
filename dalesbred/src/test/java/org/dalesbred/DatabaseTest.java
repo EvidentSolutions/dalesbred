@@ -25,6 +25,8 @@ package org.dalesbred;
 import org.dalesbred.dialects.HsqldbDialect;
 import org.dalesbred.results.ResultSetProcessor;
 import org.dalesbred.results.RowMapper;
+import org.dalesbred.transaction.Isolation;
+import org.dalesbred.transaction.Propagation;
 import org.junit.Rule;
 import org.junit.Test;
 

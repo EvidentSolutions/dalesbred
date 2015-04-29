@@ -22,6 +22,7 @@
 
 package org.dalesbred;
 
+import org.dalesbred.transaction.Isolation;
 import org.junit.Test;
 
 import java.sql.Connection;
@@ -29,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.dalesbred.Isolation.*;
+import static org.dalesbred.transaction.Isolation.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;

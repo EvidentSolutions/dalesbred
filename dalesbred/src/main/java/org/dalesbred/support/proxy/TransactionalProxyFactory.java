@@ -23,9 +23,9 @@
 package org.dalesbred.support.proxy;
 
 import org.dalesbred.Database;
-import org.dalesbred.TransactionSettings;
-import org.dalesbred.Transactional;
 import org.dalesbred.internal.utils.Require;
+import org.dalesbred.transaction.TransactionSettings;
+import org.dalesbred.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

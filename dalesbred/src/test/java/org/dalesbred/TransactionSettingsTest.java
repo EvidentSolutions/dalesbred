@@ -22,6 +22,10 @@
 
 package org.dalesbred;
 
+import org.dalesbred.transaction.Isolation;
+import org.dalesbred.transaction.Propagation;
+import org.dalesbred.transaction.TransactionSettings;
+import org.dalesbred.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 

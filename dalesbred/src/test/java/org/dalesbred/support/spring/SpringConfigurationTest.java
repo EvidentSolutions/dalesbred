@@ -23,10 +23,10 @@
 package org.dalesbred.support.spring;
 
 import org.dalesbred.Database;
-import org.dalesbred.Propagation;
 import org.dalesbred.TestDatabaseProvider;
 import org.dalesbred.dialects.Dialect;
 import org.dalesbred.dialects.PostgreSQLDialect;
+import org.dalesbred.transaction.Propagation;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

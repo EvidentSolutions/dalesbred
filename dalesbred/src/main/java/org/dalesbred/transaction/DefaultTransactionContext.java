@@ -22,7 +22,6 @@
 
 package org.dalesbred.transaction;
 
-import org.dalesbred.TransactionContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
