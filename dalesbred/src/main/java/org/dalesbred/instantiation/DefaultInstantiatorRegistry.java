@@ -260,8 +260,11 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
                 return new SqlArrayToArrayConversion(rawTarget.getComponentType(), this);
         }
 
-        if (isEnum(target))
-            return dialect.getEnumCoercion(rawType(target).asSubclass(Enum.class));
+        if (isEnum(target)) {
+            @SuppressWarnings("rawtypes")
+            Class<? extends Enum> cl = rawType(target).asSubclass(Enum.class);
+            return dialect.getEnumCoercion(cl);
+        }
 
         return null;
     }
