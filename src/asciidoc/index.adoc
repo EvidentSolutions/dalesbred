@@ -272,7 +272,7 @@ External transaction manager
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you are using http://projects.spring.io/spring-framework/[Spring Framework] or
-https://code.google.com/p/google-guice/[Guice], Dalesbred can integrated with them for transaction
+https://code.google.com/p/google-guice/[Guice], Dalesbred can integrate with them for transaction
 management. Consult the <<_integrations,Integrations>>-section for details.
 
 Implicit transactions
