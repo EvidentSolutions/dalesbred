@@ -32,20 +32,11 @@ buildscript {
 plugins {
     id 'net.researchgate.release' version '2.0.2'
     id 'org.asciidoctor.convert' version '1.5.2'
-    id 'org.hidetake.ssh' version '1.1.1'
     id 'org.ajoberstar.github-pages' version '1.1.0'
 }
 
 release {
     // tagTemplate = 'v$version' // TODO: this is not available in release-plugin 2.0.2 but we want to use it later
-}
-
-remotes {
-    website {
-        host = 'uuhi.evident.fi'
-        user = 'evident'
-        identity = file("${System.properties['user.home']}/.ssh/id_rsa")
-    }
 }
 
 configure(allprojects) { project ->
@@ -134,22 +125,6 @@ project(':dalesbred') {
                     'org.springframework.*;resolution:=optional,' +
                     'org.postgresql.*;resolution:=optional,' +
                     '*'
-        }
-    }
-
-    task publishJavadocs {
-        group 'publishing'
-        description 'Publishes the javadocs documentation to dalesbred.org'
-        dependsOn javadoc
-
-        doLast {
-            ssh.run {
-                session(remotes.website) {
-                    def target = "/var/www/dalesbred/docs/${project.version}/api"
-                    execute "mkdir -p $target"
-                    put from: "${project.projectDir}/build/docs/javadoc", into: target
-                }
-            }
         }
     }
 }
