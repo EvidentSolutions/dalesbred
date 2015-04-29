@@ -269,22 +269,17 @@ final class DefaultTypeConversions {
         @NotNull
         @Override
         public String convert(@NotNull Clob value) {
-            try {
-                Reader reader = value.getCharacterStream();
-                try {
-                    StringBuilder sb = new StringBuilder((int) value.length());
+            try (Reader reader = value.getCharacterStream()) {
+                StringBuilder sb = new StringBuilder((int) value.length());
 
-                    char[] buf = new char[BUFFER_SIZE];
-                    int n;
+                char[] buf = new char[BUFFER_SIZE];
+                int n;
 
-                    while ((n = reader.read(buf)) != -1)
-                        sb.append(buf, 0, n);
+                while ((n = reader.read(buf)) != -1)
+                    sb.append(buf, 0, n);
 
-                    return sb.toString();
+                return sb.toString();
 
-                } finally {
-                    reader.close();
-                }
             } catch (SQLException e) {
                 throw new DatabaseSQLException(e);
             } catch (IOException e) {
@@ -302,22 +297,17 @@ final class DefaultTypeConversions {
         @NotNull
         @Override
         public byte[] convert(@NotNull Blob value) {
-            try {
-                InputStream in = value.getBinaryStream();
-                try {
-                    ByteArrayOutputStream out = new ByteArrayOutputStream((int) value.length());
+            try (InputStream in = value.getBinaryStream()) {
+                ByteArrayOutputStream out = new ByteArrayOutputStream((int) value.length());
 
-                    byte[] buf = new byte[BUFFER_SIZE];
-                    int n;
+                byte[] buf = new byte[BUFFER_SIZE];
+                int n;
 
-                    while ((n = in.read(buf)) != -1)
-                        out.write(buf, 0, n);
+                while ((n = in.read(buf)) != -1)
+                    out.write(buf, 0, n);
 
-                    return out.toByteArray();
+                return out.toByteArray();
 
-                } finally {
-                    in.close();
-                }
             } catch (SQLException e) {
                 throw new DatabaseSQLException(e);
             } catch (IOException e) {

@@ -19,6 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 package org.dalesbred.support.spring;
 
 import org.dalesbred.TestDatabaseProvider;
@@ -35,8 +36,7 @@ public class SpringTransactionContextTest {
 
     @Test
     public void rollingBackDelegatesToOriginalContexts() throws SQLException {
-        Connection connection = TestDatabaseProvider.createInMemoryHSQLDataSource().getConnection();
-        try {
+        try (Connection connection = TestDatabaseProvider.createInMemoryHSQLDataSource().getConnection()) {
             SimpleTransactionStatus status = new SimpleTransactionStatus();
             SpringTransactionContext context = new SpringTransactionContext(status, connection);
 
@@ -47,9 +47,6 @@ public class SpringTransactionContextTest {
             context.setRollbackOnly();
             assertThat(context.isRollbackOnly(), is(true));
             assertThat(status.isRollbackOnly(), is(true));
-
-        }finally {
-            connection.close();
         }
     }
 }

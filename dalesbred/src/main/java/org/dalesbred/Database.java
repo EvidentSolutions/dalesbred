@@ -288,20 +288,14 @@ public final class Database {
             public T execute(@NotNull TransactionContext tx) throws SQLException {
                 logQuery(query);
 
-                PreparedStatement ps = tx.getConnection().prepareStatement(query.sql);
-                try {
+                try (PreparedStatement ps = tx.getConnection().prepareStatement(query.sql)) {
                     bindArguments(ps, query.args);
 
                     long startTime = currentTimeMillis();
-                    ResultSet resultSet = ps.executeQuery();
-                    try {
+                    try (ResultSet resultSet = ps.executeQuery()) {
                         logQueryExecution(query, currentTimeMillis() - startTime);
                         return processor.process(resultSet);
-                    } finally {
-                        resultSet.close();
                     }
-                } finally {
-                    ps.close();
                 }
             }
         });
@@ -510,15 +504,12 @@ public final class Database {
             public Integer execute(@NotNull TransactionContext tx) throws SQLException {
                 logQuery(query);
 
-                PreparedStatement ps = tx.getConnection().prepareStatement(query.sql);
-                try {
+                try (PreparedStatement ps = tx.getConnection().prepareStatement(query.sql)) {
                     bindArguments(ps, query.args);
                     long startTime = currentTimeMillis();
                     int count = ps.executeUpdate();
                     logQueryExecution(query, currentTimeMillis() - startTime);
                     return count;
-                } finally {
-                    ps.close();
                 }
             }
         });
@@ -546,21 +537,15 @@ public final class Database {
             public T execute(@NotNull TransactionContext tx) throws SQLException {
                 logQuery(query);
 
-                PreparedStatement ps = prepareStatement(tx.getConnection(), query.sql, columnNames);
-                try {
+                try (PreparedStatement ps = prepareStatement(tx.getConnection(), query.sql, columnNames)) {
                     bindArguments(ps, query.args);
                     long startTime = currentTimeMillis();
                     ps.executeUpdate();
                     logQueryExecution(query, currentTimeMillis() - startTime);
 
-                    ResultSet rs = ps.getGeneratedKeys();
-                    try {
+                    try (ResultSet rs = ps.getGeneratedKeys()) {
                         return generatedKeysProcessor.process(rs);
-                    } finally {
-                        rs.close();
                     }
-                } finally {
-                    ps.close();
                 }
             }
 
@@ -594,8 +579,7 @@ public final class Database {
             public int[] execute(@NotNull TransactionContext tx) throws SQLException {
                 logQuery(query);
 
-                PreparedStatement ps = tx.getConnection().prepareStatement(sql);
-                try {
+                try (PreparedStatement ps = tx.getConnection().prepareStatement(sql)) {
                     for (List<?> arguments : argumentLists) {
                         bindArguments(ps, arguments);
                         ps.addBatch();
@@ -604,8 +588,6 @@ public final class Database {
                     int[] counts = ps.executeBatch();
                     logQueryExecution(query, currentTimeMillis() - startTime);
                     return counts;
-                } finally {
-                    ps.close();
                 }
             }
         });

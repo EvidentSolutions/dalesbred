@@ -43,8 +43,7 @@ public class SingleConnectionTransactionManagerTest {
 
     @Test
     public void rollbacksWithoutThirdPartyTransactions() throws SQLException {
-        Connection connection = dataSource.getConnection();
-        try {
+        try (Connection connection = dataSource.getConnection()) {
             TransactionManager tm = new SingleConnectionTransactionManager(connection, false);
             final Database db = new Database(tm);
 
@@ -63,24 +62,17 @@ public class SingleConnectionTransactionManagerTest {
             });
 
             assertThat(db.findUnique(String.class, "select text from test_table"), is("foo"));
-
-        } finally {
-            connection.close();
         }
     }
 
     @Test
     public void verifyHasTransaction() throws SQLException {
-        Connection connection = dataSource.getConnection();
-        try {
+        try (Connection connection = dataSource.getConnection()) {
             Database db1 = new Database(new SingleConnectionTransactionManager(connection, true));
             assertTrue(db1.hasActiveTransaction());
 
             Database db2 = new Database(new SingleConnectionTransactionManager(connection, false));
             assertFalse(db2.hasActiveTransaction());
-
-        } finally {
-            connection.close();
         }
     }
 }
