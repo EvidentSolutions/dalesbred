@@ -56,8 +56,8 @@ db.update("insert into user (id, name) values (?, ?)", 42, "Example User");
 Documentation
 =============
 
-  - [Reference Documentation](http://dalesbred.org/docs/current/reference/)
-  - [Javadoc](http://dalesbred.org/docs/current/api/)
+  - [Reference Documentation](http://dalesbred.org/docs/reference/)
+  - [Javadoc](http://dalesbred.org/docs/api/)
 
 IDEA-integration
 ================

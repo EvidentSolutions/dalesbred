@@ -33,6 +33,7 @@ plugins {
     id 'net.researchgate.release' version '2.0.2'
     id 'org.asciidoctor.convert' version '1.5.2'
     id 'org.hidetake.ssh' version '1.1.1'
+    id 'org.ajoberstar.github-pages' version '1.1.0'
 }
 
 release {
@@ -67,7 +68,7 @@ configure(rootProject) { project ->
                 'source-highlighter': 'prettify',
                 revnumber: project.version.toString(),
                 docinfo: "",
-                javadocBase: "http://dalesbred.org/docs/${project.version.toString()}/api/?"
+                javadocBase: "http://dalesbred.org/docs/api/?"
         ]
     }
 }
@@ -176,32 +177,26 @@ project(':website') {
 
     task copyApi(type: Copy) {
         from files(tasks.findByPath(':dalesbred:javadoc'))
-        into "build/dalesbred/docs/${project.version}/api/"
+        into "build/dalesbred/docs/api/"
     }
 
     task copyReference(type: Copy) {
         dependsOn tasks.findByPath(':asciidoctor')
         from '../build/asciidoc/html5/'
-        into "build/dalesbred/docs/${project.version}/reference/"
+        into "build/dalesbred/docs/reference/"
     }
 
     assemble.dependsOn copySources
     assemble.dependsOn copyApi
     assemble.dependsOn copyReference
 
-    task publishWebsite {
-        dependsOn assemble
+    publishGhPages.dependsOn assemble
 
-        group 'publishing'
-        description 'Publishes the website to dalesbred.org'
-
-        doLast {
-            ssh.run {
-                session(remotes.website) {
-                    put from: file("build/dalesbred"), into: "/var/www/"
-                    execute "ln -sfT /var/www/dalesbred/docs/${project.version} /var/www/dalesbred/docs/current"
-                }
-            }
+    githubPages {
+        repoUri = 'git@github.com:EvidentSolutions/dalesbred.git'
+        deleteExistingFiles = true
+        pages {
+            from files('build/dalesbred')
         }
     }
 }
