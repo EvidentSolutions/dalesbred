@@ -89,8 +89,8 @@ configure(subprojects) { project ->
 configure([project(':dalesbred'), project(':dalesbred-junit')]) {
     apply plugin: 'java'
 
-    sourceCompatibility = 1.6
-    targetCompatibility = 1.6
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
     javadoc {
         options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
