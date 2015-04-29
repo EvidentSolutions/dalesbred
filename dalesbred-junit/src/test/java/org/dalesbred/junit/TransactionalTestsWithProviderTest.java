@@ -24,13 +24,8 @@ package org.dalesbred.junit;
 
 import org.dalesbred.Database;
 import org.dalesbred.Propagation;
-import org.dalesbred.TransactionCallback;
-import org.dalesbred.TransactionContext;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
-
-import javax.inject.Provider;
 
 import static org.junit.Assert.assertEquals;
 
@@ -39,23 +34,12 @@ public class TransactionalTestsWithProviderTest {
     private final Database db = Database.forUrlAndCredentials("jdbc:hsqldb:.", "sa", "");
 
     @Rule
-    public final TransactionalTests transactionalTests = new TransactionalTests(new Provider<Database>() {
-        @Override
-        public Database get() {
-            return db;
-        }
-    });
+    public final TransactionalTests transactionalTests = new TransactionalTests(() -> db);
 
     @Test
     public void checkThatThereIsAnExistingTransaction() {
         // The following code fails if we don't have an active transaction.
-        String result = db.withTransaction(Propagation.MANDATORY, new TransactionCallback<String>() {
-            @NotNull
-            @Override
-            public String  execute(@NotNull TransactionContext tx) {
-                return "ok";
-            }
-        });
+        String result = db.withTransaction(Propagation.MANDATORY, tx -> "ok");
 
         assertEquals("ok", result);
     }

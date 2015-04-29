@@ -33,7 +33,6 @@ import org.junit.Test;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.sql.SQLException;
 
 import static com.google.inject.name.Names.named;
 import static org.dalesbred.Isolation.SERIALIZABLE;
@@ -103,14 +102,11 @@ public class AopAllianceTransactionalMethodInterceptorTest {
         }
     }
 
+    @NotNull
     private static Isolation getTransactionIsolation(@NotNull Database db) {
-        return db.withTransaction(Propagation.MANDATORY, new TransactionCallback<Isolation>() {
-            @NotNull
-            @Override
-            public Isolation execute(@NotNull TransactionContext tx) throws SQLException {
-                return Isolation.forJdbcCode(tx.getConnection().getTransactionIsolation());
-            }
-        });
+        return db.withTransaction(Propagation.MANDATORY, tx ->
+            Isolation.forJdbcCode(tx.getConnection().getTransactionIsolation())
+        );
     }
 
     @Before

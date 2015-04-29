@@ -41,22 +41,19 @@ public final class TransactionalTestsRule implements TestRule {
 
     @Nullable
     @Override
-    public Statement apply(@NotNull final Statement base, Description description) {
+    public Statement apply(@NotNull Statement base, Description description) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
                 Throwable throwable =
-                    db.withTransaction(new TransactionCallback<Throwable>() {
-                        @Nullable
-                        @Override
-                        public Throwable execute(@NotNull TransactionContext tx) {
-                            try {
-                                base.evaluate();
-                                return null;
-                            } catch (Throwable e) {
-                                tx.setRollbackOnly();
-                                return e;
-                            }
+                    db.withTransaction(tx -> {
+                        try {
+                            base.evaluate();
+                            //noinspection ReturnOfNull
+                            return null;
+                        } catch (Throwable e) {
+                            tx.setRollbackOnly();
+                            return e;
                         }
                     });
                 if (throwable != null)

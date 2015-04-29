@@ -32,7 +32,6 @@ import org.springframework.jdbc.datasource.ConnectionHolder;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -79,21 +78,18 @@ public final class SpringTransactionManager implements TransactionManager {
         return execute(callback, dialect, settingsToSpringDefinition(settings));
     }
 
-    private <T> T execute(@NotNull final TransactionCallback<T> callback, @NotNull final Dialect dialect, @NotNull DefaultTransactionDefinition df) {
+    private <T> T execute(@NotNull TransactionCallback<T> callback, @NotNull Dialect dialect, @NotNull DefaultTransactionDefinition df) {
         TransactionTemplate tt = new TransactionTemplate(platformTransactionManager, df);
-        return tt.execute(new org.springframework.transaction.support.TransactionCallback<T>() {
-            @Override
-            public T doInTransaction(TransactionStatus status) {
+        return tt.execute(status -> {
+            try {
+                Connection connection = DataSourceUtils.getConnection(dataSource);
                 try {
-                    Connection connection = DataSourceUtils.getConnection(dataSource);
-                    try {
-                        return callback.execute(new SpringTransactionContext(status, connection));
-                    } finally {
-                        DataSourceUtils.releaseConnection(connection, dataSource);
-                    }
-                } catch (SQLException e) {
-                    throw dialect.convertException(e);
+                    return callback.execute(new SpringTransactionContext(status, connection));
+                } finally {
+                    DataSourceUtils.releaseConnection(connection, dataSource);
                 }
+            } catch (SQLException e) {
+                throw dialect.convertException(e);
             }
         });
     }

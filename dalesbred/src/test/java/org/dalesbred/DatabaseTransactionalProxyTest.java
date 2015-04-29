@@ -80,7 +80,7 @@ public class DatabaseTransactionalProxyTest {
         try {
             service.methodWithMandatoryPropagation();
             fail("Expected exception");
-        } catch (NoActiveTransactionException e) {
+        } catch (NoActiveTransactionException ignored) {
         }
     }
 
@@ -107,7 +107,7 @@ public class DatabaseTransactionalProxyTest {
         try {
             service.transactionalMethod();
             fail("Expected exception");
-        } catch (NoActiveTransactionException e) {
+        } catch (NoActiveTransactionException ignored) {
         }
     }
 
@@ -129,13 +129,13 @@ public class DatabaseTransactionalProxyTest {
         try {
             service.transactionalMethod();
             fail("expected IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException ignored) {
         }
 
         try {
             service.nonTransactionalMethod();
             fail("expected IllegalStateException");
-        } catch (IllegalStateException e) {
+        } catch (IllegalStateException ignored) {
         }
     }
 
@@ -157,13 +157,13 @@ public class DatabaseTransactionalProxyTest {
         try {
             service.transactionalMethod();
             fail("Expected IOException");
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
 
         try {
             service.nonTransactionalMethod();
             fail("Expected IOException");
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
     }
 

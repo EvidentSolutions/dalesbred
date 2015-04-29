@@ -22,8 +22,6 @@
 
 package org.dalesbred;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -39,14 +37,9 @@ public class DatabaseTransactionContextTest {
         db.update("create table test_table (text varchar(64))");
         db.update("insert into test_table (text) values ('foo')");
 
-        db.withTransaction(new TransactionCallback<Object>() {
-            @Nullable
-            @Override
-            public Object execute(@NotNull TransactionContext tx) {
-                db.update("update test_table set text='bar'");
-                tx.setRollbackOnly();
-                return null;
-            }
+        db.withVoidTransaction(tx -> {
+            db.update("update test_table set text='bar'");
+            tx.setRollbackOnly();
         });
 
         assertThat(db.findUnique(String.class, "select text from test_table"), is("foo"));

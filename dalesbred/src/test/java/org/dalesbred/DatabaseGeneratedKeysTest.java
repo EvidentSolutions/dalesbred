@@ -66,7 +66,7 @@ public class DatabaseGeneratedKeysTest {
     private static final class CollectKeysResultSetProcessor implements ResultSetProcessor<List<Integer>> {
         @Override
         public List<Integer> process(@NotNull ResultSet resultSet) throws SQLException {
-            List<Integer> result = new ArrayList<Integer>();
+            List<Integer> result = new ArrayList<>();
             while (resultSet.next())
                 result.add(resultSet.getInt(1));
             return result;

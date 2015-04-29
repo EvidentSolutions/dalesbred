@@ -26,8 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.sql.DataSource;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.DriverManager;
 
@@ -40,26 +38,25 @@ public final class DriverManagerDataSourceProvider {
     private DriverManagerDataSourceProvider() {
     }
 
+    @SuppressWarnings("ObjectEquality")
     @NotNull
-    public static DataSource createDataSource(@NotNull final String url,
-                                              @Nullable final String user,
-                                              @Nullable final String password) {
+    public static DataSource createDataSource(@NotNull String url,
+                                              @Nullable String user,
+                                              @Nullable String password) {
         // Different versions of JDK have differing amount of methods in DataSource-interface, which
         // makes it hard for us to implement. Therefore we'll use the following hack to implement
         // the interface dynamically:
-        return (DataSource) Proxy.newProxyInstance(DriverManagerDataSourceProvider.class.getClassLoader(), new Class<?>[]{DataSource.class}, new InvocationHandler() {
-            @SuppressWarnings({"ConstantConditions", "ObjectEquality"})
-            @Override
-            public Object invoke(Object proxy, @NotNull Method method, Object[] args) throws Throwable {
-                if (method.getName().equals("getConnection"))
+        return (DataSource) Proxy.newProxyInstance(DriverManagerDataSourceProvider.class.getClassLoader(), new Class<?>[]{DataSource.class}, (proxy, method, args) -> {
+            switch (method.getName()) {
+                case "getConnection":
                     return DriverManager.getConnection(url, user, password);
-                else if (method.getName().equals("hashCode"))
+                case "hashCode":
                     return System.identityHashCode(proxy);
-                else if (method.getName().equals("equals"))
+                case "equals":
                     return proxy == args[0];
-                else if (method.getName().equals("toString"))
+                case "toString":
                     return "DataSource for " + url;
-                else
+                default:
                     throw new UnsupportedOperationException("unsupported operation: " + method);
             }
         });

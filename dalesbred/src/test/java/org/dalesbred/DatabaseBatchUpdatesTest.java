@@ -46,7 +46,7 @@ public class DatabaseBatchUpdatesTest {
         db.update("drop table if exists dictionary");
         db.update("create temporary table dictionary (word varchar(64) primary key)");
 
-        List<List<String>> data = new ArrayList<List<String>>();
+        List<List<String>> data = new ArrayList<>();
         data.add(singletonList("foo"));
         data.add(singletonList("bar"));
         data.add(singletonList("baz"));
@@ -58,7 +58,7 @@ public class DatabaseBatchUpdatesTest {
 
     @Test
     public void exceptionsContainReferenceToOriginalQuery() {
-        List<List<String>> data = new ArrayList<List<String>>();
+        List<List<String>> data = new ArrayList<>();
         data.add(singletonList("foo"));
 
         try {

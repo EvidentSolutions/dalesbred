@@ -36,7 +36,7 @@ import java.sql.SQLException;
 import static org.dalesbred.internal.utils.Require.requireNonNull;
 
 /**
- * A {@link TransactionManager} that uses single underlying {@link java.sql.Connection}.
+ * A {@link TransactionManager} that uses single underlying {@link Connection}.
  * Can be used to construct a {@link Database} with limited functionality
  * in situations where we need to use a specific connection (i.e. integration with third-party
  * frameworks that provide callbacks with just a connection).

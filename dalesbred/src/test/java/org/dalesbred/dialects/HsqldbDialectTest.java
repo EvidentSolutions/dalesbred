@@ -22,13 +22,11 @@
 
 package org.dalesbred.dialects;
 
-import org.dalesbred.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.dalesbred.Database;
+import org.dalesbred.Reflective;
+import org.dalesbred.TransactionalTestsRule;
 import org.junit.Rule;
 import org.junit.Test;
-
-import java.sql.SQLException;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
@@ -47,15 +45,10 @@ public class HsqldbDialectTest {
 
     @Test
     public void detectDialect() {
-        db.withTransaction(new TransactionCallback<Void>() {
-            @Override
-            @Nullable
-            public Void execute(@NotNull TransactionContext tx) throws SQLException {
-                Dialect dialect = Dialect.detect(tx.getConnection());
+        db.withVoidTransaction(tx -> {
+            Dialect dialect = Dialect.detect(tx.getConnection());
 
-                assertThat(dialect, is(instanceOf(HsqldbDialect.class)));
-                return null;
-            }
+            assertThat(dialect, is(instanceOf(HsqldbDialect.class)));
         });
     }
 

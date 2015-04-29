@@ -23,10 +23,7 @@
 package org.dalesbred.junit;
 
 import org.dalesbred.Database;
-import org.dalesbred.TransactionCallback;
-import org.dalesbred.TransactionContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -73,13 +70,8 @@ public final class TransactionalTests implements TestRule {
      * Constructs a rule that will wrap tests in transactions and use the specified
      * rollback-policy for rolling back the transaction.
      */
-    public TransactionalTests(@NotNull final Database db, @NotNull RollbackPolicy rollbackPolicy) {
-        this(new Provider<Database>() {
-            @Override
-            public Database get() {
-                return db;
-            }
-        }, rollbackPolicy);
+    public TransactionalTests(@NotNull Database db, @NotNull RollbackPolicy rollbackPolicy) {
+        this(() -> db, rollbackPolicy);
     }
 
     /**
@@ -102,25 +94,22 @@ public final class TransactionalTests implements TestRule {
 
     @NotNull
     @Override
-    public Statement apply(@NotNull final Statement base, @NotNull Description description) {
+    public Statement apply(@NotNull Statement base, @NotNull Description description) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
                 Throwable throwable =
-                    db.get().withTransaction(new TransactionCallback<Throwable>() {
-                        @Nullable
-                        @Override
-                        public Throwable execute(@NotNull TransactionContext tx) {
-                            try {
-                                base.evaluate();
-                                if (rollbackPolicy == ROLLBACK_ALWAYS)
-                                    tx.setRollbackOnly();
-                                return null;
-                            } catch (Throwable e) {
-                                if (rollbackPolicy != ROLLBACK_NEVER)
-                                    tx.setRollbackOnly();
-                                return e;
-                            }
+                    db.get().withTransaction(tx -> {
+                        try {
+                            base.evaluate();
+                            if (rollbackPolicy == ROLLBACK_ALWAYS)
+                                tx.setRollbackOnly();
+                            //noinspection ReturnOfNull
+                            return null;
+                        } catch (Throwable e) {
+                            if (rollbackPolicy != ROLLBACK_NEVER)
+                                tx.setRollbackOnly();
+                            return e;
                         }
                     });
                 if (throwable != null)

@@ -19,12 +19,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 package org.dalesbred.support.spring;
 
-import org.dalesbred.*;
+import org.dalesbred.Database;
+import org.dalesbred.Propagation;
+import org.dalesbred.TestDatabaseProvider;
 import org.dalesbred.dialects.Dialect;
 import org.dalesbred.dialects.PostgreSQLDialect;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -33,7 +35,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
@@ -47,40 +48,29 @@ public class SpringConfigurationTest {
     @Test
     public void dalesbredUsesConnectionBoundToSpringTransactions() {
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(SimpleConfiguration.class);
-        final DataSource dataSource = ctx.getBean(DataSource.class);
-        final Database db = ctx.getBean(Database.class);
+        DataSource dataSource = ctx.getBean(DataSource.class);
+        Database db = ctx.getBean(Database.class);
 
-        new TransactionTemplate(new DataSourceTransactionManager(dataSource)).execute(new org.springframework.transaction.support.TransactionCallback<Object>() {
-            @Override
-            public Object doInTransaction(TransactionStatus status) {
-                return db.withTransaction(Propagation.MANDATORY, new TransactionCallback<Object>() {
-                    @Override
-                    public Object execute(@NotNull TransactionContext tx) {
-                        assertThat(tx.getConnection(), is(DataSourceUtils.getConnection(dataSource)));
-                        return "ok";
-                    }
-                });
-            }
-        });
+        new TransactionTemplate(new DataSourceTransactionManager(dataSource)).execute(status ->
+                db.withTransaction(Propagation.MANDATORY, tx -> {
+                    assertThat(tx.getConnection(), is(DataSourceUtils.getConnection(dataSource)));
+                    return "ok";
+                }));
     }
 
     @Test
     public void rollbackForSpringTransactionDiscardsChangesOfDalesbred() {
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(SimpleConfiguration.class);
         DataSource dataSource = ctx.getBean(DataSource.class);
-        final Database db = ctx.getBean(Database.class);
+        Database db = ctx.getBean(Database.class);
 
         db.update("drop table if exists spring_tx_test");
         db.update("create table spring_tx_test (id int)");
 
-        new TransactionTemplate(new DataSourceTransactionManager(dataSource)).execute(new org.springframework.transaction.support.TransactionCallback<Object>() {
-            @Nullable
-            @Override
-            public Object doInTransaction(TransactionStatus status) {
-                db.update("insert into spring_tx_test (id) values (1)");
-                status.setRollbackOnly();
-                return null;
-            }
+        new TransactionTemplate(new DataSourceTransactionManager(dataSource)).execute(status -> {
+            db.update("insert into spring_tx_test (id) values (1)");
+            status.setRollbackOnly();
+            return "";
         });
 
         assertThat(db.findUniqueInt("select count(*) from spring_tx_test"), is(0));

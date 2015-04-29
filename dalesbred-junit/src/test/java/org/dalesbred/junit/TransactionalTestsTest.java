@@ -24,9 +24,6 @@ package org.dalesbred.junit;
 
 import org.dalesbred.Database;
 import org.dalesbred.Propagation;
-import org.dalesbred.TransactionCallback;
-import org.dalesbred.TransactionContext;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -42,13 +39,7 @@ public class TransactionalTestsTest {
     @Test
     public void checkThatThereIsAnExistingTransaction() {
         // The following code fails if we don't have an active transaction.
-        String result = db.withTransaction(Propagation.MANDATORY, new TransactionCallback<String>() {
-            @NotNull
-            @Override
-            public String  execute(@NotNull TransactionContext tx) {
-                return "ok";
-            }
-        });
+        String result = db.withTransaction(Propagation.MANDATORY, tx -> "ok");
 
         assertEquals("ok", result);
     }

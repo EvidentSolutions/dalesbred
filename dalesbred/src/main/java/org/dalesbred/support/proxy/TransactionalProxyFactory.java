@@ -22,7 +22,9 @@
 
 package org.dalesbred.support.proxy;
 
-import org.dalesbred.*;
+import org.dalesbred.Database;
+import org.dalesbred.TransactionSettings;
+import org.dalesbred.Transactional;
 import org.dalesbred.internal.utils.Require;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -88,19 +90,16 @@ public final class TransactionalProxyFactory {
 
         @Nullable
         private Object invokeInTransaction(@NotNull TransactionSettings settings,
-                                           @NotNull final Method method,
-                                           @Nullable final Object[] args) throws Throwable {
+                                           @NotNull Method method,
+                                           @Nullable Object[] args) throws Throwable {
             try {
-                return db.withTransaction(settings, new TransactionCallback<Object>() {
-                    @Override
-                    public Object execute(@NotNull TransactionContext tx) {
-                        try {
-                            return method.invoke(target, args);
-                        } catch (IllegalAccessException e) {
-                            throw new WrappedException(e);
-                        } catch (InvocationTargetException e) {
-                            throw new WrappedException(e.getTargetException());
-                        }
+                return db.withTransaction(settings, tx -> {
+                    try {
+                        return method.invoke(target, args);
+                    } catch (IllegalAccessException e) {
+                        throw new WrappedException(e);
+                    } catch (InvocationTargetException e) {
+                        throw new WrappedException(e.getTargetException());
                     }
                 });
             } catch (WrappedException e) {

@@ -77,7 +77,7 @@ public class DatabaseArraysTest {
     }
 
     @Test
-    public void databaseArraysAsCollectionss() {
+    public void databaseArraysAsCollections() {
         CollectionContainer object = db.findUnique(CollectionContainer.class, "select (cast ('{1,5,3}' as numeric array)) as intCollection, (cast ('{foo, bar, baz}' as varchar array)) as stringCollection");
         assertThat(object.intCollection, is((Collection<Integer>) asList(1, 5, 3)));
         assertThat(object.stringCollection, is((Collection<String>) asList("foo", "bar", "baz")));
@@ -100,23 +100,27 @@ public class DatabaseArraysTest {
         assertThat(db.findUnique(String[].class, "select string_array from array_test"), is(new String[] { "foo", "bar" }));
     }
 
+    @SuppressWarnings("unused")
     public static final class ListContainer {
         public List<Integer> intList;
         public List<String> stringList;
     }
 
+    @SuppressWarnings("unused")
     public static final class SetContainer {
         public Set<Integer> intSet;
         public Set<String> stringSet;
     }
 
+    @SuppressWarnings("unused")
     public static final class CollectionContainer {
         public Collection<Integer> intCollection;
         public Collection<String> stringCollection;
     }
 
     @NotNull
+    @SafeVarargs
     private static <T> Set<T> setOf(T... items) {
-        return new HashSet<T>(asList(items));
+        return new HashSet<>(asList(items));
     }
 }

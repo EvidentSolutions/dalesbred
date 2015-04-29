@@ -46,7 +46,7 @@ public final class SystemPropertyRule implements TestRule {
 
     @Nullable
     @Override
-    public Statement apply(@NotNull final Statement base, Description description) {
+    public Statement apply(@NotNull Statement base, Description description) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {

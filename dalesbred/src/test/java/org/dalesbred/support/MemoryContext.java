@@ -31,7 +31,7 @@ import java.util.Map;
 
 public final class MemoryContext implements Context {
 
-    private final Map<String, Object> map = new HashMap<String, Object>();
+    private final Map<String, Object> map = new HashMap<>();
 
     @Override
     public Object lookup(@NotNull Name name) {

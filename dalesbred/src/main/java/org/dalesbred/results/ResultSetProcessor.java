@@ -28,7 +28,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Callback for processing a whole {@link java.sql.ResultSet}.
+ * Callback for processing a whole {@link ResultSet}.
  */
 public interface ResultSetProcessor<T> {
     T process(@NotNull ResultSet resultSet) throws SQLException;

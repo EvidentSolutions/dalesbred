@@ -97,7 +97,7 @@ public abstract class TypeConversion<S,T> {
 
     @NotNull
     public <R> TypeConversion<Object,R> unsafeCast(@NotNull Class<R> requiredTarget) {
-        final TypeConversion<S,R> self = cast(source, requiredTarget);
+        TypeConversion<S,R> self = cast(source, requiredTarget);
         return new TypeConversion<Object, R>(Object.class, requiredTarget) {
             @SuppressWarnings("unchecked")
             @NotNull

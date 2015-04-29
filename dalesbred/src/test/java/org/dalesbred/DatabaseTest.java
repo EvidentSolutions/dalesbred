@@ -23,20 +23,12 @@
 package org.dalesbred;
 
 import org.dalesbred.dialects.HsqldbDialect;
-import org.dalesbred.instantiation.InstantiationListener;
-import org.dalesbred.instantiation.Instantiator;
-import org.dalesbred.instantiation.InstantiatorArguments;
 import org.dalesbred.results.ResultSetProcessor;
 import org.dalesbred.results.RowMapper;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +49,7 @@ public class DatabaseTest {
     public void meaningfulToString() {
         db.setDefaultIsolation(Isolation.READ_UNCOMMITTED);
         db.setAllowImplicitTransactions(true);
-        Assert.assertEquals("Database [dialect=" + new HsqldbDialect().toString() + ", allowImplicitTransactions=true, defaultIsolation=READ_UNCOMMITTED, defaultPropagation=DEFAULT]", db.toString());
+        assertEquals("Database [dialect=" + new HsqldbDialect().toString() + ", allowImplicitTransactions=true, defaultIsolation=READ_UNCOMMITTED, defaultPropagation=DEFAULT]", db.toString());
     }
 
     @Test
@@ -150,13 +142,9 @@ public class DatabaseTest {
 
     @Test
     public void rowMapper() {
-        RowMapper<Integer> squaringRowMapper = new RowMapper<Integer>() {
-            @NotNull
-            @Override
-            public Integer mapRow(@NotNull ResultSet resultSet) throws SQLException {
-                int value = resultSet.getInt(1);
-                return value*value;
-            }
+        RowMapper<Integer> squaringRowMapper = resultSet -> {
+            int value = resultSet.getInt(1);
+            return value*value;
         };
 
         assertThat(db.findAll(squaringRowMapper, "values (1), (2), (3)"), is(asList(1, 4, 9)));
@@ -166,13 +154,10 @@ public class DatabaseTest {
 
     @Test
     public void customResultProcessor() {
-        ResultSetProcessor<Integer> rowCounter = new ResultSetProcessor<Integer>() {
-            @Override
-            public Integer process(@NotNull ResultSet resultSet) throws SQLException {
-                int rows = 0;
-                while (resultSet.next()) rows++;
-                return rows;
-            }
+        ResultSetProcessor<Integer> rowCounter = resultSet -> {
+            int rows = 0;
+            while (resultSet.next()) rows++;
+            return rows;
         };
 
         assertThat(db.executeQuery(rowCounter, "values (1), (2), (3)"), is(3));
@@ -215,13 +200,10 @@ public class DatabaseTest {
 
     @Test
     public void instantiationListener() {
-        final List<Department> instantiations = new ArrayList<Department>();
-        db.getInstantiatorRegistry().addInstantiationListener(new InstantiationListener() {
-            @Override
-            public void onInstantiation(@NotNull Object object) {
-                if (object instanceof Department)
-                    instantiations.add((Department) object);
-            }
+        List<Department> instantiations = new ArrayList<>();
+        db.getInstantiatorRegistry().addInstantiationListener(object -> {
+            if (object instanceof Department)
+                instantiations.add((Department) object);
         });
 
         db.update("drop table if exists department");
@@ -233,13 +215,8 @@ public class DatabaseTest {
 
     @Test
     public void instantiationUsingCustomInstantiator() {
-        db.getInstantiatorRegistry().registerInstantiator(Integer.class, new Instantiator<Integer>() {
-            @Nullable
-            @Override
-            public Integer instantiate(@NotNull InstantiatorArguments arguments) {
-                return arguments.getValues().get(0).toString().length();
-            }
-        });
+        db.getInstantiatorRegistry().registerInstantiator(Integer.class, arguments ->
+                arguments.getValues().get(0).toString().length());
 
         assertThat(db.findUnique(Integer.class, "values ('foobar')"), is(6));
     }

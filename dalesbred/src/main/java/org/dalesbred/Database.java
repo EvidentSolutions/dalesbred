@@ -238,14 +238,11 @@ public final class Database {
     }
 
     @NotNull
-    private static TransactionCallback<Void> convertCallback(@NotNull final VoidTransactionCallback callback) {
-        return new TransactionCallback<Void>() {
-            @Nullable
-            @Override
-            public Void execute(@NotNull TransactionContext tx) throws SQLException {
-                callback.execute(tx);
-                return null;
-            }
+    private static TransactionCallback<Void> convertCallback(@NotNull VoidTransactionCallback callback) {
+        return tx -> {
+            callback.execute(tx);
+            //noinspection ReturnOfNull
+            return null;
         };
     }
 
@@ -282,20 +279,17 @@ public final class Database {
      * Executes a query and processes the results with given {@link ResultSetProcessor}.
      * All other findXXX-methods are just convenience methods for this one.
      */
-    public <T> T executeQuery(@NotNull final ResultSetProcessor<T> processor, @NotNull final SqlQuery query) {
-        return withCurrentTransaction(query, new TransactionCallback<T>() {
-            @Override
-            public T execute(@NotNull TransactionContext tx) throws SQLException {
-                logQuery(query);
+    public <T> T executeQuery(@NotNull ResultSetProcessor<T> processor, @NotNull SqlQuery query) {
+        return withCurrentTransaction(query, tx -> {
+            logQuery(query);
 
-                try (PreparedStatement ps = tx.getConnection().prepareStatement(query.sql)) {
-                    bindArguments(ps, query.args);
+            try (PreparedStatement ps = tx.getConnection().prepareStatement(query.sql)) {
+                bindArguments(ps, query.args);
 
-                    long startTime = currentTimeMillis();
-                    try (ResultSet resultSet = ps.executeQuery()) {
-                        logQueryExecution(query, currentTimeMillis() - startTime);
-                        return processor.process(resultSet);
-                    }
+                long startTime = currentTimeMillis();
+                try (ResultSet resultSet = ps.executeQuery()) {
+                    logQueryExecution(query, currentTimeMillis() - startTime);
+                    return processor.process(resultSet);
                 }
             }
         });
@@ -498,19 +492,16 @@ public final class Database {
     /**
      * Executes an update against the database and returns the amount of affected rows.
      */
-    public int update(@NotNull final SqlQuery query) {
-        return withCurrentTransaction(query, new TransactionCallback<Integer>() {
-            @Override
-            public Integer execute(@NotNull TransactionContext tx) throws SQLException {
-                logQuery(query);
+    public int update(@NotNull SqlQuery query) {
+        return withCurrentTransaction(query, tx -> {
+            logQuery(query);
 
-                try (PreparedStatement ps = tx.getConnection().prepareStatement(query.sql)) {
-                    bindArguments(ps, query.args);
-                    long startTime = currentTimeMillis();
-                    int count = ps.executeUpdate();
-                    logQueryExecution(query, currentTimeMillis() - startTime);
-                    return count;
-                }
+            try (PreparedStatement ps = tx.getConnection().prepareStatement(query.sql)) {
+                bindArguments(ps, query.args);
+                long startTime = currentTimeMillis();
+                int count = ps.executeUpdate();
+                logQueryExecution(query, currentTimeMillis() - startTime);
+                return count;
             }
         });
     }
@@ -531,24 +522,20 @@ public final class Database {
      * @param query to execute
      * @return Result of processing the results with {@code generatedKeysProcessor}.
      */
-    public <T> T updateAndProcessGeneratedKeys(@NotNull final ResultSetProcessor<T> generatedKeysProcessor, @NotNull final List<String> columnNames, @NotNull final SqlQuery query) {
-        return withCurrentTransaction(query, new TransactionCallback<T>() {
-            @Override
-            public T execute(@NotNull TransactionContext tx) throws SQLException {
-                logQuery(query);
+    public <T> T updateAndProcessGeneratedKeys(@NotNull ResultSetProcessor<T> generatedKeysProcessor, @NotNull List<String> columnNames, @NotNull SqlQuery query) {
+        return withCurrentTransaction(query, tx -> {
+            logQuery(query);
 
-                try (PreparedStatement ps = prepareStatement(tx.getConnection(), query.sql, columnNames)) {
-                    bindArguments(ps, query.args);
-                    long startTime = currentTimeMillis();
-                    ps.executeUpdate();
-                    logQueryExecution(query, currentTimeMillis() - startTime);
+            try (PreparedStatement ps = prepareStatement(tx.getConnection(), query.sql, columnNames)) {
+                bindArguments(ps, query.args);
+                long startTime = currentTimeMillis();
+                ps.executeUpdate();
+                logQueryExecution(query, currentTimeMillis() - startTime);
 
-                    try (ResultSet rs = ps.getGeneratedKeys()) {
-                        return generatedKeysProcessor.process(rs);
-                    }
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    return generatedKeysProcessor.process(rs);
                 }
             }
-
         });
     }
 
@@ -561,7 +548,7 @@ public final class Database {
     }
 
     /**
-     * @see #updateAndProcessGeneratedKeys(ResultSetProcessor, java.util.List, SqlQuery)
+     * @see #updateAndProcessGeneratedKeys(ResultSetProcessor, List, SqlQuery)
      */
     public <T> T updateAndProcessGeneratedKeys(@NotNull ResultSetProcessor<T> generatedKeysProcessor, @NotNull List<String> columnNames, @NotNull @SQL String sql, Object... args) {
         return updateAndProcessGeneratedKeys(generatedKeysProcessor, columnNames, SqlQuery.query(sql, args));
@@ -571,24 +558,21 @@ public final class Database {
      * Executes a batch update against the database, returning an array of modification
      * counts for each argument list.
      */
-    public int[] updateBatch(@SQL @NotNull final String sql, @NotNull final List<? extends  List<?>> argumentLists) {
-        final SqlQuery query = SqlQuery.query(sql, "<batch-update>");
+    public int[] updateBatch(@SQL @NotNull String sql, @NotNull List<? extends  List<?>> argumentLists) {
+        SqlQuery query = SqlQuery.query(sql, "<batch-update>");
 
-        return withCurrentTransaction(query, new TransactionCallback<int[]>() {
-            @Override
-            public int[] execute(@NotNull TransactionContext tx) throws SQLException {
-                logQuery(query);
+        return withCurrentTransaction(query, tx -> {
+            logQuery(query);
 
-                try (PreparedStatement ps = tx.getConnection().prepareStatement(sql)) {
-                    for (List<?> arguments : argumentLists) {
-                        bindArguments(ps, arguments);
-                        ps.addBatch();
-                    }
-                    long startTime = currentTimeMillis();
-                    int[] counts = ps.executeBatch();
-                    logQueryExecution(query, currentTimeMillis() - startTime);
-                    return counts;
+            try (PreparedStatement ps = tx.getConnection().prepareStatement(sql)) {
+                for (List<?> arguments : argumentLists) {
+                    bindArguments(ps, arguments);
+                    ps.addBatch();
                 }
+                long startTime = currentTimeMillis();
+                int[] counts = ps.executeBatch();
+                logQueryExecution(query, currentTimeMillis() - startTime);
+                return counts;
             }
         });
     }

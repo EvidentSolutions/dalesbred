@@ -32,6 +32,7 @@ import java.sql.SQLException;
  * @see Database#withTransaction(TransactionCallback)
  * @see VoidTransactionCallback
  */
+@SuppressWarnings({"UnusedParameters", "SameReturnValue"})
 public interface TransactionCallback<T> {
     T execute(@NotNull TransactionContext tx) throws SQLException;
 }

@@ -38,6 +38,7 @@ import java.util.logging.Logger;
 
 import static java.lang.reflect.Modifier.isPublic;
 import static java.util.Arrays.sort;
+import static java.util.Comparator.comparing;
 import static org.dalesbred.internal.utils.Require.requireNonNull;
 import static org.dalesbred.internal.utils.TypeUtils.*;
 
@@ -270,16 +271,7 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
         @SuppressWarnings("unchecked")
         Constructor<T>[] constructors = (Constructor<T>[]) cl.getConstructors();
 
-        sort(constructors, new Comparator<Constructor<T>>() {
-            @Override
-            public int compare(@NotNull Constructor<T> o1, @NotNull Constructor<T> o2) {
-                int c1 = o1.getParameterTypes().length;
-                int c2 = o2.getParameterTypes().length;
-                return (c1 < c2) ? 1
-                     : (c1 > c2) ? -1
-                     : 0;
-            }
-        });
+        sort(constructors, comparing((Constructor<T> ctor) -> ctor.getParameterTypes().length).reversed());
         return constructors;
     }
 

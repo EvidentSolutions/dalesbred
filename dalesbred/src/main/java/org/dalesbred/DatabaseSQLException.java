@@ -41,7 +41,7 @@ public class DatabaseSQLException extends DatabaseException {
 
     @NotNull
     @Override
-    public SQLException getCause() {
+    public synchronized SQLException getCause() {
         return (SQLException) super.getCause();
     }
 }

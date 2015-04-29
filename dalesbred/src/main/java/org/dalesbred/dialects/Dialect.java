@@ -108,7 +108,7 @@ public abstract class Dialect {
     }
 
     @NotNull
-    public <T extends Enum<T>> TypeConversion<Object, T> getEnumCoercion(@NotNull final Class<T> enumType) {
+    public <T extends Enum<T>> TypeConversion<Object, T> getEnumCoercion(@NotNull Class<T> enumType) {
         return new TypeConversion<Object, T>(Object.class, enumType) {
             @NotNull
             @Override
@@ -137,12 +137,8 @@ public abstract class Dialect {
 
     @NotNull
     public static Dialect detect(@NotNull TransactionManager transactionManager) {
-        return transactionManager.withTransaction(new TransactionSettings(), new TransactionCallback<Dialect>() {
-            @Override
-            public Dialect execute(@NotNull TransactionContext tx) {
-                return detect(tx.getConnection());
-            }
-        }, new DefaultDialect());
+        return transactionManager.withTransaction(new TransactionSettings(),
+                tx -> detect(tx.getConnection()), new DefaultDialect());
     }
 
     @NotNull
@@ -164,29 +160,30 @@ public abstract class Dialect {
         try {
             String productName = connection.getMetaData().getDatabaseProductName();
 
-            if (productName.equals("PostgreSQL")) {
-                log.fine("Automatically detected dialect PostgreSQL.");
-                return new PostgreSQLDialect();
+            switch (productName) {
+                case "PostgreSQL":
+                    log.fine("Automatically detected dialect PostgreSQL.");
+                    return new PostgreSQLDialect();
 
-            } else if (productName.equals("HSQL Database Engine")) {
-                log.fine("Automatically detected dialect HSQLDB.");
-                return new HsqldbDialect();
+                case "HSQL Database Engine":
+                    log.fine("Automatically detected dialect HSQLDB.");
+                    return new HsqldbDialect();
 
-            } else if (productName.equals("MySQL")) {
-                log.fine("Automatically detected dialect MySQL.");
-                return new MySQLDialect();
+                case "MySQL":
+                    log.fine("Automatically detected dialect MySQL.");
+                    return new MySQLDialect();
 
-            } else if (productName.equals("Oracle")) {
-                log.fine("Automatically detected dialect Oracle.");
-                return new OracleDialect();
+                case "Oracle":
+                    log.fine("Automatically detected dialect Oracle.");
+                    return new OracleDialect();
 
-            } else if (productName.equals("Microsoft SQL Server")) {
-                log.fine("Automatically detected dialect SQLServer.");
-                return new SQLServerDialect();
+                case "Microsoft SQL Server":
+                    log.fine("Automatically detected dialect SQLServer.");
+                    return new SQLServerDialect();
 
-            } else {
-                log.info("Could not detect dialect for product name '" + productName + "', falling back to default.");
-                return new DefaultDialect();
+                default:
+                    log.info("Could not detect dialect for product name '" + productName + "', falling back to default.");
+                    return new DefaultDialect();
             }
         } catch (SQLException e) {
             throw new DatabaseSQLException("Failed to auto-detect database dialect: " + e, e);
@@ -227,7 +224,7 @@ public abstract class Dialect {
     }
 
     /**
-     * Bind object to {@link java.sql.PreparedStatement}. Can be overridden by subclasses to
+     * Bind object to {@link PreparedStatement}. Can be overridden by subclasses to
      * implement custom argument binding.
      *
      * @param ps statement to bind object to

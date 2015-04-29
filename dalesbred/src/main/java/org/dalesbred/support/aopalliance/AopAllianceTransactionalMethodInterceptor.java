@@ -24,7 +24,9 @@ package org.dalesbred.support.aopalliance;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.dalesbred.*;
+import org.dalesbred.Database;
+import org.dalesbred.TransactionSettings;
+import org.dalesbred.Transactional;
 import org.dalesbred.internal.utils.Require;
 import org.dalesbred.support.guice.GuiceSupport;
 import org.jetbrains.annotations.NotNull;
@@ -52,17 +54,14 @@ public final class AopAllianceTransactionalMethodInterceptor implements MethodIn
 
     @Override
     @Nullable
-    public Object invoke(@NotNull final MethodInvocation invocation) throws Throwable {
+    public Object invoke(@NotNull MethodInvocation invocation) throws Throwable {
         try {
             TransactionSettings settings = getTransactionSettings(invocation);
-            return databaseProvider.get().withTransaction(settings, new TransactionCallback<Object>() {
-                @Override
-                public Object execute(@NotNull TransactionContext tx) {
-                    try {
-                        return invocation.proceed();
-                    } catch (Throwable e) {
-                        throw new WrappedException(e);
-                    }
+            return databaseProvider.get().withTransaction(settings, tx -> {
+                try {
+                    return invocation.proceed();
+                } catch (Throwable e) {
+                    throw new WrappedException(e);
                 }
             });
         } catch (WrappedException e) {

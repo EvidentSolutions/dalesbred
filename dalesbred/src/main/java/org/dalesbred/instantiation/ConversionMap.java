@@ -22,7 +22,6 @@
 
 package org.dalesbred.instantiation;
 
-import org.dalesbred.internal.utils.Primitives;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,7 +52,7 @@ final class ConversionMap {
 
     @Nullable
     TypeConversion<?,?> findConversion(@NotNull Type source, @NotNull Type target) {
-        for (Type cl = Primitives.wrap(source); cl != null; cl = genericSuperClass(cl)) {
+        for (Type cl = wrap(source); cl != null; cl = genericSuperClass(cl)) {
             TypeConversion<?,?> conversion = findConversionsRegisteredFor(cl, target);
             if (conversion != null)
                 return conversion;

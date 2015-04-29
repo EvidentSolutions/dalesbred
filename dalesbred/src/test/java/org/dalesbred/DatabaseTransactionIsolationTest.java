@@ -24,8 +24,6 @@ package org.dalesbred;
 
 import org.dalesbred.testutils.LoggingController;
 import org.dalesbred.testutils.SuppressLogging;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -49,24 +47,15 @@ public class DatabaseTransactionIsolationTest {
         db1.update("create table isolation_test (value int)");
         db1.update("insert into isolation_test (value) values (1)");
 
-        db1.withVoidTransaction(new VoidTransactionCallback() {
-            @Override
-            public void execute(@NotNull TransactionContext tx) {
-                db1.findUniqueInt("select value from isolation_test");
+        db1.withVoidTransaction(tx -> {
+            db1.findUniqueInt("select value from isolation_test");
 
-                db2.withTransaction(new TransactionCallback<Object>() {
-                    @Nullable
-                    @Override
-                    public Object execute(@NotNull TransactionContext tx) {
-                        db2.findUniqueInt("select value from isolation_test");
+            db2.withVoidTransaction(tx1 -> {
+                db2.findUniqueInt("select value from isolation_test");
+                db2.update("update isolation_test set value=2");
+            });
 
-                        db2.update("update isolation_test set value=2");
-                        return null;
-                    }
-                });
-
-                db1.update("update isolation_test set value=3");
-            }
+            db1.update("update isolation_test set value=3");
         });
     }
 }

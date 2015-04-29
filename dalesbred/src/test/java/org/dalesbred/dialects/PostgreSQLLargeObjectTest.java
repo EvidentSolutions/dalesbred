@@ -45,7 +45,7 @@ public class PostgreSQLLargeObjectTest {
 
     @Test
     @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
-    public void streamBlobToDatabaseByteArray() throws Exception {
+    public void streamBlobToDatabaseByteArray() {
         db.update("drop table if exists blob_test");
         db.update("create temporary table blob_test (id int, blob_data bytea)");
 
@@ -58,7 +58,7 @@ public class PostgreSQLLargeObjectTest {
 
     @Test
     @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
-    public void streamReaderToDatabaseText() throws Exception {
+    public void streamReaderToDatabaseText() {
         db.update("drop table if exists text_test");
         db.update("create temporary table text_test (id int, text_data text)");
 

@@ -75,7 +75,7 @@ public final class SqlQuery implements Serializable {
      * Constructs a query with named arguments, using given map for resolving the values of arguments.
      *
      * @see #namedQuery(String, VariableResolver)
-     * @see VariableResolvers#resolverForMap(java.util.Map)
+     * @see VariableResolvers#resolverForMap(Map)
      */
     @NotNull
     public static SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull Map<String, ?> valueMap) {

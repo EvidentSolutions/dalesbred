@@ -54,7 +54,7 @@ public final class TestDatabaseProvider {
     /**
      * Loads database with given properties.
      *
-     * @throws org.junit.internal.AssumptionViolatedException if properties were not found
+     * @throws AssumptionViolatedException if properties were not found
      */
     @NotNull
     public static Database databaseForProperties(@NotNull String propertiesPath) {
@@ -64,7 +64,7 @@ public final class TestDatabaseProvider {
     /**
      * Loads database with given properties, using specified dialect.
      *
-     * @throws org.junit.internal.AssumptionViolatedException if properties were not found
+     * @throws AssumptionViolatedException if properties were not found
      */
     @NotNull
     public static Database databaseForProperties(@NotNull String propertiesPath, @NotNull Dialect dialect) {

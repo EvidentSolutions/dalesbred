@@ -25,7 +25,6 @@ package org.dalesbred.support.guice;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 import org.dalesbred.Database;
-import org.dalesbred.instantiation.InstantiationListener;
 import org.dalesbred.internal.utils.Require;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,12 +48,7 @@ final class DatabaseProvider implements Provider<Database> {
     @Override
     public Database get() {
         Database db = new Database(dataSource);
-        db.getInstantiatorRegistry().addInstantiationListener(new InstantiationListener() {
-            @Override
-            public void onInstantiation(@NotNull Object object) {
-                injector.injectMembers(object);
-            }
-        });
+        db.getInstantiatorRegistry().addInstantiationListener(injector::injectMembers);
         return db;
     }
 }

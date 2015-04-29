@@ -43,8 +43,8 @@ public class SqlQueryTest {
 
     @Test
     public void queriesHaveStructuralEquality() {
-        assertThat(SqlQuery.query("select * from foo"), CoreMatchers.is(SqlQuery.query("select * from foo")));
-        assertThat(SqlQuery.query("select * from foo", 1, 2), CoreMatchers.is(SqlQuery.query("select * from foo", 1, 2)));
+        assertThat(SqlQuery.query("select * from foo"), is(SqlQuery.query("select * from foo")));
+        assertThat(SqlQuery.query("select * from foo", 1, 2), is(SqlQuery.query("select * from foo", 1, 2)));
 
         assertThat(SqlQuery.query("select * from foo"), is(CoreMatchers.not(SqlQuery.query("select * from bar"))));
         assertThat(SqlQuery.query("select * from foo", 1, 2), is(CoreMatchers.not(SqlQuery.query("select * from foo", 1, 3))));
@@ -52,8 +52,8 @@ public class SqlQueryTest {
 
     @Test
     public void hashCodeObeysEquality() {
-        assertThat(SqlQuery.query("select * from foo").hashCode(), CoreMatchers.is(SqlQuery.query("select * from foo").hashCode()));
-        assertThat(SqlQuery.query("select * from foo", 1, 2).hashCode(), CoreMatchers.is(SqlQuery.query("select * from foo", 1, 2).hashCode()));
+        assertThat(SqlQuery.query("select * from foo").hashCode(), is(SqlQuery.query("select * from foo").hashCode()));
+        assertThat(SqlQuery.query("select * from foo", 1, 2).hashCode(), is(SqlQuery.query("select * from foo", 1, 2).hashCode()));
     }
 
     @Test

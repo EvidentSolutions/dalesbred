@@ -29,7 +29,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import javax.naming.Context;
-import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
 import java.util.Hashtable;
 
@@ -42,7 +41,7 @@ public class DatabaseJndiLookupTest {
     public final SystemPropertyRule initialFactoryRule = new SystemPropertyRule("java.naming.factory.initial", MyInitialFactory.class.getName());
 
     @Test
-    public void createDatabaseByFetchingDataSourceFromJndi() throws NamingException {
+    public void createDatabaseByFetchingDataSourceFromJndi() {
         MyInitialFactory.initialContext.bind("java:comp/env/foo", TestDatabaseProvider.createInMemoryHSQLDataSource());
 
         Database db = Database.forJndiDataSource("java:comp/env/foo");
@@ -55,7 +54,7 @@ public class DatabaseJndiLookupTest {
 
         @NotNull
         @Override
-        public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
+        public Context getInitialContext(Hashtable<?, ?> environment) {
             return initialContext;
         }
     }

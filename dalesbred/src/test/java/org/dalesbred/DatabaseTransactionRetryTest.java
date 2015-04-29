@@ -24,7 +24,6 @@ package org.dalesbred;
 
 import org.dalesbred.testutils.LoggingController;
 import org.dalesbred.testutils.SuppressLogging;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -44,18 +43,15 @@ public class DatabaseTransactionRetryTest {
     @Test
     @SuppressLogging
     public void maxRetries() {
-        final AtomicInteger tries = new AtomicInteger(0);
+        AtomicInteger tries = new AtomicInteger(0);
 
         TransactionSettings settings = new TransactionSettings();
         settings.setRetries(3);
 
         try {
-            db.withVoidTransaction(settings, new VoidTransactionCallback() {
-                @Override
-                public void execute(@NotNull TransactionContext tx) {
-                    tries.incrementAndGet();
-                    throw new TransactionSerializationException(new SQLException());
-                }
+            db.withVoidTransaction(settings, tx -> {
+                tries.incrementAndGet();
+                throw new TransactionSerializationException(new SQLException());
             });
         } catch (TransactionSerializationException e) {
             // expected

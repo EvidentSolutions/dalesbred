@@ -65,28 +65,28 @@ public class DefaultInstantiatorRegistryTest {
     }
 
     @Test
-    public void findDefaultConstructor() throws Exception {
+    public void findDefaultConstructor() {
         TestClass result = instantiate(TestClass.class, NamedTypeList.builder(0).build());
         assertNotNull(result);
         assertThat(result.calledConstructor, is(1));
     }
 
     @Test
-    public void findConstructedBasedOnType() throws Exception {
+    public void findConstructedBasedOnType() {
         TestClass result = instantiate(TestClass.class, String.class, "foo");
         assertNotNull(result);
         assertThat(result.calledConstructor, is(2));
     }
 
     @Test
-    public void findBasedOnPrimitiveType() throws Exception {
+    public void findBasedOnPrimitiveType() {
         TestClass result = instantiate(TestClass.class, int.class, 3);
         assertNotNull(result);
         assertThat(result.calledConstructor, is(3));
     }
 
     @Test
-    public void findPrimitiveTypedConstructorWithBoxedType() throws Exception {
+    public void findPrimitiveTypedConstructorWithBoxedType() {
         TestClass result = instantiate(TestClass.class, Integer.class, 3);
         assertNotNull(result);
         assertThat(result.calledConstructor, is(3));
@@ -115,14 +115,9 @@ public class DefaultInstantiatorRegistryTest {
 
     @Test
     public void instantiationListenerForReflectionInstantiator() {
-        final List<Object> instantiatedObjects = new ArrayList<Object>();
+        List<Object> instantiatedObjects = new ArrayList<>();
 
-        instantiatorRegistry.addInstantiationListener(new InstantiationListener() {
-            @Override
-            public void onInstantiation(@NotNull Object object) {
-                instantiatedObjects.add(object);
-            }
-        });
+        instantiatorRegistry.addInstantiationListener(instantiatedObjects::add);
 
         TestClass result = instantiate(TestClass.class, Integer.class, 3);
         assertNotNull(result);
@@ -131,14 +126,9 @@ public class DefaultInstantiatorRegistryTest {
 
     @Test
     public void instantiationListenerForConversionInstantiator() {
-        final List<Object> instantiatedObjects = new ArrayList<Object>();
+        List<Object> instantiatedObjects = new ArrayList<>();
 
-        instantiatorRegistry.addInstantiationListener(new InstantiationListener() {
-            @Override
-            public void onInstantiation(@NotNull Object object) {
-                instantiatedObjects.add(object);
-            }
-        });
+        instantiatorRegistry.addInstantiationListener(instantiatedObjects::add);
 
         Integer result = instantiate(Integer.class, Integer.class, 3);
         assertNotNull(result);
@@ -147,13 +137,7 @@ public class DefaultInstantiatorRegistryTest {
 
     @Test
     public void instantiationUsingCustomInstantiator() {
-        instantiatorRegistry.registerInstantiator(Integer.class, new Instantiator<Integer>() {
-            @Nullable
-            @Override
-            public Integer instantiate(@NotNull InstantiatorArguments arguments) {
-                return arguments.getValues().get(0).toString().length();
-            }
-        });
+        instantiatorRegistry.registerInstantiator(Integer.class, arguments -> arguments.getValues().get(0).toString().length());
 
         assertThat(instantiate(Integer.class, String.class, "foobar"), is(6));
     }
@@ -196,7 +180,7 @@ public class DefaultInstantiatorRegistryTest {
 
     @Nullable
     private <T,V> T instantiate(@NotNull Class<T> cl, @NotNull Class<V> type, V value) {
-        return instantiate(cl, createNamedTypeList(new Class<?>[]{type}), value);
+        return instantiate(cl, createNamedTypeList(type), value);
     }
 
     @Nullable
@@ -206,7 +190,8 @@ public class DefaultInstantiatorRegistryTest {
         return instantiator.instantiate(arguments);
     }
 
-    private static NamedTypeList createNamedTypeList(Class<?>... types) {
+    @NotNull
+    private static NamedTypeList createNamedTypeList(@NotNull Class<?>... types) {
         NamedTypeList.Builder list = NamedTypeList.builder(types.length);
         for (int i = 0; i < types.length; i++)
             list.add("name" + i, types[i]);

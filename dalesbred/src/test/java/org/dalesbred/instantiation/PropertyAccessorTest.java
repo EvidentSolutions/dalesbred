@@ -76,7 +76,7 @@ public class PropertyAccessorTest {
         @DalesbredIgnore
         public String ignoredField;
 
-        @SuppressWarnings("UnusedParameters")
+        @SuppressWarnings({"UnusedParameters", "EmptyMethod"})
         @DalesbredIgnore
         public void setIgnoredMethod(String s) {
         }

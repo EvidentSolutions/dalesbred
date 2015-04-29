@@ -131,6 +131,7 @@ public final class ThreeTenTypeConversions {
             super(Time.class, LocalTime.class);
         }
 
+        @SuppressWarnings("deprecation")
         @NotNull
         @Override
         public LocalTime convert(@NotNull Time value) {

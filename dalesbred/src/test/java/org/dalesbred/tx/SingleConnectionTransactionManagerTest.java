@@ -24,10 +24,6 @@ package org.dalesbred.tx;
 
 import org.dalesbred.Database;
 import org.dalesbred.TestDatabaseProvider;
-import org.dalesbred.TransactionCallback;
-import org.dalesbred.TransactionContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 import javax.sql.DataSource;
@@ -45,20 +41,15 @@ public class SingleConnectionTransactionManagerTest {
     public void rollbacksWithoutThirdPartyTransactions() throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             TransactionManager tm = new SingleConnectionTransactionManager(connection, false);
-            final Database db = new Database(tm);
+            Database db = new Database(tm);
 
             db.update("drop table if exists test_table");
             db.update("create table test_table (text varchar(64))");
             db.update("insert into test_table (text) values ('foo')");
 
-            db.withTransaction(new TransactionCallback<Object>() {
-                @Nullable
-                @Override
-                public Object execute(@NotNull TransactionContext tx) {
-                    db.update("update test_table set text='bar'");
-                    tx.setRollbackOnly();
-                    return null;
-                }
+            db.withVoidTransaction(tx -> {
+                db.update("update test_table set text='bar'");
+                tx.setRollbackOnly();
             });
 
             assertThat(db.findUnique(String.class, "select text from test_table"), is("foo"));

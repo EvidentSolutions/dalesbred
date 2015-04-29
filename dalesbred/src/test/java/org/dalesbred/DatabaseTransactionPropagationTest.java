@@ -24,8 +24,6 @@ package org.dalesbred;
 
 import org.dalesbred.testutils.LoggingController;
 import org.dalesbred.testutils.SuppressLogging;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -42,28 +40,13 @@ public class DatabaseTransactionPropagationTest {
 
     @Test(expected = DatabaseException.class)
     public void mandatoryPropagationWithoutExistingTransactionThrowsException() {
-        db.withTransaction(MANDATORY, new TransactionCallback<Object>() {
-            @Nullable
-            @Override
-            public Object execute(@NotNull TransactionContext tx) {
-                return null;
-            }
-        });
+        db.withTransaction(MANDATORY, tx -> null);
     }
 
     @Test
     public void mandatoryPropagationWithExistingTransactionProceedsNormally() {
-        String result = db.withTransaction(REQUIRED, new TransactionCallback<String>() {
-            @Override
-            public String execute(@NotNull TransactionContext tx) {
-                return db.withTransaction(MANDATORY, new TransactionCallback<String>() {
-                    @NotNull
-                    @Override
-                    public String execute(@NotNull TransactionContext tx) {
-                        return "ok";
-                    }
-                });
-            }
+        String result = db.withTransaction(REQUIRED, tx -> {
+            return db.withTransaction(MANDATORY, tx1 -> "ok");
         });
 
         assertEquals("ok", result);
@@ -75,31 +58,25 @@ public class DatabaseTransactionPropagationTest {
         db.update("drop table if exists test_table");
         db.update("create table test_table (text varchar(64))");
 
-        db.withVoidTransaction(new VoidTransactionCallback() {
-            @Override
-            public void execute(@NotNull TransactionContext tx) {
-                db.update("insert into test_table (text) values ('initial')");
+        db.withVoidTransaction(tx -> {
+            db.update("insert into test_table (text) values ('initial')");
 
-                assertThat(db.findUnique(String.class, "select text from test_table"), is("initial"));
+            assertThat(db.findUnique(String.class, "select text from test_table"), is("initial"));
 
-                try {
-                    db.withVoidTransaction(NESTED, new VoidTransactionCallback() {
-                        @Override
-                        public void execute(@NotNull TransactionContext tx) {
-                            db.update("update test_table set text = 'new-value'");
+            try {
+                db.withVoidTransaction(NESTED, tx1 -> {
+                    db.update("update test_table set text = 'new-value'");
 
-                            assertThat(db.findUnique(String.class, "select text from test_table"), is("new-value"));
+                    assertThat(db.findUnique(String.class, "select text from test_table"), is("new-value"));
 
-                            throw new RuntimeException();
-                        }
-                    });
-                    fail("did not receive expected exception");
-                } catch (RuntimeException e) {
-                    // this is expected
-                }
-
-                assertThat(db.findUnique(String.class, "select text from test_table"), is("initial"));
+                    throw new RuntimeException();
+                });
+                fail("did not receive expected exception");
+            } catch (RuntimeException e) {
+                // this is expected
             }
+
+            assertThat(db.findUnique(String.class, "select text from test_table"), is("initial"));
         });
     }
 
@@ -109,24 +86,14 @@ public class DatabaseTransactionPropagationTest {
         db.update("create table test_table (text varchar(64))");
         db.update("insert into test_table (text) values ('foo')");
 
-        db.withTransaction(new TransactionCallback<Object>() {
-            @Nullable
-            @Override
-            public Object execute(@NotNull TransactionContext tx) {
-                db.update("update test_table set text='bar'");
+        db.withVoidTransaction(tx -> {
+            db.update("update test_table set text='bar'");
 
-                db.withTransaction(REQUIRES_NEW, new TransactionCallback<Object>() {
-                    @Nullable
-                    @Override
-                    public Object execute(@NotNull TransactionContext tx) {
-                        assertThat(db.findUnique(String.class, "select text from test_table"), is("foo"));
-                        return null;
-                    }
-                });
+            db.withVoidTransaction(REQUIRES_NEW, tx1 -> {
+                assertThat(db.findUnique(String.class, "select text from test_table"), is("foo"));
+            });
 
-                assertThat(db.findUnique(String.class, "select text from test_table"), is("bar"));
-                return null;
-            }
+            assertThat(db.findUnique(String.class, "select text from test_table"), is("bar"));
         });
     }
 }

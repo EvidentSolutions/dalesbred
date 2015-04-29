@@ -36,7 +36,7 @@ import java.util.logging.Logger;
 public final class LoggingController implements TestRule {
     @NotNull
     @Override
-    public Statement apply(@NotNull final Statement base, @NotNull Description description) {
+    public Statement apply(@NotNull Statement base, @NotNull Description description) {
         if (description.getAnnotation(SuppressLogging.class) == null)
             return base;
 
