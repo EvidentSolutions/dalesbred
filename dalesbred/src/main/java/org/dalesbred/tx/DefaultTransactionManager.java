@@ -45,7 +45,7 @@ public final class DefaultTransactionManager extends AbstractTransactionManager 
      * The current active transaction of this thread, or null
      */
     @NotNull
-    private final ThreadLocal<DefaultTransaction> activeTransaction = new ThreadLocal<DefaultTransaction>();
+    private final ThreadLocal<DefaultTransaction> activeTransaction = new ThreadLocal<>();
 
     @NotNull
     private final ConnectionProvider connectionProvider;

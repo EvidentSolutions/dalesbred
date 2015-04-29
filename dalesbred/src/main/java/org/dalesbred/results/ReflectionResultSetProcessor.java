@@ -61,7 +61,7 @@ public final class ReflectionResultSetProcessor<T> implements ResultSetProcessor
         Instantiator<T> ctor = instantiatorRegistry.findInstantiator(cl, types);
         boolean allowNulls = !cl.isPrimitive();
 
-        ArrayList<T> result = new ArrayList<T>();
+        ArrayList<T> result = new ArrayList<>();
 
         // For performance reasons we reuse the same arguments-array and InstantiatorArguments-object for all rows.
         // This should be fine as long as the instantiators don't hang on to their arguments for too long.

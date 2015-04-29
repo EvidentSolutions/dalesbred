@@ -49,7 +49,7 @@ public final class QueryBuilder {
     private final StringBuilder query = new StringBuilder(100);
 
     /** The arguments gathered so far */
-    private final List<Object> arguments = new ArrayList<Object>();
+    private final List<Object> arguments = new ArrayList<>();
 
     /**
      * Constructs a new empty QueryBuilder.
@@ -166,6 +166,6 @@ public final class QueryBuilder {
         if (query.length() == 0)
             throw new IllegalStateException("empty query");
 
-        return SqlQuery.query(query.toString(), new ArrayList<Object>(arguments));
+        return SqlQuery.query(query.toString(), new ArrayList<>(arguments));
     }
 }

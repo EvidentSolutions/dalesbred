@@ -51,7 +51,7 @@ final class NamedParameterSql {
 
     @NotNull
     private List<?> resolveParameterValues(@NotNull VariableResolver variableResolver) {
-        List<Object> result = new ArrayList<Object>(parameterNames.size());
+        List<Object> result = new ArrayList<>(parameterNames.size());
 
         for (String parameter : parameterNames) {
             result.add(variableResolver.getValue(parameter));

@@ -82,7 +82,7 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
 
     @NotNull
     public List<String> getColumnNames() {
-        List<String> names = new ArrayList<String>(columns.size());
+        List<String> names = new ArrayList<>(columns.size());
         for (ColumnMetadata column : columns)
             names.add(column.getName());
         return names;
@@ -90,7 +90,7 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
 
     @NotNull
     public List<Class<?>> getColumnTypes() {
-        List<Class<?>> types = new ArrayList<Class<?>>(columns.size());
+        List<Class<?>> types = new ArrayList<>(columns.size());
         for (ColumnMetadata column : columns)
             types.add(column.getType());
         return types;
@@ -234,7 +234,7 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
         private final List<ColumnMetadata> columns;
         @NotNull
         private final ColumnIndices indices;
-        private final List<ResultRow> rows = new ArrayList<ResultRow>();
+        private final List<ResultRow> rows = new ArrayList<>();
 
         public Builder(@NotNull List<ColumnMetadata> columns) {
             this.columns = requireNonNull(columns);

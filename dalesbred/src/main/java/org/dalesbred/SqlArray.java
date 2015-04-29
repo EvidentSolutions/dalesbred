@@ -47,7 +47,7 @@ public final class SqlArray {
 
     private SqlArray(@NotNull String type, @NotNull List<?> values) {
         this.type = Require.requireNonNull(type);
-        this.values = unmodifiableList(new ArrayList<Object>(values));
+        this.values = unmodifiableList(new ArrayList<>(values));
     }
 
     /**

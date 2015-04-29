@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 final class DebugContext {
 
-    private static final ThreadLocal<SqlQuery> currentQuery = new ThreadLocal<SqlQuery>();
+    private static final ThreadLocal<SqlQuery> currentQuery = new ThreadLocal<>();
 
     private DebugContext() { }
 

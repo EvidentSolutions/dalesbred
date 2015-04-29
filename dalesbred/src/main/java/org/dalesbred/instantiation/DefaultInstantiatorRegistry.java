@@ -56,7 +56,7 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
     private InstantiationListeners instantiationListeners;
 
     @NotNull
-    private final Map<Type, Instantiator<?>> instantiators = new HashMap<Type, Instantiator<?>>();
+    private final Map<Type, Instantiator<?>> instantiators = new HashMap<>();
 
     @NotNull
     private static final Logger log = Logger.getLogger(DefaultInstantiatorRegistry.class.getName());
@@ -112,7 +112,7 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
             TypeConversion<Object, ? extends T> coercion =
                     (TypeConversion<Object, ? extends T>) findConversionFromDbValue(types.getType(0), type);
             if (coercion != null)
-                return new CoercionInstantiator<T>(coercion, instantiationListeners);
+                return new CoercionInstantiator<>(coercion, instantiationListeners);
         }
 
         @SuppressWarnings("unchecked")
@@ -146,7 +146,7 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
         TypeConversion<Object, ?>[] conversions = resolveCoercions(types, targetTypes);
         if (conversions != null) {
             PropertyAccessor[] accessors = createPropertyAccessorsForValuesNotCoveredByConstructor(constructor, types.getNames());
-            return new ReflectionInstantiator<T>(constructor, conversions, accessors, instantiationListeners);
+            return new ReflectionInstantiator<>(constructor, conversions, accessors, instantiationListeners);
         } else
             return null;
     }
@@ -306,7 +306,7 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
 
     private static final class InstantiationListeners implements InstantiationListener {
 
-        private final List<InstantiationListener> listeners = new ArrayList<InstantiationListener>();
+        private final List<InstantiationListener> listeners = new ArrayList<>();
 
         public void add(@NotNull InstantiationListener listener) {
             listeners.add(requireNonNull(listener));

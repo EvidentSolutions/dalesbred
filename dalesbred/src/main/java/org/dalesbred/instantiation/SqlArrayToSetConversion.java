@@ -41,6 +41,6 @@ final class SqlArrayToSetConversion extends AbstractSqlArrayConversion<Set<?>> {
     @Override
     @NotNull
     protected Set<?> createResult(@NotNull List<?> list) {
-        return new LinkedHashSet<Object>(list);
+        return new LinkedHashSet<>(list);
     }
 }

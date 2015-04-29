@@ -37,14 +37,14 @@ import static org.dalesbred.internal.utils.TypeUtils.*;
 
 final class ConversionMap {
 
-    private final Map<Type, List<TypeConversion<?,?>>> mappings = new HashMap<Type, List<TypeConversion<?, ?>>>();
+    private final Map<Type, List<TypeConversion<?,?>>> mappings = new HashMap<>();
 
     void register(@NotNull TypeConversion<?, ?> coercion) {
         Type source = wrap(coercion.getSource());
 
         List<TypeConversion<?,?>> items = mappings.get(source);
         if (items == null) {
-            items = new ArrayList<TypeConversion<?, ?>>();
+            items = new ArrayList<>();
             mappings.put(source, items);
         }
 

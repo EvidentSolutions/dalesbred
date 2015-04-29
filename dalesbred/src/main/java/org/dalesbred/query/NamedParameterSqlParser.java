@@ -19,6 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 package org.dalesbred.query;
 
 import org.dalesbred.SQL;
@@ -44,7 +45,7 @@ final class NamedParameterSqlParser {
     @NotNull
     private final Lexer lexer;
     private final StringBuilder sqlBuilder;
-    private final List<String> parameterNames = new ArrayList<String>();
+    private final List<String> parameterNames = new ArrayList<>();
 
     private NamedParameterSqlParser(@SQL @NotNull String sql) {
         this.lexer = new Lexer(sql);

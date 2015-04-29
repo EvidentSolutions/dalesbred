@@ -68,8 +68,8 @@ final class DefaultTypeConversions {
         registry.registerConversionFromDatabaseType(new SQLXMLToDocumentConversion());
 
         registry.registerConversionToDatabaseType(new BigIntegerToBigDecimalTypeConversion());
-        registry.registerConversionToDatabaseType(new ToStringTypeConversion<URL>(URL.class));
-        registry.registerConversionToDatabaseType(new ToStringTypeConversion<URI>(URI.class));
+        registry.registerConversionToDatabaseType(new ToStringTypeConversion<>(URL.class));
+        registry.registerConversionToDatabaseType(new ToStringTypeConversion<>(URI.class));
         registry.registerConversionToDatabaseType(new TimeZoneToStringTypeConversion());
     }
 

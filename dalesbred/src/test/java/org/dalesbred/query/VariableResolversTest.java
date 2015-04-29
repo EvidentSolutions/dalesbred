@@ -34,7 +34,7 @@ public class VariableResolversTest {
 
     @Test
     public void testProviderForMap() {
-        Map<String, Object> parameterMap = new HashMap<String, Object>();
+        Map<String, Object> parameterMap = new HashMap<>();
 
         Object foo = new Object();
         Object bar = new Object();

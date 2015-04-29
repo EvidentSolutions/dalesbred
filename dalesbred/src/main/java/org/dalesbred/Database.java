@@ -322,7 +322,7 @@ public final class Database {
      */
     @NotNull
     public <T> List<T> findAll(@NotNull RowMapper<T> rowMapper, @NotNull SqlQuery query) {
-        return executeQuery(new ListWithRowMapperResultSetProcessor<T>(rowMapper), query);
+        return executeQuery(new ListWithRowMapperResultSetProcessor<>(rowMapper), query);
     }
 
     /**
@@ -356,7 +356,7 @@ public final class Database {
      * @throws NonUniqueResultException if there are no rows or multiple rows
      */
     public <T> T findUnique(@NotNull RowMapper<T> mapper, @NotNull SqlQuery query) {
-        return executeQuery(UniqueResultSetProcessor.unique(new ListWithRowMapperResultSetProcessor<T>(mapper)), query);
+        return executeQuery(UniqueResultSetProcessor.unique(new ListWithRowMapperResultSetProcessor<>(mapper)), query);
     }
 
     /**
@@ -394,7 +394,7 @@ public final class Database {
      */
     @Nullable
     public <T> T findUniqueOrNull(@NotNull RowMapper<T> rowMapper, @NotNull SqlQuery query) {
-        return executeQuery(UniqueResultSetProcessor.uniqueOrEmpty(new ListWithRowMapperResultSetProcessor<T>(rowMapper)), query);
+        return executeQuery(UniqueResultSetProcessor.uniqueOrEmpty(new ListWithRowMapperResultSetProcessor<>(rowMapper)), query);
     }
 
     /**
@@ -470,7 +470,7 @@ public final class Database {
     public <K,V> Map<K, V> findMap(@NotNull Class<K> keyType,
                                    @NotNull Class<V> valueType,
                                    @NotNull SqlQuery query) {
-        return executeQuery(new MapResultSetProcessor<K, V>(keyType, valueType, instantiatorRegistry), query);
+        return executeQuery(new MapResultSetProcessor<>(keyType, valueType, instantiatorRegistry), query);
     }
 
     /**
@@ -630,7 +630,7 @@ public final class Database {
 
     @NotNull
     private <T> ResultSetProcessor<List<T>> resultProcessorForClass(@NotNull Class<T> cl) {
-        return new ReflectionResultSetProcessor<T>(cl, instantiatorRegistry);
+        return new ReflectionResultSetProcessor<>(cl, instantiatorRegistry);
     }
 
     /**

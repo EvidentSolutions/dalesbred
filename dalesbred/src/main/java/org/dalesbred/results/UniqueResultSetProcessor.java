@@ -42,12 +42,12 @@ public final class UniqueResultSetProcessor<T> implements ResultSetProcessor<T> 
 
     @NotNull
     public static <T> ResultSetProcessor<T> unique(@NotNull ResultSetProcessor<List<T>> processor) {
-        return new UniqueResultSetProcessor<T>(processor, false);
+        return new UniqueResultSetProcessor<>(processor, false);
     }
 
     @NotNull
     public static <T> ResultSetProcessor<T> uniqueOrEmpty(@NotNull ResultSetProcessor<List<T>> processor) {
-        return new UniqueResultSetProcessor<T>(processor, true);
+        return new UniqueResultSetProcessor<>(processor, true);
     }
 
     private UniqueResultSetProcessor(@NotNull ResultSetProcessor<List<T>> resultSetProcessor, boolean allowEmptyResult) {

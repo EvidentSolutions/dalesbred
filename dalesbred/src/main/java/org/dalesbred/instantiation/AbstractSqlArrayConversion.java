@@ -69,7 +69,7 @@ abstract class AbstractSqlArrayConversion<T> extends TypeConversion<Array, T> {
             try {
                 NamedTypeList types = NamedTypeList.builder(1).add("value", ResultSetUtils.getColumnType(resultSet.getMetaData(), 2)).build();
                 Instantiator<?> ctor = instantiatorRegistry.findInstantiator(elementType, types);
-                ArrayList<Object> result = new ArrayList<Object>();
+                ArrayList<Object> result = new ArrayList<>();
 
                 // For performance reasons we reuse the same arguments-array and InstantiatorArguments-object for all rows.
                 // This should be fine as long as the instantiators don't hang on to their arguments for too long.
