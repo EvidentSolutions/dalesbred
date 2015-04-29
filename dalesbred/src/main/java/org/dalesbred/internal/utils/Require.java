@@ -20,41 +20,25 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.utils;
+package org.dalesbred.internal.utils;
 
-import org.dalesbred.DatabaseException;
-import org.dalesbred.instantiation.NamedTypeList;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-
 /**
- * Utilities for processing {@link java.sql.ResultSet}s.
+ * Precondition assertions.
  */
-public final class ResultSetUtils {
+public final class Require {
 
-    private ResultSetUtils() { }
+    private Require() { }
 
+    /**
+     * Returns value if it is not {@code null}, otherwise throws {@link NullPointerException}.
+     */
     @NotNull
-    public static NamedTypeList getTypes(@NotNull ResultSetMetaData metaData) throws SQLException {
-        int columns = metaData.getColumnCount();
+    @SuppressWarnings("ConstantConditions")
+    public static <T> T requireNonNull(@NotNull T value) {
+        if (value == null) throw new NullPointerException();
 
-        NamedTypeList.Builder result = NamedTypeList.builder(columns);
-
-        for (int i = 0; i < columns; i++)
-            result.add(metaData.getColumnLabel(i+1), getColumnType(metaData, i + 1));
-
-        return result.build();
-    }
-
-    @NotNull
-    public static Class<?> getColumnType(@NotNull ResultSetMetaData metaData, int column) throws SQLException {
-        String className = metaData.getColumnClassName(column);
-        try {
-            return Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            throw new DatabaseException("Could not find class '" + className + "' specified by ResultSet.", e);
-        }
+        return value;
     }
 }

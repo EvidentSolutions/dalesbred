@@ -28,7 +28,7 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import static org.dalesbred.utils.Require.requireNonNull;
+import static org.dalesbred.internal.utils.Require.requireNonNull;
 
 public final class TransactionalTestsRule implements TestRule {
 

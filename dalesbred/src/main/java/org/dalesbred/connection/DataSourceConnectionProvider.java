@@ -28,7 +28,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static org.dalesbred.utils.Require.requireNonNull;
+import static org.dalesbred.internal.utils.Require.requireNonNull;
 
 /**
  * {@link ConnectionProvider} that works on top of {@link DataSource}.

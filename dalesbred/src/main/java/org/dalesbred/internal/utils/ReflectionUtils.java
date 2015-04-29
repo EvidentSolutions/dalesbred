@@ -20,7 +20,40 @@
  * THE SOFTWARE.
  */
 
-/**
- * Various utility-classes.
- */
-package org.dalesbred.utils;
+package org.dalesbred.internal.utils;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
+public final class ReflectionUtils {
+
+    private ReflectionUtils() {
+    }
+
+    @Nullable
+    public static Field findField(@NotNull Class<?> cl, @NotNull String name) {
+        try {
+            return cl.getField(name);
+        } catch (NoSuchFieldException e) {
+            return null;
+        }
+    }
+
+    @Nullable
+    public static Method findGetter(@NotNull Class<?> cl, @NotNull String propertyName) {
+        String capitalizedName = StringUtils.capitalize(propertyName);
+
+        try {
+            return cl.getMethod("get" + capitalizedName);
+        } catch (NoSuchMethodException e) {
+            try {
+                return cl.getMethod("is" + capitalizedName);
+            } catch (NoSuchMethodException e1) {
+                return null;
+            }
+        }
+    }
+}

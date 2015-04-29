@@ -19,6 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 package org.dalesbred.tx;
 
 import org.dalesbred.TransactionContext;
@@ -26,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 
-import static org.dalesbred.utils.Require.requireNonNull;
+import static org.dalesbred.internal.utils.Require.requireNonNull;
 
 final class DefaultTransactionContext extends TransactionContext {
 

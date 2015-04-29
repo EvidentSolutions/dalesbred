@@ -22,7 +22,7 @@
 
 package org.dalesbred.query;
 
-import org.dalesbred.utils.ReflectionUtils;
+import org.dalesbred.internal.utils.ReflectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

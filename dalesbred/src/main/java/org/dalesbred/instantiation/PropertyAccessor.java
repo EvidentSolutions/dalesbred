@@ -23,7 +23,7 @@
 package org.dalesbred.instantiation;
 
 import org.dalesbred.DalesbredIgnore;
-import org.dalesbred.utils.Throwables;
+import org.dalesbred.internal.utils.Throwables;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

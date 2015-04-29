@@ -32,7 +32,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static org.dalesbred.utils.Require.requireNonNull;
+import static org.dalesbred.internal.utils.Require.requireNonNull;
 
 /**
  * A very simple builder that can be used to build queries dynamically.

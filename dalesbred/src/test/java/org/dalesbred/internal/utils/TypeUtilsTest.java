@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.utils;
+package org.dalesbred.internal.utils;
 
 import org.junit.Test;
 
@@ -28,8 +28,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import static org.dalesbred.utils.TypeUtils.arrayType;
-import static org.dalesbred.utils.TypeUtils.rawType;
+import static org.dalesbred.internal.utils.TypeUtils.arrayType;
+import static org.dalesbred.internal.utils.TypeUtils.rawType;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 

@@ -23,7 +23,7 @@
 package org.dalesbred;
 
 import org.dalesbred.instantiation.TypeConversion;
-import org.dalesbred.utils.Require;
+import org.dalesbred.internal.utils.Require;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;

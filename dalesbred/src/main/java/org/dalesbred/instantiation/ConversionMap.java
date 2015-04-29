@@ -22,7 +22,7 @@
 
 package org.dalesbred.instantiation;
 
-import org.dalesbred.utils.Primitives;
+import org.dalesbred.internal.utils.Primitives;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,8 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.dalesbred.utils.Primitives.wrap;
-import static org.dalesbred.utils.TypeUtils.*;
+import static org.dalesbred.internal.utils.Primitives.wrap;
+import static org.dalesbred.internal.utils.TypeUtils.*;
 
 final class ConversionMap {
 

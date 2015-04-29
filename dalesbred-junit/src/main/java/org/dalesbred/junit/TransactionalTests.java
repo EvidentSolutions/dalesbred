@@ -33,8 +33,8 @@ import org.junit.runners.model.Statement;
 
 import javax.inject.Provider;
 
+import static org.dalesbred.internal.utils.Require.requireNonNull;
 import static org.dalesbred.junit.TransactionalTests.RollbackPolicy.*;
-import static org.dalesbred.utils.Require.requireNonNull;
 
 /**
  * A JUnit {@link TestRule} that can be used to run the test-methods in transactions.

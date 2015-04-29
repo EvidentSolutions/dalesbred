@@ -22,7 +22,7 @@
 
 package org.dalesbred;
 
-import org.dalesbred.utils.Require;
+import org.dalesbred.internal.utils.Require;
 import org.jetbrains.annotations.NotNull;
 
 /**

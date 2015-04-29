@@ -26,7 +26,7 @@ import org.dalesbred.DalesbredIgnore;
 import org.dalesbred.Reflective;
 import org.dalesbred.dialects.DefaultDialect;
 import org.dalesbred.instantiation.test.InaccessibleClassRef;
-import org.dalesbred.utils.TypeUtils;
+import org.dalesbred.internal.utils.TypeUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;

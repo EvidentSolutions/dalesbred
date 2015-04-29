@@ -20,40 +20,25 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.utils;
+package org.dalesbred.internal.utils;
 
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class PrimitivesTest {
+public class RequireTest {
 
-    @Test
-    public void wrapping() {
-        assertThat(Primitives.wrap(char.class), sameClass(Character.class));
-        assertThat(Primitives.wrap(boolean.class), sameClass(Boolean.class));
-        assertThat(Primitives.wrap(Boolean.class), sameClass(Boolean.class));
-        assertThat(Primitives.wrap(String.class), sameClass(String.class));
+    @Test(expected=RuntimeException.class)
+    @SuppressWarnings("ConstantConditions")
+    public void requireNonNullThrowsOnNullValues() {
+        Require.requireNonNull(null);
     }
 
     @Test
-    public void unwrapping() {
-        assertThat(Primitives.unwrap(Character.class), sameClass(char.class));
-        assertThat(Primitives.unwrap(Boolean.class), sameClass(boolean.class));
-        assertThat(Primitives.unwrap(boolean.class), sameClass(boolean.class));
-        assertThat(Primitives.unwrap(String.class), sameClass(String.class));
-    }
+    public void requireNonNullReturnsNonNullValues() {
+        Object object = new Object();
 
-    @Test
-    public void convertingArraysToObjectArray() {
-        assertThat(Primitives.arrayAsObjectArray(new String[]{"foo", "bar"}), CoreMatchers.<Object[]>is(new String[]{"foo", "bar"}));
-        assertThat(Primitives.arrayAsObjectArray(new int[]{1, 4}), CoreMatchers.<Object[]>is(new Integer[]{1, 4}));
-    }
-
-    private static Matcher<Object> sameClass(Class<?> cl) {
-        return is((Object) cl);
+        assertThat(Require.requireNonNull(object), is(object));
     }
 }

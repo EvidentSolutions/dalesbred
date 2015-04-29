@@ -23,7 +23,7 @@
 package org.dalesbred.support.proxy;
 
 import org.dalesbred.*;
-import org.dalesbred.utils.Require;
+import org.dalesbred.internal.utils.Require;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

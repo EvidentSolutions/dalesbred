@@ -20,25 +20,22 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.utils;
+package org.dalesbred.internal.utils;
 
-import org.junit.Test;
+import org.jetbrains.annotations.NotNull;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import java.sql.Array;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 
-public class RequireTest {
+public final class SqlUtils {
 
-    @Test(expected=RuntimeException.class)
-    @SuppressWarnings("ConstantConditions")
-    public void requireNonNullThrowsOnNullValues() {
-        Require.requireNonNull(null);
-    }
+    private SqlUtils() { }
 
-    @Test
-    public void requireNonNullReturnsNonNullValues() {
-        Object object = new Object();
-
-        assertThat(Require.requireNonNull(object), is(object));
+    public static void freeArray(@NotNull Array array) throws SQLException {
+        try {
+            array.free();
+        } catch (SQLFeatureNotSupportedException ignored) {
+        }
     }
 }

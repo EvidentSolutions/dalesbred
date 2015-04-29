@@ -46,7 +46,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.lang.System.currentTimeMillis;
-import static org.dalesbred.utils.Require.requireNonNull;
+import static org.dalesbred.internal.utils.Require.requireNonNull;
 
 /**
  * <p>

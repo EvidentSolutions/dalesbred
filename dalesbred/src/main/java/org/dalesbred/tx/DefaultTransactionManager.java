@@ -19,6 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 package org.dalesbred.tx;
 
 import org.dalesbred.Isolation;
@@ -33,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static org.dalesbred.utils.Require.requireNonNull;
+import static org.dalesbred.internal.utils.Require.requireNonNull;
 
 /**
  * Default transaction manager that handles all transactions by itself.

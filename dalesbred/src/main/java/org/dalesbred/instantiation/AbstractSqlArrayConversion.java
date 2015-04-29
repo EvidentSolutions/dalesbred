@@ -24,9 +24,9 @@ package org.dalesbred.instantiation;
 
 import org.dalesbred.DatabaseSQLException;
 import org.dalesbred.UnexpectedResultException;
-import org.dalesbred.utils.ResultSetUtils;
-import org.dalesbred.utils.SqlUtils;
-import org.dalesbred.utils.TypeUtils;
+import org.dalesbred.internal.utils.ResultSetUtils;
+import org.dalesbred.internal.utils.SqlUtils;
+import org.dalesbred.internal.utils.TypeUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;

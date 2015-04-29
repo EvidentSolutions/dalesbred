@@ -27,7 +27,7 @@ import org.dalesbred.instantiation.DefaultInstantiatorRegistry;
 import org.dalesbred.instantiation.Instantiator;
 import org.dalesbred.instantiation.InstantiatorArguments;
 import org.dalesbred.instantiation.NamedTypeList;
-import org.dalesbred.utils.ResultSetUtils;
+import org.dalesbred.internal.utils.ResultSetUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.dalesbred.utils.Require.requireNonNull;
+import static org.dalesbred.internal.utils.Require.requireNonNull;
 
 /**
  * Builds a list of results from {@link ResultSet} using reflection to instantiate individual rows.

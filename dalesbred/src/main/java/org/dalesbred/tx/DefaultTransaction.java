@@ -19,13 +19,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 package org.dalesbred.tx;
 
 import org.dalesbred.TransactionCallback;
 import org.dalesbred.TransactionContext;
 import org.dalesbred.TransactionSerializationException;
 import org.dalesbred.dialects.Dialect;
-import org.dalesbred.utils.Throwables;
+import org.dalesbred.internal.utils.Throwables;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
@@ -34,7 +35,7 @@ import java.sql.Savepoint;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.dalesbred.utils.Require.requireNonNull;
+import static org.dalesbred.internal.utils.Require.requireNonNull;
 
 final class DefaultTransaction {
 

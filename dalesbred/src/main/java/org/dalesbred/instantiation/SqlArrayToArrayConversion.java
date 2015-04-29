@@ -22,7 +22,7 @@
 
 package org.dalesbred.instantiation;
 
-import org.dalesbred.utils.TypeUtils;
+import org.dalesbred.internal.utils.TypeUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;

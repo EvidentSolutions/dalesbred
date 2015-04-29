@@ -22,8 +22,8 @@
 
 package org.dalesbred.instantiation;
 
-import org.dalesbred.utils.Require;
-import org.dalesbred.utils.Throwables;
+import org.dalesbred.internal.utils.Require;
+import org.dalesbred.internal.utils.Throwables;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

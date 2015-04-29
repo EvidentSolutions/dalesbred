@@ -25,8 +25,8 @@ package org.dalesbred.support.aopalliance;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.dalesbred.*;
+import org.dalesbred.internal.utils.Require;
 import org.dalesbred.support.guice.GuiceSupport;
-import org.dalesbred.utils.Require;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

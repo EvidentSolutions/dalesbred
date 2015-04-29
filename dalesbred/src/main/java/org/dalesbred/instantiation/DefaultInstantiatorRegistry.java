@@ -38,8 +38,8 @@ import java.util.logging.Logger;
 
 import static java.lang.reflect.Modifier.isPublic;
 import static java.util.Arrays.sort;
-import static org.dalesbred.utils.Require.requireNonNull;
-import static org.dalesbred.utils.TypeUtils.*;
+import static org.dalesbred.internal.utils.Require.requireNonNull;
+import static org.dalesbred.internal.utils.TypeUtils.*;
 
 /**
  * Provides {@link Instantiator}s for classes.

@@ -20,12 +20,12 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.utils;
+package org.dalesbred.internal.utils;
 
 import org.junit.Test;
 
-import static org.dalesbred.utils.StringUtils.capitalize;
-import static org.dalesbred.utils.StringUtils.upperCamelToLowerUnderscore;
+import static org.dalesbred.internal.utils.StringUtils.capitalize;
+import static org.dalesbred.internal.utils.StringUtils.upperCamelToLowerUnderscore;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 

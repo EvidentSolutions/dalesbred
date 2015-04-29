@@ -22,9 +22,9 @@
 
 package org.dalesbred.instantiation;
 
-import org.dalesbred.utils.Primitives;
-import org.dalesbred.utils.Require;
-import org.dalesbred.utils.TypeUtils;
+import org.dalesbred.internal.utils.Primitives;
+import org.dalesbred.internal.utils.Require;
+import org.dalesbred.internal.utils.TypeUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;

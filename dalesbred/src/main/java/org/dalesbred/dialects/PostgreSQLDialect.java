@@ -24,7 +24,7 @@ package org.dalesbred.dialects;
 
 import org.dalesbred.instantiation.TypeConversion;
 import org.dalesbred.instantiation.TypeConversionRegistry;
-import org.dalesbred.utils.StringUtils;
+import org.dalesbred.internal.utils.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.postgresql.util.PGobject;
 

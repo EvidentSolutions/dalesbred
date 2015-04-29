@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.utils;
+package org.dalesbred.internal.utils;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;

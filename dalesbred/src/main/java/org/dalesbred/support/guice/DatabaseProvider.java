@@ -26,7 +26,7 @@ import com.google.inject.Injector;
 import com.google.inject.Provider;
 import org.dalesbred.Database;
 import org.dalesbred.instantiation.InstantiationListener;
-import org.dalesbred.utils.Require;
+import org.dalesbred.internal.utils.Require;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;

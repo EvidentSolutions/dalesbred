@@ -36,9 +36,9 @@ import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
+import static org.dalesbred.internal.utils.Require.requireNonNull;
 import static org.dalesbred.query.VariableResolvers.resolverForBean;
 import static org.dalesbred.query.VariableResolvers.resolverForMap;
-import static org.dalesbred.utils.Require.requireNonNull;
 
 /**
  * Represents an SQL query along all of its arguments.

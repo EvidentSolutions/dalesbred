@@ -19,13 +19,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 package org.dalesbred.support.spring;
 
 import org.dalesbred.*;
 import org.dalesbred.connection.ConnectionProvider;
 import org.dalesbred.dialects.Dialect;
+import org.dalesbred.internal.utils.Require;
 import org.dalesbred.tx.TransactionManager;
-import org.dalesbred.utils.Require;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.jdbc.datasource.ConnectionHolder;
 import org.springframework.jdbc.datasource.DataSourceUtils;
