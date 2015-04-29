@@ -27,7 +27,7 @@ import org.dalesbred.connection.ConnectionProvider;
 import org.dalesbred.connection.DataSourceConnectionProvider;
 import org.dalesbred.instantiation.TypeConversion;
 import org.dalesbred.instantiation.TypeConversionRegistry;
-import org.dalesbred.tx.TransactionManager;
+import org.dalesbred.transaction.TransactionManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

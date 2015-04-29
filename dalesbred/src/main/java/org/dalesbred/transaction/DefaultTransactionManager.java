@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.tx;
+package org.dalesbred.transaction;
 
 import org.dalesbred.Isolation;
 import org.dalesbred.Propagation;

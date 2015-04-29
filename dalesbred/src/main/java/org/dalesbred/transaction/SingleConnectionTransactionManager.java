@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.tx;
+package org.dalesbred.transaction;
 
 import org.dalesbred.Database;
 import org.dalesbred.DatabaseException;

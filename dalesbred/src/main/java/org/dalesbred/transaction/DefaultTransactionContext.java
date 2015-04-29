@@ -20,7 +20,44 @@
  * THE SOFTWARE.
  */
 
-/**
- * Transaction management.
- */
-package org.dalesbred.tx;
+package org.dalesbred.transaction;
+
+import org.dalesbred.TransactionContext;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.Connection;
+
+import static org.dalesbred.internal.utils.Require.requireNonNull;
+
+final class DefaultTransactionContext extends TransactionContext {
+
+    @NotNull
+    private final Connection connection;
+    private boolean rollbackOnly = false;
+
+    DefaultTransactionContext(@NotNull Connection connection) {
+        this.connection = requireNonNull(connection);
+    }
+
+    /**
+     * Returns the raw JDBC-connection for this transaction.
+     */
+    @Override
+    @NotNull
+    public Connection getConnection() {
+        return connection;
+    }
+
+    /**
+     * Requests that this transaction will be rolled back.
+     */
+    @Override
+    public void setRollbackOnly() {
+        rollbackOnly = true;
+    }
+
+    @Override
+    public boolean isRollbackOnly() {
+        return rollbackOnly;
+    }
+}
