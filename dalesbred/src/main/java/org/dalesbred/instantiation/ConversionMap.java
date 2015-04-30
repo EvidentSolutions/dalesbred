@@ -38,13 +38,7 @@ final class ConversionMap {
     void register(@NotNull TypeConversion<?, ?> coercion) {
         Type source = wrap(coercion.getSource());
 
-        List<TypeConversion<?,?>> items = mappings.get(source);
-        if (items == null) {
-            items = new ArrayList<>();
-            mappings.put(source, items);
-        }
-
-        items.add(coercion);
+        mappings.computeIfAbsent(source, a -> new ArrayList<>()).add(coercion);
     }
 
     @NotNull

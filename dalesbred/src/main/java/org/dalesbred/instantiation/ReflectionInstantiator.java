@@ -68,9 +68,11 @@ final class ReflectionInstantiator<T> implements Instantiator<T> {
     }
 
     private void bindRemainingProperties(@NotNull T result, @NotNull InstantiatorArguments arguments) {
+        List<?> values = arguments.getValues();
+
         for (int i = 0; i < accessors.length; i++) {
             int argumentIndex = i + constructorParameterCount;
-            Object originalValue = arguments.getValues().get(argumentIndex);
+            Object originalValue = values.get(argumentIndex);
             Object convertedValue = conversions[argumentIndex].convert(originalValue);
             accessors[i].set(result, convertedValue);
         }
@@ -85,5 +87,4 @@ final class ReflectionInstantiator<T> implements Instantiator<T> {
 
         return result;
     }
-
 }

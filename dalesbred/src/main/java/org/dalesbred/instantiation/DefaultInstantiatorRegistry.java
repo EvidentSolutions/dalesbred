@@ -27,6 +27,7 @@ import org.dalesbred.dialect.Dialect;
 import org.dalesbred.integration.java8.JavaTimeTypeConversions;
 import org.dalesbred.integration.joda.JodaTypeConversions;
 import org.dalesbred.integration.threeten.ThreeTenTypeConversions;
+import org.dalesbred.internal.utils.OptionalUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,6 +35,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
 import java.sql.Array;
 import java.util.*;
+import java.util.function.Function;
 import java.util.logging.Logger;
 
 import static java.lang.reflect.Modifier.isPublic;
@@ -110,7 +112,7 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
             TypeConversion<Object, ? extends T> conversion =
                     (TypeConversion<Object, ? extends T>) findConversionFromDbValue(types.getType(0), type).orElse(null);
             if (conversion != null)
-                return new ConversionInstantiator<>(conversion);
+                return args -> conversion.convert(args.getSingleValue());
         }
 
         @SuppressWarnings("unchecked")
@@ -284,29 +286,27 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
         Class<?> rawTarget = rawType(target);
 
         if (rawTarget == Optional.class) {
-            Type targetType = typeParameter(target);
-
-            TypeConversion<?, ?> conversion = findConversionFromDbValue(source, targetType).orElse(null);
-            if (conversion != null)
-                return Optional.of(new OptionalConversion<>(source, target, conversion, Optional::of, Optional.empty()));
+            return optionalConversion(source, typeParameter(target), target, Optional::ofNullable);
 
         } else if (rawTarget == OptionalInt.class) {
-            TypeConversion<?, ?> conversion = findConversionFromDbValue(source, int.class).orElse(null);
-            if (conversion != null)
-                return Optional.of(new OptionalConversion<>(source, target, conversion, o -> OptionalInt.of((Integer) o), OptionalInt.empty()));
+            return optionalConversion(source, Integer.class, target, OptionalUtils::optionalIntOfNullable);
 
         } else if (rawTarget == OptionalLong.class) {
-            TypeConversion<?, ?> conversion = findConversionFromDbValue(source, long.class).orElse(null);
-            if (conversion != null)
-                return Optional.of(new OptionalConversion<>(source, target, conversion, o -> OptionalLong.of((Long) o), OptionalLong.empty()));
+            return optionalConversion(source, Long.class, target, OptionalUtils::optionalLongOfNullable);
 
         } else if (rawTarget == OptionalDouble.class) {
-            TypeConversion<?, ?> conversion = findConversionFromDbValue(source, double.class).orElse(null);
-            if (conversion != null)
-                return Optional.of(new OptionalConversion<>(source, target, conversion, o -> OptionalDouble.of((Double) o), OptionalDouble.empty()));
-        }
+            return optionalConversion(source, Double.class, target, OptionalUtils::optionalDoubleOfNullable);
 
-        return Optional.empty();
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @NotNull
+    private <T> Optional<TypeConversion<?, ?>> optionalConversion(@NotNull Class<?> source, @NotNull Type target, @NotNull Type result, @NotNull Function<T,?> function) {
+        return findConversionFromDbValue(source, target)
+                .map(cv -> cv.compose(result, v -> function.apply((T) v)));
     }
 
     @NotNull

@@ -211,7 +211,7 @@ public class DatabaseTest {
     @Test
     public void instantiationUsingCustomInstantiator() {
         db.getInstantiatorRegistry().registerInstantiator(Integer.class, arguments ->
-                arguments.getValues().get(0).toString().length());
+                arguments.getSingleValue().toString().length());
 
         assertThat(db.findUnique(Integer.class, "values ('foobar')"), is(6));
     }

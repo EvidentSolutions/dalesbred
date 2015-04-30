@@ -24,6 +24,7 @@ package org.dalesbred.instantiation;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Collections.unmodifiableList;
@@ -38,6 +39,10 @@ public final class InstantiatorArguments {
 
     @NotNull
     private final List<?> values;
+
+    public InstantiatorArguments(@NotNull NamedTypeList types, @NotNull Object[] values) {
+        this(types, Arrays.asList(values));
+    }
 
     public InstantiatorArguments(@NotNull NamedTypeList types, @NotNull List<?> values) {
         if (types.size() != values.size())
@@ -59,5 +64,12 @@ public final class InstantiatorArguments {
 
     public int size() {
         return types.size();
+    }
+
+    public Object getSingleValue() {
+        if (values.size() != 1)
+            throw new IllegalStateException("expected single argument, but got " + values.size());
+
+        return values.get(0);
     }
 }

@@ -78,6 +78,19 @@ public abstract class TypeConversion<S,T> {
     @Nullable
     public abstract T convert(@Nullable S value);
 
+    @NotNull
+    public <R> TypeConversion<S,R> compose(@NotNull Type result, @NotNull Function<T,R> function) {
+        TypeConversion<S,T> self = this;
+
+        return new TypeConversion<S, R>(source, result) {
+            @Nullable
+            @Override
+            public R convert(@Nullable S value) {
+                return function.apply(self.convert(value));
+            }
+        };
+    }
+
     /**
      * Returns identity-coercion, ie. a coercion that does nothing.
      */

@@ -31,7 +31,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -111,7 +110,7 @@ public class DefaultInstantiatorRegistryTest {
 
     @Test
     public void instantiationUsingCustomInstantiator() {
-        instantiatorRegistry.registerInstantiator(Integer.class, arguments -> arguments.getValues().get(0).toString().length());
+        instantiatorRegistry.registerInstantiator(Integer.class, arguments -> arguments.getSingleValue().toString().length());
 
         assertThat(instantiate(Integer.class, String.class, "foobar"), is(6));
     }
@@ -160,7 +159,7 @@ public class DefaultInstantiatorRegistryTest {
     @Nullable
     private <T> T instantiate(Class<T> cl, NamedTypeList namedTypeList, Object... values) {
         Instantiator<T> instantiator = instantiatorRegistry.findInstantiator(cl, namedTypeList);
-        InstantiatorArguments arguments = new InstantiatorArguments(namedTypeList, asList(values));
+        InstantiatorArguments arguments = new InstantiatorArguments(namedTypeList, values);
         return instantiator.instantiate(arguments);
     }
 

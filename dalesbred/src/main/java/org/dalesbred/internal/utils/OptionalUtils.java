@@ -67,4 +67,19 @@ public final class OptionalUtils {
     private static Object unwrap(@NotNull OptionalDouble o) {
         return o.isPresent() ? o.getAsDouble() : null;
     }
+
+    @NotNull
+    public static OptionalInt optionalIntOfNullable(@Nullable Integer v) {
+        return v != null ? OptionalInt.of(v) : OptionalInt.empty();
+    }
+
+    @NotNull
+    public static OptionalLong optionalLongOfNullable(@Nullable Long v) {
+        return v != null ? OptionalLong.of(v) : OptionalLong.empty();
+    }
+
+    @NotNull
+    public static OptionalDouble optionalDoubleOfNullable(@Nullable Double v) {
+        return v != null ? OptionalDouble.of(v) : OptionalDouble.empty();
+    }
 }

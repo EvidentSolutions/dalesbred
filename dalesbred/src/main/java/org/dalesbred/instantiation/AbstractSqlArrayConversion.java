@@ -35,7 +35,6 @@ import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 abstract class AbstractSqlArrayConversion<T> extends TypeConversion<Array, T> {
@@ -79,7 +78,7 @@ abstract class AbstractSqlArrayConversion<T> extends TypeConversion<Array, T> {
                 // For performance reasons we reuse the same arguments-array and InstantiatorArguments-object for all rows.
                 // This should be fine as long as the instantiators don't hang on to their arguments for too long.
                 Object[] arguments = new Object[1];
-                InstantiatorArguments instantiatorArguments = new InstantiatorArguments(types, Arrays.asList(arguments));
+                InstantiatorArguments instantiatorArguments = new InstantiatorArguments(types, arguments);
 
                 while (resultSet.next()) {
                     arguments[0] = resultSet.getObject(2);
