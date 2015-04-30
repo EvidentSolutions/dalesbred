@@ -47,6 +47,7 @@ import java.util.logging.Logger;
 
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.requireNonNull;
+import static org.dalesbred.internal.utils.OptionalUtils.unwrapOptionalAsNull;
 import static org.dalesbred.transaction.TransactionCallback.fromVoidCallback;
 
 /**
@@ -632,7 +633,7 @@ public final class Database {
         int i = 1;
 
         for (Object arg : args)
-            dialect.bindArgument(ps, i++, instantiatorRegistry.valueToDatabase(arg));
+            dialect.bindArgument(ps, i++, instantiatorRegistry.valueToDatabase(unwrapOptionalAsNull(arg)));
     }
 
     @NotNull
