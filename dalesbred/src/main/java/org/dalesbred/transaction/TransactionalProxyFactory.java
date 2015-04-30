@@ -23,7 +23,7 @@
 package org.dalesbred.transaction;
 
 import org.dalesbred.Database;
-import org.dalesbred.annotation.Transactional;
+import org.dalesbred.annotation.DalesbredTransactional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -109,21 +109,21 @@ public final class TransactionalProxyFactory {
 
         @Nullable
         private TransactionSettings findTransactionSettings(@NotNull Method interfaceMethod) {
-            Transactional tx = findTransactionDefinition(interfaceMethod);
+            DalesbredTransactional tx = findTransactionDefinition(interfaceMethod);
             return  (tx != null) ? TransactionSettings.fromAnnotation(tx) : null;
         }
 
         @Nullable
-        private Transactional findTransactionDefinition(@NotNull Method interfaceMethod) {
+        private DalesbredTransactional findTransactionDefinition(@NotNull Method interfaceMethod) {
             try {
                 Method actualMethod = target.getClass().getMethod(interfaceMethod.getName(), interfaceMethod.getParameterTypes());
-                Transactional tx = actualMethod.getAnnotation(Transactional.class);
+                DalesbredTransactional tx = actualMethod.getAnnotation(DalesbredTransactional.class);
 
                 if (tx == null)
-                    tx = interfaceMethod.getAnnotation(Transactional.class);
+                    tx = interfaceMethod.getAnnotation(DalesbredTransactional.class);
 
                 if (tx == null)
-                    tx = interfaceMethod.getDeclaringClass().getAnnotation(Transactional.class);
+                    tx = interfaceMethod.getDeclaringClass().getAnnotation(DalesbredTransactional.class);
 
                 return tx;
 

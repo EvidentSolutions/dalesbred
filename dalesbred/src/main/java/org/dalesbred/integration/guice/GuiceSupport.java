@@ -27,7 +27,7 @@ import com.google.inject.Key;
 import com.google.inject.Provider;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.dalesbred.Database;
-import org.dalesbred.annotation.Transactional;
+import org.dalesbred.annotation.DalesbredTransactional;
 import org.dalesbred.integration.aopalliance.AopAllianceTransactionalMethodInterceptor;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,13 +42,13 @@ public final class GuiceSupport {
     private GuiceSupport() { }
 
     /**
-     * Binds transaction interceptor for all methods or classes that are annotated with {@link Transactional}.
+     * Binds transaction interceptor for all methods or classes that are annotated with {@link DalesbredTransactional}.
      */
     public static void bindTransactionInterceptor(@NotNull Binder binder, @NotNull Key<Database> databaseKey) {
         Provider<Database> databaseProvider = binder.getProvider(databaseKey);
         MethodInterceptor interceptor = new AopAllianceTransactionalMethodInterceptor(databaseProvider);
 
-        binder.bindInterceptor(any(), annotatedWith(Transactional.class), interceptor);
-        binder.bindInterceptor(annotatedWith(Transactional.class), any(), interceptor);
+        binder.bindInterceptor(any(), annotatedWith(DalesbredTransactional.class), interceptor);
+        binder.bindInterceptor(annotatedWith(DalesbredTransactional.class), any(), interceptor);
     }
 }

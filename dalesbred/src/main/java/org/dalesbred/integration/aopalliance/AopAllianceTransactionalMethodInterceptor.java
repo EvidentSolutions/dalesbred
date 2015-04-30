@@ -25,7 +25,7 @@ package org.dalesbred.integration.aopalliance;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.dalesbred.Database;
-import org.dalesbred.annotation.Transactional;
+import org.dalesbred.annotation.DalesbredTransactional;
 import org.dalesbred.integration.guice.GuiceSupport;
 import org.dalesbred.transaction.TransactionSettings;
 import org.jetbrains.annotations.NotNull;
@@ -72,7 +72,7 @@ public final class AopAllianceTransactionalMethodInterceptor implements MethodIn
 
     @NotNull
     private static TransactionSettings getTransactionSettings(@NotNull MethodInvocation invocation) {
-        Transactional tx = findTransactionDefinition(invocation.getMethod());
+        DalesbredTransactional tx = findTransactionDefinition(invocation.getMethod());
         if (tx != null)
             return TransactionSettings.fromAnnotation(tx);
         else
@@ -80,9 +80,9 @@ public final class AopAllianceTransactionalMethodInterceptor implements MethodIn
     }
 
     @Nullable
-    private static Transactional findTransactionDefinition(@NotNull Method method) {
-        Transactional tx = method.getAnnotation(Transactional.class);
-        return (tx != null) ? tx : method.getDeclaringClass().getAnnotation(Transactional.class);
+    private static DalesbredTransactional findTransactionDefinition(@NotNull Method method) {
+        DalesbredTransactional tx = method.getAnnotation(DalesbredTransactional.class);
+        return (tx != null) ? tx : method.getDeclaringClass().getAnnotation(DalesbredTransactional.class);
     }
 
     private static class WrappedException extends RuntimeException {

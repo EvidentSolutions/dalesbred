@@ -22,7 +22,7 @@
 
 package org.dalesbred;
 
-import org.dalesbred.annotation.Transactional;
+import org.dalesbred.annotation.DalesbredTransactional;
 import org.dalesbred.testutils.LoggingController;
 import org.dalesbred.testutils.SuppressLogging;
 import org.dalesbred.transaction.NoActiveTransactionException;
@@ -91,14 +91,14 @@ public class DatabaseTransactionalProxyTest {
     public void overridingTransactionAttributesInTargetDefinition() {
         ServiceWithTransactionalMethods service = db.createTransactionalProxyFor(ServiceWithTransactionalMethods.class, new ServiceWithTransactionalMethods() {
             @Override
-            @Transactional(propagation = Propagation.MANDATORY)
+            @DalesbredTransactional(propagation = Propagation.MANDATORY)
             public int transactionalMethod() {
                 fail("we shouldn't end up here");
                 return 0;
             }
 
             @Override
-            @Transactional
+            @DalesbredTransactional
             public int nonTransactionalMethod() {
                 assertInTransaction();
                 return 4;
@@ -179,23 +179,23 @@ public class DatabaseTransactionalProxyTest {
     }
 
     public interface ServiceWithTransactionalMethods {
-        @Transactional
+        @DalesbredTransactional
         int transactionalMethod();
 
         int nonTransactionalMethod();
     }
 
-    @Transactional
+    @DalesbredTransactional
     public interface TransactionalService {
         int methodWithoutSpecificSettings();
 
-        @Transactional(propagation = Propagation.MANDATORY)
+        @DalesbredTransactional(propagation = Propagation.MANDATORY)
         void methodWithMandatoryPropagation();
     }
 
     public interface ServiceWithCheckedExceptions {
 
-        @Transactional
+        @DalesbredTransactional
         void transactionalMethod() throws IOException;
 
         void nonTransactionalMethod() throws IOException;

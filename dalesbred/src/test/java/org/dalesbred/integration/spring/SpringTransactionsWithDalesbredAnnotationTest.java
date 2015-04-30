@@ -24,7 +24,7 @@ package org.dalesbred.integration.spring;
 
 import org.dalesbred.Database;
 import org.dalesbred.TestDatabaseProvider;
-import org.dalesbred.annotation.Transactional;
+import org.dalesbred.annotation.DalesbredTransactional;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -59,7 +59,7 @@ public class SpringTransactionsWithDalesbredAnnotationTest {
         @Autowired
         private Database db;
 
-        @Transactional
+        @DalesbredTransactional
         public boolean hasActiveTransaction() {
             return db.hasActiveTransaction();
         }

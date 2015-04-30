@@ -24,6 +24,8 @@
     revealed inadvertently is not to show exceptions at all.
   - Removed `NamedParameterQueries.namedQuery`. Use `SqlQuery.namedQuery` instead.
   - Moved `fi.evident.dalesbred.Reflective` to test folder so that it's not visible in API.
+  - Renamed `fi.evident.dalesbred.Transactional` to `org.dalesbred.annotation.DalesbredTransactional`
+    so that it does not clash with Spring's `@Transactional`
 
 ## 0.8.0 (2015-04-08)
 

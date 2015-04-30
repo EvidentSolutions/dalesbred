@@ -35,7 +35,7 @@ import java.lang.annotation.*;
 @Documented
 @Target({ ElementType.METHOD, ElementType.TYPE })
 @Inherited
-public @interface Transactional {
+public @interface DalesbredTransactional {
 
     /** The propagation for transaction */
     @NotNull Propagation propagation() default Propagation.DEFAULT;

@@ -22,7 +22,7 @@
 
 package org.dalesbred.integration.spring;
 
-import org.dalesbred.annotation.Transactional;
+import org.dalesbred.annotation.DalesbredTransactional;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.transaction.annotation.TransactionAnnotationParser;
@@ -32,7 +32,7 @@ import org.springframework.transaction.interceptor.TransactionAttribute;
 import java.lang.reflect.AnnotatedElement;
 
 /**
- * Allows using Dalesbred's {@link Transactional} with Spring. Generally it's preferable
+ * Allows using Dalesbred's {@link DalesbredTransactional} with Spring. Generally it's preferable
  * to use Spring's own annotations to manage transactions.
  */
 public final class DalesbredSpringAnnotationParser implements TransactionAnnotationParser {
@@ -40,7 +40,7 @@ public final class DalesbredSpringAnnotationParser implements TransactionAnnotat
     @Override
     @Nullable
     public TransactionAttribute parseTransactionAnnotation(AnnotatedElement ae) {
-        Transactional ann = AnnotationUtils.getAnnotation(ae, Transactional.class);
+        DalesbredTransactional ann = AnnotationUtils.getAnnotation(ae, DalesbredTransactional.class);
         if (ann != null) {
             return parseTransactionAnnotation(ann);
         } else {
@@ -48,7 +48,7 @@ public final class DalesbredSpringAnnotationParser implements TransactionAnnotat
         }
     }
 
-    public TransactionAttribute parseTransactionAnnotation(Transactional ann) {
+    public TransactionAttribute parseTransactionAnnotation(DalesbredTransactional ann) {
         RuleBasedTransactionAttribute attribute = new RuleBasedTransactionAttribute();
 
         attribute.setPropagationBehavior(SpringTransactionManager.springPropagationCode(ann.propagation()));

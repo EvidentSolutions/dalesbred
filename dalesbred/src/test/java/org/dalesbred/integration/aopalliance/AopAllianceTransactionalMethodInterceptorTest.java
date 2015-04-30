@@ -27,7 +27,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.dalesbred.Database;
 import org.dalesbred.TestDatabaseProvider;
-import org.dalesbred.annotation.Transactional;
+import org.dalesbred.annotation.DalesbredTransactional;
 import org.dalesbred.integration.guice.DriverManagerDatabaseModule;
 import org.dalesbred.transaction.Isolation;
 import org.dalesbred.transaction.Propagation;
@@ -77,19 +77,19 @@ public class AopAllianceTransactionalMethodInterceptorTest {
         Database db;
 
         @Override
-        @Transactional
+        @DalesbredTransactional
         public boolean isExecutedTransactionally() {
             return db.hasActiveTransaction();
         }
 
         @Override
-        @Transactional(isolation = SERIALIZABLE)
+        @DalesbredTransactional(isolation = SERIALIZABLE)
         public Isolation getIsolation() {
             return getTransactionIsolation(db);
         }
     }
 
-    @Transactional(isolation = SERIALIZABLE)
+    @DalesbredTransactional(isolation = SERIALIZABLE)
     public static class MyServiceImplementation2 implements MyService {
 
         @Inject

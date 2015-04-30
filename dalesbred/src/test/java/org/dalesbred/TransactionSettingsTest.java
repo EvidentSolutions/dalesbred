@@ -22,7 +22,7 @@
 
 package org.dalesbred;
 
-import org.dalesbred.annotation.Transactional;
+import org.dalesbred.annotation.DalesbredTransactional;
 import org.dalesbred.transaction.Isolation;
 import org.dalesbred.transaction.Propagation;
 import org.dalesbred.transaction.TransactionSettings;
@@ -54,7 +54,7 @@ public class TransactionSettingsTest {
 
     @Test
     public void initializeFromAnnotation() {
-        MyTransactional transactional = new MyTransactional();
+        MyDalesbredTransactional transactional = new MyDalesbredTransactional();
         transactional.isolation = Isolation.SERIALIZABLE;
         transactional.propagation = Propagation.NESTED;
         transactional.retries = 4;
@@ -66,7 +66,7 @@ public class TransactionSettingsTest {
     }
 
     @SuppressWarnings("ClassExplicitlyAnnotation")
-    private static final class MyTransactional implements Transactional {
+    private static final class MyDalesbredTransactional implements DalesbredTransactional {
         Isolation isolation = Isolation.REPEATABLE_READ;
         Propagation propagation = Propagation.REQUIRED;
         int retries = 0;
@@ -91,7 +91,7 @@ public class TransactionSettingsTest {
         @NotNull
         @Override
         public Class<? extends Annotation> annotationType() {
-            return Transactional.class;
+            return DalesbredTransactional.class;
         }
     }
 }

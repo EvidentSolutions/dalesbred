@@ -23,7 +23,7 @@
 package org.dalesbred.transaction;
 
 import org.dalesbred.Database;
-import org.dalesbred.annotation.Transactional;
+import org.dalesbred.annotation.DalesbredTransactional;
 import org.jetbrains.annotations.NotNull;
 
 import static java.util.Objects.requireNonNull;
@@ -91,7 +91,7 @@ public final class TransactionSettings {
      * Constructs TransactionSettings from given annotation.
      */
     @NotNull
-    public static TransactionSettings fromAnnotation(@NotNull Transactional transactional) {
+    public static TransactionSettings fromAnnotation(@NotNull DalesbredTransactional transactional) {
         TransactionSettings settings = new TransactionSettings();
         settings.setIsolation(transactional.isolation());
         settings.setPropagation(transactional.propagation());
