@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A listener which is notified whenever an {@link Instantiator} has created a new object.
  */
+@FunctionalInterface
 public interface InstantiationListener {
     void onInstantiation(@NotNull Object object);
 }

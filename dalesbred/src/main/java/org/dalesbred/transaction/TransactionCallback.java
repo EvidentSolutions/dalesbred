@@ -34,6 +34,7 @@ import java.sql.SQLException;
  * @see VoidTransactionCallback
  */
 @SuppressWarnings({"UnusedParameters", "SameReturnValue"})
+@FunctionalInterface
 public interface TransactionCallback<T> {
     T execute(@NotNull TransactionContext tx) throws SQLException;
 }

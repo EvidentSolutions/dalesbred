@@ -31,6 +31,7 @@ import java.sql.SQLException;
  *
  * @see TransactionCallback
  */
+@FunctionalInterface
 public interface VoidTransactionCallback {
     @SuppressWarnings("RedundantThrows")
     void execute(@NotNull TransactionContext tx) throws SQLException;

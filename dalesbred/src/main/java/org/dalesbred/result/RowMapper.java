@@ -30,6 +30,7 @@ import java.sql.SQLException;
 /**
  * Maps a single row of result-set into an object.
  */
+@FunctionalInterface
 public interface RowMapper<T> {
 
     /**

@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Resolves values for variables appearing in SQL queries with named parameters.
  */
+@FunctionalInterface
 public interface VariableResolver {
 
     /**
