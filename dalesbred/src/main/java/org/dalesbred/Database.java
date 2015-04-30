@@ -30,14 +30,13 @@ import org.dalesbred.instantiation.DefaultInstantiatorRegistry;
 import org.dalesbred.instantiation.InstantiatorRegistry;
 import org.dalesbred.instantiation.TypeConversionRegistry;
 import org.dalesbred.internal.jdbc.DriverManagerDataSourceProvider;
+import org.dalesbred.internal.utils.JndiUtils;
 import org.dalesbred.query.SqlQuery;
 import org.dalesbred.result.*;
 import org.dalesbred.transaction.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.List;
@@ -93,20 +92,7 @@ public final class Database {
      */
     @NotNull
     public static Database forJndiDataSource(@NotNull String jndiName) {
-        try {
-            InitialContext ctx = new InitialContext();
-            try {
-                DataSource dataSource = (DataSource) ctx.lookup(jndiName);
-                if (dataSource != null)
-                    return forDataSource(dataSource);
-                else
-                    throw new DatabaseException("Could not find DataSource '" + jndiName + '\'');
-            } finally {
-                ctx.close();
-            }
-        } catch (NamingException e) {
-            throw new DatabaseException("Error when looking up DataSource '" + jndiName + "': " + e, e);
-        }
+        return forDataSource(JndiUtils.lookupJndiDataSource(jndiName));
     }
 
     /**
