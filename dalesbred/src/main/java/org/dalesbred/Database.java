@@ -442,6 +442,24 @@ public final class Database {
     }
 
     /**
+     * A convenience method for retrieving a single non-null boolean.
+     *
+     * @throws NonUniqueResultException if there are no rows or multiple rows
+     */
+    public boolean findUniqueBoolean(@NotNull SqlQuery query) {
+        return executeQuery(new UniqueResultSetProcessor<>(resultProcessorForClass(boolean.class)), query);
+    }
+
+    /**
+     * A convenience method for retrieving a single non-null boolean.
+     *
+     * @throws NonUniqueResultException if there are no rows or multiple rows
+     */
+    public boolean findUniqueBoolean(@NotNull @SQL String sql, Object... args) {
+        return findUniqueBoolean(SqlQuery.query(sql, args));
+    }
+
+    /**
      * A convenience method for retrieving a single non-null integer.
      *
      * @throws NonUniqueResultException if there are no rows or multiple rows

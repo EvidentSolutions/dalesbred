@@ -68,6 +68,7 @@ public class BuiltinConversionsTest {
     @Test
     public void intConversions() {
         assertThat(db.findUnique(int.class,    "values (42)"), is(42));
+        assertThat(db.findUniqueInt("values (42)"), is(42));
         assertThat(db.findUnique(Integer.class,"values (42)"), is(42));
         assertThat(db.findUnique(Integer.class,"values (cast (42 as bigint))"), is(42));
     }
@@ -77,6 +78,14 @@ public class BuiltinConversionsTest {
         assertThat(db.findUnique(long.class, "values (42)"), is(42L));
         assertThat(db.findUnique(Long.class, "values (42)"), is(42L));
         assertThat(db.findUniqueLong("values (42)"), is(42L));
+    }
+
+    @Test
+    public void booleanConversions() {
+        assertThat(db.findUnique(boolean.class, "values true"), is(true));
+        assertThat(db.findUnique(Boolean.class, "values false"), is(false));
+        assertThat(db.findUniqueBoolean("values true"), is(true));
+        assertThat(db.findUniqueBoolean("values false"), is(false));
     }
 
     @Test
