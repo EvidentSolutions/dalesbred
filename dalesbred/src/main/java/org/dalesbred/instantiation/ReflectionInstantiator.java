@@ -22,13 +22,14 @@
 
 package org.dalesbred.instantiation;
 
-import org.dalesbred.internal.utils.Require;
 import org.dalesbred.internal.utils.Throwables;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * An instantiator that uses constructor and setters or fields to instantiate an object.
@@ -53,9 +54,9 @@ final class ReflectionInstantiator<T> implements Instantiator<T> {
                            @NotNull TypeConversion<Object, ?>[] conversions,
                            @NotNull PropertyAccessor[] accessors,
                            @Nullable InstantiationListener instantiationListener) {
-        this.constructor = Require.requireNonNull(constructor);
-        this.conversions = Require.requireNonNull(conversions);
-        this.accessors = Require.requireNonNull(accessors);
+        this.constructor = requireNonNull(constructor);
+        this.conversions = requireNonNull(conversions);
+        this.accessors = requireNonNull(accessors);
         this.instantiationListener = instantiationListener;
         this.constructorParameterCount = constructor.getParameterTypes().length;
     }

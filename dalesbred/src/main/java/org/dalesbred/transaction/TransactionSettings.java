@@ -24,8 +24,9 @@ package org.dalesbred.transaction;
 
 import org.dalesbred.Database;
 import org.dalesbred.annotation.Transactional;
-import org.dalesbred.internal.utils.Require;
 import org.jetbrains.annotations.NotNull;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Contains all the settings that can be configured for individual-transactions.
@@ -51,7 +52,7 @@ public final class TransactionSettings {
      * Sets the default transaction propagation to use.
      */
     public void setPropagation(@NotNull Propagation propagation) {
-        this.propagation = Require.requireNonNull(propagation);
+        this.propagation = requireNonNull(propagation);
     }
 
     @NotNull

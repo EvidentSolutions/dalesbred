@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 
-import static org.dalesbred.internal.utils.Require.requireNonNull;
+import static java.util.Objects.requireNonNull;
 
 final class DefaultTransactionContext extends TransactionContext {
 

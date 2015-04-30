@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static org.dalesbred.internal.utils.Require.requireNonNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A {@link TransactionManager} that uses single underlying {@link Connection}.

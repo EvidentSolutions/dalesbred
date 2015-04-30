@@ -24,7 +24,6 @@ package org.dalesbred.transaction;
 
 import org.dalesbred.Database;
 import org.dalesbred.annotation.Transactional;
-import org.dalesbred.internal.utils.Require;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,6 +31,8 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Creates proxies for transactional services.
@@ -64,8 +65,8 @@ public final class TransactionalProxyFactory {
         private final Object target;
 
         public TransactionInvocationHandler(@NotNull Database db, @NotNull Object target) {
-            this.db = Require.requireNonNull(db);
-            this.target = Require.requireNonNull(target);
+            this.db = requireNonNull(db);
+            this.target = requireNonNull(target);
         }
 
         @Override

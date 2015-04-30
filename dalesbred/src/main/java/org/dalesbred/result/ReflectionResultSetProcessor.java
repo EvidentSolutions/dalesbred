@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.dalesbred.internal.utils.Require.requireNonNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Builds a list of results from {@link ResultSet} using reflection to instantiate individual rows.

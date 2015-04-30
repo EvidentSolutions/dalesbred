@@ -29,8 +29,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Singleton;
 
+import static java.util.Objects.requireNonNull;
 import static org.dalesbred.integration.guice.GuiceSupport.bindTransactionInterceptor;
-import static org.dalesbred.internal.utils.Require.requireNonNull;
 
 /**
  * A Guice module for configuring the database using a {@link javax.sql.DataSource}.

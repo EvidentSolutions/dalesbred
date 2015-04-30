@@ -25,7 +25,7 @@ package org.dalesbred.instantiation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static org.dalesbred.internal.utils.Require.requireNonNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A simple instantiator that just applies a coercion to argument.

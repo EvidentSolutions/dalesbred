@@ -28,7 +28,7 @@ import org.springframework.transaction.TransactionStatus;
 
 import java.sql.Connection;
 
-import static org.dalesbred.internal.utils.Require.requireNonNull;
+import static java.util.Objects.requireNonNull;
 
 final class SpringTransactionContext extends TransactionContext {
 

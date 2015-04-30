@@ -29,7 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static java.util.Collections.unmodifiableList;
-import static org.dalesbred.internal.utils.Require.requireNonNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Represents the results of the query along with its metadata. Basically a detached

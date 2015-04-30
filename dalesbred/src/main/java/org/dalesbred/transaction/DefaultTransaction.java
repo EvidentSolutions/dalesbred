@@ -32,7 +32,7 @@ import java.sql.Savepoint;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.dalesbred.internal.utils.Require.requireNonNull;
+import static java.util.Objects.requireNonNull;
 
 final class DefaultTransaction {
 

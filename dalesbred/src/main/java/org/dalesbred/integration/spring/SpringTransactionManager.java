@@ -25,7 +25,6 @@ package org.dalesbred.integration.spring;
 import org.dalesbred.DatabaseException;
 import org.dalesbred.connection.ConnectionProvider;
 import org.dalesbred.dialect.Dialect;
-import org.dalesbred.internal.utils.Require;
 import org.dalesbred.transaction.*;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.jdbc.datasource.ConnectionHolder;
@@ -39,6 +38,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * {@link ConnectionProvider} which integrates with Spring's transaction management.
@@ -64,8 +65,8 @@ public final class SpringTransactionManager implements TransactionManager {
      * Constructs new SpringTransactionManager to use.
      */
     public SpringTransactionManager(@NotNull DataSource dataSource, @NotNull PlatformTransactionManager platformTransactionManager) {
-        this.dataSource = Require.requireNonNull(dataSource);
-        this.platformTransactionManager = Require.requireNonNull(platformTransactionManager);
+        this.dataSource = requireNonNull(dataSource);
+        this.platformTransactionManager = requireNonNull(platformTransactionManager);
     }
 
     @Override
@@ -108,7 +109,7 @@ public final class SpringTransactionManager implements TransactionManager {
 
     @Override
     public void setDefaultIsolation(@NotNull Isolation isolation) {
-        this.defaultIsolation = Require.requireNonNull(isolation);
+        this.defaultIsolation = requireNonNull(isolation);
     }
 
     @NotNull
@@ -119,7 +120,7 @@ public final class SpringTransactionManager implements TransactionManager {
 
     @Override
     public void setDefaultPropagation(@NotNull Propagation propagation) {
-        defaultPropagation = Require.requireNonNull(propagation);
+        defaultPropagation = requireNonNull(propagation);
     }
 
     static int springIsolationCode(@NotNull Isolation isolation) {

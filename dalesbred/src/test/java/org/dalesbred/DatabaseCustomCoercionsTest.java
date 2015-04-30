@@ -23,13 +23,13 @@
 package org.dalesbred;
 
 import org.dalesbred.instantiation.TypeConversion;
-import org.dalesbred.internal.utils.Require;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.regex.Pattern;
 
+import static java.util.Objects.requireNonNull;
 import static org.junit.Assert.assertEquals;
 
 public class DatabaseCustomCoercionsTest {
@@ -98,8 +98,8 @@ public class DatabaseCustomCoercionsTest {
 
         // This constructor has two parameters so that the reflection mechanism can't coerce the type automatically.
         public EmailAddress(@NotNull String user, @NotNull String host) {
-            this.user = Require.requireNonNull(user);
-            this.host = Require.requireNonNull(host);
+            this.user = requireNonNull(user);
+            this.host = requireNonNull(host);
         }
 
         @NotNull

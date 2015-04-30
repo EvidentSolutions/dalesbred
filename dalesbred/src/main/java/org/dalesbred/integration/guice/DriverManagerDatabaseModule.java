@@ -27,13 +27,14 @@ import com.google.inject.Key;
 import com.google.inject.Provides;
 import org.dalesbred.Database;
 import org.dalesbred.connection.DriverManagerDataSourceProvider;
-import org.dalesbred.internal.utils.Require;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.sql.DataSource;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * A Guice module for configuring the database using DriverManager. Useful for testing,
@@ -65,7 +66,7 @@ public final class DriverManagerDatabaseModule extends AbstractModule {
      * Creates a module that creates a database instance with given key.
      */
     public DriverManagerDatabaseModule(@NotNull Key<Database> databaseKey) {
-        this.databaseKey = Require.requireNonNull(databaseKey);
+        this.databaseKey = requireNonNull(databaseKey);
     }
 
     @Override

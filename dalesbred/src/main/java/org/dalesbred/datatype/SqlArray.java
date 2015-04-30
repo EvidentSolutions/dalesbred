@@ -22,7 +22,6 @@
 
 package org.dalesbred.datatype;
 
-import org.dalesbred.internal.utils.Require;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -30,6 +29,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Wrapper for values that are to be bound as {@link java.sql.Array} objects
@@ -46,7 +46,7 @@ public final class SqlArray {
     private final List<?> values;
 
     private SqlArray(@NotNull String type, @NotNull List<?> values) {
-        this.type = Require.requireNonNull(type);
+        this.type = requireNonNull(type);
         this.values = unmodifiableList(new ArrayList<>(values));
     }
 

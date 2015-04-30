@@ -23,11 +23,12 @@
 package org.dalesbred.instantiation;
 
 import org.dalesbred.internal.utils.Primitives;
-import org.dalesbred.internal.utils.Require;
 import org.dalesbred.internal.utils.TypeUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * A conversion from S into T.
@@ -41,8 +42,8 @@ public abstract class TypeConversion<S,T> {
     private final Type target;
 
     public TypeConversion(@NotNull Type source, @NotNull Type target) {
-        this.source = Primitives.wrap(Require.requireNonNull(source));
-        this.target = Primitives.wrap(Require.requireNonNull(target));
+        this.source = Primitives.wrap(requireNonNull(source));
+        this.target = Primitives.wrap(requireNonNull(target));
     }
 
     @NotNull

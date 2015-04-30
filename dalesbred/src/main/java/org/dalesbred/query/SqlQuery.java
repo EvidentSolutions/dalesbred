@@ -33,7 +33,7 @@ import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
-import static org.dalesbred.internal.utils.Require.requireNonNull;
+import static java.util.Objects.requireNonNull;
 import static org.dalesbred.query.VariableResolvers.resolverForBean;
 import static org.dalesbred.query.VariableResolvers.resolverForMap;
 

@@ -39,7 +39,7 @@ import java.util.logging.Logger;
 import static java.lang.reflect.Modifier.isPublic;
 import static java.util.Arrays.sort;
 import static java.util.Comparator.comparing;
-import static org.dalesbred.internal.utils.Require.requireNonNull;
+import static java.util.Objects.requireNonNull;
 import static org.dalesbred.internal.utils.TypeUtils.*;
 
 /**

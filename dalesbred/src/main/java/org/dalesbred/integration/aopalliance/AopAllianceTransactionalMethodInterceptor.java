@@ -27,13 +27,14 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.dalesbred.Database;
 import org.dalesbred.annotation.Transactional;
 import org.dalesbred.integration.guice.GuiceSupport;
-import org.dalesbred.internal.utils.Require;
 import org.dalesbred.transaction.TransactionSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Provider;
 import java.lang.reflect.Method;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * An AOP Alliance compatible interceptor.
@@ -49,7 +50,7 @@ public final class AopAllianceTransactionalMethodInterceptor implements MethodIn
      * Constructs the interceptor with given database-provider.
      */
     public AopAllianceTransactionalMethodInterceptor(@NotNull Provider<Database> databaseProvider) {
-        this.databaseProvider = Require.requireNonNull(databaseProvider);
+        this.databaseProvider = requireNonNull(databaseProvider);
     }
 
     @Override

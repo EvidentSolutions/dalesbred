@@ -26,7 +26,6 @@ import org.dalesbred.UnexpectedResultException;
 import org.dalesbred.instantiation.DefaultInstantiatorRegistry;
 import org.dalesbred.instantiation.NamedTypeList;
 import org.dalesbred.instantiation.TypeConversion;
-import org.dalesbred.internal.utils.Require;
 import org.dalesbred.internal.utils.ResultSetUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,6 +34,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * ResultSetProcessor that expects results with two columns and creates map from them.
@@ -53,9 +54,9 @@ public final class MapResultSetProcessor<K,V> implements ResultSetProcessor<Map<
     public MapResultSetProcessor(@NotNull Class<K> keyType,
                                  @NotNull Class<V> valueType,
                                  @NotNull DefaultInstantiatorRegistry instantiatorRegistry) {
-        this.keyType = Require.requireNonNull(keyType);
-        this.valueType = Require.requireNonNull(valueType);
-        this.instantiatorRegistry = Require.requireNonNull(instantiatorRegistry);
+        this.keyType = requireNonNull(keyType);
+        this.valueType = requireNonNull(valueType);
+        this.instantiatorRegistry = requireNonNull(instantiatorRegistry);
     }
 
     @NotNull

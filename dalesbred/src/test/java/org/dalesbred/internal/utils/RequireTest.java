@@ -24,6 +24,7 @@ package org.dalesbred.internal.utils;
 
 import org.junit.Test;
 
+import static java.util.Objects.requireNonNull;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -32,13 +33,13 @@ public class RequireTest {
     @Test(expected=RuntimeException.class)
     @SuppressWarnings("ConstantConditions")
     public void requireNonNullThrowsOnNullValues() {
-        Require.requireNonNull(null);
+        requireNonNull(null);
     }
 
     @Test
     public void requireNonNullReturnsNonNullValues() {
         Object object = new Object();
 
-        assertThat(Require.requireNonNull(object), is(object));
+        assertThat(requireNonNull(object), is(object));
     }
 }

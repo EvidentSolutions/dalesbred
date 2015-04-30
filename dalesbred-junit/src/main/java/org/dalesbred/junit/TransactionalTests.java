@@ -30,7 +30,7 @@ import org.junit.runners.model.Statement;
 
 import javax.inject.Provider;
 
-import static org.dalesbred.internal.utils.Require.requireNonNull;
+import static java.util.Objects.requireNonNull;
 import static org.dalesbred.junit.TransactionalTests.RollbackPolicy.*;
 
 /**
