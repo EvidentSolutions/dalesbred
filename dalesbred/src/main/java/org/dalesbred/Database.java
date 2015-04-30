@@ -323,7 +323,7 @@ public final class Database {
      * @throws NonUniqueResultException if there are no rows or multiple rows
      */
     public <T> T findUnique(@NotNull RowMapper<T> mapper, @NotNull SqlQuery query) {
-        return executeQuery(UniqueResultSetProcessor.unique(new ListWithRowMapperResultSetProcessor<>(mapper)), query);
+        return executeQuery(new UniqueResultSetProcessor<>(new ListWithRowMapperResultSetProcessor<>(mapper)), query);
     }
 
     /**
@@ -341,7 +341,7 @@ public final class Database {
      * @throws NonUniqueResultException if there are no rows or multiple rows
      */
     public <T> T findUnique(@NotNull Class<T> cl, @NotNull SqlQuery query) {
-        return executeQuery(UniqueResultSetProcessor.unique(resultProcessorForClass(cl)), query);
+        return executeQuery(new UniqueResultSetProcessor<>(resultProcessorForClass(cl)), query);
     }
 
     /**
@@ -361,7 +361,7 @@ public final class Database {
      */
     @NotNull
     public <T> Optional<T> findOptional(@NotNull RowMapper<T> rowMapper, @NotNull SqlQuery query) {
-        return Optional.ofNullable(findUniqueOrNull(rowMapper, query));
+        return executeQuery(new OptionalResultSetProcessor<>(new ListWithRowMapperResultSetProcessor<>(rowMapper)), query);
     }
 
     /**
@@ -383,7 +383,7 @@ public final class Database {
      */
     @NotNull
     public <T> Optional<T> findOptional(@NotNull Class<T> cl, @NotNull SqlQuery query) {
-        return Optional.ofNullable(findUniqueOrNull(cl, query));
+        return executeQuery(new OptionalResultSetProcessor<>(resultProcessorForClass(cl)), query);
     }
 
     /**
@@ -405,7 +405,7 @@ public final class Database {
      */
     @Nullable
     public <T> T findUniqueOrNull(@NotNull RowMapper<T> rowMapper, @NotNull SqlQuery query) {
-        return executeQuery(UniqueResultSetProcessor.uniqueOrEmpty(new ListWithRowMapperResultSetProcessor<>(rowMapper)), query);
+        return findOptional(rowMapper, query).orElse(null);
     }
 
     /**
@@ -427,7 +427,7 @@ public final class Database {
      */
     @Nullable
     public <T> T findUniqueOrNull(@NotNull Class<T> cl, @NotNull SqlQuery query) {
-        return executeQuery(UniqueResultSetProcessor.uniqueOrEmpty(resultProcessorForClass(cl)), query);
+        return findOptional(cl, query).orElse(null);
     }
 
     /**
@@ -447,7 +447,7 @@ public final class Database {
      * @throws NonUniqueResultException if there are no rows or multiple rows
      */
     public int findUniqueInt(@NotNull SqlQuery query) {
-        return executeQuery(UniqueResultSetProcessor.unique(resultProcessorForClass(int.class)), query);
+        return executeQuery(new UniqueResultSetProcessor<>(resultProcessorForClass(int.class)), query);
     }
 
     /**
@@ -463,7 +463,7 @@ public final class Database {
      * A convenience method for retrieving a single non-null long.
      */
     public long findUniqueLong(@NotNull SqlQuery query) {
-        return executeQuery(UniqueResultSetProcessor.unique(resultProcessorForClass(long.class)), query);
+        return executeQuery(new UniqueResultSetProcessor<>(resultProcessorForClass(long.class)), query);
     }
 
     /**

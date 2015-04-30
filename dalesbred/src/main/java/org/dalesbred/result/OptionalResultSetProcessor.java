@@ -24,31 +24,33 @@ package org.dalesbred.result;
 
 import org.dalesbred.NonUniqueResultException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 /**
- * A {@link ResultSetProcessor} that adapts another a list-producing processor to produce only single result.
+ * A {@link ResultSetProcessor} that adapts another a list-producing processor to produce optional result.
  */
-public final class UniqueResultSetProcessor<T> implements ResultSetProcessor<T> {
+public final class OptionalResultSetProcessor<T> implements ResultSetProcessor<Optional<T>> {
 
     @NotNull
     private final ResultSetProcessor<List<T>> resultSetProcessor;
 
-    public UniqueResultSetProcessor(@NotNull ResultSetProcessor<List<T>> resultSetProcessor) {
+    public OptionalResultSetProcessor(@NotNull ResultSetProcessor<List<T>> resultSetProcessor) {
         this.resultSetProcessor = resultSetProcessor;
     }
 
     @Override
-    @Nullable
-    public T process(@NotNull ResultSet resultSet) throws SQLException {
+    @NotNull
+    public Optional<T> process(@NotNull ResultSet resultSet) throws SQLException {
         List<T> results = resultSetProcessor.process(resultSet);
 
-        if (results.size() == 1)
-            return results.get(0);
+        if (results.isEmpty())
+            return Optional.empty();
+        else if (results.size() == 1)
+            return Optional.of(results.get(0));
         else
             throw new NonUniqueResultException(results.size());
     }
