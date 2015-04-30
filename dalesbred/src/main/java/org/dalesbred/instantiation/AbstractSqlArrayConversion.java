@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-abstract class AbstractSqlArrayConversion<T> extends TypeConversion<Array, T> {
+abstract class AbstractSqlArrayConversion<T> extends SimpleNonNullTypeConversion<Array, T> {
 
     @NotNull
     private final Type elementType;
@@ -54,7 +54,7 @@ abstract class AbstractSqlArrayConversion<T> extends TypeConversion<Array, T> {
 
     @NotNull
     @Override
-    public final T convert(@NotNull Array value) {
+    public final T convertNonNull(@NotNull Array value) {
         return createResult(readArray(value));
     }
 

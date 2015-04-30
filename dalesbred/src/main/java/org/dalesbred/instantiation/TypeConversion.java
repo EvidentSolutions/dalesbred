@@ -25,6 +25,7 @@ package org.dalesbred.instantiation;
 import org.dalesbred.internal.utils.Primitives;
 import org.dalesbred.internal.utils.TypeUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 
@@ -56,11 +57,8 @@ public abstract class TypeConversion<S,T> {
         return target;
     }
 
-    /**
-     * Converts value of type {@code S} to value of type {@code T}.
-     */
-    @NotNull
-    public abstract T convert(@NotNull S value);
+    @Nullable
+    public abstract T convert(@Nullable S value);
 
     /**
      * Returns identity-coercion, ie. a coercion that does nothing.
@@ -68,9 +66,9 @@ public abstract class TypeConversion<S,T> {
     @NotNull
     public static <T> TypeConversion<T,T> identity(@NotNull Type type) {
         return new TypeConversion<T, T>(type, type) {
-            @NotNull
             @Override
-            public T convert(@NotNull T value) {
+            @Nullable
+            public T convert(@Nullable T value) {
                 return value;
             }
 
@@ -101,9 +99,9 @@ public abstract class TypeConversion<S,T> {
         TypeConversion<S,R> self = cast(source, requiredTarget);
         return new TypeConversion<Object, R>(Object.class, requiredTarget) {
             @SuppressWarnings("unchecked")
-            @NotNull
+            @Nullable
             @Override
-            public R convert(@NotNull Object value) {
+            public R convert(@Nullable Object value) {
                 return self.convert((S) value);
             }
         };

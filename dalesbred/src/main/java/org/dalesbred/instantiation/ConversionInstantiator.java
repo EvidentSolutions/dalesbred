@@ -30,12 +30,12 @@ import static java.util.Objects.requireNonNull;
 /**
  * A simple instantiator that just applies a coercion to argument.
  */
-final class CoercionInstantiator<T> implements Instantiator<T> {
+final class ConversionInstantiator<T> implements Instantiator<T> {
 
     @NotNull
     private final TypeConversion<Object, ? extends T> coercion;
 
-    CoercionInstantiator(@NotNull TypeConversion<Object, ? extends T> coercion) {
+    ConversionInstantiator(@NotNull TypeConversion<Object, ? extends T> coercion) {
         this.coercion = requireNonNull(coercion);
     }
 
@@ -44,10 +44,6 @@ final class CoercionInstantiator<T> implements Instantiator<T> {
     public T instantiate(@NotNull InstantiatorArguments arguments) {
         assert arguments.getValues().size() == 1;
 
-        Object value = arguments.getValues().get(0);
-        if (value != null) {
-            return coercion.convert(value);
-        } else
-            return null;
+        return coercion.convert(arguments.getValues().get(0));
     }
 }

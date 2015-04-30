@@ -22,7 +22,7 @@
 
 package org.dalesbred;
 
-import org.dalesbred.instantiation.TypeConversion;
+import org.dalesbred.instantiation.SimpleNonNullTypeConversion;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
@@ -58,7 +58,7 @@ public class DatabaseCustomCoercionsTest {
         assertEquals("user@example.org", db.findUnique(String.class, "select email from custom_save_conversions_test"));
     }
 
-    private static class StringToEmailTypeConversion extends TypeConversion<String, EmailAddress> {
+    private static class StringToEmailTypeConversion extends SimpleNonNullTypeConversion<String, EmailAddress> {
         private static final Pattern AT_SIGN = Pattern.compile("@");
 
         public StringToEmailTypeConversion() {
@@ -67,7 +67,7 @@ public class DatabaseCustomCoercionsTest {
 
         @NotNull
         @Override
-        public EmailAddress convert(@NotNull String value) {
+        public EmailAddress convertNonNull(@NotNull String value) {
             String[] parts = AT_SIGN.split(value);
             if (parts.length == 2)
                 return new EmailAddress(parts[0], parts[1]);
@@ -76,14 +76,14 @@ public class DatabaseCustomCoercionsTest {
         }
     }
 
-    private static class EmailToStringTypeConversion extends TypeConversion<EmailAddress, String> {
+    private static class EmailToStringTypeConversion extends SimpleNonNullTypeConversion<EmailAddress, String> {
         public EmailToStringTypeConversion() {
             super(EmailAddress.class, String.class);
         }
 
         @NotNull
         @Override
-        public String convert(@NotNull EmailAddress value) {
+        public String convertNonNull(@NotNull EmailAddress value) {
             return value.toString();
         }
     }

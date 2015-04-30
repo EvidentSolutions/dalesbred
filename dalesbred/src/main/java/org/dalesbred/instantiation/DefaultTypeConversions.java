@@ -73,7 +73,7 @@ final class DefaultTypeConversions {
         registry.registerConversionToDatabaseType(new TimeZoneToStringTypeConversion());
     }
 
-    private static class NumberToShortTypeConversion extends TypeConversion<Number, Short> {
+    private static class NumberToShortTypeConversion extends SimpleNonNullTypeConversion<Number, Short> {
 
         NumberToShortTypeConversion() {
             super(Number.class, Short.class);
@@ -81,12 +81,12 @@ final class DefaultTypeConversions {
 
         @NotNull
         @Override
-        public Short convert(@NotNull Number value) {
+        public Short convertNonNull(@NotNull Number value) {
             return value.shortValue();
         }
     }
 
-    private static class NumberToIntTypeConversion extends TypeConversion<Number, Integer> {
+    private static class NumberToIntTypeConversion extends SimpleNonNullTypeConversion<Number, Integer> {
 
         NumberToIntTypeConversion() {
             super(Number.class, Integer.class);
@@ -94,12 +94,12 @@ final class DefaultTypeConversions {
 
         @NotNull
         @Override
-        public Integer convert(@NotNull Number value) {
+        public Integer convertNonNull(@NotNull Number value) {
             return value.intValue();
         }
     }
 
-    private static class NumberToLongTypeConversion extends TypeConversion<Number, Long> {
+    private static class NumberToLongTypeConversion extends SimpleNonNullTypeConversion<Number, Long> {
 
         NumberToLongTypeConversion() {
             super(Number.class, Long.class);
@@ -107,12 +107,12 @@ final class DefaultTypeConversions {
 
         @NotNull
         @Override
-        public Long convert(@NotNull Number value) {
+        public Long convertNonNull(@NotNull Number value) {
             return value.longValue();
         }
     }
 
-    private static class NumberToFloatTypeConversion extends TypeConversion<Number, Float> {
+    private static class NumberToFloatTypeConversion extends SimpleNonNullTypeConversion<Number, Float> {
 
         NumberToFloatTypeConversion() {
             super(Number.class, Float.class);
@@ -120,12 +120,12 @@ final class DefaultTypeConversions {
 
         @NotNull
         @Override
-        public Float convert(@NotNull Number value) {
+        public Float convertNonNull(@NotNull Number value) {
             return value.floatValue();
         }
     }
 
-    private static class NumberToDoubleTypeConversion extends TypeConversion<Number, Double> {
+    private static class NumberToDoubleTypeConversion extends SimpleNonNullTypeConversion<Number, Double> {
 
         NumberToDoubleTypeConversion() {
             super(Number.class, Double.class);
@@ -133,12 +133,12 @@ final class DefaultTypeConversions {
 
         @NotNull
         @Override
-        public Double convert(@NotNull Number value) {
+        public Double convertNonNull(@NotNull Number value) {
             return value.doubleValue();
         }
     }
 
-    private static class NumberToBigIntegerTypeConversion extends TypeConversion<Number, BigInteger> {
+    private static class NumberToBigIntegerTypeConversion extends SimpleNonNullTypeConversion<Number, BigInteger> {
 
         NumberToBigIntegerTypeConversion() {
             super(Number.class, BigInteger.class);
@@ -147,7 +147,7 @@ final class DefaultTypeConversions {
         @NotNull
         @Override
         @SuppressWarnings("ObjectToString")
-        public BigInteger convert(@NotNull Number value) {
+        public BigInteger convertNonNull(@NotNull Number value) {
             return (value instanceof BigInteger) ? (BigInteger) value
                  : (value instanceof BigDecimal) ? ((BigDecimal) value).toBigInteger()
                  : (value instanceof Integer)    ? BigInteger.valueOf(value.longValue())
@@ -156,7 +156,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    private static class NumberToBigDecimalTypeConversion extends TypeConversion<Number, BigDecimal> {
+    private static class NumberToBigDecimalTypeConversion extends SimpleNonNullTypeConversion<Number, BigDecimal> {
 
         NumberToBigDecimalTypeConversion() {
             super(Number.class, BigDecimal.class);
@@ -165,7 +165,7 @@ final class DefaultTypeConversions {
         @NotNull
         @Override
         @SuppressWarnings("ObjectToString")
-        public BigDecimal convert(@NotNull Number value) {
+        public BigDecimal convertNonNull(@NotNull Number value) {
             return (value instanceof BigDecimal) ? (BigDecimal) value
                     : (value instanceof BigInteger) ? new BigDecimal((BigInteger) value)
                     : (value instanceof Integer)    ? BigDecimal.valueOf(value.longValue())
@@ -174,7 +174,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    private static class BigIntegerToBigDecimalTypeConversion extends TypeConversion<BigInteger, BigDecimal> {
+    private static class BigIntegerToBigDecimalTypeConversion extends SimpleNonNullTypeConversion<BigInteger, BigDecimal> {
 
         BigIntegerToBigDecimalTypeConversion() {
             super(BigInteger.class, BigDecimal.class);
@@ -182,12 +182,12 @@ final class DefaultTypeConversions {
 
         @NotNull
         @Override
-        public BigDecimal convert(@NotNull BigInteger value) {
+        public BigDecimal convertNonNull(@NotNull BigInteger value) {
             return new BigDecimal(value);
         }
     }
 
-    private static class StringToUrlTypeConversion extends TypeConversion<String,URL> {
+    private static class StringToUrlTypeConversion extends SimpleNonNullTypeConversion<String,URL> {
 
         StringToUrlTypeConversion() {
             super(String.class, URL.class);
@@ -195,7 +195,7 @@ final class DefaultTypeConversions {
 
         @NotNull
         @Override
-        public URL convert(@NotNull String value) {
+        public URL convertNonNull(@NotNull String value) {
             try {
                 return new URL(value);
             } catch (MalformedURLException e) {
@@ -204,7 +204,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    private static class ToStringTypeConversion<S> extends TypeConversion<S,String> {
+    private static class ToStringTypeConversion<S> extends SimpleNonNullTypeConversion<S,String> {
 
         ToStringTypeConversion(@NotNull Class<S> source) {
             super(source, String.class);
@@ -212,12 +212,12 @@ final class DefaultTypeConversions {
 
         @NotNull
         @Override
-        public String convert(@NotNull S value) {
+        public String convertNonNull(@NotNull S value) {
             return value.toString();
         }
     }
 
-    private static class StringToUriTypeConversion extends TypeConversion<String,URI> {
+    private static class StringToUriTypeConversion extends SimpleNonNullTypeConversion<String,URI> {
 
         StringToUriTypeConversion() {
             super(String.class, URI.class);
@@ -225,7 +225,7 @@ final class DefaultTypeConversions {
 
         @NotNull
         @Override
-        public URI convert(@NotNull String value) {
+        public URI convertNonNull(@NotNull String value) {
             try {
                 return new URI(value);
             } catch (URISyntaxException e) {
@@ -234,7 +234,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    private static class StringToTimeZoneTypeConversion extends TypeConversion<String,TimeZone> {
+    private static class StringToTimeZoneTypeConversion extends SimpleNonNullTypeConversion<String,TimeZone> {
 
         StringToTimeZoneTypeConversion() {
             super(String.class, TimeZone.class);
@@ -242,12 +242,12 @@ final class DefaultTypeConversions {
 
         @NotNull
         @Override
-        public TimeZone convert(@NotNull String value) {
+        public TimeZone convertNonNull(@NotNull String value) {
             return TimeZone.getTimeZone(value);
         }
     }
 
-    private static class TimeZoneToStringTypeConversion extends TypeConversion<TimeZone,String> {
+    private static class TimeZoneToStringTypeConversion extends SimpleNonNullTypeConversion<TimeZone,String> {
 
         TimeZoneToStringTypeConversion() {
             super(TimeZone.class, String.class);
@@ -255,12 +255,12 @@ final class DefaultTypeConversions {
 
         @NotNull
         @Override
-        public String convert(@NotNull TimeZone value) {
+        public String convertNonNull(@NotNull TimeZone value) {
             return value.getID();
         }
     }
 
-    private static class ClobToStringTypeConversion extends TypeConversion<Clob,String> {
+    private static class ClobToStringTypeConversion extends SimpleNonNullTypeConversion<Clob,String> {
 
         ClobToStringTypeConversion() {
             super(Clob.class, String.class);
@@ -268,7 +268,7 @@ final class DefaultTypeConversions {
 
         @NotNull
         @Override
-        public String convert(@NotNull Clob value) {
+        public String convertNonNull(@NotNull Clob value) {
             try (Reader reader = value.getCharacterStream()) {
                 StringBuilder sb = new StringBuilder((int) value.length());
 
@@ -288,7 +288,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    private static class BlobToByteArrayTypeConversion extends TypeConversion<Blob,byte[]> {
+    private static class BlobToByteArrayTypeConversion extends SimpleNonNullTypeConversion<Blob,byte[]> {
 
         BlobToByteArrayTypeConversion() {
             super(Blob.class, byte[].class);
@@ -296,7 +296,7 @@ final class DefaultTypeConversions {
 
         @NotNull
         @Override
-        public byte[] convert(@NotNull Blob value) {
+        public byte[] convertNonNull(@NotNull Blob value) {
             try (InputStream in = value.getBinaryStream()) {
                 ByteArrayOutputStream out = new ByteArrayOutputStream((int) value.length());
 
@@ -316,7 +316,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    private static class BlobToInputStreamTypeConversion extends TypeConversion<Blob,InputStream> {
+    private static class BlobToInputStreamTypeConversion extends SimpleNonNullTypeConversion<Blob,InputStream> {
 
         BlobToInputStreamTypeConversion() {
             super(Blob.class, InputStream.class);
@@ -324,7 +324,7 @@ final class DefaultTypeConversions {
 
         @NotNull
         @Override
-        public InputStream convert(@NotNull Blob value) {
+        public InputStream convertNonNull(@NotNull Blob value) {
             try {
                 return value.getBinaryStream();
             } catch (SQLException e) {
@@ -333,7 +333,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    private static class ClobToReaderTypeConversion extends TypeConversion<Clob,Reader> {
+    private static class ClobToReaderTypeConversion extends SimpleNonNullTypeConversion<Clob,Reader> {
 
         ClobToReaderTypeConversion() {
             super(Clob.class, Reader.class);
@@ -341,7 +341,7 @@ final class DefaultTypeConversions {
 
         @NotNull
         @Override
-        public Reader convert(@NotNull Clob value) {
+        public Reader convertNonNull(@NotNull Clob value) {
             try {
                 return value.getCharacterStream();
             } catch (SQLException e) {
@@ -350,7 +350,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    private static class SQLXMLToDocumentConversion extends TypeConversion<SQLXML, Document> {
+    private static class SQLXMLToDocumentConversion extends SimpleNonNullTypeConversion<SQLXML, Document> {
 
         public SQLXMLToDocumentConversion() {
             super(SQLXML.class, Document.class);
@@ -358,7 +358,7 @@ final class DefaultTypeConversions {
 
         @NotNull
         @Override
-        public Document convert(@NotNull SQLXML value) {
+        public Document convertNonNull(@NotNull SQLXML value) {
             try {
                 return (Document) value.getSource(DOMSource.class).getNode();
             } catch (SQLException e) {

@@ -110,10 +110,10 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
         // First check if we have an immediate coercion registered. If so, we'll just use that.
         if (types.size() == 1) {
             @SuppressWarnings("unchecked")
-            TypeConversion<Object, ? extends T> coercion =
+            TypeConversion<Object, ? extends T> conversion =
                     (TypeConversion<Object, ? extends T>) findConversionFromDbValue(types.getType(0), type);
-            if (coercion != null)
-                return new CoercionInstantiator<>(coercion);
+            if (conversion != null)
+                return new ConversionInstantiator<>(conversion);
         }
 
         @SuppressWarnings("unchecked")

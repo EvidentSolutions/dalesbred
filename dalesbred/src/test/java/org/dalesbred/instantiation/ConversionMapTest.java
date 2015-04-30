@@ -23,6 +23,7 @@
 package org.dalesbred.instantiation;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNull;
@@ -90,9 +91,10 @@ public class ConversionMapTest {
     @NotNull
     private static <S, T> TypeConversion<S,T> dummyConversion(@NotNull Class<S> source, @NotNull Class<T> target) {
         return new TypeConversion<S, T>(source, target) {
-            @NotNull
+
+            @Nullable
             @Override
-            public T convert(@NotNull S value) {
+            public T convert(@Nullable S value) {
                 throw new UnsupportedOperationException();
             }
         };

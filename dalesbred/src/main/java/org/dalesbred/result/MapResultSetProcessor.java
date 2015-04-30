@@ -28,7 +28,6 @@ import org.dalesbred.instantiation.NamedTypeList;
 import org.dalesbred.instantiation.TypeConversion;
 import org.dalesbred.internal.jdbc.ResultSetUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -72,21 +71,13 @@ public final class MapResultSetProcessor<K,V> implements ResultSetProcessor<Map<
         TypeConversion<Object, V> valueConversion = getConversion(types.getType(1), valueType);
 
         while (resultSet.next()) {
-            K key = convert(keyConversion, resultSet.getObject(1));
-            V value = convert(valueConversion, resultSet.getObject(2));
+            K key = keyConversion.convert(resultSet.getObject(1));
+            V value = valueConversion.convert(resultSet.getObject(2));
 
             result.put(key, value);
         }
 
         return result;
-    }
-
-    @Nullable
-    private static <T> T convert(TypeConversion<Object, T> conversion, @Nullable Object value) {
-        if (value != null)
-            return conversion.convert(value);
-        else
-            return null;
     }
 
     @NotNull
