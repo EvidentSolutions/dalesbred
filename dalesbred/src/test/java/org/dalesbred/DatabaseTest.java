@@ -22,9 +22,11 @@
 
 package org.dalesbred;
 
-import org.dalesbred.dialects.HsqldbDialect;
-import org.dalesbred.results.ResultSetProcessor;
-import org.dalesbred.results.RowMapper;
+import org.dalesbred.annotation.Reflective;
+import org.dalesbred.datatype.ConfidentialValue;
+import org.dalesbred.dialect.HsqldbDialect;
+import org.dalesbred.result.ResultSetProcessor;
+import org.dalesbred.result.RowMapper;
 import org.dalesbred.transaction.Isolation;
 import org.dalesbred.transaction.Propagation;
 import org.junit.Rule;
@@ -172,7 +174,7 @@ public class DatabaseTest {
 
     @Test
     public void confidentialValuesWorkLikeNormals() {
-        assertThat(db.findUnique(String.class, "values (?)", SqlQuery.confidential("foo")), is("foo"));
+        assertThat(db.findUnique(String.class, "values (?)", ConfidentialValue.confidential("foo")), is("foo"));
     }
 
     @Test

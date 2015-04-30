@@ -22,11 +22,11 @@
 
 package org.dalesbred.instantiation;
 
-import org.dalesbred.DalesbredIgnore;
-import org.dalesbred.dialects.Dialect;
-import org.dalesbred.support.java8.JavaTimeTypeConversions;
-import org.dalesbred.support.joda.JodaTypeConversions;
-import org.dalesbred.support.threeten.ThreeTenTypeConversions;
+import org.dalesbred.annotation.DalesbredIgnore;
+import org.dalesbred.dialect.Dialect;
+import org.dalesbred.integration.java8.JavaTimeTypeConversions;
+import org.dalesbred.integration.joda.JodaTypeConversions;
+import org.dalesbred.integration.threeten.ThreeTenTypeConversions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

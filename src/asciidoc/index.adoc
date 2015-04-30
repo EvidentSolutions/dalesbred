@@ -129,14 +129,14 @@ SqlQuery vs. query parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All methods come in two variants: there's an implementation that takes
-an {javadocBase}org/dalesbred/SqlQuery.html[SqlQuery] as a parameter and there's another
+an {javadocBase}org/dalesbred/query/SqlQuery.html[SqlQuery] as a parameter and there's another
 implementation that takes {jdkJavadocBase}java/lang/String.html[String] and variable arguments of parameters.
 The latter is just convenience method for the further, meaning that the following code fragments are
 identical in functionality:
 
 [source,java,indent=0]
 ----
-        import static org.dalesbred.SqlQuery.query;
+        import static org.dalesbred.query.SqlQuery.query;
 
         SqlQuery query = query("select id, name from department where update_timestamp > ?", date);
         db.findAll(Department.class, query);
@@ -162,7 +162,7 @@ In addition to using positional parameters in your SQL statements, you can also 
 
 [source,java,indent=0]
 ----
-        import static org.dalesbred.SqlQuery.namedQuery;
+        import static org.dalesbred.query.SqlQuery.namedQuery;
 
         Map<String,Object> values = new HashMap<String,Object>();
         values.put("firstName", "John");
@@ -326,17 +326,17 @@ Confidential values
 
 Dalesbred tries to provide detailed exceptions and logs which include all the parameters of queries. While
 this is generally useful, it could mean that sensitive information such as passwords or credit card numbers
-might end up in logs or error messages. When building a query, you can wrap such values with `SqlQuery.confidential`
+might end up in logs or error messages. When building a query, you can wrap such values with `ConfidentialValue`
 so that only asterisks will be displayed whenever those values are printed, but they are still sent to database
 correctly:
 
 [source,java,indent=0]
 ----
-        import static org.dalesbred.SqlQuery.confidential;
+        import org.dalesbred.datatype.ConfidentialValue;
 
         ...
 
-        db.update("insert into credit_card (number) values (?)", confidential(creditCardNumber));
+        db.update("insert into credit_card (number) values (?)", new ConfidentialValue(creditCardNumber));
 ----
 
 Custom type-conversions

@@ -22,6 +22,7 @@
 
 package org.dalesbred;
 
+import org.dalesbred.annotation.Reflective;
 import org.junit.Rule;
 import org.junit.Test;
 

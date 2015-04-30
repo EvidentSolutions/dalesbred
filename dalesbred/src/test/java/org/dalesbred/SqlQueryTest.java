@@ -22,6 +22,9 @@
 
 package org.dalesbred;
 
+import org.dalesbred.annotation.Reflective;
+import org.dalesbred.datatype.ConfidentialValue;
+import org.dalesbred.query.SqlQuery;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
@@ -66,7 +69,7 @@ public class SqlQueryTest {
 
     @Test
     public void secretValuesAreNotShownInToString() {
-        SqlQuery query = SqlQuery.query("select * from foo where login=? and password=?", "foo", SqlQuery.confidential("bar"));
+        SqlQuery query = SqlQuery.query("select * from foo where login=? and password=?", "foo", ConfidentialValue.confidential("bar"));
 
         assertEquals("select * from foo where login=? and password=? [foo, ****]", query.toString());
     }

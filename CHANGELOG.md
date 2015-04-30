@@ -1,3 +1,23 @@
+## x.x.x (yyyy-mm-dd)
+
+### Breaking changes
+
+  - Renamed base package `fi.evident.dalesbred` to `org.dalesbred`.
+  - Other package renames:
+    - `fi.evident.dalesbred.dialects` -> `org.dalesbred.dialect`
+    - `fi.evident.dalesbred.lob` -> `org.dalesbred.datatype`
+    - `fi.evident.dalesbred.results` -> `org.dalesbred.result`
+    - `fi.evident.dalesbred.support` -> `org.dalesbred.integration`
+    - `fi.evident.dalesbred.tx` -> `org.dalesbred.transaction`
+  - Moved some classes to new packages:
+    - All annotations to `org.dalesbred.annotation`
+    - All transaction-related classes to `org.dalesbred.transaction`.
+    - `fi.evident.dalesbred.SqlQuery` -> `org.dalesbred.query.SqlQuery` 
+    - `fi.evident.dalesbred.SqlArray` -> `org.dalesbred.datatype.SqlArray` 
+    
+  - Moved classes that are technically `public`, but are not part of Dalesbred's supported 
+    API to `org.dalesbred.internal`. 
+
 ## 0.8.0 (2015-04-08)
 
   - Support instantiating arrays and collections of instantiable types from database arrays.

@@ -24,7 +24,7 @@ package org.dalesbred.junit;
 
 import org.dalesbred.Database;
 import org.dalesbred.connection.DriverManagerDataSourceProvider;
-import org.dalesbred.dialects.Dialect;
+import org.dalesbred.dialect.Dialect;
 import org.dalesbred.transaction.TransactionCallback;
 import org.jetbrains.annotations.NotNull;
 import org.junit.internal.AssumptionViolatedException;

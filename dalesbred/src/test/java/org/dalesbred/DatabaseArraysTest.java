@@ -22,6 +22,7 @@
 
 package org.dalesbred;
 
+import org.dalesbred.datatype.SqlArray;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;

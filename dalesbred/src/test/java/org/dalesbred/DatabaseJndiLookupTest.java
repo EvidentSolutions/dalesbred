@@ -22,8 +22,8 @@
 
 package org.dalesbred;
 
-import org.dalesbred.support.MemoryContext;
-import org.dalesbred.support.SystemPropertyRule;
+import org.dalesbred.integration.MemoryContext;
+import org.dalesbred.integration.SystemPropertyRule;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;

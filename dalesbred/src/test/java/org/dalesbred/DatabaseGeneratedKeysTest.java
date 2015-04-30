@@ -22,7 +22,7 @@
 
 package org.dalesbred;
 
-import org.dalesbred.results.ResultSetProcessor;
+import org.dalesbred.result.ResultSetProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;

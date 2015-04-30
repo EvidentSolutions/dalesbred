@@ -1,3 +1,3 @@
 <component name="DependencyValidationManager">
-  <scope name="Support and tests" pattern="src[dalesbred]:org.dalesbred.support..*||test[dalesbred]:*..*||file[dalesbred-junit]:*/" />
+  <scope name="Support and tests" pattern="src[dalesbred]:org.dalesbred.integration..*||test[dalesbred]:*..*||file[dalesbred-junit]:*/" />
 </component>

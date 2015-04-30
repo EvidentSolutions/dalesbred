@@ -22,8 +22,7 @@
 
 package org.dalesbred.query;
 
-import org.dalesbred.SQL;
-import org.dalesbred.SqlQuery;
+import org.dalesbred.annotation.SQL;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 

@@ -22,7 +22,7 @@
 
 package org.dalesbred.instantiation.test;
 
-import org.dalesbred.Reflective;
+import org.dalesbred.annotation.Reflective;
 
 class InaccessibleClass {
 

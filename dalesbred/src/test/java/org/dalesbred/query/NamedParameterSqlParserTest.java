@@ -22,7 +22,7 @@
 
 package org.dalesbred.query;
 
-import org.dalesbred.SQL;
+import org.dalesbred.annotation.SQL;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

@@ -22,7 +22,7 @@
 
 package org.dalesbred;
 
-import org.dalesbred.dialects.DefaultDialect;
+import org.dalesbred.dialect.DefaultDialect;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;

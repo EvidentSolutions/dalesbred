@@ -22,9 +22,10 @@
 
 package org.dalesbred;
 
-import org.dalesbred.dialects.DefaultDialect;
+import org.dalesbred.annotation.Reflective;
+import org.dalesbred.dialect.DefaultDialect;
 import org.dalesbred.instantiation.DefaultInstantiatorRegistry;
-import org.dalesbred.results.ReflectionResultSetProcessor;
+import org.dalesbred.result.ReflectionResultSetProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.mockito.stubbing.OngoingStubbing;

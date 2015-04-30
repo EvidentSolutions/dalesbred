@@ -22,6 +22,7 @@
 
 package org.dalesbred;
 
+import org.dalesbred.query.SqlQuery;
 import org.jetbrains.annotations.Nullable;
 
 final class DebugContext {

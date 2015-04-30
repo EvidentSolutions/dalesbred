@@ -22,7 +22,7 @@
 
 package org.dalesbred.query;
 
-import org.dalesbred.SqlQuery;
+import org.dalesbred.datatype.ConfidentialValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -135,7 +135,7 @@ public final class QueryBuilder {
      */
     @NotNull
     public QueryBuilder addConfidentialArgument(@Nullable Object argument) {
-        arguments.add(SqlQuery.confidential(argument));
+        arguments.add(ConfidentialValue.confidential(argument));
         return this;
     }
 

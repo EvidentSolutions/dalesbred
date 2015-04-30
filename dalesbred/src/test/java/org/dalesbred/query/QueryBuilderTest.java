@@ -22,10 +22,9 @@
 
 package org.dalesbred.query;
 
-import org.dalesbred.SqlQuery;
 import org.junit.Test;
 
-import static org.dalesbred.SqlQuery.query;
+import static org.dalesbred.query.SqlQuery.query;
 import static org.junit.Assert.assertEquals;
 
 public class QueryBuilderTest {

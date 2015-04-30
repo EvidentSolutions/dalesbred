@@ -19,8 +19,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 package org.dalesbred;
 
+import org.dalesbred.annotation.Reflective;
 import org.joda.time.DateTime;
 import org.junit.Rule;
 import org.junit.Test;

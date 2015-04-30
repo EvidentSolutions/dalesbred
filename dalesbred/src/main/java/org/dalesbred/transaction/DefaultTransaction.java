@@ -22,7 +22,7 @@
 
 package org.dalesbred.transaction;
 
-import org.dalesbred.dialects.Dialect;
+import org.dalesbred.dialect.Dialect;
 import org.dalesbred.internal.utils.Throwables;
 import org.jetbrains.annotations.NotNull;
 

@@ -22,6 +22,8 @@
 
 package org.dalesbred;
 
+import org.dalesbred.query.SqlQuery;
+
 /**
  * Exception thrown when expecting a unique result from a call, but invalid number
  * of results was returned by the database.

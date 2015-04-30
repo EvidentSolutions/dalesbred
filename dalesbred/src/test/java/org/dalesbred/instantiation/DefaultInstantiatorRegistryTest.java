@@ -22,9 +22,9 @@
 
 package org.dalesbred.instantiation;
 
-import org.dalesbred.DalesbredIgnore;
-import org.dalesbred.Reflective;
-import org.dalesbred.dialects.DefaultDialect;
+import org.dalesbred.annotation.DalesbredIgnore;
+import org.dalesbred.annotation.Reflective;
+import org.dalesbred.dialect.DefaultDialect;
 import org.dalesbred.instantiation.test.InaccessibleClassRef;
 import org.dalesbred.internal.utils.TypeUtils;
 import org.jetbrains.annotations.NotNull;

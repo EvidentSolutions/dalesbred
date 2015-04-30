@@ -22,8 +22,8 @@
 
 package org.dalesbred.instantiation;
 
-import org.dalesbred.DalesbredIgnore;
-import org.dalesbred.Reflective;
+import org.dalesbred.annotation.DalesbredIgnore;
+import org.dalesbred.annotation.Reflective;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
