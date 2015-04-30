@@ -30,7 +30,6 @@ import org.dalesbred.dialect.Dialect;
 import org.dalesbred.instantiation.DefaultInstantiatorRegistry;
 import org.dalesbred.instantiation.InstantiatorRegistry;
 import org.dalesbred.instantiation.TypeConversionRegistry;
-import org.dalesbred.integration.proxy.TransactionalProxyFactory;
 import org.dalesbred.query.SqlQuery;
 import org.dalesbred.result.*;
 import org.dalesbred.transaction.*;

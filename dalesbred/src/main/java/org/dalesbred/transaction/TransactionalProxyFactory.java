@@ -20,12 +20,10 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.integration.proxy;
+package org.dalesbred.transaction;
 
 import org.dalesbred.Database;
 import org.dalesbred.internal.utils.Require;
-import org.dalesbred.transaction.TransactionSettings;
-import org.dalesbred.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
