@@ -30,7 +30,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import static java.util.Arrays.asList;
-import static org.dalesbred.internal.utils.ResultSetUtils.getColumnType;
+import static org.dalesbred.internal.jdbc.ResultSetUtils.getColumnType;
 
 /**
  * Creates a {@link ResultTable} from {@link ResultSet}.

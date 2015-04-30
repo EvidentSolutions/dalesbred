@@ -26,7 +26,7 @@ import org.dalesbred.UnexpectedResultException;
 import org.dalesbred.instantiation.DefaultInstantiatorRegistry;
 import org.dalesbred.instantiation.NamedTypeList;
 import org.dalesbred.instantiation.TypeConversion;
-import org.dalesbred.internal.utils.ResultSetUtils;
+import org.dalesbred.internal.jdbc.ResultSetUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -26,7 +26,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Key;
 import com.google.inject.Provides;
 import org.dalesbred.Database;
-import org.dalesbred.connection.DriverManagerDataSourceProvider;
+import org.dalesbred.internal.jdbc.DriverManagerDataSourceProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

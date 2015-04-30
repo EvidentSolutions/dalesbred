@@ -27,7 +27,7 @@ import org.dalesbred.instantiation.DefaultInstantiatorRegistry;
 import org.dalesbred.instantiation.Instantiator;
 import org.dalesbred.instantiation.InstantiatorArguments;
 import org.dalesbred.instantiation.NamedTypeList;
-import org.dalesbred.internal.utils.ResultSetUtils;
+import org.dalesbred.internal.jdbc.ResultSetUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;

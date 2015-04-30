@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.internal.utils;
+package org.dalesbred.internal.jdbc;
 
 import org.dalesbred.DatabaseException;
 import org.dalesbred.instantiation.NamedTypeList;

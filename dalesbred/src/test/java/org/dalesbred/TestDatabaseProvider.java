@@ -25,7 +25,7 @@ package org.dalesbred;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.name.Names;
-import org.dalesbred.connection.DriverManagerDataSourceProvider;
+import org.dalesbred.internal.jdbc.DriverManagerDataSourceProvider;
 import org.dalesbred.transaction.TransactionCallback;
 import org.jetbrains.annotations.NotNull;
 
