@@ -58,4 +58,33 @@ public class DatabaseOptionalTest {
 
         assertThat(db.findUniqueInt("select count(*) from optional_test where val = 'foo'"), is(1));
     }
+
+    @Test
+    public void nullAreHandledAsEmpty() {
+        OptionalContainer object = db.findUnique(OptionalContainer.class, "select (cast (null as int)) as optionalInt, (cast (null as int)) as optionalInteger, null as optionalString from (values (0))");
+        assertThat(object.optionalInt, is(OptionalInt.empty()));
+        assertThat(object.optionalInteger, is(Optional.empty()));
+        assertThat(object.optionalString, is(Optional.empty()));
+    }
+
+    @Test
+    public void nonNullsAreHandledAsValues() {
+        OptionalContainer object = db.findUnique(OptionalContainer.class,
+                "SELECT 35 AS optionalInt, 53 AS optionalInteger, 'foo' AS optionalString, 4242424 as optionalLong, 424.2 as optionalDouble FROM (VALUES (0))");
+        assertThat(object.optionalInt, is(OptionalInt.of(35)));
+        assertThat(object.optionalInteger, is(Optional.of(53)));
+        assertThat(object.optionalString, is(Optional.of("foo")));
+        assertThat(object.optionalLong, is(OptionalLong.of(4242424)));
+        assertThat(object.optionalDouble, is(OptionalDouble.of(424.2)));
+    }
+
+
+    @SuppressWarnings("unused")
+    public static final class OptionalContainer {
+        public OptionalInt optionalInt;
+        public Optional<Integer> optionalInteger;
+        public Optional<String> optionalString;
+        public OptionalLong optionalLong;
+        public OptionalDouble optionalDouble;
+    }
 }

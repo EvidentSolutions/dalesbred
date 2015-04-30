@@ -33,10 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
 import java.sql.Array;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 import static java.lang.reflect.Modifier.isPublic;
@@ -247,9 +244,9 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
         if (coercion != null)
             return coercion;
 
-        if (Array.class.isAssignableFrom(source)) {
-            Class<?> rawTarget = rawType(target);
+        Class<?> rawTarget = rawType(target);
 
+        if (Array.class.isAssignableFrom(source)) {
             if (rawTarget.equals(Set.class))
                 return new SqlArrayToSetConversion(typeParameter(target), this);
 
@@ -260,12 +257,45 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
                 return new SqlArrayToArrayConversion(rawTarget.getComponentType(), this);
         }
 
+        TypeConversion<?, ?> conversion = optionalConversion(source, target);
+        if (conversion != null)
+            return conversion;
+
         if (isEnum(target)) {
             @SuppressWarnings("rawtypes")
             Class<? extends Enum> cl = rawType(target).asSubclass(Enum.class);
             return dialect.getEnumCoercion(cl);
         }
 
+        return null;
+    }
+
+    @Nullable
+    private TypeConversion<?, ?> optionalConversion(@NotNull Class<?> source, @NotNull Type target) {
+        Class<?> rawTarget = rawType(target);
+
+        if (rawTarget == Optional.class) {
+            Type targetType = typeParameter(target);
+
+            TypeConversion<?, ?> conversion = findConversionFromDbValue(source, targetType);
+            if (conversion != null)
+                return new OptionalConversion<>(source, target, conversion, Optional::of, Optional.empty());
+
+        } else if (rawTarget == OptionalInt.class) {
+            TypeConversion<?, ?> conversion = findConversionFromDbValue(source, int.class);
+            if (conversion != null)
+                return new OptionalConversion<>(source, target, conversion, o -> OptionalInt.of((Integer) o), OptionalInt.empty());
+
+        } else if (rawTarget == OptionalLong.class) {
+            TypeConversion<?, ?> conversion = findConversionFromDbValue(source, long.class);
+            if (conversion != null)
+                return new OptionalConversion<>(source, target, conversion, o -> OptionalLong.of((Long) o), OptionalLong.empty());
+
+        } else if (rawTarget == OptionalDouble.class) {
+            TypeConversion<?, ?> conversion = findConversionFromDbValue(source, double.class);
+            if (conversion != null)
+                return new OptionalConversion<>(source, target, conversion, o -> OptionalDouble.of((Double) o), OptionalDouble.empty());
+        }
         return null;
     }
 
