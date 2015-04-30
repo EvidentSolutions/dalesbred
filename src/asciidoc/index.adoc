@@ -321,24 +321,6 @@ or Reader.
 
 WARNING: Note that the returned InputStream or Reader is only valid for the duration of the active transaction.
 
-Confidential values
-~~~~~~~~~~~~~~~~~~~
-
-Dalesbred tries to provide detailed exceptions and logs which include all the parameters of queries. While
-this is generally useful, it could mean that sensitive information such as passwords or credit card numbers
-might end up in logs or error messages. When building a query, you can wrap such values with `ConfidentialValue`
-so that only asterisks will be displayed whenever those values are printed, but they are still sent to database
-correctly:
-
-[source,java,indent=0]
-----
-        import org.dalesbred.datatype.ConfidentialValue;
-
-        ...
-
-        db.update("insert into credit_card (number) values (?)", new ConfidentialValue(creditCardNumber));
-----
-
 Custom type-conversions
 ~~~~~~~~~~~~~~~~~~~~~~~
 

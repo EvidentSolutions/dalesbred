@@ -14,9 +14,11 @@
     - All transaction-related classes to `org.dalesbred.transaction`.
     - `fi.evident.dalesbred.SqlQuery` -> `org.dalesbred.query.SqlQuery` 
     - `fi.evident.dalesbred.SqlArray` -> `org.dalesbred.datatype.SqlArray` 
-    
   - Moved classes that are technically `public`, but are not part of Dalesbred's supported 
-    API to `org.dalesbred.internal`. 
+    API to `org.dalesbred.internal`.
+  - Removed `SqlQuery.confidential`. Some database drivers will print the values passed to
+    database in exceptions anyway, so the only safe way to make sure that values are not
+    revealed inadvertently is not to show exceptions at all.
 
 ## 0.8.0 (2015-04-08)
 

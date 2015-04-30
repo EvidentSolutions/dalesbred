@@ -26,7 +26,6 @@ import org.dalesbred.annotation.SQL;
 import org.dalesbred.connection.ConnectionProvider;
 import org.dalesbred.connection.DataSourceConnectionProvider;
 import org.dalesbred.connection.DriverManagerDataSourceProvider;
-import org.dalesbred.datatype.ConfidentialValue;
 import org.dalesbred.dialect.Dialect;
 import org.dalesbred.instantiation.DefaultInstantiatorRegistry;
 import org.dalesbred.instantiation.InstantiatorRegistry;
@@ -593,18 +592,7 @@ public final class Database {
         int i = 1;
 
         for (Object arg : args)
-            dialect.bindArgument(ps, i++, instantiatorRegistry.valueToDatabase(unwrapConfidential(arg)));
-    }
-
-    /**
-     * If the argument is a confidential value, returns it unwrapped, otherwise returns the value as it is.
-     */
-    @Nullable
-    private static Object unwrapConfidential(@Nullable Object arg) {
-        if (arg instanceof ConfidentialValue)
-            return ((ConfidentialValue) arg).getValue();
-        else
-            return arg;
+            dialect.bindArgument(ps, i++, instantiatorRegistry.valueToDatabase(arg));
     }
 
     @NotNull

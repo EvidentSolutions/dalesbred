@@ -23,7 +23,6 @@
 package org.dalesbred;
 
 import org.dalesbred.annotation.Reflective;
-import org.dalesbred.datatype.ConfidentialValue;
 import org.dalesbred.dialect.HsqldbDialect;
 import org.dalesbred.result.ResultSetProcessor;
 import org.dalesbred.result.RowMapper;
@@ -170,11 +169,6 @@ public class DatabaseTest {
     @Test(expected = DatabaseException.class)
     public void creatingDatabaseWithJndiDataSourceThrowsExceptionWhenContextIsNotConfigured() {
         Database.forJndiDataSource("foo");
-    }
-
-    @Test
-    public void confidentialValuesWorkLikeNormals() {
-        assertThat(db.findUnique(String.class, "values (?)", ConfidentialValue.confidential("foo")), is("foo"));
     }
 
     @Test
