@@ -22,6 +22,7 @@
     database in exceptions anyway, so the only safe way to make sure that values are not
     revealed inadvertently is not to show exceptions at all.
   - Removed `NamedParameterQueries.namedQuery`. Use `SqlQuery.namedQuery` instead.
+  - Moved `fi.evident.dalesbred.Reflective` to test folder so that it's not visible in API.
 
 ## 0.8.0 (2015-04-08)
 
