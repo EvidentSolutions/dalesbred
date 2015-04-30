@@ -47,6 +47,7 @@ import java.util.logging.Logger;
 
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.requireNonNull;
+import static org.dalesbred.transaction.TransactionCallback.fromVoidCallback;
 
 /**
  * <p>
@@ -195,7 +196,7 @@ public final class Database {
      * Executes a block of code within a context of a transaction, using {@link Propagation#REQUIRED} propagation.
      */
     public void withVoidTransaction(@NotNull VoidTransactionCallback callback) {
-        withTransaction(convertCallback(callback));
+        withTransaction(fromVoidCallback(callback));
     }
 
     /**
@@ -211,7 +212,7 @@ public final class Database {
     public void withVoidTransaction(@NotNull Propagation propagation,
                                     @NotNull Isolation isolation,
                                     @NotNull VoidTransactionCallback callback) {
-        withTransaction(propagation, isolation, convertCallback(callback));
+        withTransaction(propagation, isolation, fromVoidCallback(callback));
     }
 
     /**
@@ -221,16 +222,7 @@ public final class Database {
      */
     public void withVoidTransaction(@NotNull TransactionSettings settings,
                                     @NotNull VoidTransactionCallback callback) {
-        withTransaction(settings, convertCallback(callback));
-    }
-
-    @NotNull
-    private static TransactionCallback<Void> convertCallback(@NotNull VoidTransactionCallback callback) {
-        return tx -> {
-            callback.execute(tx);
-            //noinspection ReturnOfNull
-            return null;
-        };
+        withTransaction(settings, fromVoidCallback(callback));
     }
 
     /**

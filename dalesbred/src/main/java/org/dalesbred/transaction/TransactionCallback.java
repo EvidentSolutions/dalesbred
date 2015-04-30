@@ -37,4 +37,16 @@ import java.sql.SQLException;
 @FunctionalInterface
 public interface TransactionCallback<T> {
     T execute(@NotNull TransactionContext tx) throws SQLException;
+
+    /**
+     * Converts {@code VoidTransactionCallback} to {@code TransactionCallback<Void>}
+     */
+    @NotNull
+    static TransactionCallback<Void> fromVoidCallback(@NotNull VoidTransactionCallback callback) {
+        return tx -> {
+            callback.execute(tx);
+            //noinspection ReturnOfNull
+            return null;
+        };
+    }
 }
