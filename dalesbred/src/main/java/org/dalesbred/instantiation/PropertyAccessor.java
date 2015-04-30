@@ -25,11 +25,11 @@ package org.dalesbred.instantiation;
 import org.dalesbred.annotation.DalesbredIgnore;
 import org.dalesbred.internal.utils.Throwables;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import static java.lang.reflect.Modifier.isPublic;
@@ -43,23 +43,20 @@ abstract class PropertyAccessor {
 
     abstract Type getType();
 
-    @Nullable
-    static PropertyAccessor findAccessor(@NotNull Class<?> cl, @NotNull String name) {
+    @NotNull
+    static Optional<PropertyAccessor> findAccessor(@NotNull Class<?> cl, @NotNull String name) {
         String normalizedName = UNDERSCORE.matcher(name).replaceAll("");
-        Method setter = findSetter(cl, normalizedName);
-        if (setter != null) {
-            return new SetterPropertyAccessor(setter);
+        Optional<PropertyAccessor> setter = findSetter(cl, normalizedName).map(SetterPropertyAccessor::new);
+
+        if (setter.isPresent()) {
+            return setter;
         } else {
-            Field field = findField(cl, normalizedName);
-            if (field != null)
-                return new FieldPropertyAccessor(field);
-            else
-                return null;
+            return findField(cl, normalizedName).map(FieldPropertyAccessor::new);
         }
     }
 
-    @Nullable
-    private static Field findField(@NotNull Class<?> cl, @NotNull String name) {
+    @NotNull
+    private static Optional<Field> findField(@NotNull Class<?> cl, @NotNull String name) {
         Field result = null;
 
         for (Field field : cl.getFields())
@@ -69,11 +66,11 @@ abstract class PropertyAccessor {
                 result = field;
             }
 
-        return result;
+        return Optional.ofNullable(result);
     }
 
-    @Nullable
-    private static Method findSetter(@NotNull Class<?> cl, @NotNull String name) {
+    @NotNull
+    private static Optional<Method> findSetter(@NotNull Class<?> cl, @NotNull String name) {
         Method result = null;
 
         String methodName = "set" + name;
@@ -85,16 +82,12 @@ abstract class PropertyAccessor {
             }
         }
 
-        return result;
+        return Optional.ofNullable(result);
     }
 
-    @Nullable
-    public static Type findPropertyType(@NotNull Class<?> cl, @NotNull String name) {
-        PropertyAccessor accessor = findAccessor(cl, name);
-        if (accessor != null)
-            return accessor.getType();
-        else
-            return null;
+    @NotNull
+    public static Optional<Type> findPropertyType(@NotNull Class<?> cl, @NotNull String name) {
+        return findAccessor(cl, name).map(PropertyAccessor::getType);
     }
 
     private static final class FieldPropertyAccessor extends PropertyAccessor {

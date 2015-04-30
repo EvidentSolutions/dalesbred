@@ -23,19 +23,16 @@
 package org.dalesbred.instantiation;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.dalesbred.internal.utils.Primitives.wrap;
 import static org.dalesbred.internal.utils.TypeUtils.*;
 
 final class ConversionMap {
 
+    @NotNull
     private final Map<Type, List<TypeConversion<?,?>>> mappings = new HashMap<>();
 
     void register(@NotNull TypeConversion<?, ?> coercion) {
@@ -50,33 +47,34 @@ final class ConversionMap {
         items.add(coercion);
     }
 
-    @Nullable
-    TypeConversion<?,?> findConversion(@NotNull Type source, @NotNull Type target) {
+    @NotNull
+    Optional<TypeConversion<?,?>> findConversion(@NotNull Type source, @NotNull Type target) {
         for (Type cl = wrap(source); cl != null; cl = genericSuperClass(cl)) {
-            TypeConversion<?,?> conversion = findConversionsRegisteredFor(cl, target);
-            if (conversion != null)
+            Optional<TypeConversion<?,?>> conversion = findConversionsRegisteredFor(cl, target);
+            if (conversion.isPresent())
                 return conversion;
         }
 
         for (Type cl : genericInterfaces(source)) {
-            TypeConversion<?,?> conversion = findConversionsRegisteredFor(cl, target);
-            if (conversion != null)
+            Optional<TypeConversion<?,?>> conversion = findConversionsRegisteredFor(cl, target);
+            if (conversion.isPresent())
                 return conversion;
         }
 
-        return null;
+        return Optional.empty();
     }
 
-    @Nullable
-    private TypeConversion<?,?> findConversionsRegisteredFor(@NotNull Type source, @NotNull Type target) {
+    @NotNull
+    private Optional<TypeConversion<?,?>> findConversionsRegisteredFor(@NotNull Type source, @NotNull Type target) {
         List<TypeConversion<?,?>> candidates = mappings.get(source);
         if (candidates != null) {
             for (int i = candidates.size() - 1; i >= 0; i--) {
                 TypeConversion<?, ?> conversion = candidates.get(i);
                 if (isAssignable(rawType(target), rawType(conversion.getTarget())))
-                    return conversion;
+                    return Optional.of(conversion);
             }
         }
-        return null;
+
+        return Optional.empty();
     }
 }

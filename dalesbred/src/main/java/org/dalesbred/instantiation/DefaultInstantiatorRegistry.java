@@ -84,7 +84,7 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
     public Object valueToDatabase(@Nullable Object value) {
         if (value == null) return null;
 
-        TypeConversion<?, ?> coercion = typeConversionRegistry.findCoercionToDb(value.getClass());
+        TypeConversion<?, ?> coercion = typeConversionRegistry.findCoercionToDb(value.getClass()).orElse(null);
         if (coercion != null)
             return coercion.unsafeCast(Object.class).convert(value);
         else
@@ -108,7 +108,7 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
         if (types.size() == 1) {
             @SuppressWarnings("unchecked")
             TypeConversion<Object, ? extends T> conversion =
-                    (TypeConversion<Object, ? extends T>) findConversionFromDbValue(types.getType(0), type);
+                    (TypeConversion<Object, ? extends T>) findConversionFromDbValue(types.getType(0), type).orElse(null);
             if (conversion != null)
                 return new ConversionInstantiator<>(conversion);
         }
@@ -120,7 +120,7 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
 
         for (Constructor<T> constructor : constructorsSortedByDescendingParameterCount(cl)) {
             if (!constructor.isAnnotationPresent(DalesbredIgnore.class)) {
-                Instantiator<T> instantiator = instantiatorFrom(constructor, types);
+                Instantiator<T> instantiator = instantiatorFrom(constructor, types).orElse(null);
                 if (instantiator != null)
                     return instantiator;
             }
@@ -133,20 +133,14 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
      * Returns an instantiator that uses given constructor and given types to create instances,
      * or null if there are no coercions that can be made to instantiate the type.
      */
-    @Nullable
-    private <T> Instantiator<T> instantiatorFrom(@NotNull Constructor<T> constructor, @NotNull NamedTypeList types) {
-        if (!isPublic(constructor.getModifiers())) return null;
+    @NotNull
+    private <T> Optional<Instantiator<T>> instantiatorFrom(@NotNull Constructor<T> constructor, @NotNull NamedTypeList types) {
+        if (!isPublic(constructor.getModifiers()))
+            return Optional.empty();
 
-        Type[] targetTypes = findTargetTypes(constructor, types);
-        if (targetTypes == null)
-            return null;
-
-        TypeConversion<Object, ?>[] conversions = resolveCoercions(types, targetTypes);
-        if (conversions != null) {
-            PropertyAccessor[] accessors = createPropertyAccessorsForValuesNotCoveredByConstructor(constructor, types.getNames());
-            return new ReflectionInstantiator<>(constructor, conversions, accessors);
-        } else
-            return null;
+        return findTargetTypes(constructor, types).flatMap(targetTypes ->
+                resolveCoercions(types, targetTypes).map(conversions ->
+                    new ReflectionInstantiator<>(constructor, conversions, createPropertyAccessorsForValuesNotCoveredByConstructor(constructor, types.getNames()))));
     }
 
     @NotNull
@@ -163,59 +157,56 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
 
     @NotNull
     private static PropertyAccessor createAccessor(int index, @NotNull Class<?> cl, @NotNull List<String> names) {
-        PropertyAccessor accessor = PropertyAccessor.findAccessor(cl, names.get(index));
-        if (accessor != null)
-            return accessor;
-        else
-            throw new InstantiationException("Could not find neither setter nor field for '" + names.get(index) + '\'');
+        return PropertyAccessor.findAccessor(cl, names.get(index)).orElseThrow(() ->
+            new InstantiationException("Could not find neither setter nor field for '" + names.get(index) + '\''));
     }
 
     /**
      * Returns the target types that need to have coercions. The types contain first as many constructor
      * parameter types as we have and then the types of properties of object as given by names of result-set.
      */
-    @Nullable
-    private static Type[] findTargetTypes(@NotNull Constructor<?> ctor, @NotNull NamedTypeList resultSetTypes) {
+    @NotNull
+    private static Optional<Type[]> findTargetTypes(@NotNull Constructor<?> ctor, @NotNull NamedTypeList resultSetTypes) {
         Type[] constructorParameterTypes = ctor.getGenericParameterTypes();
-        if (constructorParameterTypes.length > resultSetTypes.size()) return null;
-        if (constructorParameterTypes.length == resultSetTypes.size()) return constructorParameterTypes;
+        if (constructorParameterTypes.length > resultSetTypes.size()) return Optional.empty();
+        if (constructorParameterTypes.length == resultSetTypes.size()) return Optional.of(constructorParameterTypes);
 
         Type[] result = new Type[resultSetTypes.size()];
         System.arraycopy(constructorParameterTypes, 0, result, 0, constructorParameterTypes.length);
 
         for (int i = constructorParameterTypes.length; i < result.length; i++) {
-            Type type = PropertyAccessor.findPropertyType(ctor.getDeclaringClass(), resultSetTypes.getName(i));
+            Type type = PropertyAccessor.findPropertyType(ctor.getDeclaringClass(), resultSetTypes.getName(i)).orElse(null);
             if (type != null)
                 result[i] = type;
             else
-                return null;
+                return Optional.empty();
         }
 
-        return result;
+        return Optional.of(result);
     }
 
     /**
      * Returns the list of coercions that need to be performed to convert sourceTypes
      * to targetTypes, or null if coercions can't be done.
      */
-    @Nullable
-    private TypeConversion<Object,?>[] resolveCoercions(@NotNull NamedTypeList sourceTypes, @NotNull Type[] targetTypes) {
+    @NotNull
+    private Optional<TypeConversion<Object,?>[]> resolveCoercions(@NotNull NamedTypeList sourceTypes, @NotNull Type[] targetTypes) {
         if (targetTypes.length != sourceTypes.size())
-            return null;
+            return Optional.empty();
 
         TypeConversion<?,?>[] conversions = new TypeConversion[targetTypes.length];
 
         for (int i = 0; i < targetTypes.length; i++) {
-            TypeConversion<?,?> conversion = findConversionFromDbValue(sourceTypes.getType(i), targetTypes[i]);
+            TypeConversion<?,?> conversion = findConversionFromDbValue(sourceTypes.getType(i), targetTypes[i]).orElse(null);
             if (conversion != null)
                 conversions[i] = conversion;
             else
-                return null;
+                return Optional.empty();
         }
 
         @SuppressWarnings("unchecked")
         TypeConversion<Object, ?>[] result = (TypeConversion<Object, ?>[]) conversions;
-        return result;
+        return Optional.of(result);
     }
 
     /**
@@ -225,7 +216,7 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
     @SuppressWarnings("unchecked")
     @NotNull
     public <S,T> TypeConversion<? super S, ? extends T> getCoercionFromDbValue(@NotNull Class<S> source, @NotNull Class<T> target) {
-        TypeConversion<?, ?> coercion = findConversionFromDbValue(source, target);
+        TypeConversion<?, ?> coercion = findConversionFromDbValue(source, target).orElse(null);
         if (coercion != null)
             return (TypeConversion<S,T>) coercion;
         else
@@ -235,68 +226,87 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
     /**
      * Returns coercion for converting value of source to target, or returns null if there's no such coercion.
      */
-    @Nullable
-    private TypeConversion<?, ?> findConversionFromDbValue(@NotNull Class<?> source, @NotNull Type target) {
+    @NotNull
+    private Optional<TypeConversion<?, ?>> findConversionFromDbValue(@NotNull Class<?> source, @NotNull Type target) {
         if (isAssignable(target, source))
-            return TypeConversion.identity(target);
+            return Optional.of(TypeConversion.identity(target));
 
-        TypeConversion<?,?> coercion = typeConversionRegistry.findCoercionFromDbValue(source, target);
-        if (coercion != null)
-            return coercion;
+        Optional<TypeConversion<?,?>> directConversion = typeConversionRegistry.findCoercionFromDbValue(source, target);
+        if (directConversion.isPresent())
+            return directConversion;
 
+        Optional<TypeConversion<?, ?>> arrayConversion = findArrayConversion(source, target);
+        if (arrayConversion.isPresent())
+            return arrayConversion;
+
+        Optional<TypeConversion<?, ?>> optionalConversion = findOptionalConversion(source, target);
+        if (optionalConversion.isPresent())
+            return optionalConversion;
+
+        Optional<TypeConversion<?, ?>> enumConversion = findEnumConversion(target);
+        if (enumConversion.isPresent())
+            return enumConversion;
+
+        return Optional.empty();
+    }
+
+    @NotNull
+    private Optional<TypeConversion<?, ?>> findEnumConversion(@NotNull Type target) {
+        if (isEnum(target)) {
+            @SuppressWarnings("rawtypes")
+            Class<? extends Enum> cl = rawType(target).asSubclass(Enum.class);
+            return Optional.ofNullable(dialect.getEnumCoercion(cl));
+        }
+
+        return Optional.empty();
+    }
+
+    @NotNull
+    private Optional<TypeConversion<?, ?>> findArrayConversion(@NotNull Class<?> source, @NotNull Type target) {
         Class<?> rawTarget = rawType(target);
 
         if (Array.class.isAssignableFrom(source)) {
             if (rawTarget.equals(Set.class))
-                return new SqlArrayToSetConversion(typeParameter(target), this);
+                return Optional.of(new SqlArrayToSetConversion(typeParameter(target), this));
 
             if (rawTarget.isAssignableFrom(List.class))
-                return new SqlArrayToListConversion(typeParameter(target), this);
+                return Optional.of(new SqlArrayToListConversion(typeParameter(target), this));
 
             if (rawTarget.isArray())
-                return new SqlArrayToArrayConversion(rawTarget.getComponentType(), this);
+                return Optional.of(new SqlArrayToArrayConversion(rawTarget.getComponentType(), this));
         }
 
-        TypeConversion<?, ?> conversion = optionalConversion(source, target);
-        if (conversion != null)
-            return conversion;
-
-        if (isEnum(target)) {
-            @SuppressWarnings("rawtypes")
-            Class<? extends Enum> cl = rawType(target).asSubclass(Enum.class);
-            return dialect.getEnumCoercion(cl);
-        }
-
-        return null;
+        return Optional.empty();
     }
 
-    @Nullable
-    private TypeConversion<?, ?> optionalConversion(@NotNull Class<?> source, @NotNull Type target) {
+    @NotNull
+    private Optional<TypeConversion<?, ?>> findOptionalConversion(@NotNull Class<?> source, @NotNull Type target) {
         Class<?> rawTarget = rawType(target);
 
         if (rawTarget == Optional.class) {
             Type targetType = typeParameter(target);
 
-            TypeConversion<?, ?> conversion = findConversionFromDbValue(source, targetType);
+            TypeConversion<?, ?> conversion = findConversionFromDbValue(source, targetType).orElse(null);
             if (conversion != null)
-                return new OptionalConversion<>(source, target, conversion, Optional::of, Optional.empty());
+                return Optional.of(new OptionalConversion<>(source, target, conversion, Optional::of, Optional.empty()));
 
         } else if (rawTarget == OptionalInt.class) {
-            TypeConversion<?, ?> conversion = findConversionFromDbValue(source, int.class);
+            TypeConversion<?, ?> conversion = findConversionFromDbValue(source, int.class).orElse(null);
             if (conversion != null)
-                return new OptionalConversion<>(source, target, conversion, o -> OptionalInt.of((Integer) o), OptionalInt.empty());
+                return Optional.of(new OptionalConversion<>(source, target, conversion, o -> OptionalInt.of((Integer) o), OptionalInt.empty()));
 
         } else if (rawTarget == OptionalLong.class) {
-            TypeConversion<?, ?> conversion = findConversionFromDbValue(source, long.class);
+            TypeConversion<?, ?> conversion = findConversionFromDbValue(source, long.class).orElse(null);
             if (conversion != null)
-                return new OptionalConversion<>(source, target, conversion, o -> OptionalLong.of((Long) o), OptionalLong.empty());
+                return Optional.of(new OptionalConversion<>(source, target, conversion, o -> OptionalLong.of((Long) o), OptionalLong.empty()));
 
         } else if (rawTarget == OptionalDouble.class) {
-            TypeConversion<?, ?> conversion = findConversionFromDbValue(source, double.class);
+            TypeConversion<?, ?> conversion = findConversionFromDbValue(source, double.class).orElse(null);
             if (conversion != null)
-                return new OptionalConversion<>(source, target, conversion, o -> OptionalDouble.of((Double) o), OptionalDouble.empty());
+                return Optional.of(new OptionalConversion<>(source, target, conversion, o -> OptionalDouble.of((Double) o), OptionalDouble.empty()));
         }
-        return null;
+
+        return Optional.empty();
     }
 
     @NotNull

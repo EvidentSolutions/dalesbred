@@ -23,36 +23,36 @@
 package org.dalesbred.internal.utils;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Optional;
 
 public final class ReflectionUtils {
 
     private ReflectionUtils() {
     }
 
-    @Nullable
-    public static Field findField(@NotNull Class<?> cl, @NotNull String name) {
+    @NotNull
+    public static Optional<Field> findField(@NotNull Class<?> cl, @NotNull String name) {
         try {
-            return cl.getField(name);
+            return Optional.of(cl.getField(name));
         } catch (NoSuchFieldException e) {
-            return null;
+            return Optional.empty();
         }
     }
 
-    @Nullable
-    public static Method findGetter(@NotNull Class<?> cl, @NotNull String propertyName) {
+    @NotNull
+    public static Optional<Method> findGetter(@NotNull Class<?> cl, @NotNull String propertyName) {
         String capitalizedName = StringUtils.capitalize(propertyName);
 
         try {
-            return cl.getMethod("get" + capitalizedName);
+            return Optional.of(cl.getMethod("get" + capitalizedName));
         } catch (NoSuchMethodException e) {
             try {
-                return cl.getMethod("is" + capitalizedName);
+                return Optional.of(cl.getMethod("is" + capitalizedName));
             } catch (NoSuchMethodException e1) {
-                return null;
+                return Optional.empty();
             }
         }
     }

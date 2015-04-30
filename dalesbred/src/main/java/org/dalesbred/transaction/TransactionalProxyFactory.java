@@ -31,6 +31,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
@@ -71,7 +72,7 @@ public final class TransactionalProxyFactory {
 
         @Override
         public Object invoke(@NotNull Object proxy, @NotNull Method method, @Nullable Object[] args) throws Throwable {
-            TransactionSettings tx = findTransactionSettings(method);
+            TransactionSettings tx = findTransactionSettings(method).orElse(null);
 
             if (tx == null)
                 return invokeWithoutTransaction(method, args);
@@ -107,14 +108,13 @@ public final class TransactionalProxyFactory {
             }
         }
 
-        @Nullable
-        private TransactionSettings findTransactionSettings(@NotNull Method interfaceMethod) {
-            DalesbredTransactional tx = findTransactionDefinition(interfaceMethod);
-            return  (tx != null) ? TransactionSettings.fromAnnotation(tx) : null;
+        @NotNull
+        private Optional<TransactionSettings> findTransactionSettings(@NotNull Method interfaceMethod) {
+            return findTransactionDefinition(interfaceMethod).map(TransactionSettings::fromAnnotation);
         }
 
-        @Nullable
-        private DalesbredTransactional findTransactionDefinition(@NotNull Method interfaceMethod) {
+        @NotNull
+        private Optional<DalesbredTransactional> findTransactionDefinition(@NotNull Method interfaceMethod) {
             try {
                 Method actualMethod = target.getClass().getMethod(interfaceMethod.getName(), interfaceMethod.getParameterTypes());
                 DalesbredTransactional tx = actualMethod.getAnnotation(DalesbredTransactional.class);
@@ -125,7 +125,7 @@ public final class TransactionalProxyFactory {
                 if (tx == null)
                     tx = interfaceMethod.getDeclaringClass().getAnnotation(DalesbredTransactional.class);
 
-                return tx;
+                return Optional.ofNullable(tx);
 
             } catch (NoSuchMethodException e) {
                 throw new RuntimeException(e);

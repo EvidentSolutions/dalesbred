@@ -60,11 +60,11 @@ public final class VariableResolvers {
     public static VariableResolver resolverForBean(@NotNull Object object) {
         return variable -> {
             try {
-                Method getter = ReflectionUtils.findGetter(object.getClass(), variable);
+                Method getter = ReflectionUtils.findGetter(object.getClass(), variable).orElse(null);
                 if (getter != null) {
                     return getter.invoke(object);
                 } else {
-                    Field field = ReflectionUtils.findField(object.getClass(), variable);
+                    Field field = ReflectionUtils.findField(object.getClass(), variable).orElse(null);
                     if (field != null)
                         return field.get(object);
                     else

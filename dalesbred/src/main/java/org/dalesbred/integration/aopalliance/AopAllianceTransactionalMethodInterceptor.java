@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Provider;
 import java.lang.reflect.Method;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
@@ -72,17 +73,15 @@ public final class AopAllianceTransactionalMethodInterceptor implements MethodIn
 
     @NotNull
     private static TransactionSettings getTransactionSettings(@NotNull MethodInvocation invocation) {
-        DalesbredTransactional tx = findTransactionDefinition(invocation.getMethod());
-        if (tx != null)
-            return TransactionSettings.fromAnnotation(tx);
-        else
-            return new TransactionSettings();
+        return findTransactionDefinition(invocation.getMethod())
+                .map(TransactionSettings::fromAnnotation)
+                .orElseGet(TransactionSettings::new);
     }
 
-    @Nullable
-    private static DalesbredTransactional findTransactionDefinition(@NotNull Method method) {
+    @NotNull
+    private static Optional<DalesbredTransactional> findTransactionDefinition(@NotNull Method method) {
         DalesbredTransactional tx = method.getAnnotation(DalesbredTransactional.class);
-        return (tx != null) ? tx : method.getDeclaringClass().getAnnotation(DalesbredTransactional.class);
+        return Optional.ofNullable((tx != null) ? tx : method.getDeclaringClass().getAnnotation(DalesbredTransactional.class));
     }
 
     private static class WrappedException extends RuntimeException {

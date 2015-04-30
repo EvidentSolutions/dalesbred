@@ -25,8 +25,11 @@ package org.dalesbred.instantiation;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNull;
+import java.util.Optional;
+
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
 
 public class ConversionMapTest {
 
@@ -34,7 +37,7 @@ public class ConversionMapTest {
 
     @Test
     public void searchingForNotExistingItemReturnsNull() {
-        assertNull(registry.findConversion(Integer.class, String.class));
+        assertThat(registry.findConversion(Integer.class, String.class), is(Optional.empty()));
     }
 
     @Test
@@ -42,7 +45,7 @@ public class ConversionMapTest {
         TypeConversion<Integer, String> conversion = dummyConversion(Integer.class, String.class);
         registry.register(conversion);
 
-        assertSame(conversion, registry.findConversion(Integer.class, String.class));
+        assertSame(conversion, registry.findConversion(Integer.class, String.class).orElse(null));
     }
 
     @Test
@@ -50,7 +53,7 @@ public class ConversionMapTest {
         TypeConversion<Integer, String> conversion = dummyConversion(Integer.class, String.class);
         registry.register(conversion);
 
-        assertSame(conversion, registry.findConversion(Integer.class, Object.class));
+        assertSame(conversion, registry.findConversion(Integer.class, Object.class).orElse(null));
     }
 
     @Test
@@ -58,7 +61,7 @@ public class ConversionMapTest {
         TypeConversion<Number, String> conversion = dummyConversion(Number.class, String.class);
         registry.register(conversion);
 
-        assertSame(conversion, registry.findConversion(Integer.class, String.class));
+        assertSame(conversion, registry.findConversion(Integer.class, String.class).orElse(null));
     }
 
     @Test
@@ -66,7 +69,7 @@ public class ConversionMapTest {
         TypeConversion<Integer, Long> conversion = dummyConversion(Integer.class, Long.class);
         registry.register(conversion);
 
-        assertSame(conversion, registry.findConversion(int.class, long.class));
+        assertSame(conversion, registry.findConversion(int.class, long.class).orElse(null));
     }
 
     @Test
@@ -74,7 +77,7 @@ public class ConversionMapTest {
         TypeConversion<CharSequence, Long> conversion = dummyConversion(CharSequence.class, Long.class);
         registry.register(conversion);
 
-        assertSame(conversion, registry.findConversion(String.class, Long.class));
+        assertSame(conversion, registry.findConversion(String.class, Long.class).orElse(null));
     }
 
     @Test
@@ -84,7 +87,7 @@ public class ConversionMapTest {
         registry.register(conversion1);
         registry.register(conversion2);
 
-        assertSame(conversion2, registry.findConversion(String.class, Long.class));
+        assertSame(conversion2, registry.findConversion(String.class, Long.class).orElse(null));
     }
 
     @NotNull

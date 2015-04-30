@@ -23,9 +23,9 @@
 package org.dalesbred.instantiation;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
+import java.util.Optional;
 
 /**
  * The used implementation of TypeConversionRegistry.
@@ -35,13 +35,13 @@ final class DefaultTypeConversionRegistry implements TypeConversionRegistry {
     private final ConversionMap loadConversions = new ConversionMap();
     private final ConversionMap storeConversions = new ConversionMap();
 
-    @Nullable
-    public TypeConversion<?,?> findCoercionFromDbValue(@NotNull Type source, @NotNull Type target) {
+    @NotNull
+    public Optional<TypeConversion<?,?>> findCoercionFromDbValue(@NotNull Type source, @NotNull Type target) {
         return loadConversions.findConversion(source, target);
     }
 
-    @Nullable
-    public TypeConversion<?,?> findCoercionToDb(@NotNull Type type) {
+    @NotNull
+    public Optional<TypeConversion<?,?>> findCoercionToDb(@NotNull Type type) {
         return storeConversions.findConversion(type, Object.class);
     }
 

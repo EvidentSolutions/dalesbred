@@ -26,10 +26,10 @@ import org.dalesbred.Database;
 import org.dalesbred.DatabaseException;
 import org.dalesbred.dialect.Dialect;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
@@ -44,8 +44,8 @@ public final class SingleConnectionTransactionManager extends AbstractTransactio
     @NotNull
     private final Connection connection;
 
-    @Nullable
-    private DefaultTransaction currentTransaction;
+    @NotNull
+    private Optional<DefaultTransaction> currentTransaction;
 
     /**
      * Constructs a transaction manager that uses given connection.
@@ -57,18 +57,18 @@ public final class SingleConnectionTransactionManager extends AbstractTransactio
     public SingleConnectionTransactionManager(@NotNull Connection connection,
                                               boolean insideForeignTransaction) {
         this.connection = requireNonNull(connection);
-        currentTransaction = insideForeignTransaction ? new DefaultTransaction(connection) : null;
+        currentTransaction = insideForeignTransaction ? Optional.of(new DefaultTransaction(connection)) : Optional.empty();
     }
 
-    @Nullable
+    @NotNull
     @Override
-    protected DefaultTransaction getActiveTransaction() {
+    protected Optional<DefaultTransaction> getActiveTransaction() {
         return currentTransaction;
     }
 
     @Override
     protected <T> T withNewTransaction(@NotNull TransactionCallback<T> callback, @NotNull Dialect dialect, @NotNull Isolation isolation, int retries) {
-        assert currentTransaction == null;
+        assert !currentTransaction.isPresent();
 
         try {
             connection.setAutoCommit(false);
@@ -76,12 +76,12 @@ public final class SingleConnectionTransactionManager extends AbstractTransactio
                 connection.setTransactionIsolation(isolation.getJdbcLevel());
 
             DefaultTransaction newTransaction = new DefaultTransaction(connection);
-            currentTransaction = newTransaction;
+            currentTransaction = Optional.of(newTransaction);
             return newTransaction.execute(retries, callback, dialect);
         } catch (SQLException e) {
             throw dialect.convertException(e);
         } finally {
-            currentTransaction = null;
+            currentTransaction = Optional.empty();
         }
     }
 

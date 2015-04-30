@@ -25,10 +25,10 @@ package org.dalesbred.transaction;
 import org.dalesbred.connection.ConnectionProvider;
 import org.dalesbred.dialect.Dialect;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
@@ -71,7 +71,7 @@ public final class DefaultTransactionManager extends AbstractTransactionManager 
                                              @NotNull Isolation isolation,
                                              @NotNull Dialect dialect,
                                              int retries) {
-        DefaultTransaction suspended = getActiveTransaction();
+        DefaultTransaction suspended = getActiveTransaction().orElse(null);
         try {
             activeTransaction.set(null);
 
@@ -86,9 +86,9 @@ public final class DefaultTransactionManager extends AbstractTransactionManager 
     }
 
     @Override
-    @Nullable
-    protected DefaultTransaction getActiveTransaction() {
-        return activeTransaction.get();
+    @NotNull
+    protected Optional<DefaultTransaction> getActiveTransaction() {
+        return Optional.ofNullable(activeTransaction.get());
     }
 
     @NotNull

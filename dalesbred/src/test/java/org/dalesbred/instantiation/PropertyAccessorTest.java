@@ -26,29 +26,32 @@ import org.dalesbred.annotation.DalesbredIgnore;
 import org.dalesbred.annotation.Reflective;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import java.util.Optional;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertThat;
 
 public class PropertyAccessorTest {
 
     @Test
     public void findingSetters() {
-        assertNotNull(PropertyAccessor.findAccessor(DepartmentWithSetters.class, "department_name"));
+        assertThat(PropertyAccessor.findAccessor(DepartmentWithSetters.class, "department_name"), is(not(Optional.empty())));
     }
 
     @Test
     public void findingFields() {
-        assertNotNull(PropertyAccessor.findAccessor(DepartmentWithFields.class, "department_name"));
+        assertThat(PropertyAccessor.findAccessor(DepartmentWithFields.class, "department_name"), is(not(Optional.empty())));
     }
 
     @Test
     public void ignoredSetters() {
-        assertNull(PropertyAccessor.findAccessor(IgnoredValues.class, "ignoredMethod"));
+        assertThat(PropertyAccessor.findAccessor(IgnoredValues.class, "ignoredMethod"), is(Optional.empty()));
     }
 
     @Test
     public void ignoredFields() {
-        assertNull(PropertyAccessor.findAccessor(IgnoredValues.class, "ignoredField"));
+        assertThat(PropertyAccessor.findAccessor(IgnoredValues.class, "ignoredField"), is(Optional.empty()));
     }
 
     private static class DepartmentWithFields {

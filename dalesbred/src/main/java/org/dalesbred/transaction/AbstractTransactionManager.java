@@ -24,7 +24,8 @@ package org.dalesbred.transaction;
 
 import org.dalesbred.dialect.Dialect;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public abstract class AbstractTransactionManager implements TransactionManager {
 
@@ -40,8 +41,8 @@ public abstract class AbstractTransactionManager implements TransactionManager {
     @NotNull
     private Propagation defaultPropagation = Propagation.DEFAULT;
 
-    @Nullable
-    protected abstract DefaultTransaction getActiveTransaction();
+    @NotNull
+    protected abstract Optional<DefaultTransaction> getActiveTransaction();
 
     protected abstract <T> T withNewTransaction(@NotNull TransactionCallback<T> callback,
                                                 @NotNull Dialect dialect,
@@ -59,7 +60,7 @@ public abstract class AbstractTransactionManager implements TransactionManager {
         Isolation isolation = settings.getIsolation().normalize(defaultIsolation);
         int retries = settings.getRetries();
 
-        DefaultTransaction existingTransaction = getActiveTransaction();
+        DefaultTransaction existingTransaction = getActiveTransaction().orElse(null);
 
         if (existingTransaction != null) {
             if (propagation == Propagation.REQUIRES_NEW)
@@ -79,16 +80,14 @@ public abstract class AbstractTransactionManager implements TransactionManager {
 
     @Override
     public <T> T withCurrentTransaction(@NotNull TransactionCallback<T> callback, @NotNull Dialect dialect) {
-        DefaultTransaction transaction = getActiveTransaction();
-        if (transaction != null)
-            return transaction.join(callback, dialect);
-        else
-            throw new NoActiveTransactionException("Tried to perform database operation without active transaction. Database accesses should be bracketed with Database.withTransaction(...) or implicit transactions should be enabled.");
+        DefaultTransaction transaction = getActiveTransaction().orElseThrow(() ->
+                new NoActiveTransactionException("Tried to perform database operation without active transaction. Database accesses should be bracketed with Database.withTransaction(...) or implicit transactions should be enabled."));
+        return transaction.join(callback, dialect);
     }
 
     @Override
     public boolean hasActiveTransaction() {
-        return getActiveTransaction() != null;
+        return getActiveTransaction().isPresent();
     }
 
     @Override

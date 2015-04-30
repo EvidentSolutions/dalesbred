@@ -50,15 +50,17 @@ public abstract class TypeConversion<S,T> {
 
     @NotNull
     public static <S,T> TypeConversion<S,T> fromNonNullFunction(@NotNull Class<S> source, @NotNull Class<T> target, @NotNull Function<S, T> function) {
+        return fromFunction(source, target, value -> value != null ? function.apply(value) : null);
+    }
+
+    @NotNull
+    public static <S,T> TypeConversion<S,T> fromFunction(@NotNull Class<S> source, @NotNull Class<T> target, @NotNull Function<S, T> function) {
         return new TypeConversion<S, T>(source, target) {
 
             @Nullable
             @Override
             public T convert(@Nullable S value) {
-                if (value != null)
-                    return function.apply(value);
-                else
-                    return null;
+                return function.apply(value);
             }
         };
     }
