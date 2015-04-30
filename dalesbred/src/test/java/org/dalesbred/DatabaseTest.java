@@ -32,7 +32,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -207,21 +206,6 @@ public class DatabaseTest {
 
         db.setAllowImplicitTransactions(true);
         assertTrue(db.isAllowImplicitTransactions());
-    }
-
-    @Test
-    public void instantiationListener() {
-        List<Department> instantiations = new ArrayList<>();
-        db.getInstantiatorRegistry().addInstantiationListener(object -> {
-            if (object instanceof Department)
-                instantiations.add((Department) object);
-        });
-
-        db.update("drop table if exists department");
-
-        List<Department> departments = db.findAll(Department.class, "select * from (values (1, 'foo'), (2, 'bar')) d");
-
-        assertEquals(departments, instantiations);
     }
 
     @Test

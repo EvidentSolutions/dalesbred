@@ -22,7 +22,6 @@
 
 package org.dalesbred.integration.guice;
 
-import com.google.inject.Injector;
 import com.google.inject.Provider;
 import org.dalesbred.Database;
 import org.jetbrains.annotations.NotNull;
@@ -35,21 +34,15 @@ import static java.util.Objects.requireNonNull;
 final class DatabaseProvider implements Provider<Database> {
 
     @NotNull
-    private final Injector injector;
-
-    @NotNull
     private final DataSource dataSource;
 
     @Inject
-    DatabaseProvider(@NotNull DataSource dataSource, @NotNull Injector injector) {
+    DatabaseProvider(@NotNull DataSource dataSource) {
         this.dataSource = requireNonNull(dataSource);
-        this.injector = requireNonNull(injector);
     }
 
     @Override
     public Database get() {
-        Database db = new Database(dataSource);
-        db.getInstantiatorRegistry().addInstantiationListener(injector::injectMembers);
-        return db;
+        return new Database(dataSource);
     }
 }

@@ -358,26 +358,6 @@ still like to be able to build from results. You can register custom instantiato
 Dalesbred will use this instantiator in place of the custom instantiator whenever it needs to build
 results of type `Foo`.
 
-InstantiationListeners
-~~~~~~~~~~~~~~~~~~~~~~
-
-You can configure a listener to receive notifications whenever Dalesbred creates new instances. The built-in
-<<_guice,Guice-support>> uses this feature to wire the dependencies of newly created objects, but you can use this
-callback anything you like:
-
-[source,java,indent=0]
-----
-        db.getInstantiatorRegistry().addInstantiationListener(new InstantiationListener() {
-            @Override
-            public void onInstantiation(@NotNull Object object) {
-                System.out.println("instantiated " + object);
-            }
-        });
-----
-
-Note that currently instantiation listeners are not called for objects instantiated by custom instantiators
-registered by users. This limitation could be lifted in the future.
-
 Integrations
 ------------
 

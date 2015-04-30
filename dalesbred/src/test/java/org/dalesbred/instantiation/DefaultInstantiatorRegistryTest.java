@@ -31,10 +31,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
@@ -111,28 +107,6 @@ public class DefaultInstantiatorRegistryTest {
         assertThat(result.calledConstructor, is(2));
         assertThat(result.getPropertyWithAccessors(), is("bar"));
         assertThat(result.publicField, is("baz"));
-    }
-
-    @Test
-    public void instantiationListenerForReflectionInstantiator() {
-        List<Object> instantiatedObjects = new ArrayList<>();
-
-        instantiatorRegistry.addInstantiationListener(instantiatedObjects::add);
-
-        TestClass result = instantiate(TestClass.class, Integer.class, 3);
-        assertNotNull(result);
-        assertThat(instantiatedObjects, is(Collections.<Object>singletonList(result)));
-    }
-
-    @Test
-    public void instantiationListenerForConversionInstantiator() {
-        List<Object> instantiatedObjects = new ArrayList<>();
-
-        instantiatorRegistry.addInstantiationListener(instantiatedObjects::add);
-
-        Integer result = instantiate(Integer.class, Integer.class, 3);
-        assertNotNull(result);
-        assertThat(instantiatedObjects, is(Collections.<Object>singletonList(result)));
     }
 
     @Test

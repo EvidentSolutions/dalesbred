@@ -33,7 +33,10 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
 import java.sql.Array;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import static java.lang.reflect.Modifier.isPublic;
@@ -52,9 +55,6 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
 
     @NotNull
     private final DefaultTypeConversionRegistry typeConversionRegistry = new DefaultTypeConversionRegistry();
-
-    @Nullable
-    private InstantiationListeners instantiationListeners;
 
     @NotNull
     private final Map<Type, Instantiator<?>> instantiators = new HashMap<>();
@@ -113,7 +113,7 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
             TypeConversion<Object, ? extends T> coercion =
                     (TypeConversion<Object, ? extends T>) findConversionFromDbValue(types.getType(0), type);
             if (coercion != null)
-                return new CoercionInstantiator<>(coercion, instantiationListeners);
+                return new CoercionInstantiator<>(coercion);
         }
 
         @SuppressWarnings("unchecked")
@@ -147,7 +147,7 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
         TypeConversion<Object, ?>[] conversions = resolveCoercions(types, targetTypes);
         if (conversions != null) {
             PropertyAccessor[] accessors = createPropertyAccessorsForValuesNotCoveredByConstructor(constructor, types.getNames());
-            return new ReflectionInstantiator<>(constructor, conversions, accessors, instantiationListeners);
+            return new ReflectionInstantiator<>(constructor, conversions, accessors);
         } else
             return null;
     }
@@ -283,34 +283,8 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
         return typeConversionRegistry;
     }
 
-    /**
-     * Adds a new listener which gets notified whenever an object is instantiated.
-     */
-    @Override
-    public void addInstantiationListener(@NotNull InstantiationListener instantiationListener) {
-        if (instantiationListeners == null) {
-            instantiationListeners = new InstantiationListeners();
-            instantiationListeners.add(instantiationListener);
-        }
-    }
-
     @Override
     public <T> void registerInstantiator(@NotNull Class<T> cl, @NotNull Instantiator<T> instantiator) {
         instantiators.put(requireNonNull(cl), requireNonNull(instantiator));
-    }
-
-    private static final class InstantiationListeners implements InstantiationListener {
-
-        private final List<InstantiationListener> listeners = new ArrayList<>();
-
-        public void add(@NotNull InstantiationListener listener) {
-            listeners.add(requireNonNull(listener));
-        }
-
-        @Override
-        public void onInstantiation(@NotNull Object object) {
-            for (InstantiationListener listener : listeners)
-                listener.onInstantiation(object);
-        }
     }
 }

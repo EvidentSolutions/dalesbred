@@ -28,6 +28,7 @@
   - Moved `fi.evident.dalesbred.Reflective` to test folder so that it's not visible in API.
   - Renamed `fi.evident.dalesbred.Transactional` to `org.dalesbred.annotation.DalesbredTransactional`
     so that it does not clash with Spring's `@Transactional`
+  - Removed `fi.evident.dalesbred.instantiation.InstantiationListener` completely.
 
 ## 0.8.0 (2015-04-08)
 
