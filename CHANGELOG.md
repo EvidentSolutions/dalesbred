@@ -19,6 +19,7 @@
   - Removed `SqlQuery.confidential`. Some database drivers will print the values passed to
     database in exceptions anyway, so the only safe way to make sure that values are not
     revealed inadvertently is not to show exceptions at all.
+  - Removed `NamedParameterQueries.namedQuery`. Use `SqlQuery.namedQuery` instead.
 
 ## 0.8.0 (2015-04-08)
 

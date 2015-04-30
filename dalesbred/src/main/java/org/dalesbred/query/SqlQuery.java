@@ -103,7 +103,7 @@ public final class SqlQuery implements Serializable {
      */
     @NotNull
     public static SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull VariableResolver variableResolver) {
-        return NamedParameterQueries.namedQuery(sql, variableResolver);
+        return NamedParameterSqlParser.parseSqlStatement(sql).toQuery(variableResolver);
     }
 
     /**
