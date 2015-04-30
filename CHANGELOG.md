@@ -13,7 +13,8 @@
     - All annotations to `org.dalesbred.annotation`
     - All transaction-related classes to `org.dalesbred.transaction`.
     - `fi.evident.dalesbred.SqlQuery` -> `org.dalesbred.query.SqlQuery` 
-    - `fi.evident.dalesbred.SqlArray` -> `org.dalesbred.datatype.SqlArray` 
+    - `fi.evident.dalesbred.SqlArray` -> `org.dalesbred.datatype.SqlArray`
+    - `fi.evident.dalesbred.ResultTable` -> `org.dalesbred.result.ResultTable`
   - Moved classes that are technically `public`, but are not part of Dalesbred's supported 
     API to `org.dalesbred.internal`.
   - Removed `SqlQuery.confidential`. Some database drivers will print the values passed to

@@ -22,8 +22,7 @@
 
 package org.dalesbred.result;
 
-import org.dalesbred.ResultTable;
-import org.dalesbred.ResultTable.ColumnMetadata;
+import org.dalesbred.result.ResultTable.ColumnMetadata;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;

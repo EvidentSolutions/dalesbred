@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred;
+package org.dalesbred.result;
 
 import org.jetbrains.annotations.NotNull;
 
