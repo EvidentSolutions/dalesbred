@@ -1,5 +1,7 @@
 ## x.x.x (yyyy-mm-dd)
 
+  - New family of `findOptional` -methods in `Database`, returning `java.util.Optional` values.
+
 ### Breaking changes
 
   - Renamed base package `fi.evident.dalesbred` to `org.dalesbred`.

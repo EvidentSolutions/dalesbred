@@ -42,6 +42,7 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -372,6 +373,50 @@ public final class Database {
      */
     public <T> T findUnique(@NotNull Class<T> cl, @NotNull @SQL String sql, Object... args) {
         return findUnique(cl, SqlQuery.query(sql, args));
+    }
+
+    /**
+     * Find a unique result from database, using given {@link RowMapper} to convert row. Returns empty if
+     * there are no results.
+     *
+     * @throws NonUniqueResultException if there are multiple result rows
+     */
+    @NotNull
+    public <T> Optional<T> findOptional(@NotNull RowMapper<T> rowMapper, @NotNull SqlQuery query) {
+        return Optional.ofNullable(findUniqueOrNull(rowMapper, query));
+    }
+
+    /**
+     * Find a unique result from database, using given {@link RowMapper} to convert row. Returns empty if
+     * there are no results.
+     *
+     * @throws NonUniqueResultException if there are multiple result rows
+     */
+    @NotNull
+    public <T> Optional<T> findOptional(@NotNull RowMapper<T> rowMapper, @NotNull @SQL String sql, Object... args) {
+        return findOptional(rowMapper, SqlQuery.query(sql, args));
+    }
+
+    /**
+     * Finds a unique result from database, converting the database row to given class using default mechanisms.
+     * Returns empty if there are no results.
+     *
+     * @throws NonUniqueResultException if there are multiple result rows
+     */
+    @NotNull
+    public <T> Optional<T> findOptional(@NotNull Class<T> cl, @NotNull SqlQuery query) {
+        return Optional.ofNullable(findUniqueOrNull(cl, query));
+    }
+
+    /**
+     * Finds a unique result from database, converting the database row to given class using default mechanisms.
+     * Returns empty if there are no results.
+     *
+     * @throws NonUniqueResultException if there are multiple result rows
+     */
+    @NotNull
+    public <T> Optional<T> findOptional(@NotNull Class<T> cl, @NotNull @SQL String sql, Object... args) {
+        return findOptional(cl, SqlQuery.query(sql, args));
     }
 
     /**

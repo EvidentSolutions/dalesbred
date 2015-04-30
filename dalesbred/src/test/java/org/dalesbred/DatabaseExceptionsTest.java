@@ -48,6 +48,17 @@ public class DatabaseExceptionsTest {
     }
 
     @Test
+    public void findOptional_nonUniqueResult() {
+        SqlQuery query = SqlQuery.query("values (1), (2)");
+        try {
+            db.findOptional(Integer.class, query);
+            fail("Expected NonUniqueResultException");
+        } catch (NonUniqueResultException e) {
+            assertSame(query, e.getQuery());
+        }
+    }
+
+    @Test
     public void findUniqueInt_nullResult() {
         SqlQuery query = SqlQuery.query("values (cast(null as int))");
         try {

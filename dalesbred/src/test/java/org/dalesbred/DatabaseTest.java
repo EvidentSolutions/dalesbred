@@ -35,6 +35,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
@@ -144,6 +145,16 @@ public class DatabaseTest {
     }
 
     @Test
+    public void findOptional_emptyResult() {
+        assertThat(db.findOptional(Integer.class, "select * from (values (1)) n where false"), is(Optional.empty()));
+    }
+
+    @Test(expected = NonUniqueResultException.class)
+    public void findOptional_nonUniqueResult() {
+        db.findOptional(Integer.class, "values (1), (2)");
+    }
+
+    @Test
     public void rowMapper() {
         RowMapper<Integer> squaringRowMapper = resultSet -> {
             int value = resultSet.getInt(1);
@@ -153,6 +164,8 @@ public class DatabaseTest {
         assertThat(db.findAll(squaringRowMapper, "values (1), (2), (3)"), is(asList(1, 4, 9)));
         assertThat(db.findUnique(squaringRowMapper, "values (7)"), is(49));
         assertThat(db.findUniqueOrNull(squaringRowMapper, "select * from (values (1)) n where false"), is(nullValue()));
+        assertThat(db.findOptional(squaringRowMapper, "values (7)"), is(Optional.of(49)));
+        assertThat(db.findOptional(squaringRowMapper, "select * from (values (1)) n where false"), is(Optional.empty()));
     }
 
     @Test
