@@ -24,7 +24,7 @@ package org.dalesbred.integration.spring;
 
 import org.dalesbred.Database;
 import org.dalesbred.TestDatabaseProvider;
-import org.dalesbred.transaction.Transactional;
+import org.dalesbred.annotation.Transactional;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;

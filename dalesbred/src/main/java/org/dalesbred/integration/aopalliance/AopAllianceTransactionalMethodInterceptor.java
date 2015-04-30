@@ -25,10 +25,10 @@ package org.dalesbred.integration.aopalliance;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.dalesbred.Database;
+import org.dalesbred.annotation.Transactional;
 import org.dalesbred.integration.guice.GuiceSupport;
 import org.dalesbred.internal.utils.Require;
 import org.dalesbred.transaction.TransactionSettings;
-import org.dalesbred.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -20,8 +20,10 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.transaction;
+package org.dalesbred.annotation;
 
+import org.dalesbred.transaction.Isolation;
+import org.dalesbred.transaction.Propagation;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.*;

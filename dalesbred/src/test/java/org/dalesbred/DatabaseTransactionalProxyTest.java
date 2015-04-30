@@ -22,11 +22,11 @@
 
 package org.dalesbred;
 
+import org.dalesbred.annotation.Transactional;
 import org.dalesbred.testutils.LoggingController;
 import org.dalesbred.testutils.SuppressLogging;
 import org.dalesbred.transaction.NoActiveTransactionException;
 import org.dalesbred.transaction.Propagation;
-import org.dalesbred.transaction.Transactional;
 import org.junit.Rule;
 import org.junit.Test;
 
