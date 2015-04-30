@@ -24,6 +24,8 @@ package org.dalesbred.instantiation;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Function;
+
 /**
  * Registry containing the {@link TypeConversion}s used when converting database values
  * to objects and vice versa.
@@ -39,4 +41,20 @@ public interface TypeConversionRegistry {
      * Registers a new conversion that is used when sending data to the database.
      */
     void registerConversionToDatabaseType(@NotNull TypeConversion<?, ?> conversion);
+
+    default <S, T> void registerNonNullConversionFromDatabaseType(@NotNull Class<S> source, @NotNull Class<T> target, @NotNull Function<S, T> conversion) {
+        registerConversionFromDatabaseType(TypeConversion.fromNonNullFunction(source, target, conversion));
+    }
+
+    default <S, T> void registerNonNullConversionToDatabaseType(@NotNull Class<S> source, @NotNull Class<T> target, @NotNull Function<S, T> conversion) {
+        registerConversionToDatabaseType(TypeConversion.fromNonNullFunction(source, target, conversion));
+    }
+
+    default <D, J> void registerNonNullConversions(@NotNull Class<D> databaseType,
+                                                   @NotNull Class<J> javaType,
+                                                   @NotNull Function<D, J> fromDatabase,
+                                                   @NotNull Function<J, D> toDatabase) {
+        registerNonNullConversionFromDatabaseType(databaseType, javaType, fromDatabase);
+        registerNonNullConversionToDatabaseType(javaType, databaseType, toDatabase);
+    }
 }

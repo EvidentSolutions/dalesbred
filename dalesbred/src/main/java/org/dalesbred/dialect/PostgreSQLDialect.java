@@ -22,7 +22,6 @@
 
 package org.dalesbred.dialect;
 
-import org.dalesbred.instantiation.SimpleNonNullTypeConversion;
 import org.dalesbred.instantiation.TypeConversionRegistry;
 import org.dalesbred.internal.utils.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -52,12 +51,6 @@ public class PostgreSQLDialect extends Dialect {
 
     @Override
     public void registerTypeConversions(@NotNull TypeConversionRegistry typeConversionRegistry) {
-        typeConversionRegistry.registerConversionToDatabaseType(new SimpleNonNullTypeConversion<Date, Timestamp>(Date.class, Timestamp.class) {
-            @NotNull
-            @Override
-            public Timestamp convertNonNull(@NotNull Date value) {
-                return new Timestamp(value.getTime());
-            }
-        });
+        typeConversionRegistry.registerNonNullConversionToDatabaseType(Date.class, Timestamp.class, v -> new Timestamp(v.getTime()));
     }
 }

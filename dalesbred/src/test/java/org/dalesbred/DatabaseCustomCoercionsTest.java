@@ -22,7 +22,6 @@
 
 package org.dalesbred;
 
-import org.dalesbred.instantiation.SimpleNonNullTypeConversion;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,14 +40,14 @@ public class DatabaseCustomCoercionsTest {
 
     @Test
     public void customLoadConversions() {
-        db.getTypeConversionRegistry().registerConversionFromDatabaseType(new StringToEmailTypeConversion());
+        db.getTypeConversionRegistry().registerNonNullConversionFromDatabaseType(String.class, EmailAddress.class, EmailAddress::parse);
 
         assertEquals(new EmailAddress("user", "example.org"), db.findUnique(EmailAddress.class, "values ('user@example.org')"));
     }
 
     @Test
     public void customSaveConversions() {
-        db.getTypeConversionRegistry().registerConversionToDatabaseType(new EmailToStringTypeConversion());
+        db.getTypeConversionRegistry().registerNonNullConversionToDatabaseType(EmailAddress.class, String.class, EmailAddress::toString);
 
         db.update("drop table if exists custom_save_conversions_test");
         db.update("create temporary table custom_save_conversions_test (email varchar(32))");
@@ -56,36 +55,6 @@ public class DatabaseCustomCoercionsTest {
         db.update("insert into custom_save_conversions_test (email) values (?)", new EmailAddress("user", "example.org"));
 
         assertEquals("user@example.org", db.findUnique(String.class, "select email from custom_save_conversions_test"));
-    }
-
-    private static class StringToEmailTypeConversion extends SimpleNonNullTypeConversion<String, EmailAddress> {
-        private static final Pattern AT_SIGN = Pattern.compile("@");
-
-        public StringToEmailTypeConversion() {
-            super(String.class, EmailAddress.class);
-        }
-
-        @NotNull
-        @Override
-        public EmailAddress convertNonNull(@NotNull String value) {
-            String[] parts = AT_SIGN.split(value);
-            if (parts.length == 2)
-                return new EmailAddress(parts[0], parts[1]);
-            throw
-                new IllegalArgumentException("invalid address: '" + value + '\'');
-        }
-    }
-
-    private static class EmailToStringTypeConversion extends SimpleNonNullTypeConversion<EmailAddress, String> {
-        public EmailToStringTypeConversion() {
-            super(EmailAddress.class, String.class);
-        }
-
-        @NotNull
-        @Override
-        public String convertNonNull(@NotNull EmailAddress value) {
-            return value.toString();
-        }
     }
 
     public static class EmailAddress {
@@ -96,10 +65,21 @@ public class DatabaseCustomCoercionsTest {
         @NotNull
         private final String host;
 
+        private static final Pattern AT_SIGN = Pattern.compile("@");
+
         // This constructor has two parameters so that the reflection mechanism can't coerce the type automatically.
         public EmailAddress(@NotNull String user, @NotNull String host) {
             this.user = requireNonNull(user);
             this.host = requireNonNull(host);
+        }
+
+        @NotNull
+        public static EmailAddress parse(@NotNull String value) {
+            String[] parts = AT_SIGN.split(value);
+            if (parts.length == 2)
+                return new EmailAddress(parts[0], parts[1]);
+            throw
+                    new IllegalArgumentException("invalid address: '" + value + '\'');
         }
 
         @NotNull

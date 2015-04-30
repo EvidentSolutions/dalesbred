@@ -51,319 +51,127 @@ final class DefaultTypeConversions {
     private DefaultTypeConversions() { }
 
     public static void register(@NotNull TypeConversionRegistry registry) {
-        registry.registerConversionFromDatabaseType(new StringToUrlTypeConversion());
-        registry.registerConversionFromDatabaseType(new StringToUriTypeConversion());
-        registry.registerConversionFromDatabaseType(new StringToTimeZoneTypeConversion());
-        registry.registerConversionFromDatabaseType(new NumberToShortTypeConversion());
-        registry.registerConversionFromDatabaseType(new NumberToIntTypeConversion());
-        registry.registerConversionFromDatabaseType(new NumberToLongTypeConversion());
-        registry.registerConversionFromDatabaseType(new NumberToFloatTypeConversion());
-        registry.registerConversionFromDatabaseType(new NumberToDoubleTypeConversion());
-        registry.registerConversionFromDatabaseType(new NumberToBigIntegerTypeConversion());
-        registry.registerConversionFromDatabaseType(new NumberToBigDecimalTypeConversion());
-        registry.registerConversionFromDatabaseType(new ClobToStringTypeConversion());
-        registry.registerConversionFromDatabaseType(new ClobToReaderTypeConversion());
-        registry.registerConversionFromDatabaseType(new BlobToByteArrayTypeConversion());
-        registry.registerConversionFromDatabaseType(new BlobToInputStreamTypeConversion());
-        registry.registerConversionFromDatabaseType(new SQLXMLToDocumentConversion());
+        registry.registerNonNullConversions(String.class, URL.class, DefaultTypeConversions::convertStringToUrl, URL::toString);
+        registry.registerNonNullConversions(String.class, URI.class, DefaultTypeConversions::convertStringToUri, URI::toString);
+        registry.registerNonNullConversions(String.class, TimeZone.class, TimeZone::getTimeZone, TimeZone::getID);
 
-        registry.registerConversionToDatabaseType(new BigIntegerToBigDecimalTypeConversion());
-        registry.registerConversionToDatabaseType(new ToStringTypeConversion<>(URL.class));
-        registry.registerConversionToDatabaseType(new ToStringTypeConversion<>(URI.class));
-        registry.registerConversionToDatabaseType(new TimeZoneToStringTypeConversion());
+        registry.registerNonNullConversionFromDatabaseType(Number.class, Short.class, Number::shortValue);
+        registry.registerNonNullConversionFromDatabaseType(Number.class, Integer.class, Number::intValue);
+        registry.registerNonNullConversionFromDatabaseType(Number.class, Long.class, Number::longValue);
+        registry.registerNonNullConversionFromDatabaseType(Number.class, Float.class, Number::floatValue);
+        registry.registerNonNullConversionFromDatabaseType(Number.class, Double.class, Number::doubleValue);
+        registry.registerNonNullConversionFromDatabaseType(Number.class, BigInteger.class, DefaultTypeConversions::convertNumberToBigInteger);
+        registry.registerNonNullConversionFromDatabaseType(Number.class, BigDecimal.class, DefaultTypeConversions::convertNumberToBigDecimal);
+        registry.registerNonNullConversionFromDatabaseType(Clob.class, String.class, DefaultTypeConversions::convertClobToString);
+        registry.registerNonNullConversionFromDatabaseType(Clob.class, Reader.class, DefaultTypeConversions::convertClobToReader);
+        registry.registerNonNullConversionFromDatabaseType(Blob.class, byte[].class, DefaultTypeConversions::convertBlobToByteArray);
+        registry.registerNonNullConversionFromDatabaseType(Blob.class, InputStream.class, DefaultTypeConversions::convertBlobToInputStream);
+        registry.registerNonNullConversionFromDatabaseType(SQLXML.class, Document.class, DefaultTypeConversions::convertSQLXMLToDocument);
+
+        registry.registerNonNullConversionToDatabaseType(BigInteger.class, BigDecimal.class, BigDecimal::new);
     }
 
-    private static class NumberToShortTypeConversion extends SimpleNonNullTypeConversion<Number, Short> {
-
-        NumberToShortTypeConversion() {
-            super(Number.class, Short.class);
-        }
-
-        @NotNull
-        @Override
-        public Short convertNonNull(@NotNull Number value) {
-            return value.shortValue();
-        }
+    @SuppressWarnings("ObjectToString")
+    @NotNull
+    private static BigInteger convertNumberToBigInteger(@NotNull Number value) {
+        return (value instanceof BigInteger) ? (BigInteger) value
+             : (value instanceof BigDecimal) ? ((BigDecimal) value).toBigInteger()
+             : (value instanceof Integer)    ? BigInteger.valueOf(value.longValue())
+             : (value instanceof Long)       ? BigInteger.valueOf(value.longValue())
+             : new BigInteger(value.toString());
     }
 
-    private static class NumberToIntTypeConversion extends SimpleNonNullTypeConversion<Number, Integer> {
-
-        NumberToIntTypeConversion() {
-            super(Number.class, Integer.class);
-        }
-
-        @NotNull
-        @Override
-        public Integer convertNonNull(@NotNull Number value) {
-            return value.intValue();
-        }
+    @SuppressWarnings("ObjectToString")
+    private static BigDecimal convertNumberToBigDecimal(@NotNull Number value) {
+        return (value instanceof BigDecimal) ? (BigDecimal) value
+                : (value instanceof BigInteger) ? new BigDecimal((BigInteger) value)
+                : (value instanceof Integer)    ? BigDecimal.valueOf(value.longValue())
+                : (value instanceof Long)       ? BigDecimal.valueOf(value.longValue())
+                : new BigDecimal(value.toString());
     }
 
-    private static class NumberToLongTypeConversion extends SimpleNonNullTypeConversion<Number, Long> {
-
-        NumberToLongTypeConversion() {
-            super(Number.class, Long.class);
-        }
-
-        @NotNull
-        @Override
-        public Long convertNonNull(@NotNull Number value) {
-            return value.longValue();
+    @NotNull
+    private static URL convertStringToUrl(@NotNull String value) {
+        try {
+            return new URL(value);
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException(e);
         }
     }
 
-    private static class NumberToFloatTypeConversion extends SimpleNonNullTypeConversion<Number, Float> {
-
-        NumberToFloatTypeConversion() {
-            super(Number.class, Float.class);
-        }
-
-        @NotNull
-        @Override
-        public Float convertNonNull(@NotNull Number value) {
-            return value.floatValue();
+    @NotNull
+    private static URI convertStringToUri(@NotNull String value) {
+        try {
+            return new URI(value);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e);
         }
     }
 
-    private static class NumberToDoubleTypeConversion extends SimpleNonNullTypeConversion<Number, Double> {
+    @NotNull
+    private static String convertClobToString(@NotNull Clob value) {
+        try (Reader reader = value.getCharacterStream()) {
+            StringBuilder sb = new StringBuilder((int) value.length());
 
-        NumberToDoubleTypeConversion() {
-            super(Number.class, Double.class);
-        }
+            char[] buf = new char[BUFFER_SIZE];
+            int n;
 
-        @NotNull
-        @Override
-        public Double convertNonNull(@NotNull Number value) {
-            return value.doubleValue();
-        }
-    }
+            while ((n = reader.read(buf)) != -1)
+                sb.append(buf, 0, n);
 
-    private static class NumberToBigIntegerTypeConversion extends SimpleNonNullTypeConversion<Number, BigInteger> {
+            return sb.toString();
 
-        NumberToBigIntegerTypeConversion() {
-            super(Number.class, BigInteger.class);
-        }
-
-        @NotNull
-        @Override
-        @SuppressWarnings("ObjectToString")
-        public BigInteger convertNonNull(@NotNull Number value) {
-            return (value instanceof BigInteger) ? (BigInteger) value
-                 : (value instanceof BigDecimal) ? ((BigDecimal) value).toBigInteger()
-                 : (value instanceof Integer)    ? BigInteger.valueOf(value.longValue())
-                 : (value instanceof Long)       ? BigInteger.valueOf(value.longValue())
-                 : new BigInteger(value.toString());
+        } catch (SQLException e) {
+            throw new DatabaseSQLException(e);
+        } catch (IOException e) {
+            throw new DatabaseException("failed to convert Clob to String", e);
         }
     }
 
-    private static class NumberToBigDecimalTypeConversion extends SimpleNonNullTypeConversion<Number, BigDecimal> {
+    @NotNull
+    private static byte[] convertBlobToByteArray(@NotNull Blob value) {
+        try (InputStream in = value.getBinaryStream()) {
+            ByteArrayOutputStream out = new ByteArrayOutputStream((int) value.length());
 
-        NumberToBigDecimalTypeConversion() {
-            super(Number.class, BigDecimal.class);
-        }
+            byte[] buf = new byte[BUFFER_SIZE];
+            int n;
 
-        @NotNull
-        @Override
-        @SuppressWarnings("ObjectToString")
-        public BigDecimal convertNonNull(@NotNull Number value) {
-            return (value instanceof BigDecimal) ? (BigDecimal) value
-                    : (value instanceof BigInteger) ? new BigDecimal((BigInteger) value)
-                    : (value instanceof Integer)    ? BigDecimal.valueOf(value.longValue())
-                    : (value instanceof Long)       ? BigDecimal.valueOf(value.longValue())
-                    : new BigDecimal(value.toString());
-        }
-    }
+            while ((n = in.read(buf)) != -1)
+                out.write(buf, 0, n);
 
-    private static class BigIntegerToBigDecimalTypeConversion extends SimpleNonNullTypeConversion<BigInteger, BigDecimal> {
+            return out.toByteArray();
 
-        BigIntegerToBigDecimalTypeConversion() {
-            super(BigInteger.class, BigDecimal.class);
-        }
-
-        @NotNull
-        @Override
-        public BigDecimal convertNonNull(@NotNull BigInteger value) {
-            return new BigDecimal(value);
+        } catch (SQLException e) {
+            throw new DatabaseSQLException(e);
+        } catch (IOException e) {
+            throw new DatabaseException("failed to convert Blob to byte-array", e);
         }
     }
 
-    private static class StringToUrlTypeConversion extends SimpleNonNullTypeConversion<String,URL> {
-
-        StringToUrlTypeConversion() {
-            super(String.class, URL.class);
-        }
-
-        @NotNull
-        @Override
-        public URL convertNonNull(@NotNull String value) {
-            try {
-                return new URL(value);
-            } catch (MalformedURLException e) {
-                throw new IllegalArgumentException(e);
-            }
+    @NotNull
+    private static InputStream convertBlobToInputStream(@NotNull Blob value) {
+        try {
+            return value.getBinaryStream();
+        } catch (SQLException e) {
+            throw new DatabaseSQLException(e);
         }
     }
 
-    private static class ToStringTypeConversion<S> extends SimpleNonNullTypeConversion<S,String> {
-
-        ToStringTypeConversion(@NotNull Class<S> source) {
-            super(source, String.class);
-        }
-
-        @NotNull
-        @Override
-        public String convertNonNull(@NotNull S value) {
-            return value.toString();
+    @NotNull
+    private static Reader convertClobToReader(@NotNull Clob value) {
+        try {
+            return value.getCharacterStream();
+        } catch (SQLException e) {
+            throw new DatabaseSQLException(e);
         }
     }
 
-    private static class StringToUriTypeConversion extends SimpleNonNullTypeConversion<String,URI> {
-
-        StringToUriTypeConversion() {
-            super(String.class, URI.class);
-        }
-
-        @NotNull
-        @Override
-        public URI convertNonNull(@NotNull String value) {
-            try {
-                return new URI(value);
-            } catch (URISyntaxException e) {
-                throw new IllegalArgumentException(e);
-            }
-        }
-    }
-
-    private static class StringToTimeZoneTypeConversion extends SimpleNonNullTypeConversion<String,TimeZone> {
-
-        StringToTimeZoneTypeConversion() {
-            super(String.class, TimeZone.class);
-        }
-
-        @NotNull
-        @Override
-        public TimeZone convertNonNull(@NotNull String value) {
-            return TimeZone.getTimeZone(value);
-        }
-    }
-
-    private static class TimeZoneToStringTypeConversion extends SimpleNonNullTypeConversion<TimeZone,String> {
-
-        TimeZoneToStringTypeConversion() {
-            super(TimeZone.class, String.class);
-        }
-
-        @NotNull
-        @Override
-        public String convertNonNull(@NotNull TimeZone value) {
-            return value.getID();
-        }
-    }
-
-    private static class ClobToStringTypeConversion extends SimpleNonNullTypeConversion<Clob,String> {
-
-        ClobToStringTypeConversion() {
-            super(Clob.class, String.class);
-        }
-
-        @NotNull
-        @Override
-        public String convertNonNull(@NotNull Clob value) {
-            try (Reader reader = value.getCharacterStream()) {
-                StringBuilder sb = new StringBuilder((int) value.length());
-
-                char[] buf = new char[BUFFER_SIZE];
-                int n;
-
-                while ((n = reader.read(buf)) != -1)
-                    sb.append(buf, 0, n);
-
-                return sb.toString();
-
-            } catch (SQLException e) {
-                throw new DatabaseSQLException(e);
-            } catch (IOException e) {
-                throw new DatabaseException("failed to convert Clob to String", e);
-            }
-        }
-    }
-
-    private static class BlobToByteArrayTypeConversion extends SimpleNonNullTypeConversion<Blob,byte[]> {
-
-        BlobToByteArrayTypeConversion() {
-            super(Blob.class, byte[].class);
-        }
-
-        @NotNull
-        @Override
-        public byte[] convertNonNull(@NotNull Blob value) {
-            try (InputStream in = value.getBinaryStream()) {
-                ByteArrayOutputStream out = new ByteArrayOutputStream((int) value.length());
-
-                byte[] buf = new byte[BUFFER_SIZE];
-                int n;
-
-                while ((n = in.read(buf)) != -1)
-                    out.write(buf, 0, n);
-
-                return out.toByteArray();
-
-            } catch (SQLException e) {
-                throw new DatabaseSQLException(e);
-            } catch (IOException e) {
-                throw new DatabaseException("failed to convert Blob to byte-array", e);
-            }
-        }
-    }
-
-    private static class BlobToInputStreamTypeConversion extends SimpleNonNullTypeConversion<Blob,InputStream> {
-
-        BlobToInputStreamTypeConversion() {
-            super(Blob.class, InputStream.class);
-        }
-
-        @NotNull
-        @Override
-        public InputStream convertNonNull(@NotNull Blob value) {
-            try {
-                return value.getBinaryStream();
-            } catch (SQLException e) {
-                throw new DatabaseSQLException(e);
-            }
-        }
-    }
-
-    private static class ClobToReaderTypeConversion extends SimpleNonNullTypeConversion<Clob,Reader> {
-
-        ClobToReaderTypeConversion() {
-            super(Clob.class, Reader.class);
-        }
-
-        @NotNull
-        @Override
-        public Reader convertNonNull(@NotNull Clob value) {
-            try {
-                return value.getCharacterStream();
-            } catch (SQLException e) {
-                throw new DatabaseSQLException(e);
-            }
-        }
-    }
-
-    private static class SQLXMLToDocumentConversion extends SimpleNonNullTypeConversion<SQLXML, Document> {
-
-        public SQLXMLToDocumentConversion() {
-            super(SQLXML.class, Document.class);
-        }
-
-        @NotNull
-        @Override
-        public Document convertNonNull(@NotNull SQLXML value) {
-            try {
-                return (Document) value.getSource(DOMSource.class).getNode();
-            } catch (SQLException e) {
-                throw new DatabaseSQLException(e);
-            }
+    @NotNull
+    private static Document convertSQLXMLToDocument(@NotNull SQLXML value) {
+        try {
+            return (Document) value.getSource(DOMSource.class).getNode();
+        } catch (SQLException e) {
+            throw new DatabaseSQLException(e);
         }
     }
 }

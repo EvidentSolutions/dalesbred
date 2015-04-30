@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
+import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
 
@@ -45,6 +46,21 @@ public abstract class TypeConversion<S,T> {
     public TypeConversion(@NotNull Type source, @NotNull Type target) {
         this.source = Primitives.wrap(requireNonNull(source));
         this.target = Primitives.wrap(requireNonNull(target));
+    }
+
+    @NotNull
+    public static <S,T> TypeConversion<S,T> fromNonNullFunction(@NotNull Class<S> source, @NotNull Class<T> target, @NotNull Function<S, T> function) {
+        return new TypeConversion<S, T>(source, target) {
+
+            @Nullable
+            @Override
+            public T convert(@Nullable S value) {
+                if (value != null)
+                    return function.apply(value);
+                else
+                    return null;
+            }
+        };
     }
 
     @NotNull

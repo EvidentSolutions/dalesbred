@@ -28,6 +28,7 @@ import org.dalesbred.internal.jdbc.ResultSetUtils;
 import org.dalesbred.internal.jdbc.SqlUtils;
 import org.dalesbred.internal.utils.TypeUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.sql.Array;
@@ -37,7 +38,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-abstract class AbstractSqlArrayConversion<T> extends SimpleNonNullTypeConversion<Array, T> {
+abstract class AbstractSqlArrayConversion<T> extends TypeConversion<Array, T> {
 
     @NotNull
     private final Type elementType;
@@ -52,10 +53,14 @@ abstract class AbstractSqlArrayConversion<T> extends SimpleNonNullTypeConversion
         this.instantiatorRegistry = instantiatorRegistry;
     }
 
-    @NotNull
+    @Nullable
     @Override
-    public final T convertNonNull(@NotNull Array value) {
-        return createResult(readArray(value));
+    public T convert(@Nullable Array value) {
+        if (value != null) {
+            return createResult(readArray(value));
+        } else {
+            return null;
+        }
     }
 
     @NotNull

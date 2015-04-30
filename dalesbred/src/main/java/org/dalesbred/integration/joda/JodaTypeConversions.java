@@ -22,7 +22,6 @@
 
 package org.dalesbred.integration.joda;
 
-import org.dalesbred.instantiation.SimpleNonNullTypeConversion;
 import org.dalesbred.instantiation.TypeConversionRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
@@ -55,111 +54,14 @@ public final class JodaTypeConversions {
     }
 
     public static void register(@NotNull TypeConversionRegistry typeConversionRegistry) {
-        typeConversionRegistry.registerConversionFromDatabaseType(new DateTimeFromSqlTimestampTypeConversion());
-        typeConversionRegistry.registerConversionFromDatabaseType(new LocalDateFromDateTypeConversion());
-        typeConversionRegistry.registerConversionFromDatabaseType(new LocalTimeFromSqlTimeTypeConversion());
-        typeConversionRegistry.registerConversionFromDatabaseType(new DateTimeZoneFromStringTypeConversion());
+        typeConversionRegistry.registerNonNullConversions(Timestamp.class, DateTime.class, DateTime::new, v -> new Timestamp(v.getMillis()));
 
-        typeConversionRegistry.registerConversionToDatabaseType(new DateTimeToSqlTimestampTypeConversion());
-        typeConversionRegistry.registerConversionToDatabaseType(new LocalDateToSqlDateTypeConversion());
-        typeConversionRegistry.registerConversionToDatabaseType(new LocalTimeToSqlTimeTypeConversion());
-        typeConversionRegistry.registerConversionToDatabaseType(new DateTimeToStringTypeConversion());
-    }
+        typeConversionRegistry.registerNonNullConversionFromDatabaseType(java.util.Date.class, LocalDate.class, LocalDate::fromDateFields);
+        typeConversionRegistry.registerNonNullConversionFromDatabaseType(Time.class, LocalTime.class, LocalTime::new);
+        typeConversionRegistry.registerNonNullConversionFromDatabaseType(String.class, DateTimeZone.class, DateTimeZone::forID);
 
-    private static class DateTimeFromSqlTimestampTypeConversion extends SimpleNonNullTypeConversion<Timestamp, DateTime> {
-        DateTimeFromSqlTimestampTypeConversion() {
-            super(Timestamp.class, DateTime.class);
-        }
-
-        @NotNull
-        @Override
-        public DateTime convertNonNull(@NotNull Timestamp value) {
-            return new DateTime(value);
-        }
-    }
-
-    private static class DateTimeToSqlTimestampTypeConversion extends SimpleNonNullTypeConversion<DateTime,Timestamp> {
-        DateTimeToSqlTimestampTypeConversion() {
-            super(DateTime.class, Timestamp.class);
-        }
-
-        @NotNull
-        @Override
-        public Timestamp convertNonNull(@NotNull DateTime value) {
-            return new Timestamp(value.getMillis());
-        }
-    }
-
-    private static class LocalDateFromDateTypeConversion extends SimpleNonNullTypeConversion<java.util.Date, LocalDate> {
-        LocalDateFromDateTypeConversion() {
-            super(java.util.Date.class, LocalDate.class);
-        }
-
-        @NotNull
-        @Override
-        public LocalDate convertNonNull(@NotNull java.util.Date value) {
-            return LocalDate.fromDateFields(value);
-        }
-    }
-
-
-    private static class LocalDateToSqlDateTypeConversion extends SimpleNonNullTypeConversion<LocalDate, Date> {
-        LocalDateToSqlDateTypeConversion() {
-            super(LocalDate.class, Date.class);
-        }
-
-        @NotNull
-        @Override
-        public Date convertNonNull(@NotNull LocalDate value) {
-            return new Date(value.toDateTimeAtStartOfDay().getMillis());
-        }
-    }
-
-    private static class LocalTimeFromSqlTimeTypeConversion extends SimpleNonNullTypeConversion<Time, LocalTime> {
-        LocalTimeFromSqlTimeTypeConversion() {
-            super(Time.class, LocalTime.class);
-        }
-
-        @NotNull
-        @Override
-        public LocalTime convertNonNull(@NotNull Time value) {
-            return new LocalTime(value);
-        }
-    }
-
-    private static class LocalTimeToSqlTimeTypeConversion extends SimpleNonNullTypeConversion<LocalTime, Time> {
-        LocalTimeToSqlTimeTypeConversion() {
-            super(LocalTime.class, Time.class);
-        }
-
-        @NotNull
-        @Override
-        public Time convertNonNull(@NotNull LocalTime value) {
-            return new Time(value.toDateTimeToday(DateTimeZone.getDefault()).getMillis());
-        }
-    }
-
-    private static class DateTimeZoneFromStringTypeConversion extends SimpleNonNullTypeConversion<String, DateTimeZone> {
-        DateTimeZoneFromStringTypeConversion() {
-            super(String.class, DateTimeZone.class);
-        }
-
-        @NotNull
-        @Override
-        public DateTimeZone convertNonNull(@NotNull String value) {
-            return DateTimeZone.forID(value);
-        }
-    }
-
-    private static class DateTimeToStringTypeConversion extends SimpleNonNullTypeConversion<DateTimeZone, String> {
-        DateTimeToStringTypeConversion() {
-            super(DateTimeZone.class, String.class);
-        }
-
-        @NotNull
-        @Override
-        public String convertNonNull(@NotNull DateTimeZone value) {
-            return value.getID();
-        }
+        typeConversionRegistry.registerNonNullConversionToDatabaseType(LocalDate.class, Date.class, value -> new Date(value.toDateTimeAtStartOfDay().getMillis()));
+        typeConversionRegistry.registerNonNullConversionToDatabaseType(LocalTime.class, Time.class, value -> new Time(value.toDateTimeToday(DateTimeZone.getDefault()).getMillis()));
+        typeConversionRegistry.registerNonNullConversionToDatabaseType(DateTimeZone.class, String.class, DateTimeZone::getID);
     }
 }
