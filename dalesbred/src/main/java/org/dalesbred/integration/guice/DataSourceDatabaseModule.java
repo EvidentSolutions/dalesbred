@@ -35,8 +35,6 @@ import static org.dalesbred.integration.guice.GuiceSupport.bindTransactionInterc
 /**
  * A Guice module for configuring the database using a {@link javax.sql.DataSource}.
  * Assumes that a DataSource has been bound to the context.
- *
- * @see DriverManagerDatabaseModule
  */
 public final class DataSourceDatabaseModule extends AbstractModule {
 

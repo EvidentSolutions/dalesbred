@@ -25,10 +25,10 @@ package org.dalesbred.integration.aopalliance;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import org.dalesbred.Database;
-import org.dalesbred.TestDatabaseProvider;
 import org.dalesbred.annotation.DalesbredTransactional;
-import org.dalesbred.integration.guice.DriverManagerDatabaseModule;
+import org.dalesbred.integration.guice.GuiceSupport;
 import org.dalesbred.transaction.Isolation;
 import org.dalesbred.transaction.Propagation;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +37,7 @@ import org.junit.Test;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import static com.google.inject.name.Names.named;
 import static org.dalesbred.transaction.Isolation.SERIALIZABLE;
@@ -115,15 +116,18 @@ public class AopAllianceTransactionalMethodInterceptorTest {
 
     @Before
     public void init() {
-        Injector injector = Guice.createInjector(new DriverManagerDatabaseModule(), new MyServiceModule(), TestDatabaseProvider.inMemoryDatabasePropertiesModule());
+        Injector injector = Guice.createInjector(new TestModule());
         injector.injectMembers(this);
     }
 
-    private static class MyServiceModule extends AbstractModule {
+    private static class TestModule extends AbstractModule {
         @Override
         protected void configure() {
             bind(MyService.class).annotatedWith(named("myService1")).to(MyServiceImplementation.class);
             bind(MyService.class).annotatedWith(named("myService2")).to(MyServiceImplementation2.class);
+            bind(Database.class).toProvider(() -> Database.forUrlAndCredentials("jdbc:hsqldb:.", "sa", "")).in(Singleton.class);
+
+            GuiceSupport.bindTransactionInterceptor(binder(), Key.get(Database.class));
         }
     }
 }

@@ -22,9 +22,6 @@
 
 package org.dalesbred;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
-import com.google.inject.name.Names;
 import org.dalesbred.internal.jdbc.DriverManagerDataSourceProvider;
 import org.dalesbred.transaction.TransactionCallback;
 import org.jetbrains.annotations.NotNull;
@@ -68,21 +65,6 @@ public final class TestDatabaseProvider {
         String password = props.getProperty("jdbc.password");
 
         return DriverManagerDataSourceProvider.createDataSource(url, login, password);
-    }
-
-    @NotNull
-    public static Module inMemoryDatabasePropertiesModule() {
-        return new AbstractModule() {
-            @Override
-            protected void configure() {
-                Properties props = new Properties();
-                props.setProperty("jdbc.url", "jdbc:hsqldb:.");
-                props.setProperty("jdbc.login", "sa");
-                props.setProperty("jdbc.password", "");
-
-                Names.bindProperties(binder(), props);
-            }
-        };
     }
 
     @NotNull
