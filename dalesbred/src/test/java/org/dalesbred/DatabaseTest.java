@@ -123,7 +123,7 @@ public class DatabaseTest {
         }
     }
 
-    @Test(expected = NonUniqueResultException.class)
+    @Test(expected = EmptyResultException.class)
     public void findUnique_emptyResult() {
         db.findUnique(Integer.class, "select * from (values (1)) n where false");
     }

@@ -20,39 +20,13 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.result;
-
-import org.dalesbred.EmptyResultException;
-import org.dalesbred.NonUniqueResultException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
+package org.dalesbred;
 
 /**
- * A {@link ResultSetProcessor} that adapts another a list-producing processor to produce only single result.
+ * Exception thrown when expecting a unique result from a call, but got no results.
  */
-public final class UniqueResultSetProcessor<T> implements ResultSetProcessor<T> {
-
-    @NotNull
-    private final ResultSetProcessor<List<T>> resultSetProcessor;
-
-    public UniqueResultSetProcessor(@NotNull ResultSetProcessor<List<T>> resultSetProcessor) {
-        this.resultSetProcessor = resultSetProcessor;
-    }
-
-    @Override
-    @Nullable
-    public T process(@NotNull ResultSet resultSet) throws SQLException {
-        List<T> results = resultSetProcessor.process(resultSet);
-
-        if (results.size() == 1)
-            return results.get(0);
-        else if (results.isEmpty())
-            throw new EmptyResultException();
-        else
-            throw new NonUniqueResultException(results.size());
+public class EmptyResultException extends NonUniqueResultException {
+    public EmptyResultException() {
+        super(0);
     }
 }

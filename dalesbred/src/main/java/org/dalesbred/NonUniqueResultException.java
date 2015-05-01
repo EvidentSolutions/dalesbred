@@ -30,6 +30,7 @@ import org.dalesbred.query.SqlQuery;
  *
  * @see Database#findUnique(Class, SqlQuery)
  * @see Database#findUniqueOrNull(Class, SqlQuery)
+ * @see EmptyResultException
  */
 public class NonUniqueResultException extends UnexpectedResultException {
 
