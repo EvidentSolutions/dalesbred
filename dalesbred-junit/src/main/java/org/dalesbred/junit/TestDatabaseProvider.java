@@ -23,13 +23,13 @@
 package org.dalesbred.junit;
 
 import org.dalesbred.Database;
+import org.dalesbred.connection.ConnectionProvider;
+import org.dalesbred.connection.DriverManagerConnectionProvider;
 import org.dalesbred.dialect.Dialect;
-import org.dalesbred.internal.jdbc.DriverManagerDataSourceProvider;
 import org.dalesbred.transaction.TransactionCallback;
 import org.jetbrains.annotations.NotNull;
 import org.junit.internal.AssumptionViolatedException;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -58,7 +58,7 @@ public final class TestDatabaseProvider {
      */
     @NotNull
     public static Database databaseForProperties(@NotNull String propertiesPath) {
-        return new Database(createDataSource(propertiesPath));
+        return new Database(createConnectionProvider(propertiesPath));
     }
 
     /**
@@ -68,11 +68,11 @@ public final class TestDatabaseProvider {
      */
     @NotNull
     public static Database databaseForProperties(@NotNull String propertiesPath, @NotNull Dialect dialect) {
-        return new Database(createDataSource(propertiesPath), dialect);
+        return new Database(createConnectionProvider(propertiesPath), dialect);
     }
 
     @NotNull
-    private static DataSource createDataSource(@NotNull String propertiesPath) {
+    private static ConnectionProvider createConnectionProvider(@NotNull String propertiesPath) {
         Properties props = loadConnectionProperties(propertiesPath);
 
         String url = props.getProperty("jdbc.url");
@@ -82,7 +82,7 @@ public final class TestDatabaseProvider {
         String login = props.getProperty("jdbc.login");
         String password = props.getProperty("jdbc.password");
 
-        return DriverManagerDataSourceProvider.createDataSource(url, login, password);
+        return new DriverManagerConnectionProvider(url, login, password);
     }
 
     @NotNull

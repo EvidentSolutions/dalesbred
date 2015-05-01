@@ -22,14 +22,22 @@
 
 package org.dalesbred;
 
-import org.dalesbred.internal.jdbc.DriverManagerDataSourceProvider;
+import org.dalesbred.connection.ConnectionProvider;
+import org.dalesbred.connection.DriverManagerConnectionProvider;
 import org.dalesbred.transaction.TransactionCallback;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import static org.junit.Assume.assumeNotNull;
 
@@ -44,27 +52,32 @@ public final class TestDatabaseProvider {
 
     @NotNull
     public static Database createPostgreSQLDatabase() {
-        return new Database(createDataSource("postgresql-connection.properties"));
+        return new Database(createConnectionProvider("postgresql-connection.properties"));
     }
 
     @NotNull
     public static Database createMySQLDatabase() {
-        return new Database(createDataSource("mysql-connection.properties"));
+        return new Database(createConnectionProvider("mysql-connection.properties"));
+    }
+
+    @NotNull
+    public static ConnectionProvider createInMemoryHSQLConnectionProvider() {
+        return new DriverManagerConnectionProvider("jdbc:hsqldb:.", "sa", "");
     }
 
     @NotNull
     public static DataSource createInMemoryHSQLDataSource() {
-        return DriverManagerDataSourceProvider.createDataSource("jdbc:hsqldb:.", "sa", "");
+        return new DriverManagerDataSource("jdbc:hsqldb:.", "sa", "");
     }
 
     @NotNull
-    private static DataSource createDataSource(@NotNull String name) {
+    private static ConnectionProvider createConnectionProvider(@NotNull String name) {
         Properties props = loadProperties(name);
         String url = props.getProperty("jdbc.url");
         String login = props.getProperty("jdbc.login");
         String password = props.getProperty("jdbc.password");
 
-        return DriverManagerDataSourceProvider.createDataSource(url, login, password);
+        return new DriverManagerConnectionProvider(url, login, password);
     }
 
     @NotNull
@@ -82,6 +95,69 @@ public final class TestDatabaseProvider {
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private static final class DriverManagerDataSource implements DataSource {
+
+        @NotNull
+        private final String url;
+
+        @Nullable
+        private final String defaultUser;
+
+        @Nullable
+        private final String defaultPassword;
+
+        private DriverManagerDataSource(@NotNull String url, @Nullable String defaultUser, @Nullable String defaultPassword) {
+            this.url = url;
+            this.defaultUser = defaultUser;
+            this.defaultPassword = defaultPassword;
+        }
+
+        @Override
+        public Connection getConnection() throws SQLException {
+            return getConnection(defaultUser, defaultPassword);
+        }
+
+        @Override
+        public Connection getConnection(String username, String password) throws SQLException {
+            return DriverManager.getConnection(url, username, password);
+        }
+
+        @Override
+        public PrintWriter getLogWriter() throws SQLException {
+            throw new SQLFeatureNotSupportedException();
+        }
+
+        @Override
+        public void setLogWriter(PrintWriter out) throws SQLException {
+            throw new SQLFeatureNotSupportedException();
+        }
+
+        @Override
+        public void setLoginTimeout(int seconds) throws SQLException {
+            throw new SQLFeatureNotSupportedException();
+        }
+
+        @Override
+        public int getLoginTimeout() throws SQLException {
+            throw new SQLFeatureNotSupportedException();
+        }
+
+        @Override
+        public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+            throw new SQLFeatureNotSupportedException();
+        }
+
+        @Override
+        public <T> T unwrap(Class<T> iface) throws SQLException {
+            throw new SQLFeatureNotSupportedException();
+        }
+
+        @Override
+        public boolean isWrapperFor(Class<?> iface) throws SQLException {
+            throw new SQLFeatureNotSupportedException();
         }
     }
 }

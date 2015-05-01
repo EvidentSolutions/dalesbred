@@ -20,37 +20,44 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred;
+package org.dalesbred.connection;
 
-import org.dalesbred.dialect.DefaultDialect;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Rule;
-import org.junit.Test;
+import org.jetbrains.annotations.Nullable;
 
-import static org.junit.Assert.assertEquals;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
-public class DatabaseCustomDialectTest {
+/**
+ *  {@link ConnectionProvider} that works opens connections from {@link DriverManager}
+ *  and closes them when releasing.
+ */
+public final class DriverManagerConnectionProvider implements ConnectionProvider {
 
-    private final Database db = new Database(TestDatabaseProvider.createInMemoryHSQLConnectionProvider(), new UppercaseDialect());
+    @NotNull
+    private final String url;
 
-    @Rule
-    public final TransactionalTestsRule rule = new TransactionalTestsRule(db);
+    @Nullable
+    private final String user;
 
-    @Test
-    public void customDialect() {
-        db.update("drop table if exists my_table");
-        db.update("create temporary table my_table (text varchar(64))");
+    @Nullable
+    private final String password;
 
-        db.update("insert into my_table values (?)", "foo");
-
-        assertEquals("FOO", db.findUnique(String.class, "select text from my_table"));
+    public DriverManagerConnectionProvider(@NotNull String url, @Nullable String user, @Nullable String password) {
+        this.url = url;
+        this.user = user;
+        this.password = password;
     }
 
-    private static final class UppercaseDialect extends DefaultDialect {
-        @NotNull
-        @Override
-        public Object valueToDatabase(@NotNull Object value) {
-            return value.toString().toUpperCase();
-        }
+    @NotNull
+    @Override
+    public Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(url, user, password);
+    }
+
+    @Override
+    public void releaseConnection(@NotNull Connection connection) throws SQLException {
+        connection.close();
     }
 }

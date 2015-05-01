@@ -25,11 +25,11 @@ package org.dalesbred;
 import org.dalesbred.annotation.SQL;
 import org.dalesbred.connection.ConnectionProvider;
 import org.dalesbred.connection.DataSourceConnectionProvider;
+import org.dalesbred.connection.DriverManagerConnectionProvider;
 import org.dalesbred.dialect.Dialect;
 import org.dalesbred.instantiation.DefaultInstantiatorRegistry;
 import org.dalesbred.instantiation.InstantiatorRegistry;
 import org.dalesbred.instantiation.TypeConversionRegistry;
-import org.dalesbred.internal.jdbc.DriverManagerDataSourceProvider;
 import org.dalesbred.internal.utils.JndiUtils;
 import org.dalesbred.query.SqlQuery;
 import org.dalesbred.result.*;
@@ -99,13 +99,13 @@ public final class Database {
 
     /**
      * Returns a new Database that uses given connection options to open connection. The database
-     * uses {@link DriverManagerDataSourceProvider} so it performs no connection pooling.
+     * opens connections directly from {@link DriverManager} without performing connection pooling.
      *
-     * @see DriverManagerDataSourceProvider
+     * @see DriverManagerConnectionProvider
      */
     @NotNull
     public static Database forUrlAndCredentials(@NotNull String url, @Nullable String username, @Nullable String password) {
-        return forDataSource(DriverManagerDataSourceProvider.createDataSource(url, username, password));
+        return new Database(new DriverManagerConnectionProvider(url, username, password));
     }
 
     /**
