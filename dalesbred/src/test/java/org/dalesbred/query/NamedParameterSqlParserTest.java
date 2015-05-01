@@ -25,85 +25,78 @@ package org.dalesbred.query;
 import org.dalesbred.annotation.SQL;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class NamedParameterSqlParserTest {
 
     @Test
     public void simpleQuery() {
-        @SQL String sql = "SELECT * FROM foo WHERE col = :col";
-        @SQL String traditionalSql = "SELECT * FROM foo WHERE col = ?";
-
-        assertNamedParameters(NamedParameterSqlParser.parseSqlStatement(sql), traditionalSql, "col");
+        assertNamedParameters("SELECT * FROM foo WHERE col = :col", "SELECT * FROM foo WHERE col = ?",
+                singletonList("col"));
     }
 
     @Test
     public void queryLiteralLikeNamedParameter() {
-        @SQL String sql = "SELECT * FROM foobaz f WHERE f.id = :id AND f.col = ':notanamedparameter'";
-        @SQL String traditionalSql = "SELECT * FROM foobaz f WHERE f.id = ? AND f.col = ':notanamedparameter'";
-
-        assertNamedParameters(NamedParameterSqlParser.parseSqlStatement(sql), traditionalSql, "id");
+        assertNamedParameters("SELECT * FROM foobaz f WHERE f.id = :id AND f.col = ':notanamedparameter'",
+                "SELECT * FROM foobaz f WHERE f.id = ? AND f.col = ':notanamedparameter'",
+                singletonList("id"));
     }
 
     @Test
     public void queryWithLineCommentWithoutLineEnd() {
-        @SQL String sql = "SELECT *, f.col::TEXT FROM foobar f WHERE f.id = :id -- comment :notnamedparameter";
-        @SQL String traditionalSql = "SELECT *, f.col::TEXT FROM foobar f WHERE f.id = ? -- comment :notnamedparameter";
-
-        assertNamedParameters(NamedParameterSqlParser.parseSqlStatement(sql), traditionalSql, "id");
+        assertNamedParameters("SELECT *, f.col::TEXT FROM foobar f WHERE f.id = :id -- comment :notnamedparameter",
+                "SELECT *, f.col::TEXT FROM foobar f WHERE f.id = ? -- comment :notnamedparameter",
+                singletonList("id"));
     }
 
     @Test
     public void queryWithLineComment() {
-        @SQL String sql = "SELECT *, f.col::TEXT FROM foobar f -- comment :notnamedparameter \n WHERE f.id = :id";
-        @SQL String traditionalSql = "SELECT *, f.col::TEXT FROM foobar f -- comment :notnamedparameter \n WHERE f.id = ?";
-
-        assertNamedParameters(NamedParameterSqlParser.parseSqlStatement(sql), traditionalSql, "id");
+        assertNamedParameters("SELECT *, f.col::TEXT FROM foobar f -- comment :notnamedparameter \n WHERE f.id = :id",
+                "SELECT *, f.col::TEXT FROM foobar f -- comment :notnamedparameter \n WHERE f.id = ?",
+                singletonList("id"));
     }
 
     @Test
     public void queryWithBlockComment() {
-        @SQL String sql = "SELECT *, f.col::TEXT /* comment :notanamedparameter */ FROM foobar f WHERE f.id = :id";
-        @SQL String traditionalSql = "SELECT *, f.col::TEXT /* comment :notanamedparameter */ FROM foobar f WHERE f.id = ?";
-
-        assertNamedParameters(NamedParameterSqlParser.parseSqlStatement(sql), traditionalSql, "id");
+        assertNamedParameters("SELECT *, f.col::TEXT /* comment :notanamedparameter */ FROM foobar f WHERE f.id = :id",
+                "SELECT *, f.col::TEXT /* comment :notanamedparameter */ FROM foobar f WHERE f.id = ?",
+                singletonList("id"));
     }
 
     @Test
     public void queryWithPostgresqlCast() {
-        @SQL String sql = "SELECT *, f.col::TEXT FROM foobar f WHERE f.id = :id";
-        @SQL String traditionalSql = "SELECT *, f.col::TEXT FROM foobar f WHERE f.id = ?";
-
-        assertNamedParameters(NamedParameterSqlParser.parseSqlStatement(sql), traditionalSql, "id");
+        assertNamedParameters("SELECT *, f.col::TEXT FROM foobar f WHERE f.id = :id",
+                "SELECT *, f.col::TEXT FROM foobar f WHERE f.id = ?",
+                singletonList("id"));
     }
 
     @Test
     public void complexQuery() {
-        @SQL String sql = "SELECT *, 1::TEXT FROM foobar f WHERE f.id = :id AND /* comment :notparameter */ f.qwerty = :bar*/snafu*/ AND f.literal = 'laalaa :pai puppa' AND f.test =:test /*what*/   /*  */ -- ef  ";
-        @SQL String traditionalSql = "SELECT *, 1::TEXT FROM foobar f WHERE f.id = ? AND /* comment :notparameter */ f.qwerty = ?*/snafu*/ AND f.literal = 'laalaa :pai puppa' AND f.test =? /*what*/   /*  */ -- ef  ";
-
-        assertNamedParameters(NamedParameterSqlParser.parseSqlStatement(sql), traditionalSql, "id", "bar", "test");
+        assertNamedParameters("SELECT *, 1::TEXT FROM foobar f WHERE f.id = :id AND /* comment :notparameter */ f.qwerty = :bar*/snafu*/ AND f.literal = 'laalaa :pai puppa' AND f.test =:test /*what*/   /*  */ -- ef  ",
+                "SELECT *, 1::TEXT FROM foobar f WHERE f.id = ? AND /* comment :notparameter */ f.qwerty = ?*/snafu*/ AND f.literal = 'laalaa :pai puppa' AND f.test =? /*what*/   /*  */ -- ef  ",
+                asList("id", "bar", "test"));
     }
 
     @Test
     public void quotedStrings() {
-        @SQL String sql = "select 'foo '' :bar'";
-
-        assertNamedParameters(NamedParameterSqlParser.parseSqlStatement(sql), sql);
+        assertNamedParameters("select 'foo '' :bar'", "select 'foo '' :bar'", emptyList());
     }
 
     @Test
     public void doubleQuotes() {
-        @SQL String sql = "select \" :bar  \"";
-
-        assertNamedParameters(NamedParameterSqlParser.parseSqlStatement(sql), sql);
+        assertNamedParameters("select \" :bar  \"", "select \" :bar  \"", emptyList());
     }
 
-    private static void assertNamedParameters(NamedParameterSql namedParameterSql, String traditionalSql, Object... parameters) {
-        assertEquals(traditionalSql, namedParameterSql.getSql());
-        assertEquals(parameters.length, namedParameterSql.getParameterNames().size());
-        for (int i = 0; i < parameters.length; i++) {
-            assertEquals(parameters[i], namedParameterSql.getParameterNames().get(i));
-        }
+    private static void assertNamedParameters(@SQL String sql, @SQL String expected, List<String> parameters) {
+        NamedParameterSql result = NamedParameterSqlParser.parseSqlStatement(sql);
+
+        assertThat(result.getSql(), is(expected));
+        assertThat(result.getParameterNames(), is(parameters));
     }
 }
