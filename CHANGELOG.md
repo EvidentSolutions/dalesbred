@@ -1,6 +1,9 @@
 ## x.x.x (yyyy-mm-dd)
 
+### New features
+
   - New family of `findOptional` -methods in `Database`, returning `java.util.Optional` values.
+  - Added `EmptyResultException` as a subclass of `NonUniqueResultException` for case with zero results.
 
 ### Breaking changes
 
@@ -18,7 +21,6 @@
     - `fi.evident.dalesbred.SqlArray` -> `org.dalesbred.datatype.SqlArray`
     - `fi.evident.dalesbred.ResultTable` -> `org.dalesbred.result.ResultTable`
     - `fi.evident.support.proxy.TransactionalProxyFactory` -> `org.dalesbred.transaction.TransactionalProxyFactory`
-    - `fi.evident.dalesbred.connection.DriverManagerDataSourceProvider` -> `org.dalesbred.internal.jdbc`
   - Moved classes that are technically `public`, but are not part of Dalesbred's supported 
     API to `org.dalesbred.internal`.
   - Removed `SqlQuery.confidential`. Some database drivers will print the values passed to
@@ -29,6 +31,8 @@
   - Renamed `fi.evident.dalesbred.Transactional` to `org.dalesbred.annotation.DalesbredTransactional`
     so that it does not clash with Spring's `@Transactional`
   - Removed `fi.evident.dalesbred.instantiation.InstantiationListener` completely.
+  - Removed `fi.evident.dalesbred.connection.DriverManagerDataSourceProvider`. 
+    New `org.dalesbred.connection.DriverManagerConnectionProvider` can be used instead.
 
 ## 0.8.0 (2015-04-08)
 
