@@ -1,4 +1,7 @@
-## x.x.x (yyyy-mm-dd)
+## 1.0.0-alpha.1 (2015-05-02)
+
+First alpha for 1.0 -version of Dalesbred. This is not source compatible with previous versions, 
+but unless you have been using really obscure features, just renaming packages in imports should be enough.
 
 ### New features
 
