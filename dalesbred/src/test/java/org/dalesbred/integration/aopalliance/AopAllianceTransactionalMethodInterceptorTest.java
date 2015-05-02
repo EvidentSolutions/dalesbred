@@ -37,7 +37,6 @@ import org.junit.Test;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Singleton;
 
 import static com.google.inject.name.Names.named;
 import static org.dalesbred.transaction.Isolation.SERIALIZABLE;
@@ -125,7 +124,7 @@ public class AopAllianceTransactionalMethodInterceptorTest {
         protected void configure() {
             bind(MyService.class).annotatedWith(named("myService1")).to(MyServiceImplementation.class);
             bind(MyService.class).annotatedWith(named("myService2")).to(MyServiceImplementation2.class);
-            bind(Database.class).toProvider(() -> Database.forUrlAndCredentials("jdbc:hsqldb:.", "sa", "")).in(Singleton.class);
+            bind(Database.class).toInstance(Database.forUrlAndCredentials("jdbc:hsqldb:.", "sa", ""));
 
             GuiceSupport.bindTransactionInterceptor(binder(), Key.get(Database.class));
         }
