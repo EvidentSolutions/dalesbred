@@ -20,50 +20,19 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.query;
+package org.dalesbred.internal.utils;
 
-import org.dalesbred.annotation.SQL;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.TestOnly;
+import org.junit.Test;
 
-import java.util.List;
-
+import static java.util.Arrays.asList;
 import static org.dalesbred.internal.utils.CollectionUtils.mapToList;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
-final class NamedParameterSql {
+public class CollectionUtilsTest {
 
-    @NotNull
-    @SQL
-    private final String sql;
-
-    @NotNull
-    private final List<String> parameterNames;
-
-    NamedParameterSql(@NotNull @SQL String sql, @NotNull List<String> parameterNames) {
-        this.sql = sql;
-        this.parameterNames = parameterNames;
-    }
-
-    @NotNull
-    public SqlQuery toQuery(@NotNull VariableResolver variableResolver) {
-        return SqlQuery.query(sql, resolveParameterValues(variableResolver));
-    }
-
-    @NotNull
-    private List<?> resolveParameterValues(@NotNull VariableResolver variableResolver) {
-        return mapToList(parameterNames, variableResolver::getValue);
-    }
-
-    @NotNull
-    @SQL
-    @TestOnly
-    String getSql() {
-        return sql;
-    }
-
-    @NotNull
-    @TestOnly
-    public List<String> getParameterNames() {
-        return parameterNames;
+    @Test
+    public void mapping() {
+        assertThat(mapToList(asList("foo", "quux", "xyzzy"), String::length), is(asList(3, 4, 5)));
     }
 }

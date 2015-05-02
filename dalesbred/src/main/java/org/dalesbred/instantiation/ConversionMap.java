@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Type;
 import java.util.*;
 
+import static java.util.Collections.emptyList;
 import static org.dalesbred.internal.utils.Primitives.wrap;
 import static org.dalesbred.internal.utils.TypeUtils.*;
 
@@ -60,13 +61,12 @@ final class ConversionMap {
 
     @NotNull
     private Optional<TypeConversion<?,?>> findConversionsRegisteredFor(@NotNull Type source, @NotNull Type target) {
-        List<TypeConversion<?,?>> candidates = mappings.get(source);
-        if (candidates != null) {
-            for (int i = candidates.size() - 1; i >= 0; i--) {
-                TypeConversion<?, ?> conversion = candidates.get(i);
-                if (isAssignable(rawType(target), rawType(conversion.getTarget())))
-                    return Optional.of(conversion);
-            }
+        List<TypeConversion<?,?>> candidates = mappings.getOrDefault(source, emptyList());
+
+        for (int i = candidates.size() - 1; i >= 0; i--) {
+            TypeConversion<?, ?> conversion = candidates.get(i);
+            if (isAssignable(rawType(target), rawType(conversion.getTarget())))
+                return Optional.of(conversion);
         }
 
         return Optional.empty();

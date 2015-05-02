@@ -37,6 +37,7 @@ import java.sql.Array;
 import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import static java.lang.reflect.Modifier.isPublic;
 import static java.util.Arrays.sort;
@@ -120,15 +121,11 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
         if (!isPublic(cl.getModifiers()))
             throw new InstantiationException(type + " can't be instantiated reflectively because it is not public");
 
-        for (Constructor<T> constructor : constructorsSortedByDescendingParameterCount(cl)) {
-            if (!constructor.isAnnotationPresent(DalesbredIgnore.class)) {
-                Instantiator<T> instantiator = instantiatorFrom(constructor, types).orElse(null);
-                if (instantiator != null)
-                    return instantiator;
-            }
-        }
-
-        throw new InstantiationException("could not find a way to instantiate " + type + " with parameters " + types);
+        return candidateConstructorsSortedByDescendingParameterCount(cl)
+                .map(ctor -> instantiatorFrom(ctor, types).orElse(null))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseThrow(() -> new InstantiationException("could not find a way to instantiate " + type + " with parameters " + types));
     }
 
     /**
@@ -310,12 +307,13 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
     }
 
     @NotNull
-    private static <T> Constructor<T>[] constructorsSortedByDescendingParameterCount(@NotNull Class<T> cl) {
+    private static <T> Stream<Constructor<T>> candidateConstructorsSortedByDescendingParameterCount(@NotNull Class<T> cl) {
         @SuppressWarnings("unchecked")
         Constructor<T>[] constructors = (Constructor<T>[]) cl.getConstructors();
-
         sort(constructors, comparing((Constructor<T> ctor) -> ctor.getParameterTypes().length).reversed());
-        return constructors;
+
+        return Stream.of(constructors)
+                .filter(ctor -> !ctor.isAnnotationPresent(DalesbredIgnore.class));
     }
 
     @NotNull

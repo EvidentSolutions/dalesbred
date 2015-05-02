@@ -30,6 +30,7 @@ import java.util.List;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
+import static org.dalesbred.internal.utils.CollectionUtils.mapToList;
 
 /**
  * Represents the results of the query along with its metadata. Basically a detached
@@ -82,18 +83,12 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
 
     @NotNull
     public List<String> getColumnNames() {
-        List<String> names = new ArrayList<>(columns.size());
-        for (ColumnMetadata column : columns)
-            names.add(column.getName());
-        return names;
+        return mapToList(columns, ColumnMetadata::getName);
     }
 
     @NotNull
     public List<Class<?>> getColumnTypes() {
-        List<Class<?>> types = new ArrayList<>(columns.size());
-        for (ColumnMetadata column : columns)
-            types.add(column.getType());
-        return types;
+        return mapToList(columns, ColumnMetadata::getType);
     }
 
     @Override

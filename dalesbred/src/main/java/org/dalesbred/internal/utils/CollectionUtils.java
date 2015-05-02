@@ -20,50 +20,29 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.query;
+package org.dalesbred.internal.utils;
 
-import org.dalesbred.annotation.SQL;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.TestOnly;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collector;
 
-import static org.dalesbred.internal.utils.CollectionUtils.mapToList;
+import static java.util.stream.Collectors.toCollection;
 
-final class NamedParameterSql {
+public final class CollectionUtils {
+
+    private CollectionUtils() { }
 
     @NotNull
-    @SQL
-    private final String sql;
-
-    @NotNull
-    private final List<String> parameterNames;
-
-    NamedParameterSql(@NotNull @SQL String sql, @NotNull List<String> parameterNames) {
-        this.sql = sql;
-        this.parameterNames = parameterNames;
+    public static <A,B> List<B> mapToList(@NotNull Collection<? extends A> xs, @NotNull Function<? super A, ? extends B> mapper) {
+        return xs.stream().map(mapper).collect(toListWithCapacity(xs.size()));
     }
 
     @NotNull
-    public SqlQuery toQuery(@NotNull VariableResolver variableResolver) {
-        return SqlQuery.query(sql, resolveParameterValues(variableResolver));
-    }
-
-    @NotNull
-    private List<?> resolveParameterValues(@NotNull VariableResolver variableResolver) {
-        return mapToList(parameterNames, variableResolver::getValue);
-    }
-
-    @NotNull
-    @SQL
-    @TestOnly
-    String getSql() {
-        return sql;
-    }
-
-    @NotNull
-    @TestOnly
-    public List<String> getParameterNames() {
-        return parameterNames;
+    private static <T> Collector<T, ?, ArrayList<T>> toListWithCapacity(int capacity) {
+        return toCollection(() -> new ArrayList<>(capacity));
     }
 }
