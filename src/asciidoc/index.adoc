@@ -164,7 +164,7 @@ In addition to using positional parameters in your SQL statements, you can also 
 ----
         import static org.dalesbred.query.SqlQuery.namedQuery;
 
-        Map<String,Object> values = new HashMap<String,Object>();
+        Map<String,Object> values = new HashMap<>();
         values.put("firstName", "John");
         values.put("lastName", "Doe");
 
@@ -209,26 +209,6 @@ or {javadocBase}org/dalesbred/VoidTransactionCallback.html[VoidTransactionCallba
 
 [source,java,indent=0]
 ----
-        db.withTransaction(new TransactionCallback<Result>() {
-            public Result execute(TransactionContext tx) throws SQLException {
-                // transactional operations
-                ...
-                return result;
-            });
-        });
-
-        db.withVoidTransaction(new VoidTransactionCallback() {
-            public void execute(TransactionContext tx) throws SQLException {
-                // transactional operations
-                ...
-            });
-        });
-----
-
-If you are using Java 8, you can use the lighter lambda syntax:
-
-[source,java,indent=0]
-----
         db.withTransaction(tx -> {
             // transactional operations
             ...
@@ -244,9 +224,7 @@ If you are using Java 8, you can use the lighter lambda syntax:
 Annotation based transactions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you are not using Java 8, the anonymous inner classes required by transaction callbacks
-are quite verbose. Therefore Dalesbred provides
-a simple support for building transactional proxies for services:
+Instead of using transaction callbacks you can also build transactional proxies for your services:
 
 [source,java,indent=0]
 ----
@@ -256,7 +234,7 @@ a simple support for building transactional proxies for services:
 
         public class MyRealService implements MyService {
 
-             @Transactional
+             @DalesbredTransactional
              public void frobnicate() {
                  ...
              }
@@ -292,7 +270,7 @@ Nested transactions are supported if your database supports them:
 
 [source,java,indent=0]
 ----
-        db.withTransaction(Propagation.NESTED, new TransactionCallback<Result>() {
+        db.withTransaction(Propagation.NESTED, tx -> {
             ...
         });
 ----
@@ -335,6 +313,24 @@ to {javadocBase}org/dalesbred/instantiation/TypeConversionRegistry.html[TypeConv
         conversions.registerConversionToDatabaseType(new EmailAddressToStringConversion());
 ----
 
+You can register type-conversions using lambdas or method references as well:
+
+[source,java,indent=0]
+----
+        TypeConversionRegistry conversions = db.getTypeConversionRegistry();
+
+        // register conversions from database and to database types separately
+        conversions.registerNonNullConversionFromDatabaseType(
+            String.class, EmailAddress.class, MyConversions::stringToEmail);
+        conversions.registerNonNullConversionToDatabaseType(
+            EmailAddress.class, String.class, MyConversions::emailToString);
+
+        // or register both conversions with one call
+        conversions.registerNonNullConversions(
+            String.class, EmailAddress.class, MyConversions::stringToEmail, MyConversions::emailToString);
+----
+
+
 Custom instantiators
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -361,6 +357,31 @@ results of type `Foo`.
 Integrations
 ------------
 
+Java
+~~~~
+
+Dalesbred provides builtin type <<_custom_type_conversions,type-conversions>> for the following classes:
+
+[frame="topbot",options="header"]
+|====
+| Model type                       |       | Database type
+| java.net.URI                     | <- -> | String
+| java.net.URL                     | <- -> | String
+| java.util.TimeZone               | <- -> | String
+| Short/Integer/Long/Float/Double  | <-    | Number
+| BigInteger/BigDecimal            | <-    | Number
+| BigInteger                       |    -> | BigDecimal
+| String/java.io.Reader            | <-    | Clob
+| byte/java.io.InputStream         | <-    | Blob
+| org.w3c.dom.Document             | <-    | SQLXML
+| java.time.Instant                | <- -> | Timestamp
+| java.time.LocalDateTime          | <- -> | Timestamp
+| java.time.LocalTime              | <- -> | Time
+| java.time.ZoneId                 | <- -> | String
+| java.time.LocalDate              | <- -> | java.util.Date/java.sql.Date
+|====
+
+
 Joda-Time
 ~~~~~~~~~
 
@@ -369,14 +390,6 @@ register <<_custom_type_conversions,type-conversions>> between http://www.joda.o
 {jodaJavadocBase}org/joda/time/DateTime.html[DateTime], {jodaJavadocBase}org/joda/time/LocalDate.html[LocalDate]
 and {jodaJavadocBase}org/joda/time/LocalTime.html[LocalTime] to {jdkJavadocBase}java/sql/Timestamp.html[java.sql.Timestamp],
 {jdkJavadocBase}java/sql/Date.html[java.sql.Date] and {jdkJavadocBase}java/sql/Time.html[java.sql.Time].
-
-Java 8
-~~~~~~
-
-When running on Java 8, <<_custom_type_conversions,type-conversions>> for {jdkJavadocBase}java/time/Instant.html[Instant],
-{jdkJavadocBase}java/time/LocalDate.html[LocalDate], {jdkJavadocBase}java/time/LocalDateTime.html[LocalDateTime],
-{jdkJavadocBase}java/time/LocalTime.html[LocalTime] and {jdkJavadocBase}java/time/ZoneId.html[ZoneId] from
-{jdkJavadocBase}java/time/package-summary.html[java.time]-package are automatically registered.
 
 Spring
 ~~~~~~
@@ -411,9 +424,9 @@ After this you can inject {javadocBase}org/dalesbred/Database.html[Database] nor
 Guice
 ~~~~~
 
-Dalesbred has support for integration with https://code.google.com/p/google-guice/[Guice 3]. You can just pass in
+Dalesbred has support for integration with https://code.google.com/p/google-guice/[Guice 3]. Provided
+that you have defined a binding for `DataSource`, you can just pass in
 {javadocBase}org/dalesbred/support/guice/DataSourceDatabaseModule.html[DataSourceDatabaseModule]
-or {javadocBase}org/dalesbred/support/guice/DriverManagerDatabaseModule.html[DriverManagerDatabaseModule]
 when constructing your injector and you'll get automatic support for annotation based transactions and can
 @Inject your database wherever you need it.
 
@@ -421,9 +434,6 @@ when constructing your injector and you'll get automatic support for annotation 
 ----
         Injector injector = Guice.createInjector(new DataSourceDatabaseModule(), new MyOtherModule());
 ----
-
-When using either of the Guice modules, you'll also get automatic support for using `@Inject` in the
-results returned from database.
 
 See the {javadocBase}[Javadoc] of the modules for details of their configuration.
 
