@@ -33,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
@@ -66,7 +65,7 @@ public final class ReflectionResultSetProcessor<T> implements ResultSetProcessor
         // For performance reasons we reuse the same arguments-array and InstantiatorArguments-object for all rows.
         // This should be fine as long as the instantiators don't hang on to their arguments for too long.
         Object[] arguments = new Object[types.size()];
-        InstantiatorArguments instantiatorArguments = new InstantiatorArguments(types, Arrays.asList(arguments));
+        InstantiatorArguments instantiatorArguments = new InstantiatorArguments(types, arguments);
 
         while (resultSet.next()) {
             for (int i = 0; i < arguments.length; i++)
