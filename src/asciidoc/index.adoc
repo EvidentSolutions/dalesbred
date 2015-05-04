@@ -360,7 +360,7 @@ Integrations
 Java
 ~~~~
 
-Dalesbred provides builtin type <<_custom_type_conversions,type-conversions>> for the following classes:
+Dalesbred provides built-in <<_custom_type_conversions,type-conversions>> for the following classes:
 
 [frame="topbot",options="header"]
 |====
