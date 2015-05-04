@@ -20,7 +20,9 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred;
+package org.dalesbred.dialect;
+
+import org.dalesbred.Database;
 
 /**
  * Specifies the way that enum-values are persisted to database.

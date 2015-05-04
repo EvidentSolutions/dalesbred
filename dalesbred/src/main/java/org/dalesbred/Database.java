@@ -28,6 +28,7 @@ import org.dalesbred.connection.DataSourceConnectionProvider;
 import org.dalesbred.connection.DriverManagerConnectionProvider;
 import org.dalesbred.conversion.TypeConversionRegistry;
 import org.dalesbred.dialect.Dialect;
+import org.dalesbred.dialect.EnumMode;
 import org.dalesbred.internal.instantiation.InstantiatorProvider;
 import org.dalesbred.internal.utils.JndiUtils;
 import org.dalesbred.query.SqlQuery;

@@ -24,7 +24,6 @@ package org.dalesbred.dialect;
 
 import org.dalesbred.DatabaseException;
 import org.dalesbred.DatabaseSQLException;
-import org.dalesbred.EnumMode;
 import org.dalesbred.connection.ConnectionProvider;
 import org.dalesbred.connection.DataSourceConnectionProvider;
 import org.dalesbred.conversion.TypeConversion;

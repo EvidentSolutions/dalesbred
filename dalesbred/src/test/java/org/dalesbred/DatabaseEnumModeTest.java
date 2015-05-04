@@ -22,6 +22,7 @@
 
 package org.dalesbred;
 
+import org.dalesbred.dialect.EnumMode;
 import org.junit.Rule;
 import org.junit.Test;
 
