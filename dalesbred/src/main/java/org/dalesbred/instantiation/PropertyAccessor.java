@@ -33,6 +33,7 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 import static java.lang.reflect.Modifier.isPublic;
+import static org.dalesbred.internal.utils.StringUtils.isEqualIgnoringCaseAndUnderscores;
 
 abstract class PropertyAccessor {
 
@@ -45,13 +46,12 @@ abstract class PropertyAccessor {
 
     @NotNull
     static Optional<PropertyAccessor> findAccessor(@NotNull Class<?> cl, @NotNull String name) {
-        String normalizedName = UNDERSCORE.matcher(name).replaceAll("");
-        Optional<PropertyAccessor> setter = findSetter(cl, normalizedName).map(SetterPropertyAccessor::new);
+        Optional<PropertyAccessor> setter = findSetter(cl, name).map(SetterPropertyAccessor::new);
 
         if (setter.isPresent()) {
             return setter;
         } else {
-            return findField(cl, normalizedName).map(FieldPropertyAccessor::new);
+            return findField(cl, name).map(FieldPropertyAccessor::new);
         }
     }
 
@@ -60,7 +60,7 @@ abstract class PropertyAccessor {
         Field result = null;
 
         for (Field field : cl.getFields())
-            if (isPublic(field.getModifiers()) && field.getName().equalsIgnoreCase(name) && !field.isAnnotationPresent(DalesbredIgnore.class)) {
+            if (isPublic(field.getModifiers()) && isEqualIgnoringCaseAndUnderscores(name, field.getName()) && !field.isAnnotationPresent(DalesbredIgnore.class)) {
                 if (result != null)
                     throw new InstantiationException("Conflicting fields for property: " + result + " - " + name);
                 result = field;
@@ -75,7 +75,8 @@ abstract class PropertyAccessor {
 
         String methodName = "set" + name;
         for (Method method : cl.getMethods()) {
-            if (isPublic(method.getModifiers()) && methodName.equalsIgnoreCase(method.getName()) && method.getParameterTypes().length == 1 && !method.isAnnotationPresent(DalesbredIgnore.class)) {
+
+            if (isPublic(method.getModifiers()) && isEqualIgnoringCaseAndUnderscores(methodName, method.getName()) && method.getParameterTypes().length == 1 && !method.isAnnotationPresent(DalesbredIgnore.class)) {
                 if (result != null)
                     throw new InstantiationException("Conflicting setters for property: " + result + " - " + name);
                 result = method;

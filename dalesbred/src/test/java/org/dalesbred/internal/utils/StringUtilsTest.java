@@ -24,8 +24,7 @@ package org.dalesbred.internal.utils;
 
 import org.junit.Test;
 
-import static org.dalesbred.internal.utils.StringUtils.capitalize;
-import static org.dalesbred.internal.utils.StringUtils.upperCamelToLowerUnderscore;
+import static org.dalesbred.internal.utils.StringUtils.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -70,5 +69,21 @@ public class StringUtilsTest {
         assertThat(capitalize("Foo"), is("Foo"));
         assertThat(capitalize("foo"), is("Foo"));
         assertThat(capitalize("fooBar"), is("FooBar"));
+    }
+
+    @Test
+    public void caseAndUnderscoreIgnoringEquality() {
+        assertThat(isEqualIgnoringCaseAndUnderscores("", ""), is(true));
+        assertThat(isEqualIgnoringCaseAndUnderscores("foo", "foo"), is(true));
+        assertThat(isEqualIgnoringCaseAndUnderscores("foo", "bar"), is(false));
+
+        assertThat(isEqualIgnoringCaseAndUnderscores("foo", "FOo"), is(true));
+        assertThat(isEqualIgnoringCaseAndUnderscores("Foo", "FOo"), is(true));
+
+        assertThat(isEqualIgnoringCaseAndUnderscores("Foo_bar", "FOoBar"), is(true));
+        assertThat(isEqualIgnoringCaseAndUnderscores("Foobar", "FOo_Bar"), is(true));
+
+        assertThat(isEqualIgnoringCaseAndUnderscores("_foo_", "foo"), is(true));
+        assertThat(isEqualIgnoringCaseAndUnderscores("foo", "__foo__"), is(true));
     }
 }

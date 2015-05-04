@@ -65,4 +65,35 @@ public final class StringUtils {
     public static String capitalize(@NotNull String s) {
         return s.isEmpty() ? s : (toUpperCase(s.charAt(0)) + s.substring(1));
     }
+
+    /**
+     * Returns true if two strings are equal, apart from case differences and underscores.
+     * Underscores in both sides are totally ignored.
+     */
+    public static boolean isEqualIgnoringCaseAndUnderscores(@NotNull String s1, @NotNull String s2) {
+        int index1 = 0;
+        int index2 = 0;
+        int length1 = s1.length();
+        int length2 = s2.length();
+
+        while (index1 < length1 && index2 < length2) {
+            char nameChar = s1.charAt(index1++);
+            if (nameChar == '_') continue;
+
+            char memberNameChar = s2.charAt(index2++);
+            if (memberNameChar == '_') {
+                index1--;
+                continue;
+            }
+
+            if (toLowerCase(nameChar) != toLowerCase(memberNameChar))
+                return false;
+        }
+
+        // Skip trailing underscores
+        while (index1 < length1 && s1.charAt(index1) == '_') index1++;
+        while (index2 < length2 && s2.charAt(index2) == '_') index2++;
+
+        return index1 == length1 && index2 == length2;
+    }
 }

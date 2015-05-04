@@ -74,6 +74,18 @@ public class DatabaseReflectiveInstantiationTest {
         assertThat(result.getDateTime(), is(nullValue()));
     }
 
+    @Test
+    public void fieldsWithUnderscores() {
+        ClassWithUnderscoreFields result = db.findUnique(ClassWithUnderscoreFields.class, "select 'Fred' as first_name from (values (1))");
+        assertThat(result.first_name, is("Fred"));
+    }
+
+    @Test
+    public void settersWithUnderscores() {
+        ClassWithUnderscoreSetters result = db.findUnique(ClassWithUnderscoreSetters.class, "select 'Fred' as first_name from (values (1))");
+        assertThat(result.first_name, is("Fred"));
+    }
+
     public static class MyResult {
         public final int constructor;
 
@@ -119,6 +131,23 @@ public class DatabaseReflectiveInstantiationTest {
         @Reflective
         public void setDateTime(DateTime dateTime) {
             this.dateTime = dateTime;
+        }
+    }
+
+    public static class ClassWithUnderscoreFields {
+
+        @SuppressWarnings("InstanceVariableNamingConvention")
+        public String first_name;
+    }
+
+    @SuppressWarnings("InstanceVariableNamingConvention")
+    public static class ClassWithUnderscoreSetters {
+
+        private String first_name;
+
+        @Reflective
+        public void setFirst_name(String firstName) {
+            this.first_name = firstName;
         }
     }
 }

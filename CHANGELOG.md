@@ -1,3 +1,7 @@
+## 1.0.0-alpha.2 (yyyy-mm-dd)
+
+  - Ignore underscores on Java fields and setters when resolving instantiators. (Fixes [#3](https://github.com/EvidentSolutions/dalesbred/issues/3))
+
 ## 1.0.0-alpha.1 (2015-05-02)
 
 First alpha for 1.0 -version of Dalesbred. This is not source compatible with previous versions, 
