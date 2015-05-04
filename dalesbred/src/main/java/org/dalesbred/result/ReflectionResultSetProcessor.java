@@ -23,10 +23,10 @@
 package org.dalesbred.result;
 
 import org.dalesbred.UnexpectedResultException;
-import org.dalesbred.instantiation.DefaultInstantiatorRegistry;
-import org.dalesbred.instantiation.Instantiator;
-import org.dalesbred.instantiation.InstantiatorArguments;
-import org.dalesbred.instantiation.NamedTypeList;
+import org.dalesbred.internal.instantiation.Instantiator;
+import org.dalesbred.internal.instantiation.InstantiatorArguments;
+import org.dalesbred.internal.instantiation.InstantiatorProvider;
+import org.dalesbred.internal.instantiation.NamedTypeList;
 import org.dalesbred.internal.jdbc.ResultSetUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,9 +46,9 @@ public final class ReflectionResultSetProcessor<T> implements ResultSetProcessor
     private final Class<T> cl;
 
     @NotNull
-    private final DefaultInstantiatorRegistry instantiatorRegistry;
+    private final InstantiatorProvider instantiatorRegistry;
 
-    public ReflectionResultSetProcessor(@NotNull Class<T> cl, @NotNull DefaultInstantiatorRegistry instantiatorRegistry) {
+    public ReflectionResultSetProcessor(@NotNull Class<T> cl, @NotNull InstantiatorProvider instantiatorRegistry) {
         this.cl = requireNonNull(cl);
         this.instantiatorRegistry = requireNonNull(instantiatorRegistry);
     }

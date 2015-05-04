@@ -20,38 +20,11 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.instantiation;
+package org.dalesbred.internal.instantiation.test;
 
-import org.jetbrains.annotations.NotNull;
+public final class InaccessibleClassRef {
 
-import java.lang.reflect.Type;
-import java.util.Optional;
+    public static final Class<?> INACCESSIBLE_CLASS = InaccessibleClass.class;
 
-/**
- * The used implementation of TypeConversionRegistry.
- */
-final class DefaultTypeConversionRegistry implements TypeConversionRegistry {
-
-    private final ConversionMap loadConversions = new ConversionMap();
-    private final ConversionMap storeConversions = new ConversionMap();
-
-    @NotNull
-    public Optional<TypeConversion<?,?>> findCoercionFromDbValue(@NotNull Type source, @NotNull Type target) {
-        return loadConversions.findConversion(source, target);
-    }
-
-    @NotNull
-    public Optional<TypeConversion<?,?>> findCoercionToDb(@NotNull Type type) {
-        return storeConversions.findConversion(type, Object.class);
-    }
-
-    @Override
-    public void registerConversionFromDatabaseType(@NotNull TypeConversion<?, ?> conversion) {
-        loadConversions.register(conversion);
-    }
-
-    @Override
-    public void registerConversionToDatabaseType(@NotNull TypeConversion<?, ?> conversion) {
-        storeConversions.register(conversion);
-    }
+    private InaccessibleClassRef() { }
 }

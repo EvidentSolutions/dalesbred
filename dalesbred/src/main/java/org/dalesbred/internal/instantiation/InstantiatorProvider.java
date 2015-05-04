@@ -20,9 +20,11 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.instantiation;
+package org.dalesbred.internal.instantiation;
 
 import org.dalesbred.annotation.DalesbredIgnore;
+import org.dalesbred.conversion.TypeConversion;
+import org.dalesbred.conversion.TypeConversionRegistry;
 import org.dalesbred.dialect.Dialect;
 import org.dalesbred.integration.java8.JavaTimeTypeConversions;
 import org.dalesbred.integration.joda.JodaTypeConversions;
@@ -49,7 +51,7 @@ import static org.dalesbred.internal.utils.TypeUtils.*;
 /**
  * Provides {@link Instantiator}s for classes.
  */
-public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
+public final class InstantiatorProvider {
 
     @NotNull
     private final Dialect dialect;
@@ -58,12 +60,9 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
     private final DefaultTypeConversionRegistry typeConversionRegistry = new DefaultTypeConversionRegistry();
 
     @NotNull
-    private final Map<Type, Instantiator<?>> instantiators = new HashMap<>();
+    private static final Logger log = Logger.getLogger(InstantiatorProvider.class.getName());
 
-    @NotNull
-    private static final Logger log = Logger.getLogger(DefaultInstantiatorRegistry.class.getName());
-
-    public DefaultInstantiatorRegistry(@NotNull Dialect dialect) {
+    public InstantiatorProvider(@NotNull Dialect dialect) {
         this.dialect = requireNonNull(dialect);
 
         DefaultTypeConversions.register(typeConversionRegistry);
@@ -103,11 +102,6 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
      */
     @NotNull
     public <T> Instantiator<T> findInstantiator(@NotNull Type type, @NotNull NamedTypeList types) {
-        @SuppressWarnings("unchecked")
-        Instantiator<T> registeredInstantiator = (Instantiator<T>) instantiators.get(type);
-        if (registeredInstantiator != null)
-            return registeredInstantiator;
-
         // First check if we have an immediate coercion registered. If so, we'll just use that.
         if (types.size() == 1) {
             @SuppressWarnings("unchecked")
@@ -320,10 +314,5 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
     @NotNull
     public TypeConversionRegistry getTypeConversionRegistry() {
         return typeConversionRegistry;
-    }
-
-    @Override
-    public <T> void registerInstantiator(@NotNull Class<T> cl, @NotNull Instantiator<T> instantiator) {
-        instantiators.put(requireNonNull(cl), requireNonNull(instantiator));
     }
 }

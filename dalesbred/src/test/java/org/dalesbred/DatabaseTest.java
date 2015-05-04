@@ -230,14 +230,6 @@ public class DatabaseTest {
         assertTrue(db.isAllowImplicitTransactions());
     }
 
-    @Test
-    public void instantiationUsingCustomInstantiator() {
-        db.getInstantiatorRegistry().registerInstantiator(Integer.class, arguments ->
-                arguments.getSingleValue().toString().length());
-
-        assertThat(db.findUnique(Integer.class, "values ('foobar')"), is(6));
-    }
-
     public static class Department {
         final int id;
         final String name;

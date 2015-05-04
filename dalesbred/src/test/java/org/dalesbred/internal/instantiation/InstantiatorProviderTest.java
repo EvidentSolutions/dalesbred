@@ -20,12 +20,12 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.instantiation;
+package org.dalesbred.internal.instantiation;
 
 import org.dalesbred.annotation.DalesbredIgnore;
 import org.dalesbred.annotation.Reflective;
 import org.dalesbred.dialect.DefaultDialect;
-import org.dalesbred.instantiation.test.InaccessibleClassRef;
+import org.dalesbred.internal.instantiation.test.InaccessibleClassRef;
 import org.dalesbred.internal.utils.TypeUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,9 +35,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class DefaultInstantiatorRegistryTest {
+public class InstantiatorProviderTest {
 
-    private final DefaultInstantiatorRegistry instantiatorRegistry = new DefaultInstantiatorRegistry(new DefaultDialect());
+    private final InstantiatorProvider instantiatorRegistry = new InstantiatorProvider(new DefaultDialect());
 
     @Test
     public void everyClassIsAssignableFromItself() {
@@ -106,13 +106,6 @@ public class DefaultInstantiatorRegistryTest {
         assertThat(result.calledConstructor, is(2));
         assertThat(result.getPropertyWithAccessors(), is("bar"));
         assertThat(result.publicField, is("baz"));
-    }
-
-    @Test
-    public void instantiationUsingCustomInstantiator() {
-        instantiatorRegistry.registerInstantiator(Integer.class, arguments -> arguments.getSingleValue().toString().length());
-
-        assertThat(instantiate(Integer.class, String.class, "foobar"), is(6));
     }
 
     @Test(expected = InstantiationException.class)

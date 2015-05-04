@@ -21,6 +21,6 @@
  */
 
 /**
- * Conversion of database results to classes and vice versa.
+ * Support for instantiating objects from result-sets.
  */
-package org.dalesbred.instantiation;
+package org.dalesbred.internal.instantiation;

@@ -23,7 +23,7 @@
 package org.dalesbred.internal.jdbc;
 
 import org.dalesbred.DatabaseException;
-import org.dalesbred.instantiation.NamedTypeList;
+import org.dalesbred.internal.instantiation.NamedTypeList;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSetMetaData;

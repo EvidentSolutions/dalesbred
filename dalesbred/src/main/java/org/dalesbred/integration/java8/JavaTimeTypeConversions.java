@@ -22,7 +22,7 @@
 
 package org.dalesbred.integration.java8;
 
-import org.dalesbred.instantiation.TypeConversionRegistry;
+import org.dalesbred.conversion.TypeConversionRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Date;

@@ -20,17 +20,40 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.instantiation;
+package org.dalesbred.internal.instantiation;
 
-import org.dalesbred.DatabaseException;
+import org.dalesbred.conversion.TypeConversion;
+import org.dalesbred.conversion.TypeConversionRegistry;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Exception thrown when there is a problem with instantiation or coercion.
- */
-public class InstantiationException extends DatabaseException {
+import java.lang.reflect.Type;
+import java.util.Optional;
 
-    public InstantiationException(@NotNull String message) {
-        super(message);
+/**
+ * The used implementation of TypeConversionRegistry.
+ */
+final class DefaultTypeConversionRegistry implements TypeConversionRegistry {
+
+    private final ConversionMap loadConversions = new ConversionMap();
+    private final ConversionMap storeConversions = new ConversionMap();
+
+    @NotNull
+    public Optional<TypeConversion<?,?>> findCoercionFromDbValue(@NotNull Type source, @NotNull Type target) {
+        return loadConversions.findConversion(source, target);
+    }
+
+    @NotNull
+    public Optional<TypeConversion<?,?>> findCoercionToDb(@NotNull Type type) {
+        return storeConversions.findConversion(type, Object.class);
+    }
+
+    @Override
+    public void registerConversionFromDatabaseType(@NotNull TypeConversion<?, ?> conversion) {
+        loadConversions.register(conversion);
+    }
+
+    @Override
+    public void registerConversionToDatabaseType(@NotNull TypeConversion<?, ?> conversion) {
+        storeConversions.register(conversion);
     }
 }

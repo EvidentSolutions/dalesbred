@@ -20,10 +20,11 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.instantiation;
+package org.dalesbred.internal.instantiation;
 
 import org.dalesbred.DatabaseSQLException;
 import org.dalesbred.UnexpectedResultException;
+import org.dalesbred.conversion.TypeConversion;
 import org.dalesbred.internal.jdbc.ResultSetUtils;
 import org.dalesbred.internal.jdbc.SqlUtils;
 import org.dalesbred.internal.utils.TypeUtils;
@@ -44,13 +45,13 @@ class SqlArrayConversion<T> extends TypeConversion<Array, T> {
     private final Type elementType;
 
     @NotNull
-    private final DefaultInstantiatorRegistry instantiatorRegistry;
+    private final InstantiatorProvider instantiatorRegistry;
 
     private final Function<List<?>,T> createResult;
 
     public SqlArrayConversion(@NotNull Type target,
                               @NotNull Type elementType,
-                              @NotNull DefaultInstantiatorRegistry instantiatorRegistry,
+                              @NotNull InstantiatorProvider instantiatorRegistry,
                               @NotNull Function<List<?>, T> createResult) {
         super(Array.class, target);
 

@@ -20,11 +20,17 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.instantiation.test;
+package org.dalesbred.internal.instantiation;
 
-public final class InaccessibleClassRef {
+import org.dalesbred.DatabaseException;
+import org.jetbrains.annotations.NotNull;
 
-    public static final Class<?> INACCESSIBLE_CLASS = InaccessibleClass.class;
+/**
+ * Exception thrown when there is a problem with instantiation or coercion.
+ */
+public class InstantiationException extends DatabaseException {
 
-    private InaccessibleClassRef() { }
+    public InstantiationException(@NotNull String message) {
+        super(message);
+    }
 }

@@ -20,17 +20,7 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.instantiation;
-
-import org.jetbrains.annotations.NotNull;
-
 /**
- * Provides access to the publicly available configuration interface of {@link DefaultInstantiatorRegistry}.
+ * Conversion of database results to classes and vice versa.
  */
-public interface InstantiatorRegistry {
-
-    /**
-     * Registers an instantiator to be used when instances of {@code cl} are required.
-     */
-    <T> void registerInstantiator(@NotNull Class<T> cl, @NotNull Instantiator<T> instantiator);
-}
+package org.dalesbred.conversion;

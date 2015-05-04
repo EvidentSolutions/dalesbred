@@ -20,16 +20,13 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.instantiation;
+package org.dalesbred.internal.instantiation.test;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.dalesbred.annotation.Reflective;
 
-/**
- * Factory for producing objects from given arguments.
- */
-@FunctionalInterface
-public interface Instantiator<T> {
-    @Nullable
-    T instantiate(@NotNull InstantiatorArguments arguments);
+class InaccessibleClass {
+
+    @Reflective
+    public InaccessibleClass(int x) { }
 }
+

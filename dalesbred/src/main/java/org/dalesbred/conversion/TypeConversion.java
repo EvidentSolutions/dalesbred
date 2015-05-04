@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.instantiation;
+package org.dalesbred.conversion;
 
 import org.dalesbred.internal.utils.Primitives;
 import org.dalesbred.internal.utils.TypeUtils;
@@ -116,10 +116,10 @@ public abstract class TypeConversion<S,T> {
      * if coercion is not compatible.
      */
     @NotNull
-    private <S,T> TypeConversion<S,T> cast(@NotNull Type requiredSource, @NotNull Type requiredTarget) {
+    private <F, R> TypeConversion<F, R> cast(@NotNull Type requiredSource, @NotNull Type requiredTarget) {
         if (canConvert(requiredSource, requiredTarget)) {
             @SuppressWarnings("unchecked")
-            TypeConversion<S,T> result = (TypeConversion<S,T>) this;
+            TypeConversion<F, R> result = (TypeConversion<F, R>) this;
             return result;
         } else
             throw new RuntimeException("can't cast " + this + " to coercion from " + requiredSource + " to " + requiredTarget);

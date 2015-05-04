@@ -22,7 +22,7 @@
 
 package org.dalesbred.integration.threeten;
 
-import org.dalesbred.instantiation.TypeConversionRegistry;
+import org.dalesbred.conversion.TypeConversionRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.threeten.bp.*;
 

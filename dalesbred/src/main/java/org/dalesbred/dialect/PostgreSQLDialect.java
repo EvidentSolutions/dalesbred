@@ -22,7 +22,7 @@
 
 package org.dalesbred.dialect;
 
-import org.dalesbred.instantiation.TypeConversionRegistry;
+import org.dalesbred.conversion.TypeConversionRegistry;
 import org.dalesbred.internal.utils.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.postgresql.util.PGobject;

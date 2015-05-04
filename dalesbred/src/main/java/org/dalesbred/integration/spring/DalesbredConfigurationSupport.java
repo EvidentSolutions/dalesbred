@@ -23,9 +23,8 @@
 package org.dalesbred.integration.spring;
 
 import org.dalesbred.Database;
+import org.dalesbred.conversion.TypeConversionRegistry;
 import org.dalesbred.dialect.Dialect;
-import org.dalesbred.instantiation.InstantiatorRegistry;
-import org.dalesbred.instantiation.TypeConversionRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.context.annotation.Bean;
@@ -45,17 +44,9 @@ public abstract class DalesbredConfigurationSupport {
             dialect = Dialect.detect(dataSource);
 
         Database db = new Database(new SpringTransactionManager(dataSource, transactionManager), dialect);
-        registerInstantiators(db.getInstantiatorRegistry());
         registerTypeConversions(db.getTypeConversionRegistry());
         setupDatabase(db);
         return db;
-    }
-
-    /**
-     * Can be overridden by subclasses to register custom instantiators.
-     */
-    @SuppressWarnings({"UnusedParameters", "EmptyMethod"})
-    protected void registerInstantiators(@NotNull InstantiatorRegistry registry) {
     }
 
     /**

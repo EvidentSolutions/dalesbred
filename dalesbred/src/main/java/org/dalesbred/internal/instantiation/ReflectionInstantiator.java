@@ -20,8 +20,9 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.instantiation;
+package org.dalesbred.internal.instantiation;
 
+import org.dalesbred.conversion.TypeConversion;
 import org.dalesbred.internal.utils.Throwables;
 import org.jetbrains.annotations.NotNull;
 

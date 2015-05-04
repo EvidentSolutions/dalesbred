@@ -24,7 +24,7 @@ package org.dalesbred;
 
 import org.dalesbred.annotation.Reflective;
 import org.dalesbred.dialect.DefaultDialect;
-import org.dalesbred.instantiation.DefaultInstantiatorRegistry;
+import org.dalesbred.internal.instantiation.InstantiatorProvider;
 import org.dalesbred.result.ReflectionResultSetProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -43,7 +43,7 @@ import static org.mockito.Mockito.when;
 
 public class ReflectionRowMapperTest {
 
-    private final DefaultInstantiatorRegistry instantiatorRegistry = new DefaultInstantiatorRegistry(new DefaultDialect());
+    private final InstantiatorProvider instantiatorRegistry = new InstantiatorProvider(new DefaultDialect());
 
     @Test
     public void instantiatingWithSimpleConstructor() throws SQLException {

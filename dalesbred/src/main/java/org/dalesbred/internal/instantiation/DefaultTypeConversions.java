@@ -20,10 +20,11 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.instantiation;
+package org.dalesbred.internal.instantiation;
 
 import org.dalesbred.DatabaseException;
 import org.dalesbred.DatabaseSQLException;
+import org.dalesbred.conversion.TypeConversionRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Document;
 

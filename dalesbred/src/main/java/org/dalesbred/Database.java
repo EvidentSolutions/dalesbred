@@ -26,10 +26,9 @@ import org.dalesbred.annotation.SQL;
 import org.dalesbred.connection.ConnectionProvider;
 import org.dalesbred.connection.DataSourceConnectionProvider;
 import org.dalesbred.connection.DriverManagerConnectionProvider;
+import org.dalesbred.conversion.TypeConversionRegistry;
 import org.dalesbred.dialect.Dialect;
-import org.dalesbred.instantiation.DefaultInstantiatorRegistry;
-import org.dalesbred.instantiation.InstantiatorRegistry;
-import org.dalesbred.instantiation.TypeConversionRegistry;
+import org.dalesbred.internal.instantiation.InstantiatorProvider;
 import org.dalesbred.internal.utils.JndiUtils;
 import org.dalesbred.query.SqlQuery;
 import org.dalesbred.result.*;
@@ -79,7 +78,7 @@ public final class Database {
 
     /** Contains the instantiators and data-converters */
     @NotNull
-    private final DefaultInstantiatorRegistry instantiatorRegistry;
+    private final InstantiatorProvider instantiatorRegistry;
 
     /**
      * Returns a new Database that uses given {@link DataSource} to retrieve connections.
@@ -135,7 +134,7 @@ public final class Database {
     public Database(@NotNull TransactionManager transactionManager, @NotNull Dialect dialect) {
         this.transactionManager = requireNonNull(transactionManager);
         this.dialect = requireNonNull(dialect);
-        this.instantiatorRegistry = new DefaultInstantiatorRegistry(dialect);
+        this.instantiatorRegistry = new InstantiatorProvider(dialect);
 
         dialect.registerTypeConversions(instantiatorRegistry.getTypeConversionRegistry());
     }
@@ -635,14 +634,6 @@ public final class Database {
     @NotNull
     public TypeConversionRegistry getTypeConversionRegistry() {
         return instantiatorRegistry.getTypeConversionRegistry();
-    }
-
-    /**
-     * Returns {@link InstantiatorRegistry} that can be used to configure instantiation issues.
-     */
-    @NotNull
-    public InstantiatorRegistry getInstantiatorRegistry() {
-        return instantiatorRegistry;
     }
 
     /**

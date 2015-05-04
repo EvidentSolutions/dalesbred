@@ -23,7 +23,11 @@
 package org.dalesbred.result;
 
 import org.dalesbred.UnexpectedResultException;
-import org.dalesbred.instantiation.*;
+import org.dalesbred.conversion.TypeConversion;
+import org.dalesbred.internal.instantiation.Instantiator;
+import org.dalesbred.internal.instantiation.InstantiatorArguments;
+import org.dalesbred.internal.instantiation.InstantiatorProvider;
+import org.dalesbred.internal.instantiation.NamedTypeList;
 import org.dalesbred.internal.jdbc.ResultSetUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,11 +51,11 @@ public final class MapResultSetProcessor<K,V> implements ResultSetProcessor<Map<
     private final Class<V> valueType;
 
     @NotNull
-    private final DefaultInstantiatorRegistry instantiatorRegistry;
+    private final InstantiatorProvider instantiatorRegistry;
 
     public MapResultSetProcessor(@NotNull Class<K> keyType,
                                  @NotNull Class<V> valueType,
-                                 @NotNull DefaultInstantiatorRegistry instantiatorRegistry) {
+                                 @NotNull InstantiatorProvider instantiatorRegistry) {
         this.keyType = requireNonNull(keyType);
         this.valueType = requireNonNull(valueType);
         this.instantiatorRegistry = requireNonNull(instantiatorRegistry);
