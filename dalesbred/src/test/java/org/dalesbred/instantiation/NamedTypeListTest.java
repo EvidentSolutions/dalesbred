@@ -73,6 +73,22 @@ public class NamedTypeListTest {
         assertThat(types.getType(2), is(type(Boolean.class)));
     }
 
+    @Test
+    public void subList() {
+        NamedTypeList.Builder builder = NamedTypeList.builder(3);
+        builder.add("foo", String.class);
+        builder.add("bar", Integer.class);
+        builder.add("baz", Boolean.class);
+
+        NamedTypeList types = builder.build().subList(1, 3);
+
+        assertThat(types.size(), is(2));
+        assertThat(types.getName(0), is("bar"));
+        assertThat(types.getType(0), is(type(Integer.class)));
+        assertThat(types.getName(1), is("baz"));
+        assertThat(types.getType(1), is(type(Boolean.class)));
+    }
+
     @NotNull
     private static Matcher<Class<?>> type(@NotNull Class<?> cl) {
         return CoreMatchers.<Class<?>>sameInstance(cl);

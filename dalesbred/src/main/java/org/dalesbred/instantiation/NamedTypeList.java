@@ -24,9 +24,9 @@ package org.dalesbred.instantiation;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 
@@ -36,47 +36,55 @@ import static java.util.Objects.requireNonNull;
 public final class NamedTypeList {
 
     @NotNull
-    private final String[] names;
+    private final List<String> names;
 
     @NotNull
-    private final Class<?>[] types;
+    private final List<Class<?>> types;
 
-    private NamedTypeList(@NotNull String[] names, @NotNull Class<?>[] types) {
-        this.names = names;
+    private NamedTypeList(@NotNull List<String> names, @NotNull List<Class<?>> types) {
+        assert names.size() == types.size();
+        this.names = unmodifiableList(names);
         this.types = types;
     }
 
     public int size() {
-        return types.length;
+        return types.size();
     }
 
     @NotNull
     public String getName(int index) {
-        return names[index];
+        return names.get(index);
     }
 
     @NotNull
     public Class<?> getType(int index) {
-        return types[index];
+        return types.get(index);
     }
 
     @NotNull
     public List<String> getNames() {
-        return unmodifiableList(asList(names));
+        return names;
+    }
+
+    @NotNull
+    public NamedTypeList subList(int fromIndex, int toIndex) {
+        return new NamedTypeList(names.subList(fromIndex, toIndex), types.subList(fromIndex, toIndex));
     }
 
     @Override
     @NotNull
     public String toString() {
+        int size = types.size();
+
         @SuppressWarnings("MagicNumber")
-        StringBuilder sb = new StringBuilder(10 + types.length * 30);
+        StringBuilder sb = new StringBuilder(10 + size * 30);
 
         sb.append('[');
 
-        for (int i = 0; i < types.length; i++) {
+        for (int i = 0; i < size; i++) {
             if (i != 0) sb.append(", ");
 
-            sb.append(names[i]).append(": ").append(types[i].getName());
+            sb.append(names.get(i)).append(": ").append(types.get(i).getName());
         }
 
         sb.append(']');
@@ -93,31 +101,31 @@ public final class NamedTypeList {
      * Builder for {@link NamedTypeList}s.
      */
     public static class Builder {
-        private int index = 0;
+
+        private boolean built = false;
 
         @NotNull
-        private final String[] names;
+        private final List<String> names;
+
         @NotNull
-        private final Class<?>[] types;
+        private final List<Class<?>> types;
 
         private Builder(int size) {
-            this.names = new String[size];
-            this.types = new Class<?>[size];
+            this.names = new ArrayList<>(size);
+            this.types = new ArrayList<>(size);
         }
 
         public Builder add(@NotNull String name, @NotNull Class<?> type) {
-            names[index] = requireNonNull(name);
-            types[index] = requireNonNull(type);
-            index++;
+            if (built) throw new IllegalStateException("can't add items to builder that has been built");
+
+            names.add(requireNonNull(name));
+            types.add(requireNonNull(type));
             return this;
         }
 
         @NotNull
         public NamedTypeList build() {
-            if (index != names.length)
-                throw new IllegalStateException("expected " + names.length + " items, but got only " + index);
-
-            index = -1; // set the index to invalid value so that we can no longer modify the class
+            built = true;
             return new NamedTypeList(names, types);
         }
     }
