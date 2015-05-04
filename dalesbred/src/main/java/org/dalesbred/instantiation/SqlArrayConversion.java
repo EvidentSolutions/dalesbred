@@ -36,8 +36,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
-abstract class AbstractSqlArrayConversion<T> extends TypeConversion<Array, T> {
+class SqlArrayConversion<T> extends TypeConversion<Array, T> {
 
     @NotNull
     private final Type elementType;
@@ -45,25 +46,28 @@ abstract class AbstractSqlArrayConversion<T> extends TypeConversion<Array, T> {
     @NotNull
     private final DefaultInstantiatorRegistry instantiatorRegistry;
 
-    public AbstractSqlArrayConversion(@NotNull Type target, @NotNull Type elementType, @NotNull DefaultInstantiatorRegistry instantiatorRegistry) {
+    private final Function<List<?>,T> createResult;
+
+    public SqlArrayConversion(@NotNull Type target,
+                              @NotNull Type elementType,
+                              @NotNull DefaultInstantiatorRegistry instantiatorRegistry,
+                              @NotNull Function<List<?>, T> createResult) {
         super(Array.class, target);
 
         this.elementType = elementType;
         this.instantiatorRegistry = instantiatorRegistry;
+        this.createResult = createResult;
     }
 
     @Nullable
     @Override
     public T convert(@Nullable Array value) {
         if (value != null) {
-            return createResult(readArray(value));
+            return createResult.apply(readArray(value));
         } else {
             return null;
         }
     }
-
-    @NotNull
-    protected abstract T createResult(@NotNull List<?> list);
 
     @NotNull
     private List<?> readArray(@NotNull Array array) {

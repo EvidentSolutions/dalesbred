@@ -43,6 +43,7 @@ import static java.lang.reflect.Modifier.isPublic;
 import static java.util.Arrays.sort;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
+import static org.dalesbred.internal.utils.CollectionUtils.arrayOfType;
 import static org.dalesbred.internal.utils.TypeUtils.*;
 
 /**
@@ -266,13 +267,13 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
 
         if (Array.class.isAssignableFrom(source)) {
             if (rawTarget.equals(Set.class))
-                return Optional.of(new SqlArrayToSetConversion(typeParameter(target), this));
+                return Optional.of(new SqlArrayConversion<>(List.class, typeParameter(target), this, LinkedHashSet::new));
 
             if (rawTarget.isAssignableFrom(List.class))
-                return Optional.of(new SqlArrayToListConversion(typeParameter(target), this));
+                return Optional.of(new SqlArrayConversion<>(List.class, typeParameter(target), this, Function.identity()));
 
             if (rawTarget.isArray())
-                return Optional.of(new SqlArrayToArrayConversion(rawTarget.getComponentType(), this));
+                return Optional.of(new SqlArrayConversion<>(rawTarget, rawTarget.getComponentType(), this, list -> arrayOfType(rawTarget.getComponentType(), list)));
         }
 
         return Optional.empty();
