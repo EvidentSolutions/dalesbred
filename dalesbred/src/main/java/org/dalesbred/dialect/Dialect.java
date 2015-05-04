@@ -29,6 +29,7 @@ import org.dalesbred.connection.ConnectionProvider;
 import org.dalesbred.connection.DataSourceConnectionProvider;
 import org.dalesbred.conversion.TypeConversion;
 import org.dalesbred.conversion.TypeConversionRegistry;
+import org.dalesbred.internal.jdbc.ArgumentBinder;
 import org.dalesbred.transaction.TransactionManager;
 import org.dalesbred.transaction.TransactionRollbackException;
 import org.dalesbred.transaction.TransactionSerializationException;

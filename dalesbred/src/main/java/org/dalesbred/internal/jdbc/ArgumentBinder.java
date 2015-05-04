@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.dialect;
+package org.dalesbred.internal.jdbc;
 
 import org.dalesbred.datatype.InputStreamWithSize;
 import org.dalesbred.datatype.ReaderWithSize;
@@ -37,12 +37,12 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLXML;
 
-final class ArgumentBinder {
+public final class ArgumentBinder {
 
     private ArgumentBinder() {
     }
 
-    static void bindArgument(@NotNull PreparedStatement ps, int index, @Nullable Object value) throws SQLException {
+    public static void bindArgument(@NotNull PreparedStatement ps, int index, @Nullable Object value) throws SQLException {
         if (value instanceof InputStream) {
             bindInputStream(ps, index, (InputStream) value);
 
