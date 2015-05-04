@@ -23,9 +23,7 @@
 package org.dalesbred.result;
 
 import org.dalesbred.UnexpectedResultException;
-import org.dalesbred.instantiation.DefaultInstantiatorRegistry;
-import org.dalesbred.instantiation.NamedTypeList;
-import org.dalesbred.instantiation.TypeConversion;
+import org.dalesbred.instantiation.*;
 import org.dalesbred.internal.jdbc.ResultSetUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,15 +62,25 @@ public final class MapResultSetProcessor<K,V> implements ResultSetProcessor<Map<
         Map<K,V> result = new LinkedHashMap<>();
 
         NamedTypeList types = ResultSetUtils.getTypes(resultSet.getMetaData());
-        if (types.size() != 2)
-            throw new UnexpectedResultException("Expected ResultSet with 2 columns, but got " + types.size() + " columns.");
+        if (types.size() < 2)
+            throw new UnexpectedResultException("Expected ResultSet with at least 2 columns, but got " + types.size() + " columns.");
 
+        NamedTypeList valueTypes = types.subList(1, types.size());
         TypeConversion<Object, K> keyConversion = getConversion(types.getType(0), keyType);
-        TypeConversion<Object, V> valueConversion = getConversion(types.getType(1), valueType);
+        Instantiator<V> valueInstantiator = instantiatorRegistry.findInstantiator(valueType, valueTypes);
+
+        // For performance reasons we reuse the same arguments-array and InstantiatorArguments-object for all rows.
+        // This should be fine as long as the instantiators don't hang on to their arguments for too long.
+        Object[] valueArguments = new Object[valueTypes.size()];
+        InstantiatorArguments instantiatorArguments = new InstantiatorArguments(valueTypes, valueArguments);
 
         while (resultSet.next()) {
             K key = keyConversion.convert(resultSet.getObject(1));
-            V value = valueConversion.convert(resultSet.getObject(2));
+
+            for (int i = 0; i < valueArguments.length; i++)
+                valueArguments[i] = resultSet.getObject(i+2);
+
+            V value = valueInstantiator.instantiate(instantiatorArguments);
 
             result.put(key, value);
         }

@@ -481,8 +481,8 @@ public final class Database {
     }
 
     /**
-     * Executes a query that returns two values and creates a map from the results,
-     * using the first value as the key and second value as the value for that key.
+     * Executes a query that returns at least two values and creates a map from the results,
+     * using the first value as the key and rest of the values for instantiating {@code V}.
      */
     @NotNull
     public <K,V> Map<K, V> findMap(@NotNull Class<K> keyType,
@@ -492,8 +492,8 @@ public final class Database {
     }
 
     /**
-     * Executes a query that returns two values and creates a map from the results,
-     * using the first value as the key and second value as the value for that key.
+     * Executes a query that returns at least two values and creates a map from the results,
+     * using the first value as the key and rest of the values for instantiating {@code V}
      */
     @NotNull
     public <K,V> Map<K, V> findMap(@NotNull Class<K> keyType,

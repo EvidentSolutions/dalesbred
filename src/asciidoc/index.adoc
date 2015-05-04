@@ -90,6 +90,11 @@ You can also convert the results directly to a map:
 ----
         Map<Integer,String> namesByIds = db.findMap(
                 Integer.class, String.class, "select id, name from department");
+
+        // first column is used for key, rest for instantiating the value
+        Map<Integer,Department> departmentsByIds = db.findMap(
+                Integer.class, Department.class, "select id, id, name from department");
+
 ----
 
 If for some reason you don't want to map the results into your own class, you can ask for

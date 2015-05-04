@@ -1,3 +1,7 @@
+## x.y.z (yyyy-mm-dd)
+
+  - Generalized `findMap` to allow more than one column for instantiating the value. (Closes [#2](https://github.com/EvidentSolutions/dalesbred/issues/2))
+
 ## 1.0.0-alpha.2 (2015-05-04)
 
   - Ignore underscores on Java fields and setters when resolving instantiators. (Fixes [#3](https://github.com/EvidentSolutions/dalesbred/issues/3))

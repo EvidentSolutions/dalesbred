@@ -109,6 +109,18 @@ public class DatabaseTest {
     }
 
     @Test
+    public void mapWithMultipleArguments() {
+        Map<Integer, Department> map = db.findMap(Integer.class, Department.class,
+                "select * from (values (1, 10, 'foo'), (2, 20, 'bar')) d");
+
+        assertThat(map.size(), is(2));
+        assertThat(map.get(1).id, is(10));
+        assertThat(map.get(1).name, is("foo"));
+        assertThat(map.get(2).id, is(20));
+        assertThat(map.get(2).name, is("bar"));
+    }
+
+    @Test
     public void findUnique_singleResult() {
         assertThat(db.findUnique(Integer.class, "values (42)"), is(42));
     }
