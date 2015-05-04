@@ -24,6 +24,7 @@ package org.dalesbred.internal.utils;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -39,6 +40,17 @@ public final class CollectionUtils {
     @NotNull
     public static <A,B> List<B> mapToList(@NotNull Collection<? extends A> xs, @NotNull Function<? super A, ? extends B> mapper) {
         return xs.stream().map(mapper).collect(toListWithCapacity(xs.size()));
+    }
+
+    @NotNull
+    public static Object arrayOfType(@NotNull Class<?> elementType, @NotNull List<?> values) {
+        int length = values.size();
+
+        Object result = Array.newInstance(elementType, length);
+        for (int i = 0; i < length; i++)
+            Array.set(result, i, values.get(i));
+
+        return result;
     }
 
     @NotNull

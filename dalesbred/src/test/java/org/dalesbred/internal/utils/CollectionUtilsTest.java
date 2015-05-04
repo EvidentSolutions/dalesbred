@@ -25,7 +25,9 @@ package org.dalesbred.internal.utils;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;
+import static org.dalesbred.internal.utils.CollectionUtils.arrayOfType;
 import static org.dalesbred.internal.utils.CollectionUtils.mapToList;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -34,5 +36,29 @@ public class CollectionUtilsTest {
     @Test
     public void mapping() {
         assertThat(mapToList(asList("foo", "quux", "xyzzy"), String::length), is(asList(3, 4, 5)));
+    }
+
+    @Test
+    public void createArrayOfObjectType() {
+        Object array = arrayOfType(Integer.class, asList(1, 42, 7));
+        assertThat(array, is(instanceOf(Integer[].class)));
+
+        Integer[] intArray = (Integer[]) array;
+        assertThat(intArray.length, is(3));
+        assertThat(intArray[0], is(1));
+        assertThat(intArray[1], is(42));
+        assertThat(intArray[2], is(7));
+    }
+
+    @Test
+    public void createArrayOfPrimitiveType() {
+        Object array = arrayOfType(int.class, asList(1, 42, 7));
+        assertThat(array, is(instanceOf(int[].class)));
+
+        int[] intArray = (int[]) array;
+        assertThat(intArray.length, is(3));
+        assertThat(intArray[0], is(1));
+        assertThat(intArray[1], is(42));
+        assertThat(intArray[2], is(7));
     }
 }

@@ -22,10 +22,10 @@
 
 package org.dalesbred.instantiation;
 
+import org.dalesbred.internal.utils.CollectionUtils;
 import org.dalesbred.internal.utils.TypeUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Array;
 import java.util.List;
 
 /**
@@ -45,12 +45,6 @@ final class SqlArrayToArrayConversion extends AbstractSqlArrayConversion<Object>
     @Override
     @NotNull
     protected Object createResult(@NotNull List<?> list) {
-        int length = list.size();
-
-        Object result = Array.newInstance(elementType, length);
-        for (int i = 0; i < length; i++)
-            Array.set(result, i, list.get(i));
-
-        return result;
+        return CollectionUtils.arrayOfType(elementType, list);
     }
 }
