@@ -356,7 +356,7 @@ public final class Database {
 
     /**
      * Find a unique result from database, using given {@link RowMapper} to convert row. Returns empty if
-     * there are no results.
+     * there are no results or if single null result is returned.
      *
      * @throws NonUniqueResultException if there are multiple result rows
      */
@@ -367,7 +367,7 @@ public final class Database {
 
     /**
      * Find a unique result from database, using given {@link RowMapper} to convert row. Returns empty if
-     * there are no results.
+     * there are no results or if single null result is returned.
      *
      * @throws NonUniqueResultException if there are multiple result rows
      */
@@ -378,7 +378,7 @@ public final class Database {
 
     /**
      * Finds a unique result from database, converting the database row to given class using default mechanisms.
-     * Returns empty if there are no results.
+     * Returns empty if there are no results or if single null result is returned.
      *
      * @throws NonUniqueResultException if there are multiple result rows
      */
@@ -389,7 +389,7 @@ public final class Database {
 
     /**
      * Finds a unique result from database, converting the database row to given class using default mechanisms.
-     * Returns empty if there are no results.
+     * Returns empty if there are no results or if single null result is returned.
      *
      * @throws NonUniqueResultException if there are multiple result rows
      */
@@ -399,10 +399,7 @@ public final class Database {
     }
 
     /**
-     * Find a unique result from database, using given {@link RowMapper} to convert row. Returns null if
-     * there are no results.
-     *
-     * @throws NonUniqueResultException if there are multiple result rows
+     * Alias for {@code findOptional(rowMapper, query).orElse(null)}.
      */
     @Nullable
     public <T> T findUniqueOrNull(@NotNull RowMapper<T> rowMapper, @NotNull SqlQuery query) {
@@ -410,10 +407,7 @@ public final class Database {
     }
 
     /**
-     * Find a unique result from database, using given {@link RowMapper} to convert row. Returns null if
-     * there are no results.
-     *
-     * @throws NonUniqueResultException if there are multiple result rows
+     * Alias for {findUniqueOrNull(rowMapper, SqlQuery.query(sql, args))}.
      */
     @Nullable
     public <T> T findUniqueOrNull(@NotNull RowMapper<T> rowMapper, @NotNull @SQL String sql, Object... args) {
@@ -421,10 +415,7 @@ public final class Database {
     }
 
     /**
-     * Finds a unique result from database, converting the database row to given class using default mechanisms.
-     * Returns null if there are no results.
-     *
-     * @throws NonUniqueResultException if there are multiple result rows
+     * Alias for {@code findOptional(cl, query).orElse(null)}.
      */
     @Nullable
     public <T> T findUniqueOrNull(@NotNull Class<T> cl, @NotNull SqlQuery query) {
@@ -432,14 +423,11 @@ public final class Database {
     }
 
     /**
-     * Finds a unique result from database, converting the database row to given class using default mechanisms.
-     * Returns null if there are no results.
-     *
-     * @throws NonUniqueResultException if there are multiple result rows
+     * Alias for {@code findOptional(cl, sql, args).orElse(null)}.
      */
     @Nullable
     public <T> T findUniqueOrNull(@NotNull Class<T> cl, @NotNull @SQL String sql, Object... args) {
-        return findUniqueOrNull(cl, SqlQuery.query(sql, args));
+        return findOptional(cl, sql, args).orElse(null);
     }
 
     /**

@@ -32,6 +32,9 @@ import java.util.Optional;
 
 /**
  * A {@link ResultSetProcessor} that adapts another a list-producing processor to produce optional result.
+ * Note that a single null result will produce {@code Optional.empty()} because it's not possible to represent
+ * {@code Optional.of(null)} and because the pattern of single null return meaning null comes up quite often
+ * when dealing with aggregate queries (e.g. "select max(salary) from employee").
  */
 public final class OptionalResultSetProcessor<T> implements ResultSetProcessor<Optional<T>> {
 
@@ -50,7 +53,7 @@ public final class OptionalResultSetProcessor<T> implements ResultSetProcessor<O
         if (results.isEmpty())
             return Optional.empty();
         else if (results.size() == 1)
-            return Optional.of(results.get(0));
+            return Optional.ofNullable(results.get(0));
         else
             throw new NonUniqueResultException(results.size());
     }

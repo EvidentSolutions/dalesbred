@@ -144,6 +144,11 @@ public class DatabaseTest {
     }
 
     @Test
+    public void findUniqueOrNull_nullResult() {
+        assertThat(db.findUniqueOrNull(Integer.class, "values (cast (null as int))"), is(nullValue()));
+    }
+
+    @Test
     public void findOptional_emptyResult() {
         assertThat(db.findOptional(Integer.class, "select * from (values (1)) n where false"), is(Optional.empty()));
     }
@@ -151,6 +156,11 @@ public class DatabaseTest {
     @Test(expected = NonUniqueResultException.class)
     public void findOptional_nonUniqueResult() {
         db.findOptional(Integer.class, "values (1), (2)");
+    }
+
+    @Test
+    public void findOptional_nullResult() {
+        assertThat(db.findOptional(Integer.class, "values (cast (null as int))"), is(Optional.empty()));
     }
 
     @Test
