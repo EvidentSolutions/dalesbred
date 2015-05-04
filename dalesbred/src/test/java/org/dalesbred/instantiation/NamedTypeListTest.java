@@ -27,6 +27,8 @@ import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
+import java.lang.reflect.Type;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -90,7 +92,7 @@ public class NamedTypeListTest {
     }
 
     @NotNull
-    private static Matcher<Class<?>> type(@NotNull Class<?> cl) {
-        return CoreMatchers.<Class<?>>sameInstance(cl);
+    private static Matcher<Type> type(@NotNull Class<?> cl) {
+        return CoreMatchers.sameInstance(cl);
     }
 }

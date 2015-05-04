@@ -24,6 +24,7 @@ package org.dalesbred.instantiation;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,9 +40,9 @@ public final class NamedTypeList {
     private final List<String> names;
 
     @NotNull
-    private final List<Class<?>> types;
+    private final List<Type> types;
 
-    private NamedTypeList(@NotNull List<String> names, @NotNull List<Class<?>> types) {
+    private NamedTypeList(@NotNull List<String> names, @NotNull List<Type> types) {
         assert names.size() == types.size();
         this.names = unmodifiableList(names);
         this.types = types;
@@ -57,7 +58,7 @@ public final class NamedTypeList {
     }
 
     @NotNull
-    public Class<?> getType(int index) {
+    public Type getType(int index) {
         return types.get(index);
     }
 
@@ -84,7 +85,7 @@ public final class NamedTypeList {
         for (int i = 0; i < size; i++) {
             if (i != 0) sb.append(", ");
 
-            sb.append(names.get(i)).append(": ").append(types.get(i).getName());
+            sb.append(names.get(i)).append(": ").append(types.get(i).getTypeName());
         }
 
         sb.append(']');
@@ -108,14 +109,14 @@ public final class NamedTypeList {
         private final List<String> names;
 
         @NotNull
-        private final List<Class<?>> types;
+        private final List<Type> types;
 
         private Builder(int size) {
             this.names = new ArrayList<>(size);
             this.types = new ArrayList<>(size);
         }
 
-        public Builder add(@NotNull String name, @NotNull Class<?> type) {
+        public Builder add(@NotNull String name, @NotNull Type type) {
             if (built) throw new IllegalStateException("can't add items to builder that has been built");
 
             names.add(requireNonNull(name));

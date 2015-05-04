@@ -215,19 +215,19 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
      */
     @SuppressWarnings("unchecked")
     @NotNull
-    public <S,T> TypeConversion<? super S, ? extends T> getCoercionFromDbValue(@NotNull Class<S> source, @NotNull Class<T> target) {
+    public <S,T> TypeConversion<? super S, ? extends T> getCoercionFromDbValue(@NotNull Type source, @NotNull Type target) {
         TypeConversion<?, ?> coercion = findConversionFromDbValue(source, target).orElse(null);
         if (coercion != null)
             return (TypeConversion<S,T>) coercion;
         else
-            throw new InstantiationException("could not find a conversion from " + source.getName() + " to " + target.getName());
+            throw new InstantiationException("could not find a conversion from " + source.getTypeName() + " to " + target.getTypeName());
     }
 
     /**
      * Returns coercion for converting value of source to target, or returns null if there's no such coercion.
      */
     @NotNull
-    private Optional<TypeConversion<?, ?>> findConversionFromDbValue(@NotNull Class<?> source, @NotNull Type target) {
+    private Optional<TypeConversion<?, ?>> findConversionFromDbValue(@NotNull Type source, @NotNull Type target) {
         if (isAssignable(target, source))
             return Optional.of(TypeConversion.identity(target));
 
@@ -262,10 +262,10 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
     }
 
     @NotNull
-    private Optional<TypeConversion<?, ?>> findArrayConversion(@NotNull Class<?> source, @NotNull Type target) {
+    private Optional<TypeConversion<?, ?>> findArrayConversion(@NotNull Type source, @NotNull Type target) {
         Class<?> rawTarget = rawType(target);
 
-        if (Array.class.isAssignableFrom(source)) {
+        if (isAssignable(Array.class, source)) {
             if (rawTarget.equals(Set.class))
                 return Optional.of(new SqlArrayConversion<>(List.class, typeParameter(target), this, LinkedHashSet::new));
 
@@ -280,7 +280,7 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
     }
 
     @NotNull
-    private Optional<TypeConversion<?, ?>> findOptionalConversion(@NotNull Class<?> source, @NotNull Type target) {
+    private Optional<TypeConversion<?, ?>> findOptionalConversion(@NotNull Type source, @NotNull Type target) {
         Class<?> rawTarget = rawType(target);
 
         if (rawTarget == Optional.class) {
@@ -302,7 +302,7 @@ public final class DefaultInstantiatorRegistry implements InstantiatorRegistry {
 
     @SuppressWarnings("unchecked")
     @NotNull
-    private <T> Optional<TypeConversion<?, ?>> optionalConversion(@NotNull Class<?> source, @NotNull Type target, @NotNull Type result, @NotNull Function<T,?> function) {
+    private <T> Optional<TypeConversion<?, ?>> optionalConversion(@NotNull Type source, @NotNull Type target, @NotNull Type result, @NotNull Function<T,?> function) {
         return findConversionFromDbValue(source, target)
                 .map(cv -> cv.compose(result, v -> function.apply((T) v)));
     }

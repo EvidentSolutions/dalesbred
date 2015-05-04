@@ -27,6 +27,7 @@ import org.dalesbred.instantiation.*;
 import org.dalesbred.internal.jdbc.ResultSetUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
@@ -89,7 +90,7 @@ public final class MapResultSetProcessor<K,V> implements ResultSetProcessor<Map<
     }
 
     @NotNull
-    private <T> TypeConversion<Object, T> getConversion(@NotNull Class<?> sourceType, @NotNull Class<T> targetType) {
+    private <T> TypeConversion<Object, T> getConversion(@NotNull Type sourceType, @NotNull Class<T> targetType) {
         return instantiatorRegistry.getCoercionFromDbValue(sourceType, targetType).unsafeCast(targetType);
     }
 }
