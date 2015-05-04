@@ -30,7 +30,9 @@ import org.dalesbred.conversion.TypeConversionRegistry;
 import org.dalesbred.dialect.Dialect;
 import org.dalesbred.dialect.EnumMode;
 import org.dalesbred.internal.instantiation.InstantiatorProvider;
-import org.dalesbred.internal.result.*;
+import org.dalesbred.internal.result.InstantiatorRowMapper;
+import org.dalesbred.internal.result.MapResultSetProcessor;
+import org.dalesbred.internal.result.ResultTableResultSetProcessor;
 import org.dalesbred.internal.utils.JndiUtils;
 import org.dalesbred.query.SqlQuery;
 import org.dalesbred.result.ResultSetProcessor;
@@ -293,7 +295,7 @@ public final class Database {
      */
     @NotNull
     public <T> List<T> findAll(@NotNull RowMapper<T> rowMapper, @NotNull SqlQuery query) {
-        return executeQuery(new ListWithRowMapperResultSetProcessor<>(rowMapper), query);
+        return executeQuery(rowMapper.list(), query);
     }
 
     /**
@@ -327,7 +329,7 @@ public final class Database {
      * @throws NonUniqueResultException if there are no rows or multiple rows
      */
     public <T> T findUnique(@NotNull RowMapper<T> mapper, @NotNull SqlQuery query) {
-        return executeQuery(new UniqueResultSetProcessor<>(new ListWithRowMapperResultSetProcessor<>(mapper)), query);
+        return executeQuery(mapper.unique(), query);
     }
 
     /**
@@ -345,7 +347,7 @@ public final class Database {
      * @throws NonUniqueResultException if there are no rows or multiple rows
      */
     public <T> T findUnique(@NotNull Class<T> cl, @NotNull SqlQuery query) {
-        return executeQuery(new UniqueResultSetProcessor<>(resultProcessorForClass(cl)), query);
+        return executeQuery(rowMapperForClass(cl).unique(), query);
     }
 
     /**
@@ -365,7 +367,7 @@ public final class Database {
      */
     @NotNull
     public <T> Optional<T> findOptional(@NotNull RowMapper<T> rowMapper, @NotNull SqlQuery query) {
-        return executeQuery(new OptionalResultSetProcessor<>(new ListWithRowMapperResultSetProcessor<>(rowMapper)), query);
+        return executeQuery(rowMapper.optional(), query);
     }
 
     /**
@@ -387,7 +389,7 @@ public final class Database {
      */
     @NotNull
     public <T> Optional<T> findOptional(@NotNull Class<T> cl, @NotNull SqlQuery query) {
-        return executeQuery(new OptionalResultSetProcessor<>(resultProcessorForClass(cl)), query);
+        return executeQuery(rowMapperForClass(cl).optional(), query);
     }
 
     /**
@@ -439,7 +441,7 @@ public final class Database {
      * @throws NonUniqueResultException if there are no rows or multiple rows
      */
     public boolean findUniqueBoolean(@NotNull SqlQuery query) {
-        return executeQuery(new UniqueResultSetProcessor<>(resultProcessorForClass(boolean.class)), query);
+        return executeQuery(rowMapperForClass(boolean.class).unique(), query);
     }
 
     /**
@@ -457,7 +459,7 @@ public final class Database {
      * @throws NonUniqueResultException if there are no rows or multiple rows
      */
     public int findUniqueInt(@NotNull SqlQuery query) {
-        return executeQuery(new UniqueResultSetProcessor<>(resultProcessorForClass(int.class)), query);
+        return executeQuery(rowMapperForClass(int.class).unique(), query);
     }
 
     /**
@@ -473,7 +475,7 @@ public final class Database {
      * A convenience method for retrieving a single non-null long.
      */
     public long findUniqueLong(@NotNull SqlQuery query) {
-        return executeQuery(new UniqueResultSetProcessor<>(resultProcessorForClass(long.class)), query);
+        return executeQuery(rowMapperForClass(long.class).unique(), query);
     }
 
     /**
@@ -629,7 +631,12 @@ public final class Database {
 
     @NotNull
     private <T> ResultSetProcessor<List<T>> resultProcessorForClass(@NotNull Class<T> cl) {
-        return new ReflectionResultSetProcessor<>(cl, instantiatorRegistry);
+        return rowMapperForClass(cl).list();
+    }
+
+    @NotNull
+    private <T> RowMapper<T> rowMapperForClass(@NotNull Class<T> cl) {
+        return new InstantiatorRowMapper<>(cl, instantiatorRegistry);
     }
 
     /**

@@ -22,10 +22,15 @@
 
 package org.dalesbred.result;
 
+import org.dalesbred.EmptyResultException;
+import org.dalesbred.NonUniqueResultException;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Maps a single row of result-set into an object.
@@ -42,4 +47,54 @@ public interface RowMapper<T> {
      * @throws SQLException
      */
     T mapRow(@NotNull ResultSet resultSet) throws SQLException;
+
+    /**
+     * Creates a {@link ResultSetProcessor} that applies this row-mapper to every row
+     * and results a list.
+     */
+    @NotNull
+    default ResultSetProcessor<List<T>> list() {
+        return resultSet -> {
+            List<T> result = new ArrayList<>();
+
+            while (resultSet.next())
+                result.add(mapRow(resultSet));
+
+            return result;
+        };
+    }
+
+    /**
+     * Creates a {@link ResultSetProcessor} that expects a single result row from database.
+     */
+    @NotNull
+    default ResultSetProcessor<T> unique() {
+        return resultSet -> {
+            List<T> results = list().process(resultSet);
+
+            if (results.size() == 1)
+                return results.get(0);
+            else if (results.isEmpty())
+                throw new EmptyResultException();
+            else
+                throw new NonUniqueResultException(results.size());
+        };
+    }
+
+    /**
+     * Creates a {@link ResultSetProcessor} that no rows or single row from database.
+     */
+    @NotNull
+    default ResultSetProcessor<Optional<T>> optional() {
+        return resultSet -> {
+            List<T> results = list().process(resultSet);
+
+            if (results.size() == 1)
+                return Optional.ofNullable(results.get(0));
+            else if (results.isEmpty())
+                return Optional.empty();
+            else
+                throw new NonUniqueResultException(results.size());
+        };
+    }
 }

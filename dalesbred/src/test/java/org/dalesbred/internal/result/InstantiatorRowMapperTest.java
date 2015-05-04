@@ -20,12 +20,12 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred;
+package org.dalesbred.internal.result;
 
 import org.dalesbred.annotation.Reflective;
 import org.dalesbred.dialect.DefaultDialect;
 import org.dalesbred.internal.instantiation.InstantiatorProvider;
-import org.dalesbred.internal.result.ReflectionResultSetProcessor;
+import org.dalesbred.result.ResultSetProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.mockito.stubbing.OngoingStubbing;
@@ -41,14 +41,14 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ReflectionRowMapperTest {
+public class InstantiatorRowMapperTest {
 
     private final InstantiatorProvider instantiatorRegistry = new InstantiatorProvider(new DefaultDialect());
 
     @Test
     public void instantiatingWithSimpleConstructor() throws SQLException {
-        ReflectionResultSetProcessor<SingleConstructor> mapper =
-                new ReflectionResultSetProcessor<>(SingleConstructor.class, instantiatorRegistry);
+        ResultSetProcessor<List<SingleConstructor>> mapper =
+                new InstantiatorRowMapper<>(SingleConstructor.class, instantiatorRegistry).list();
 
         ResultSet resultSet = resultSet(new Object[][] {
             { 1, "foo" },
@@ -66,16 +66,16 @@ public class ReflectionRowMapperTest {
 
     @Test
     public void emptyResultSetProducesNoResults() throws SQLException {
-        ReflectionResultSetProcessor<SingleConstructor> mapper =
-                new ReflectionResultSetProcessor<>(SingleConstructor.class, instantiatorRegistry);
+        ResultSetProcessor<List<SingleConstructor>> mapper =
+                new InstantiatorRowMapper<>(SingleConstructor.class, instantiatorRegistry).list();
 
         assertThat(mapper.process(emptyResultSet(Integer.class, String.class)).isEmpty(), is(true));
     }
 
     @Test
     public void correctConstructorIsPickedBasedOnTypes() throws SQLException {
-        ReflectionResultSetProcessor<TwoConstructors> mapper =
-                new ReflectionResultSetProcessor<>(TwoConstructors.class, instantiatorRegistry);
+        ResultSetProcessor<List<TwoConstructors>> mapper =
+                new InstantiatorRowMapper<>(TwoConstructors.class, instantiatorRegistry).list();
 
         List<TwoConstructors> list = mapper.process(singletonResultSet(1, "foo"));
         assertThat(list.size(), is(1));
