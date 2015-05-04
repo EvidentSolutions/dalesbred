@@ -30,6 +30,7 @@ import java.sql.SQLException;
 /**
  * Callback for processing a whole {@link ResultSet}.
  */
+@FunctionalInterface
 public interface ResultSetProcessor<T> {
     T process(@NotNull ResultSet resultSet) throws SQLException;
 }
