@@ -20,37 +20,40 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.result;
+package org.dalesbred.internal.result;
 
+import org.dalesbred.EmptyResultException;
+import org.dalesbred.NonUniqueResultException;
+import org.dalesbred.result.ResultSetProcessor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Objects.requireNonNull;
-
 /**
- * A ResultSetProcessor that creates a list of results using given RowMapper.
+ * A {@link ResultSetProcessor} that adapts another a list-producing processor to produce only single result.
  */
-public final class ListWithRowMapperResultSetProcessor<T> implements ResultSetProcessor<List<T>> {
-    
+public final class UniqueResultSetProcessor<T> implements ResultSetProcessor<T> {
+
     @NotNull
-    private final RowMapper<T> rowMapper;
-    
-    public ListWithRowMapperResultSetProcessor(@NotNull RowMapper<T> rowMapper) {
-        this.rowMapper = requireNonNull(rowMapper);
+    private final ResultSetProcessor<List<T>> resultSetProcessor;
+
+    public UniqueResultSetProcessor(@NotNull ResultSetProcessor<List<T>> resultSetProcessor) {
+        this.resultSetProcessor = resultSetProcessor;
     }
 
     @Override
-    @NotNull
-    public List<T> process(@NotNull ResultSet resultSet) throws SQLException {
-        List<T> result = new ArrayList<>();
+    @Nullable
+    public T process(@NotNull ResultSet resultSet) throws SQLException {
+        List<T> results = resultSetProcessor.process(resultSet);
 
-        while (resultSet.next())
-            result.add(rowMapper.mapRow(resultSet));
-
-        return result;
+        if (results.size() == 1)
+            return results.get(0);
+        else if (results.isEmpty())
+            throw new EmptyResultException();
+        else
+            throw new NonUniqueResultException(results.size());
     }
 }

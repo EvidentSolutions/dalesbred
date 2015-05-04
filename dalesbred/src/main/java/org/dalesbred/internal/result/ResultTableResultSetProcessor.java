@@ -20,8 +20,10 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.result;
+package org.dalesbred.internal.result;
 
+import org.dalesbred.result.ResultSetProcessor;
+import org.dalesbred.result.ResultTable;
 import org.dalesbred.result.ResultTable.ColumnMetadata;
 import org.jetbrains.annotations.NotNull;
 

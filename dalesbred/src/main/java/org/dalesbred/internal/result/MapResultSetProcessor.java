@@ -20,64 +20,82 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.result;
+package org.dalesbred.internal.result;
 
 import org.dalesbred.UnexpectedResultException;
+import org.dalesbred.conversion.TypeConversion;
 import org.dalesbred.internal.instantiation.Instantiator;
 import org.dalesbred.internal.instantiation.InstantiatorArguments;
 import org.dalesbred.internal.instantiation.InstantiatorProvider;
 import org.dalesbred.internal.instantiation.NamedTypeList;
 import org.dalesbred.internal.jdbc.ResultSetUtils;
+import org.dalesbred.result.ResultSetProcessor;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 
 /**
- * Builds a list of results from {@link ResultSet} using reflection to instantiate individual rows.
+ * ResultSetProcessor that expects results with two columns and creates map from them.
  */
-public final class ReflectionResultSetProcessor<T> implements ResultSetProcessor<List<T>> {
+public final class MapResultSetProcessor<K,V> implements ResultSetProcessor<Map<K,V>> {
 
     @NotNull
-    private final Class<T> cl;
+    private final Class<K> keyType;
+
+    @NotNull
+    private final Class<V> valueType;
 
     @NotNull
     private final InstantiatorProvider instantiatorRegistry;
 
-    public ReflectionResultSetProcessor(@NotNull Class<T> cl, @NotNull InstantiatorProvider instantiatorRegistry) {
-        this.cl = requireNonNull(cl);
+    public MapResultSetProcessor(@NotNull Class<K> keyType,
+                                 @NotNull Class<V> valueType,
+                                 @NotNull InstantiatorProvider instantiatorRegistry) {
+        this.keyType = requireNonNull(keyType);
+        this.valueType = requireNonNull(valueType);
         this.instantiatorRegistry = requireNonNull(instantiatorRegistry);
     }
 
     @NotNull
     @Override
-    public List<T> process(@NotNull ResultSet resultSet) throws SQLException {
-        NamedTypeList types = ResultSetUtils.getTypes(resultSet.getMetaData());
-        Instantiator<T> ctor = instantiatorRegistry.findInstantiator(cl, types);
-        boolean allowNulls = !cl.isPrimitive();
+    public Map<K, V> process(@NotNull ResultSet resultSet) throws SQLException {
+        Map<K,V> result = new LinkedHashMap<>();
 
-        ArrayList<T> result = new ArrayList<>();
+        NamedTypeList types = ResultSetUtils.getTypes(resultSet.getMetaData());
+        if (types.size() < 2)
+            throw new UnexpectedResultException("Expected ResultSet with at least 2 columns, but got " + types.size() + " columns.");
+
+        NamedTypeList valueTypes = types.subList(1, types.size());
+        TypeConversion<Object, K> keyConversion = getConversion(types.getType(0), keyType);
+        Instantiator<V> valueInstantiator = instantiatorRegistry.findInstantiator(valueType, valueTypes);
 
         // For performance reasons we reuse the same arguments-array and InstantiatorArguments-object for all rows.
         // This should be fine as long as the instantiators don't hang on to their arguments for too long.
-        Object[] arguments = new Object[types.size()];
-        InstantiatorArguments instantiatorArguments = new InstantiatorArguments(types, arguments);
+        Object[] valueArguments = new Object[valueTypes.size()];
+        InstantiatorArguments instantiatorArguments = new InstantiatorArguments(valueTypes, valueArguments);
 
         while (resultSet.next()) {
-            for (int i = 0; i < arguments.length; i++)
-                arguments[i] = resultSet.getObject(i+1);
+            K key = keyConversion.convert(resultSet.getObject(1));
 
-            T value = ctor.instantiate(instantiatorArguments);
-            if (value != null || allowNulls)
-                result.add(value);
-            else
-                throw new UnexpectedResultException("Expected " + cl.getName() + ", but got null");
+            for (int i = 0; i < valueArguments.length; i++)
+                valueArguments[i] = resultSet.getObject(i+2);
+
+            V value = valueInstantiator.instantiate(instantiatorArguments);
+
+            result.put(key, value);
         }
 
         return result;
+    }
+
+    @NotNull
+    private <T> TypeConversion<Object, T> getConversion(@NotNull Type sourceType, @NotNull Class<T> targetType) {
+        return instantiatorRegistry.getCoercionFromDbValue(sourceType, targetType).unsafeCast(targetType);
     }
 }

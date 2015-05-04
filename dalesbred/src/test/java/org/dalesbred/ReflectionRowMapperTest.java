@@ -25,7 +25,7 @@ package org.dalesbred;
 import org.dalesbred.annotation.Reflective;
 import org.dalesbred.dialect.DefaultDialect;
 import org.dalesbred.internal.instantiation.InstantiatorProvider;
-import org.dalesbred.result.ReflectionResultSetProcessor;
+import org.dalesbred.internal.result.ReflectionResultSetProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.mockito.stubbing.OngoingStubbing;

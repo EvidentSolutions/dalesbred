@@ -20,38 +20,41 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.result;
+package org.dalesbred.internal.result;
 
-import org.dalesbred.EmptyResultException;
 import org.dalesbred.NonUniqueResultException;
+import org.dalesbred.result.ResultSetProcessor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 /**
- * A {@link ResultSetProcessor} that adapts another a list-producing processor to produce only single result.
+ * A {@link ResultSetProcessor} that adapts another a list-producing processor to produce optional result.
+ * Note that a single null result will produce {@code Optional.empty()} because it's not possible to represent
+ * {@code Optional.of(null)} and because the pattern of single null return meaning null comes up quite often
+ * when dealing with aggregate queries (e.g. "select max(salary) from employee").
  */
-public final class UniqueResultSetProcessor<T> implements ResultSetProcessor<T> {
+public final class OptionalResultSetProcessor<T> implements ResultSetProcessor<Optional<T>> {
 
     @NotNull
     private final ResultSetProcessor<List<T>> resultSetProcessor;
 
-    public UniqueResultSetProcessor(@NotNull ResultSetProcessor<List<T>> resultSetProcessor) {
+    public OptionalResultSetProcessor(@NotNull ResultSetProcessor<List<T>> resultSetProcessor) {
         this.resultSetProcessor = resultSetProcessor;
     }
 
     @Override
-    @Nullable
-    public T process(@NotNull ResultSet resultSet) throws SQLException {
+    @NotNull
+    public Optional<T> process(@NotNull ResultSet resultSet) throws SQLException {
         List<T> results = resultSetProcessor.process(resultSet);
 
-        if (results.size() == 1)
-            return results.get(0);
-        else if (results.isEmpty())
-            throw new EmptyResultException();
+        if (results.isEmpty())
+            return Optional.empty();
+        else if (results.size() == 1)
+            return Optional.ofNullable(results.get(0));
         else
             throw new NonUniqueResultException(results.size());
     }
