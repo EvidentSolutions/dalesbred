@@ -30,15 +30,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 import static java.lang.reflect.Modifier.isPublic;
 import static org.dalesbred.internal.utils.StringUtils.isEqualIgnoringCaseAndUnderscores;
 
 abstract class PropertyAccessor {
-
-    @NotNull
-    private static final Pattern UNDERSCORE = Pattern.compile("_", Pattern.LITERAL);
 
     abstract void set(Object object, Object value);
 
