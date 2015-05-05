@@ -23,6 +23,8 @@
 package org.dalesbred;
 
 import org.dalesbred.query.SqlQuery;
+import org.dalesbred.result.NonUniqueResultException;
+import org.dalesbred.result.UnexpectedResultException;
 import org.junit.Rule;
 import org.junit.Test;
 

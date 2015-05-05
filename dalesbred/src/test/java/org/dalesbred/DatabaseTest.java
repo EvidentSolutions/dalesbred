@@ -24,6 +24,8 @@ package org.dalesbred;
 
 import org.dalesbred.annotation.Reflective;
 import org.dalesbred.dialect.HsqldbDialect;
+import org.dalesbred.result.EmptyResultException;
+import org.dalesbred.result.NonUniqueResultException;
 import org.dalesbred.result.ResultSetProcessor;
 import org.dalesbred.result.RowMapper;
 import org.dalesbred.transaction.Isolation;

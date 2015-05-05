@@ -22,8 +22,6 @@
 
 package org.dalesbred.result;
 
-import org.dalesbred.EmptyResultException;
-import org.dalesbred.NonUniqueResultException;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;

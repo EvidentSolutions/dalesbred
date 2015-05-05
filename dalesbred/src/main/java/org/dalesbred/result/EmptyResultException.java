@@ -20,27 +20,20 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred;
+package org.dalesbred.result;
 
+import org.dalesbred.Database;
 import org.dalesbred.query.SqlQuery;
-import org.jetbrains.annotations.NotNull;
 
 /**
- * Exception thrown when expecting a unique result from a call, but more then one row
- * of results was returned by the database.
+ * Exception thrown when expecting a unique result from a call, but got no results.
  *
  * @see Database#findUnique(Class, SqlQuery)
- * @see Database#findOptional(Class, SqlQuery)
- * @see Database#findUniqueOrNull(Class, SqlQuery)
- * @see EmptyResultException
+ * @see NonUniqueResultException
  */
-public class NonUniqueResultException extends UnexpectedResultException {
+public class EmptyResultException extends NonUniqueResultException {
 
-    public NonUniqueResultException() {
-        super("Expected unique result but received more than one row");
-    }
-
-    protected NonUniqueResultException(@NotNull String message) {
-        super(message);
+    public EmptyResultException() {
+        super("Expected unique result, but got no rows");
     }
 }
