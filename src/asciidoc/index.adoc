@@ -325,30 +325,6 @@ you can register your functions to {javadocBase}org/dalesbred/instantiation/Type
             String.class, EmailAddress.class, MyConversions::stringToEmail, MyConversions::emailToString);
 ----
 
-
-Custom instantiators
-~~~~~~~~~~~~~~~~~~~~
-
-Sometimes you have objects that you can't instantiate using just constructors and setters, but you'd
-still like to be able to build from results. You can register custom instantiators for such objects:
-
-[source,java,indent=0]
-----
-        db.getInstantiatorRegistry().registerInstantiator(Foo.class, new Instantiator<Foo>() {
-            @Override
-            public Foo instantiate(@NotNull InstantiatorArguments arguments) {
-                List<?> args = arguments.getValues();
-                FooBuilder fooBuilder = new FooBuilder();
-                fooBuilder.setBar(args.get(0));
-                fooBuilder.setBaz(args.get(1));
-                return fooBuilder.build();
-            }
-        });
-----
-
-Dalesbred will use this instantiator in place of the custom instantiator whenever it needs to build
-results of type `Foo`.
-
 Integrations
 ------------
 
