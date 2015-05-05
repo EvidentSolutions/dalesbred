@@ -35,12 +35,6 @@ public abstract class AbstractTransactionManager implements TransactionManager {
     @NotNull
     private Isolation defaultIsolation = Isolation.DEFAULT;
 
-    /**
-     * The default propagation for transactions
-     */
-    @NotNull
-    private Propagation defaultPropagation = Propagation.DEFAULT;
-
     @NotNull
     protected abstract Optional<DefaultTransaction> getActiveTransaction();
 
@@ -56,7 +50,7 @@ public abstract class AbstractTransactionManager implements TransactionManager {
 
     @Override
     public <T> T withTransaction(@NotNull TransactionSettings settings, @NotNull TransactionCallback<T> callback, @NotNull Dialect dialect) {
-        Propagation propagation = settings.getPropagation().normalize(defaultPropagation);
+        Propagation propagation = settings.getPropagation();
         Isolation isolation = settings.getIsolation().normalize(defaultIsolation);
         int retries = settings.getRetries();
 
@@ -99,16 +93,5 @@ public abstract class AbstractTransactionManager implements TransactionManager {
     @Override
     public void setDefaultIsolation(@NotNull Isolation isolation) {
         this.defaultIsolation = isolation;
-    }
-
-    @Override
-    @NotNull
-    public Propagation getDefaultPropagation() {
-        return defaultPropagation;
-    }
-
-    @Override
-    public void setDefaultPropagation(@NotNull Propagation propagation) {
-        this.defaultPropagation = propagation;
     }
 }

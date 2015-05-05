@@ -55,15 +55,4 @@ public interface TransactionManager {
      * Sets the transaction isolation level to use.
      */
     void setDefaultIsolation(@NotNull Isolation isolation);
-
-    /**
-     * Returns the default transaction propagation to use.
-     */
-    @NotNull
-    Propagation getDefaultPropagation();
-
-    /**
-     * Returns the default transaction propagation to use.
-     */
-    void setDefaultPropagation(@NotNull Propagation propagation);
 }

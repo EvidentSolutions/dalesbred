@@ -58,9 +58,6 @@ public final class SpringTransactionManager implements TransactionManager {
     @NotNull
     private Isolation defaultIsolation = Isolation.DEFAULT;
 
-    @NotNull
-    private Propagation defaultPropagation = Propagation.DEFAULT;
-
     /**
      * Constructs new SpringTransactionManager to use.
      */
@@ -112,17 +109,6 @@ public final class SpringTransactionManager implements TransactionManager {
         this.defaultIsolation = requireNonNull(isolation);
     }
 
-    @NotNull
-    @Override
-    public Propagation getDefaultPropagation() {
-        return defaultPropagation;
-    }
-
-    @Override
-    public void setDefaultPropagation(@NotNull Propagation propagation) {
-        defaultPropagation = requireNonNull(propagation);
-    }
-
     static int springIsolationCode(@NotNull Isolation isolation) {
         if (isolation == Isolation.DEFAULT)
             return TransactionDefinition.ISOLATION_DEFAULT;
@@ -132,7 +118,6 @@ public final class SpringTransactionManager implements TransactionManager {
 
     static int springPropagationCode(@NotNull Propagation propagation) {
         switch (propagation) {
-            case DEFAULT:
             case REQUIRED:
                 return TransactionDefinition.PROPAGATION_REQUIRED;
             case MANDATORY:
@@ -152,7 +137,7 @@ public final class SpringTransactionManager implements TransactionManager {
 
         DefaultTransactionDefinition df = new DefaultTransactionDefinition();
         df.setIsolationLevel(springIsolationCode(settings.getIsolation().normalize(defaultIsolation)));
-        df.setPropagationBehavior(springPropagationCode(settings.getPropagation().normalize(defaultPropagation)));
+        df.setPropagationBehavior(springPropagationCode(settings.getPropagation()));
         return df;
     }
 }

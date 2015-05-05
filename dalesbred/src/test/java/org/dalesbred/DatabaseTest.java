@@ -28,7 +28,6 @@ import org.dalesbred.result.EmptyResultException;
 import org.dalesbred.result.NonUniqueResultException;
 import org.dalesbred.result.ResultSetProcessor;
 import org.dalesbred.result.RowMapper;
-import org.dalesbred.transaction.Isolation;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -51,9 +50,8 @@ public class DatabaseTest {
 
     @Test
     public void meaningfulToString() {
-        db.getTransactionManager().setDefaultIsolation(Isolation.READ_UNCOMMITTED);
         db.setAllowImplicitTransactions(true);
-        assertEquals("Database [dialect=" + new HsqldbDialect().toString() + ", allowImplicitTransactions=true, defaultIsolation=READ_UNCOMMITTED, defaultPropagation=DEFAULT]", db.toString());
+        assertEquals("Database [dialect=" + new HsqldbDialect().toString() + ", allowImplicitTransactions=true]", db.toString());
     }
 
     @Test

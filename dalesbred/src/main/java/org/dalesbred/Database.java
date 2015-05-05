@@ -161,7 +161,7 @@ public final class Database {
      * Executes a block of code within a context of a transaction, using {@link Propagation#REQUIRED} propagation.
      */
     public <T> T withTransaction(@NotNull TransactionCallback<T> callback) {
-        return withTransaction(Propagation.DEFAULT, Isolation.DEFAULT, callback);
+        return withTransaction(Propagation.REQUIRED, Isolation.DEFAULT, callback);
     }
 
     /**
@@ -169,6 +169,13 @@ public final class Database {
      */
     public <T> T withTransaction(@NotNull Propagation propagation, @NotNull TransactionCallback<T> callback) {
         return withTransaction(propagation, Isolation.DEFAULT, callback);
+    }
+
+    /**
+     * Executes a block of code with given isolation.
+     */
+    public <T> T withTransaction(@NotNull Isolation isolation, @NotNull TransactionCallback<T> callback) {
+        return withTransaction(Propagation.REQUIRED, isolation, callback);
     }
 
     /**
@@ -208,6 +215,13 @@ public final class Database {
      */
     public void withVoidTransaction(@NotNull Propagation propagation, @NotNull VoidTransactionCallback callback) {
         withVoidTransaction(propagation, Isolation.DEFAULT, callback);
+    }
+
+    /**
+     * Executes a block of code with given isolation.
+     */
+    public void withVoidTransaction(@NotNull Isolation isolation, @NotNull VoidTransactionCallback callback) {
+        withVoidTransaction(Propagation.REQUIRED, isolation, callback);
     }
 
     /**
@@ -712,6 +726,6 @@ public final class Database {
     @Override
     @NotNull
     public String toString() {
-        return "Database [dialect=" + dialect + ", allowImplicitTransactions=" + allowImplicitTransactions + ", defaultIsolation=" + transactionManager.getDefaultIsolation() + ", defaultPropagation=" + transactionManager.getDefaultPropagation() + ']';
+        return "Database [dialect=" + dialect + ", allowImplicitTransactions=" + allowImplicitTransactions + ']';
     }
 }

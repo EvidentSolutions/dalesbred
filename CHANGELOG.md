@@ -17,8 +17,9 @@
   - Renamed `VariableResolvers.resolverForMap/resolverForBean` to `VariableResolver.forMap/forBean`.
   - Made `TransactionContext` an interface instead of abstract class.
   - Removed `Database.createTransactionalProxyFor`. Use `TransactionalProxyFactory.createTransactionalProxyFor`instead.
-  - Removed accessors for isolation and propagation from `Database`. `Database.getTransactionManager` can be used
-    to access `TransactionManager` for configuring these.
+  - Removed accessors for isolation `Database`. `Database.getTransactionManager` can be used to access 
+    `TransactionManager` for configuring these.
+  - Removed support for configuring default propagation. Use propagation on per-transaction basis.
 
 ## 1.0.0-alpha.2 (2015-05-04)
 

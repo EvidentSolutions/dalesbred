@@ -40,7 +40,7 @@ import java.lang.annotation.*;
 public @interface DalesbredTransactional {
 
     /** The propagation for transaction */
-    @NotNull Propagation propagation() default Propagation.DEFAULT;
+    @NotNull Propagation propagation() default Propagation.REQUIRED;
 
     /** Isolation for transaction */
     @NotNull Isolation isolation() default Isolation.DEFAULT;

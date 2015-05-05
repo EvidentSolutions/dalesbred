@@ -36,7 +36,7 @@ import static java.util.Objects.requireNonNull;
 public final class TransactionSettings {
 
     @NotNull
-    private Propagation propagation = Propagation.DEFAULT;
+    private Propagation propagation = Propagation.REQUIRED;
 
     @NotNull
     private Isolation isolation = Isolation.DEFAULT;

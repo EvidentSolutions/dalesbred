@@ -22,15 +22,10 @@
 
 package org.dalesbred.transaction;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * Transaction propagation types.
  */
 public enum Propagation {
-
-    /** Use the default propagation level that is configured */
-    DEFAULT,
 
     /** Join existing transaction if there is one, otherwise create a new one. */
     REQUIRED,
@@ -42,12 +37,5 @@ public enum Propagation {
     REQUIRES_NEW,
 
     /** Start a nested transaction if there is a current transaction, otherwise start a new normal transaction. */
-    NESTED,;
-
-    @NotNull
-    public Propagation normalize(@NotNull Propagation defaultValue) {
-        return (this != DEFAULT)         ? this
-             : (defaultValue != DEFAULT) ? defaultValue
-             : REQUIRED;
-    }
+    NESTED;
 }
