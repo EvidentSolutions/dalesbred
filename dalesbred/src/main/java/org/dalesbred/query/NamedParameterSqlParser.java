@@ -31,13 +31,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.util.Objects.requireNonNull;
+
 final class NamedParameterSqlParser {
 
-    private static final SkippableBlock[] SKIPPABLE_BLOCKS = { new SkippableBlock("'",  "'",  false),
-                                                               new SkippableBlock("\"", "\"", false),
-                                                               new SkippableBlock("/*", "*/", false),
-                                                               new SkippableBlock("::", "", false),
-                                                               new SkippableBlock("--", "\n", true) };
+    /** The various patterns we need to skip combined to single regex so that it will be executed at once */
+    private static final Pattern SKIP_PATTERN = Pattern.compile("('[^']*'|\"[^\"]*\"|::|--[^\n]*)");
 
     private static final Pattern IDENTIFIER_PATTERN = Pattern.compile("\\w+");
 
@@ -51,21 +50,23 @@ final class NamedParameterSqlParser {
         this.sqlBuilder = new StringBuilder(sql.length());
     }
 
+    @NotNull
     public static NamedParameterSql parseSqlStatement(@NotNull @SQL String sql) {
-        return new NamedParameterSqlParser(sql).parse();
-    }
+        NamedParameterSqlParser parser = new NamedParameterSqlParser(requireNonNull(sql));
 
-    private NamedParameterSql parse() {
-        while (lexer.hasMore())
-            parseNext();
+        while (parser.lexer.hasMore())
+            parser.parseNext();
 
-        return new NamedParameterSql(sqlBuilder.toString(), parameterNames);
+        return new NamedParameterSql(parser.sqlBuilder.toString(), parser.parameterNames);
     }
 
     private void parseNext() {
-        SkippableBlock skippableBlock = findSkippableBlock();
-        if (skippableBlock != null) {
-            sqlBuilder.append(lexer.readBlock(skippableBlock));
+        CharSequence skipped = lexer.readRegexp(SKIP_PATTERN);
+        if (skipped != null) {
+            sqlBuilder.append(skipped);
+
+        } else if (lexer.lookingAt("/*")) {
+            sqlBuilder.append(readUntil("*/"));
 
         } else if (lexer.lookingAt(":")) {
             sqlBuilder.append('?');
@@ -79,37 +80,30 @@ final class NamedParameterSqlParser {
         }
     }
 
+    @NotNull
     private String parseName() {
         lexer.expect(":");
-        String name = lexer.readRegexp(IDENTIFIER_PATTERN);
+        CharSequence name = lexer.readRegexp(IDENTIFIER_PATTERN);
         if (name != null)
-            return name;
+            return name.toString();
         else
             throw new SqlSyntaxException("SQL cannot end to named parameter without name", lexer.sql);
     }
 
-    @Nullable
-    private SkippableBlock findSkippableBlock() {
-        for (SkippableBlock block : SKIPPABLE_BLOCKS)
-            if (lexer.lookingAt(block.start))
-                return block;
+    @NotNull
+    public String readUntil(@NotNull String end) {
+        int startOffset = lexer.offset;
 
-        return null;
+        int nextHit = lexer.findNext(end);
+        if (nextHit != -1)
+            lexer.offset = nextHit + end.length();
+        else
+            throw new SqlSyntaxException("Block end not found: \"" + end + "\".", lexer.sql);
+
+        return lexer.sql.substring(startOffset, lexer.offset);
     }
 
-    private static class SkippableBlock {
-        private final String start;
-        private final String end;
-        private final boolean blockEndsWhenStreamRunsOut;
-
-        private SkippableBlock(String start, String end, boolean blockEndsWhenStreamRunsOut) {
-            this.start = start;
-            this.end = end;
-            this.blockEndsWhenStreamRunsOut = blockEndsWhenStreamRunsOut;
-        }
-    }
-
-    private static final class Lexer {
+    private static final class Lexer implements CharSequence {
         private final String sql;
         private int offset;
 
@@ -133,10 +127,10 @@ final class NamedParameterSqlParser {
         }
 
         @Nullable
-        private String readRegexp(@NotNull Pattern pattern) {
-            Matcher matcher = pattern.matcher(sql.substring(offset));
+        private CharSequence readRegexp(@NotNull Pattern pattern) {
+            Matcher matcher = pattern.matcher(this);
             if (matcher.lookingAt()) {
-                String result = matcher.group(0);
+                CharSequence result = subSequence(0, matcher.end());
                 offset += result.length();
                 return result;
             } else {
@@ -144,22 +138,24 @@ final class NamedParameterSqlParser {
             }
         }
 
-        private String readBlock(SkippableBlock skippableBlock) {
-            int startOffset = offset;
+        @Override
+        public int length() {
+            return sql.length() - offset;
+        }
 
-            expect(skippableBlock.start);
+        @Override
+        public char charAt(int index) {
+            return sql.charAt(offset + index);
+        }
 
-            int nextHit = findNext(skippableBlock.end);
-            if (nextHit != -1) {
-                offset = nextHit + skippableBlock.end.length();
-            } else {
-                if (skippableBlock.blockEndsWhenStreamRunsOut)
-                    offset = sql.length();
-                else
-                    throw new SqlSyntaxException("Block end not found: \"" + skippableBlock.end + "\".", sql);
-            }
+        @Override
+        public CharSequence subSequence(int start, int end) {
+            return sql.substring(offset + start, offset + end);
+        }
 
-            return sql.substring(startOffset, offset);
+        @Override
+        public String toString() {
+            return sql.substring(offset);
         }
 
         private int findNext(@NotNull String substring) {
