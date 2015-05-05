@@ -29,7 +29,6 @@ import org.dalesbred.result.NonUniqueResultException;
 import org.dalesbred.result.ResultSetProcessor;
 import org.dalesbred.result.RowMapper;
 import org.dalesbred.transaction.Isolation;
-import org.dalesbred.transaction.Propagation;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -52,7 +51,7 @@ public class DatabaseTest {
 
     @Test
     public void meaningfulToString() {
-        db.setDefaultIsolation(Isolation.READ_UNCOMMITTED);
+        db.getTransactionManager().setDefaultIsolation(Isolation.READ_UNCOMMITTED);
         db.setAllowImplicitTransactions(true);
         assertEquals("Database [dialect=" + new HsqldbDialect().toString() + ", allowImplicitTransactions=true, defaultIsolation=READ_UNCOMMITTED, defaultPropagation=DEFAULT]", db.toString());
     }
@@ -201,22 +200,6 @@ public class DatabaseTest {
     @Test(expected = DatabaseException.class)
     public void creatingDatabaseWithJndiDataSourceThrowsExceptionWhenContextIsNotConfigured() {
         Database.forJndiDataSource("foo");
-    }
-
-    @Test
-    public void isolation() {
-        assertSame(Isolation.DEFAULT, db.getDefaultIsolation());
-
-        db.setDefaultIsolation(Isolation.REPEATABLE_READ);
-        assertSame(Isolation.REPEATABLE_READ, db.getDefaultIsolation());
-    }
-
-    @Test
-    public void propagation() {
-        assertSame(Propagation.DEFAULT, db.getDefaultPropagation());
-
-        db.setDefaultPropagation(Propagation.NESTED);
-        assertSame(Propagation.NESTED, db.getDefaultPropagation());
     }
 
     @Test

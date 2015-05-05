@@ -41,8 +41,8 @@ public class DatabaseTransactionIsolationTest {
     @Test(expected = TransactionSerializationException.class)
     @SuppressLogging
     public void concurrentUpdatesInSerializableTransactionThrowTransactionSerializationException() {
-        db1.setDefaultIsolation(SERIALIZABLE);
-        db2.setDefaultIsolation(SERIALIZABLE);
+        db1.getTransactionManager().setDefaultIsolation(SERIALIZABLE);
+        db2.getTransactionManager().setDefaultIsolation(SERIALIZABLE);
 
         db1.update("drop table if exists isolation_test");
         db1.update("create table isolation_test (value int)");

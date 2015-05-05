@@ -660,33 +660,11 @@ public final class Database {
     }
 
     /**
-     * Returns the used transaction isolation level.
+     * Returns the TransactionManager that database uses.
      */
     @NotNull
-    public Isolation getDefaultIsolation() {
-        return transactionManager.getDefaultIsolation();
-    }
-
-    /**
-     * Sets the transaction isolation level to use.
-     */
-    public void setDefaultIsolation(@NotNull Isolation isolation) {
-        transactionManager.setDefaultIsolation(isolation);
-    }
-
-    /**
-     * Returns the default transaction propagation to use.
-     */
-    @NotNull
-    public Propagation getDefaultPropagation() {
-        return transactionManager.getDefaultPropagation();
-    }
-
-    /**
-     * Returns the default transaction propagation to use.
-     */
-    public void setDefaultPropagation(@NotNull Propagation propagation) {
-        transactionManager.setDefaultPropagation(propagation);
+    public TransactionManager getTransactionManager() {
+        return transactionManager;
     }
 
     /**
