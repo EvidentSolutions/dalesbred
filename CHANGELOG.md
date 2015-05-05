@@ -15,6 +15,7 @@
     returns raw `Class<?>` -objects. Similarly `getType` in `ResultTable.ColumnMetadata` now returns
     `Type` and raw class can be returned with `getRawType`.
   - Renamed `VariableResolvers.resolverForMap/resolverForBean` to `VariableResolver.forMap/forBean`.
+  - Made `TransactionContext` an interface instead of abstract class.
 
 ## 1.0.0-alpha.2 (2015-05-04)
 

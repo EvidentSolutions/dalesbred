@@ -29,18 +29,18 @@ import java.sql.Connection;
 /**
  * Provides transactions with access to the context.
  */
-public abstract class TransactionContext {
+public interface TransactionContext {
 
     /**
      * Returns the raw JDBC-connection for this transaction.
      */
     @NotNull
-    public abstract Connection getConnection();
+    Connection getConnection();
 
     /**
      * Requests that this transaction will be rolled back.
      */
-    public abstract void setRollbackOnly();
+    void setRollbackOnly();
 
-    public abstract boolean isRollbackOnly();
+    boolean isRollbackOnly();
 }

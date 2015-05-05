@@ -28,7 +28,7 @@ import java.sql.Connection;
 
 import static java.util.Objects.requireNonNull;
 
-final class DefaultTransactionContext extends TransactionContext {
+final class DefaultTransactionContext implements TransactionContext {
 
     @NotNull
     private final Connection connection;

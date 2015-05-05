@@ -30,7 +30,7 @@ import java.sql.Connection;
 
 import static java.util.Objects.requireNonNull;
 
-final class SpringTransactionContext extends TransactionContext {
+final class SpringTransactionContext implements TransactionContext {
 
     @NotNull
     private final TransactionStatus status;
