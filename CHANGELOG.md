@@ -14,6 +14,7 @@
   - `ResultTable.getColumnTypes()` now returns `Type`-objects. New `ResultTable.getRawColumnTypes`
     returns raw `Class<?>` -objects. Similarly `getType` in `ResultTable.ColumnMetadata` now returns
     `Type` and raw class can be returned with `getRawType`.
+  - Renamed `VariableResolvers.resolverForMap/resolverForBean` to `VariableResolver.forMap/forBean`.
 
 ## 1.0.0-alpha.2 (2015-05-04)
 

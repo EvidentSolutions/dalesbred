@@ -34,8 +34,6 @@ import java.util.Objects;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
-import static org.dalesbred.query.VariableResolvers.resolverForBean;
-import static org.dalesbred.query.VariableResolvers.resolverForMap;
 
 /**
  * Represents an SQL query along all of its arguments.
@@ -76,22 +74,22 @@ public final class SqlQuery implements Serializable {
      * Constructs a query with named arguments, using given map for resolving the values of arguments.
      *
      * @see #namedQuery(String, VariableResolver)
-     * @see VariableResolvers#resolverForMap(Map)
+     * @see VariableResolver#forMap(Map)
      */
     @NotNull
     public static SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull Map<String, ?> valueMap) {
-        return namedQuery(sql, resolverForMap(valueMap));
+        return namedQuery(sql, VariableResolver.forMap(valueMap));
     }
 
     /**
      * Constructs a query with named arguments, using the properties/fields of given bean for resolving arguments.
      *
      * @see #namedQuery(String, VariableResolver)
-     * @see VariableResolvers#resolverForBean(Object)
+     * @see VariableResolver#forBean(Object)
      */
     @NotNull
     public static SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull Object bean) {
-        return namedQuery(sql, resolverForBean(bean));
+        return namedQuery(sql, VariableResolver.forBean(bean));
     }
 
     /**

@@ -44,7 +44,7 @@ public class VariableResolversTest {
         parameterMap.put("bar", bar);
         parameterMap.put("baz", baz);
 
-        VariableResolver variableResolver = VariableResolvers.resolverForMap(parameterMap);
+        VariableResolver variableResolver = VariableResolver.forMap(parameterMap);
 
         assertEquals(foo, variableResolver.getValue("foo"));
         assertEquals(bar, variableResolver.getValue("bar"));
@@ -54,7 +54,7 @@ public class VariableResolversTest {
     @Test
     public void testProviderForBean() {
         TestBean bean = new TestBean();
-        VariableResolver variableResolver = VariableResolvers.resolverForBean(bean);
+        VariableResolver variableResolver = VariableResolver.forBean(bean);
 
         assertEquals(bean.foo, variableResolver.getValue("foo"));
         assertEquals(bean.bar, variableResolver.getValue("bar"));
@@ -63,28 +63,28 @@ public class VariableResolversTest {
 
     @Test(expected = VariableResolutionException.class)
     public void resolvingUnknownVariableThrowsException() {
-        VariableResolver variableResolver = VariableResolvers.resolverForBean(new TestBean());
+        VariableResolver variableResolver = VariableResolver.forBean(new TestBean());
 
         variableResolver.getValue("unknown");
     }
 
     @Test(expected = VariableResolutionException.class)
     public void resolvingPrivateVariableThrowsException() {
-        VariableResolver variableResolver = VariableResolvers.resolverForBean(new TestBean());
+        VariableResolver variableResolver = VariableResolver.forBean(new TestBean());
 
         variableResolver.getValue("privateVariable");
     }
 
     @Test(expected = VariableResolutionException.class)
     public void variableThrowingIsWrappedInVariableResolutionException() {
-        VariableResolver variableResolver = VariableResolvers.resolverForBean(new TestBean());
+        VariableResolver variableResolver = VariableResolver.forBean(new TestBean());
 
         variableResolver.getValue("throwingVariable");
     }
 
     @Test(expected = VariableResolutionException.class)
     public void mapResolverForUnknownMapKey() {
-        VariableResolver variableResolver = VariableResolvers.resolverForMap(Collections.<String,Object>emptyMap());
+        VariableResolver variableResolver = VariableResolver.forMap(Collections.<String, Object>emptyMap());
 
         variableResolver.getValue("unknown");
     }
