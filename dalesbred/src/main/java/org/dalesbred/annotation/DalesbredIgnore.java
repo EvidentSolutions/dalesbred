@@ -25,7 +25,7 @@ package org.dalesbred.annotation;
 import java.lang.annotation.*;
 
 /**
- * Ignores given property, setter or constructor when instantiating.
+ * Ignores given field, setter or constructor when instantiating.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

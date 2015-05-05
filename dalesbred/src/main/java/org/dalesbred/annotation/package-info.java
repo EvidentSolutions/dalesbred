@@ -20,31 +20,7 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.annotation;
-
-import org.dalesbred.transaction.Isolation;
-import org.dalesbred.transaction.Propagation;
-import org.jetbrains.annotations.NotNull;
-
-import java.lang.annotation.*;
-
 /**
- * Marks the given method or type as transactional.
- *
- * @see org.dalesbred.transaction.TransactionalProxyFactory
+ * Annotations that programs can use to customize certain aspects of Dalesbred's functionality.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Target({ ElementType.METHOD, ElementType.TYPE })
-@Inherited
-public @interface DalesbredTransactional {
-
-    /** The propagation for transaction */
-    @NotNull Propagation propagation() default Propagation.DEFAULT;
-
-    /** Isolation for transaction */
-    @NotNull Isolation isolation() default Isolation.DEFAULT;
-
-    /** Number of automatic retries due to serialization failures, default is 0. */
-    int retries() default 0;
-}
+package org.dalesbred.annotation;

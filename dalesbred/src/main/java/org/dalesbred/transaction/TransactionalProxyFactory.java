@@ -37,6 +37,8 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * Creates proxies for transactional services.
+ *
+ * @see DalesbredTransactional
  */
 public final class TransactionalProxyFactory {
 

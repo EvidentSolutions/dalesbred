@@ -34,5 +34,6 @@ public interface ConnectionProvider {
 
     @NotNull
     Connection getConnection() throws SQLException;
+
     void releaseConnection(@NotNull Connection connection) throws SQLException;
 }
