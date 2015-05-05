@@ -70,14 +70,15 @@ public interface RowMapper<T> {
     @NotNull
     default ResultSetProcessor<T> unique() {
         return resultSet -> {
-            List<T> results = list().process(resultSet);
-
-            if (results.size() == 1)
-                return results.get(0);
-            else if (results.isEmpty())
+            if (!resultSet.next())
                 throw new EmptyResultException();
-            else
+
+            T result = mapRow(resultSet);
+
+            if (resultSet.next())
                 throw new NonUniqueResultException();
+
+            return result;
         };
     }
 
@@ -87,14 +88,15 @@ public interface RowMapper<T> {
     @NotNull
     default ResultSetProcessor<Optional<T>> optional() {
         return resultSet -> {
-            List<T> results = list().process(resultSet);
-
-            if (results.size() == 1)
-                return Optional.ofNullable(results.get(0));
-            else if (results.isEmpty())
+            if (!resultSet.next())
                 return Optional.empty();
-            else
+
+            Optional<T> result = Optional.ofNullable(mapRow(resultSet));
+
+            if (resultSet.next())
                 throw new NonUniqueResultException();
+
+            return result;
         };
     }
 }
