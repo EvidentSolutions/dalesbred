@@ -235,7 +235,7 @@ public final class InstantiatorProvider {
         if (isEnum(target)) {
             @SuppressWarnings("rawtypes")
             Class<? extends Enum> cl = rawType(target).asSubclass(Enum.class);
-            return Optional.ofNullable(dialect.getEnumCoercion(cl));
+            return Optional.ofNullable(TypeConversion.fromNonNullFunction(value -> dialect.parseDatabaseEnum(cl, value)));
         }
 
         return Optional.empty();
