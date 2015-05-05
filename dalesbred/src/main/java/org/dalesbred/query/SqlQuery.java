@@ -22,7 +22,6 @@
 
 package org.dalesbred.query;
 
-import org.dalesbred.SqlSyntaxException;
 import org.dalesbred.annotation.SQL;
 import org.jetbrains.annotations.NotNull;
 

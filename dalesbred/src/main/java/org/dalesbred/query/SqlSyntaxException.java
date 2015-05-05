@@ -20,8 +20,9 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred;
+package org.dalesbred.query;
 
+import org.dalesbred.DatabaseException;
 import org.jetbrains.annotations.NotNull;
 
 /**
