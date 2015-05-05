@@ -42,7 +42,6 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import static java.lang.reflect.Modifier.isPublic;
-import static java.util.Arrays.sort;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 import static org.dalesbred.internal.utils.CollectionUtils.arrayOfType;
@@ -94,25 +93,24 @@ public final class InstantiatorProvider {
             return dialect.valueToDatabase(value);
     }
 
-    /**
-     * Returns constructor matching given argument types. Differs from 
-     * {@link Class#getConstructor(Class[])} in that this method allows
-     * does not require strict match for types, but finds any constructor
-     * that is assignable from given types.
-     */
     @NotNull
-    public <T> Instantiator<T> findInstantiator(@NotNull Type type, @NotNull NamedTypeList types) {
+    @SuppressWarnings("unchecked")
+    public <T> Instantiator<T> findInstantiator(@NotNull Class<T> type, @NotNull NamedTypeList types) {
+        return (Instantiator<T>) findInstantiator((Type) type, types);
+    }
+
+    @NotNull
+    public Instantiator<?> findInstantiator(@NotNull Type type, @NotNull NamedTypeList types) {
         // First check if we have an immediate coercion registered. If so, we'll just use that.
         if (types.size() == 1) {
             @SuppressWarnings("unchecked")
-            TypeConversion<Object, ? extends T> conversion =
-                    (TypeConversion<Object, ? extends T>) findConversionFromDbValue(types.getType(0), type).orElse(null);
+            TypeConversion<Object, ?> conversion =
+                    (TypeConversion<Object, ?>) findConversionFromDbValue(types.getType(0), type).orElse(null);
             if (conversion != null)
                 return args -> conversion.convert(args.getSingleValue());
         }
 
-        @SuppressWarnings("unchecked")
-        Class<T> cl = (Class<T>) rawType(type);
+        Class<?> cl = rawType(type);
         if (!isPublic(cl.getModifiers()))
             throw new InstantiationException(type + " can't be instantiated reflectively because it is not public");
 
@@ -302,13 +300,10 @@ public final class InstantiatorProvider {
     }
 
     @NotNull
-    private static <T> Stream<Constructor<T>> candidateConstructorsSortedByDescendingParameterCount(@NotNull Class<T> cl) {
-        @SuppressWarnings("unchecked")
-        Constructor<T>[] constructors = (Constructor<T>[]) cl.getConstructors();
-        sort(constructors, comparing((Constructor<T> ctor) -> ctor.getParameterTypes().length).reversed());
-
-        return Stream.of(constructors)
-                .filter(ctor -> !ctor.isAnnotationPresent(DalesbredIgnore.class));
+    private static Stream<Constructor<?>> candidateConstructorsSortedByDescendingParameterCount(@NotNull Class<?> cl) {
+        return Stream.of(cl.getConstructors())
+                .filter(ctor -> !ctor.isAnnotationPresent(DalesbredIgnore.class))
+                .sorted(comparing((Constructor<?> ctor) -> ctor.getParameterTypes().length).reversed());
     }
 
     @NotNull
