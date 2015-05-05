@@ -65,7 +65,7 @@ final class ConversionMap {
 
         for (int i = candidates.size() - 1; i >= 0; i--) {
             TypeConversion conversion = candidates.get(i);
-            if (isAssignable(rawType(target), rawType(conversion.getTarget())))
+            if (isAssignable(target, conversion.getTarget()))
                 return Optional.of(conversion);
         }
 
