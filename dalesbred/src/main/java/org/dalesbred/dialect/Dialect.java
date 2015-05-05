@@ -41,6 +41,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
+import static org.dalesbred.internal.utils.EnumUtils.enumByOrdinal;
+
 /**
  * Abstracts away the differences of databases.
  */
@@ -90,15 +92,6 @@ public abstract class Dialect {
         }
 
         throw new IllegalStateException("unknown enumMode: " + enumMode);
-    }
-
-    @NotNull
-    private static <T extends Enum<T>> T enumByOrdinal(@NotNull Class<T> enumType, int ordinal) {
-        Enum<?>[] constants = enumType.getEnumConstants();
-        if (ordinal >= 0 && ordinal < constants.length)
-            return enumType.cast(constants[ordinal]);
-        else
-            throw new DatabaseException("invalid ordinal " + ordinal + " for enum type " + enumType.getName());
     }
 
     @NotNull
