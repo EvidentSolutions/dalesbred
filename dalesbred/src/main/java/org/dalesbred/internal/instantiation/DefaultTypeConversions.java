@@ -39,15 +39,15 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.SQLException;
-import java.sql.SQLXML;
+import java.sql.*;
+import java.time.*;
 import java.util.TimeZone;
 
 final class DefaultTypeConversions {
 
     private static final int BUFFER_SIZE = 1024;
+
+    private static final int EPOCH_YEAR = 1900;
 
     private DefaultTypeConversions() { }
 
@@ -70,6 +70,14 @@ final class DefaultTypeConversions {
         registry.registerNonNullConversionFromDatabaseType(SQLXML.class, Document.class, DefaultTypeConversions::convertSQLXMLToDocument);
 
         registry.registerNonNullConversionToDatabaseType(BigInteger.class, BigDecimal.class, BigDecimal::new);
+
+        // java.time
+        registry.registerNonNullConversions(Timestamp.class, Instant.class, Timestamp::toInstant, Timestamp::from);
+        registry.registerNonNullConversions(Timestamp.class, LocalDateTime.class, Timestamp::toLocalDateTime, Timestamp::valueOf);
+        registry.registerNonNullConversions(Time.class, LocalTime.class, Time::toLocalTime, Time::valueOf);
+        registry.registerNonNullConversions(String.class, ZoneId.class, ZoneId::of, ZoneId::getId);
+        registry.registerNonNullConversionFromDatabaseType(java.util.Date.class, LocalDate.class, DefaultTypeConversions::convertDateToLocalDate);
+        registry.registerNonNullConversionToDatabaseType(LocalDate.class, Date.class, Date::valueOf);
     }
 
     @SuppressWarnings("ObjectToString")
@@ -174,5 +182,11 @@ final class DefaultTypeConversions {
         } catch (SQLException e) {
             throw new DatabaseSQLException(e);
         }
+    }
+
+    @NotNull
+    @SuppressWarnings("deprecation")
+    private static LocalDate convertDateToLocalDate(@NotNull java.util.Date value) {
+        return LocalDate.of(value.getYear() + EPOCH_YEAR, value.getMonth() + 1, value.getDate());
     }
 }

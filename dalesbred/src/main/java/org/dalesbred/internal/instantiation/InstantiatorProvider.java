@@ -26,7 +26,6 @@ import org.dalesbred.annotation.DalesbredIgnore;
 import org.dalesbred.conversion.TypeConversion;
 import org.dalesbred.conversion.TypeConversionRegistry;
 import org.dalesbred.dialect.Dialect;
-import org.dalesbred.integration.java8.JavaTimeTypeConversions;
 import org.dalesbred.integration.joda.JodaTypeConversions;
 import org.dalesbred.integration.threeten.ThreeTenTypeConversions;
 import org.dalesbred.internal.utils.OptionalUtils;
@@ -65,11 +64,6 @@ public final class InstantiatorProvider {
         this.dialect = requireNonNull(dialect);
 
         DefaultTypeConversions.register(typeConversionRegistry);
-
-        if (JavaTimeTypeConversions.hasJavaTime()) {
-            log.fine("Detected java.time in classpath. Registering type conversions for it.");
-            JavaTimeTypeConversions.register(typeConversionRegistry);
-        }
 
         if (JodaTypeConversions.hasJoda()) {
             log.fine("Detected Joda Time in classpath. Registering type conversions for Joda.");
