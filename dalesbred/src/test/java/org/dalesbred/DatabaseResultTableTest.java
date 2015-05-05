@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.lang.reflect.Type;
 import java.sql.Types;
 import java.util.List;
 
@@ -49,6 +50,7 @@ public class DatabaseResultTableTest {
         assertThat(table.getColumnCount(), is(3));
         assertThat(table.getColumnNames(), is(asList("NUM", "STR", "BOOL")));
         assertThat(table.getColumnTypes(), is(types(Integer.class, String.class, Boolean.class)));
+        assertThat(table.getRawColumnTypes(), is(types(Integer.class, String.class, Boolean.class)));
         assertThat(table.getColumns().toString(), is("[NUM: java.lang.Integer, STR: java.lang.String, BOOL: java.lang.Boolean]"));
         assertThat(table.getColumns().get(1).getIndex(), is(1));
 
@@ -69,7 +71,7 @@ public class DatabaseResultTableTest {
     }
 
     @NotNull
-    private static List<Class<?>> types(Class<?>... classes) {
-        return asList(classes);
+    private static List<Type> types(Type... types) {
+        return asList(types);
     }
 }

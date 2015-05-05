@@ -26,6 +26,7 @@ import org.dalesbred.DatabaseException;
 import org.dalesbred.internal.instantiation.NamedTypeList;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Type;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
@@ -49,7 +50,7 @@ public final class ResultSetUtils {
     }
 
     @NotNull
-    public static Class<?> getColumnType(@NotNull ResultSetMetaData metaData, int column) throws SQLException {
+    public static Type getColumnType(@NotNull ResultSetMetaData metaData, int column) throws SQLException {
         String className = metaData.getColumnClassName(column);
         try {
             return Class.forName(className);

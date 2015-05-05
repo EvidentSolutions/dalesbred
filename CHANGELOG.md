@@ -10,6 +10,9 @@
   - Moved `TypeConversion` and `TypeConversionRegistry` to `org.dalesbred.conversion`.
   - Removed `getCount` from `NonUniqueResultException` so that its possible to throw the exception 
     without reading all rows from database.
+  - `ResultTable.getColumnTypes()` now returns `Type`-objects. New `ResultTable.getRawColumnTypes`
+    returns raw `Class<?>` -objects. Similarly `getType` in `ResultTable.ColumnMetadata` now returns
+    `Type` and raw class can be returned with `getRawType`.
 
 ## 1.0.0-alpha.2 (2015-05-04)
 

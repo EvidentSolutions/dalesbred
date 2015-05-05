@@ -22,8 +22,10 @@
 
 package org.dalesbred.result;
 
+import org.dalesbred.internal.utils.TypeUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -87,8 +89,13 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
     }
 
     @NotNull
-    public List<Class<?>> getColumnTypes() {
+    public List<Type> getColumnTypes() {
         return mapToList(columns, ColumnMetadata::getType);
+    }
+
+    @NotNull
+    public List<Class<?>> getRawColumnTypes() {
+        return mapToList(columns, ColumnMetadata::getRawType);
     }
 
     @Override
@@ -154,11 +161,11 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
     public static class ColumnMetadata {
         private final int index;
         private final String name;
-        private final Class<?> type;
+        private final Type type;
         private final int jdbcType;
         private final String databaseType;
 
-        public ColumnMetadata(int index, @NotNull String name, @NotNull Class<?> type, int jdbcType, @NotNull String databaseType) {
+        public ColumnMetadata(int index, @NotNull String name, @NotNull Type type, int jdbcType, @NotNull String databaseType) {
             this.index = index;
             this.name = requireNonNull(name);
             this.type = requireNonNull(type);
@@ -185,8 +192,16 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
          * Returns the Java-type of this column.
          */
         @NotNull
-        public Class<?> getType() {
+        public Type getType() {
             return type;
+        }
+
+        /**
+         * Returns the raw Java-type of this column.
+         */
+        @NotNull
+        public Class<?> getRawType() {
+            return TypeUtils.rawType(type);
         }
 
         /**
@@ -209,7 +224,7 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
         @NotNull
         @Override
         public String toString() {
-            return name + ": " + type.getName();
+            return name + ": " + type.getTypeName();
         }
     }
 
