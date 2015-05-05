@@ -7,7 +7,8 @@
 ### Breaking changes
 
   - Removed `InstantiatorRegistry`, `Instantiator` and related/classes and methods from public API.
-  - Moved `TypeConversion` and `TypeConversionRegistry` to `org.dalesbred.conversion`.
+  - Moved `TypeConversionRegistry` to `org.dalesbred.conversion` and removed `TypedConversion` from
+    public API. Register conversion functions to TypeConversionRegistry instead.
   - Removed `getCount` from `NonUniqueResultException` so that its possible to throw the exception 
     without reading all rows from database.
   - `ResultTable.getColumnTypes()` now returns `Type`-objects. New `ResultTable.getRawColumnTypes`

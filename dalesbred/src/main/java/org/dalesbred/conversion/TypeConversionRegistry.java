@@ -27,34 +27,29 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Function;
 
 /**
- * Registry containing the {@link TypeConversion}s used when converting database values
- * to objects and vice versa.
+ * Registry containing the type-conversions used when converting database values
+ * to model values and vice versa.
  */
 public interface TypeConversionRegistry {
 
     /**
-     * Registers a new conversion that is used when loading data from the database.
+     * Registers conversion from given source database type to given target model type.
      */
-    void registerConversionFromDatabaseType(@NotNull TypeConversion<?, ?> conversion);
+    <S, T> void registerConversionFromDatabase(@NotNull Class<S> source, @NotNull Class<T> target, @NotNull Function<S, T> conversion);
 
     /**
-     * Registers a new conversion that is used when sending data to the database.
+     * Registers conversion from given source model type to given target database type.
      */
-    void registerConversionToDatabaseType(@NotNull TypeConversion<?, ?> conversion);
+    <S, T> void registerConversionToDatabase(@NotNull Class<S> source, @NotNull Class<T> target, @NotNull Function<S, T> conversion);
 
-    default <S, T> void registerNonNullConversionFromDatabaseType(@NotNull Class<S> source, @NotNull Class<T> target, @NotNull Function<S, T> conversion) {
-        registerConversionFromDatabaseType(TypeConversion.fromNonNullFunction(source, target, conversion));
-    }
-
-    default <S, T> void registerNonNullConversionToDatabaseType(@NotNull Class<S> source, @NotNull Class<T> target, @NotNull Function<S, T> conversion) {
-        registerConversionToDatabaseType(TypeConversion.fromNonNullFunction(source, target, conversion));
-    }
-
-    default <D, J> void registerNonNullConversions(@NotNull Class<D> databaseType,
-                                                   @NotNull Class<J> javaType,
-                                                   @NotNull Function<D, J> fromDatabase,
-                                                   @NotNull Function<J, D> toDatabase) {
-        registerNonNullConversionFromDatabaseType(databaseType, javaType, fromDatabase);
-        registerNonNullConversionToDatabaseType(javaType, databaseType, toDatabase);
+    /**
+     * Registers conversions from database type to model type and back.
+     */
+    default <D, J> void registerConversions(@NotNull Class<D> databaseType,
+                                            @NotNull Class<J> javaType,
+                                            @NotNull Function<D, J> fromDatabase,
+                                            @NotNull Function<J, D> toDatabase) {
+        registerConversionFromDatabase(databaseType, javaType, fromDatabase);
+        registerConversionToDatabase(javaType, databaseType, toDatabase);
     }
 }

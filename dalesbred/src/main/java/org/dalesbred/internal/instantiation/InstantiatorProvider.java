@@ -23,7 +23,6 @@
 package org.dalesbred.internal.instantiation;
 
 import org.dalesbred.annotation.DalesbredIgnore;
-import org.dalesbred.conversion.TypeConversion;
 import org.dalesbred.conversion.TypeConversionRegistry;
 import org.dalesbred.dialect.Dialect;
 import org.dalesbred.integration.joda.JodaTypeConversions;

@@ -24,7 +24,6 @@ package org.dalesbred.internal.instantiation;
 
 import org.dalesbred.DatabaseSQLException;
 import org.dalesbred.UnexpectedResultException;
-import org.dalesbred.conversion.TypeConversion;
 import org.dalesbred.internal.jdbc.ResultSetUtils;
 import org.dalesbred.internal.jdbc.SqlUtils;
 import org.dalesbred.internal.utils.TypeUtils;

@@ -56,13 +56,13 @@ public final class ThreeTenTypeConversions {
     }
 
     public static void register(@NotNull TypeConversionRegistry typeConversionRegistry) {
-        typeConversionRegistry.registerNonNullConversions(Timestamp.class, Instant.class, ThreeTenTypeConversions::convertSqlTimeStampToInstant, ThreeTenTypeConversions::convertInstantToSqlTimestamp);
-        typeConversionRegistry.registerNonNullConversions(Timestamp.class, LocalDateTime.class, ThreeTenTypeConversions::convertTimeStampToLocalDateTime, ThreeTenTypeConversions::convertLocalDateTimeToTimestamp);
-        typeConversionRegistry.registerNonNullConversions(Time.class, LocalTime.class, ThreeTenTypeConversions::convertSqlTimeToLocalTime, ThreeTenTypeConversions::convertLocalTimeToSqlTime);
-        typeConversionRegistry.registerNonNullConversions(String.class, ZoneId.class, ZoneId::of, ZoneId::getId);
+        typeConversionRegistry.registerConversions(Timestamp.class, Instant.class, ThreeTenTypeConversions::convertSqlTimeStampToInstant, ThreeTenTypeConversions::convertInstantToSqlTimestamp);
+        typeConversionRegistry.registerConversions(Timestamp.class, LocalDateTime.class, ThreeTenTypeConversions::convertTimeStampToLocalDateTime, ThreeTenTypeConversions::convertLocalDateTimeToTimestamp);
+        typeConversionRegistry.registerConversions(Time.class, LocalTime.class, ThreeTenTypeConversions::convertSqlTimeToLocalTime, ThreeTenTypeConversions::convertLocalTimeToSqlTime);
+        typeConversionRegistry.registerConversions(String.class, ZoneId.class, ZoneId::of, ZoneId::getId);
 
-        typeConversionRegistry.registerNonNullConversionFromDatabaseType(java.util.Date.class, LocalDate.class, ThreeTenTypeConversions::convertDateToLocalDate);
-        typeConversionRegistry.registerNonNullConversionToDatabaseType(LocalDate.class, Date.class, ThreeTenTypeConversions::convertLocalDateToSqlDate);
+        typeConversionRegistry.registerConversionFromDatabase(java.util.Date.class, LocalDate.class, ThreeTenTypeConversions::convertDateToLocalDate);
+        typeConversionRegistry.registerConversionToDatabase(LocalDate.class, Date.class, ThreeTenTypeConversions::convertLocalDateToSqlDate);
     }
 
     @NotNull

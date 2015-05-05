@@ -54,14 +54,14 @@ public final class JodaTypeConversions {
     }
 
     public static void register(@NotNull TypeConversionRegistry typeConversionRegistry) {
-        typeConversionRegistry.registerNonNullConversions(Timestamp.class, DateTime.class, DateTime::new, v -> new Timestamp(v.getMillis()));
+        typeConversionRegistry.registerConversions(Timestamp.class, DateTime.class, DateTime::new, v -> new Timestamp(v.getMillis()));
 
-        typeConversionRegistry.registerNonNullConversionFromDatabaseType(java.util.Date.class, LocalDate.class, LocalDate::fromDateFields);
-        typeConversionRegistry.registerNonNullConversionFromDatabaseType(Time.class, LocalTime.class, LocalTime::new);
-        typeConversionRegistry.registerNonNullConversionFromDatabaseType(String.class, DateTimeZone.class, DateTimeZone::forID);
+        typeConversionRegistry.registerConversionFromDatabase(java.util.Date.class, LocalDate.class, LocalDate::fromDateFields);
+        typeConversionRegistry.registerConversionFromDatabase(Time.class, LocalTime.class, LocalTime::new);
+        typeConversionRegistry.registerConversionFromDatabase(String.class, DateTimeZone.class, DateTimeZone::forID);
 
-        typeConversionRegistry.registerNonNullConversionToDatabaseType(LocalDate.class, Date.class, value -> new Date(value.toDateTimeAtStartOfDay().getMillis()));
-        typeConversionRegistry.registerNonNullConversionToDatabaseType(LocalTime.class, Time.class, value -> new Time(value.toDateTimeToday(DateTimeZone.getDefault()).getMillis()));
-        typeConversionRegistry.registerNonNullConversionToDatabaseType(DateTimeZone.class, String.class, DateTimeZone::getID);
+        typeConversionRegistry.registerConversionToDatabase(LocalDate.class, Date.class, value -> new Date(value.toDateTimeAtStartOfDay().getMillis()));
+        typeConversionRegistry.registerConversionToDatabase(LocalTime.class, Time.class, value -> new Time(value.toDateTimeToday(DateTimeZone.getDefault()).getMillis()));
+        typeConversionRegistry.registerConversionToDatabase(DateTimeZone.class, String.class, DateTimeZone::getID);
     }
 }

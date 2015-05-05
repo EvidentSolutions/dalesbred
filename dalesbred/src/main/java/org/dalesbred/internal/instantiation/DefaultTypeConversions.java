@@ -52,32 +52,32 @@ final class DefaultTypeConversions {
     private DefaultTypeConversions() { }
 
     public static void register(@NotNull TypeConversionRegistry registry) {
-        registry.registerNonNullConversions(String.class, URL.class, DefaultTypeConversions::convertStringToUrl, URL::toString);
-        registry.registerNonNullConversions(String.class, URI.class, DefaultTypeConversions::convertStringToUri, URI::toString);
-        registry.registerNonNullConversions(String.class, TimeZone.class, TimeZone::getTimeZone, TimeZone::getID);
+        registry.registerConversions(String.class, URL.class, DefaultTypeConversions::convertStringToUrl, URL::toString);
+        registry.registerConversions(String.class, URI.class, DefaultTypeConversions::convertStringToUri, URI::toString);
+        registry.registerConversions(String.class, TimeZone.class, TimeZone::getTimeZone, TimeZone::getID);
 
-        registry.registerNonNullConversionFromDatabaseType(Number.class, Short.class, Number::shortValue);
-        registry.registerNonNullConversionFromDatabaseType(Number.class, Integer.class, Number::intValue);
-        registry.registerNonNullConversionFromDatabaseType(Number.class, Long.class, Number::longValue);
-        registry.registerNonNullConversionFromDatabaseType(Number.class, Float.class, Number::floatValue);
-        registry.registerNonNullConversionFromDatabaseType(Number.class, Double.class, Number::doubleValue);
-        registry.registerNonNullConversionFromDatabaseType(Number.class, BigInteger.class, DefaultTypeConversions::convertNumberToBigInteger);
-        registry.registerNonNullConversionFromDatabaseType(Number.class, BigDecimal.class, DefaultTypeConversions::convertNumberToBigDecimal);
-        registry.registerNonNullConversionFromDatabaseType(Clob.class, String.class, DefaultTypeConversions::convertClobToString);
-        registry.registerNonNullConversionFromDatabaseType(Clob.class, Reader.class, DefaultTypeConversions::convertClobToReader);
-        registry.registerNonNullConversionFromDatabaseType(Blob.class, byte[].class, DefaultTypeConversions::convertBlobToByteArray);
-        registry.registerNonNullConversionFromDatabaseType(Blob.class, InputStream.class, DefaultTypeConversions::convertBlobToInputStream);
-        registry.registerNonNullConversionFromDatabaseType(SQLXML.class, Document.class, DefaultTypeConversions::convertSQLXMLToDocument);
+        registry.registerConversionFromDatabase(Number.class, Short.class, Number::shortValue);
+        registry.registerConversionFromDatabase(Number.class, Integer.class, Number::intValue);
+        registry.registerConversionFromDatabase(Number.class, Long.class, Number::longValue);
+        registry.registerConversionFromDatabase(Number.class, Float.class, Number::floatValue);
+        registry.registerConversionFromDatabase(Number.class, Double.class, Number::doubleValue);
+        registry.registerConversionFromDatabase(Number.class, BigInteger.class, DefaultTypeConversions::convertNumberToBigInteger);
+        registry.registerConversionFromDatabase(Number.class, BigDecimal.class, DefaultTypeConversions::convertNumberToBigDecimal);
+        registry.registerConversionFromDatabase(Clob.class, String.class, DefaultTypeConversions::convertClobToString);
+        registry.registerConversionFromDatabase(Clob.class, Reader.class, DefaultTypeConversions::convertClobToReader);
+        registry.registerConversionFromDatabase(Blob.class, byte[].class, DefaultTypeConversions::convertBlobToByteArray);
+        registry.registerConversionFromDatabase(Blob.class, InputStream.class, DefaultTypeConversions::convertBlobToInputStream);
+        registry.registerConversionFromDatabase(SQLXML.class, Document.class, DefaultTypeConversions::convertSQLXMLToDocument);
 
-        registry.registerNonNullConversionToDatabaseType(BigInteger.class, BigDecimal.class, BigDecimal::new);
+        registry.registerConversionToDatabase(BigInteger.class, BigDecimal.class, BigDecimal::new);
 
         // java.time
-        registry.registerNonNullConversions(Timestamp.class, Instant.class, Timestamp::toInstant, Timestamp::from);
-        registry.registerNonNullConversions(Timestamp.class, LocalDateTime.class, Timestamp::toLocalDateTime, Timestamp::valueOf);
-        registry.registerNonNullConversions(Time.class, LocalTime.class, Time::toLocalTime, Time::valueOf);
-        registry.registerNonNullConversions(String.class, ZoneId.class, ZoneId::of, ZoneId::getId);
-        registry.registerNonNullConversionFromDatabaseType(java.util.Date.class, LocalDate.class, DefaultTypeConversions::convertDateToLocalDate);
-        registry.registerNonNullConversionToDatabaseType(LocalDate.class, Date.class, Date::valueOf);
+        registry.registerConversions(Timestamp.class, Instant.class, Timestamp::toInstant, Timestamp::from);
+        registry.registerConversions(Timestamp.class, LocalDateTime.class, Timestamp::toLocalDateTime, Timestamp::valueOf);
+        registry.registerConversions(Time.class, LocalTime.class, Time::toLocalTime, Time::valueOf);
+        registry.registerConversions(String.class, ZoneId.class, ZoneId::of, ZoneId::getId);
+        registry.registerConversionFromDatabase(java.util.Date.class, LocalDate.class, DefaultTypeConversions::convertDateToLocalDate);
+        registry.registerConversionToDatabase(LocalDate.class, Date.class, Date::valueOf);
     }
 
     @SuppressWarnings("ObjectToString")

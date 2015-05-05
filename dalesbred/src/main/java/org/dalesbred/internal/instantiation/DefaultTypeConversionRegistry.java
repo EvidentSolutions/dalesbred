@@ -22,12 +22,12 @@
 
 package org.dalesbred.internal.instantiation;
 
-import org.dalesbred.conversion.TypeConversion;
 import org.dalesbred.conversion.TypeConversionRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * The used implementation of TypeConversionRegistry.
@@ -48,12 +48,12 @@ final class DefaultTypeConversionRegistry implements TypeConversionRegistry {
     }
 
     @Override
-    public void registerConversionFromDatabaseType(@NotNull TypeConversion<?, ?> conversion) {
-        loadConversions.register(conversion);
+    public <S, T> void registerConversionFromDatabase(@NotNull Class<S> source, @NotNull Class<T> target, @NotNull Function<S, T> conversion) {
+        loadConversions.register(TypeConversion.fromNonNullFunction(source, target, conversion));
     }
 
     @Override
-    public void registerConversionToDatabaseType(@NotNull TypeConversion<?, ?> conversion) {
-        storeConversions.register(conversion);
+    public <S, T> void registerConversionToDatabase(@NotNull Class<S> source, @NotNull Class<T> target, @NotNull Function<S, T> conversion) {
+        storeConversions.register(TypeConversion.fromNonNullFunction(source, target, conversion));
     }
 }

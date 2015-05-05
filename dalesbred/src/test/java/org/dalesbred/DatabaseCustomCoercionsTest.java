@@ -40,14 +40,14 @@ public class DatabaseCustomCoercionsTest {
 
     @Test
     public void customLoadConversions() {
-        db.getTypeConversionRegistry().registerNonNullConversionFromDatabaseType(String.class, EmailAddress.class, EmailAddress::parse);
+        db.getTypeConversionRegistry().registerConversionFromDatabase(String.class, EmailAddress.class, EmailAddress::parse);
 
         assertEquals(new EmailAddress("user", "example.org"), db.findUnique(EmailAddress.class, "values ('user@example.org')"));
     }
 
     @Test
     public void customSaveConversions() {
-        db.getTypeConversionRegistry().registerNonNullConversionToDatabaseType(EmailAddress.class, String.class, EmailAddress::toString);
+        db.getTypeConversionRegistry().registerConversionToDatabase(EmailAddress.class, String.class, EmailAddress::toString);
 
         db.update("drop table if exists custom_save_conversions_test");
         db.update("create temporary table custom_save_conversions_test (email varchar(32))");

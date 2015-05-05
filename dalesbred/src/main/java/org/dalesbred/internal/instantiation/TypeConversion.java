@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.conversion;
+package org.dalesbred.internal.instantiation;
 
 import org.dalesbred.internal.utils.Primitives;
 import org.dalesbred.internal.utils.TypeUtils;
@@ -50,17 +50,12 @@ public abstract class TypeConversion<S,T> {
 
     @NotNull
     public static <S,T> TypeConversion<S,T> fromNonNullFunction(@NotNull Class<S> source, @NotNull Class<T> target, @NotNull Function<S, T> function) {
-        return fromFunction(source, target, value -> value != null ? function.apply(value) : null);
-    }
-
-    @NotNull
-    public static <S,T> TypeConversion<S,T> fromFunction(@NotNull Class<S> source, @NotNull Class<T> target, @NotNull Function<S, T> function) {
         return new TypeConversion<S, T>(source, target) {
 
             @Nullable
             @Override
             public T convert(@Nullable S value) {
-                return function.apply(value);
+                return value != null ? function.apply(value) : null;
             }
         };
     }
@@ -101,12 +96,6 @@ public abstract class TypeConversion<S,T> {
             @Nullable
             public T convert(@Nullable T value) {
                 return value;
-            }
-
-            @NotNull
-            @Override
-            public String toString() {
-                return "IdentityConversion";
             }
         };
     }

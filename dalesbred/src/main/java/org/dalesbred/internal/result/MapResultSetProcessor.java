@@ -23,7 +23,7 @@
 package org.dalesbred.internal.result;
 
 import org.dalesbred.UnexpectedResultException;
-import org.dalesbred.conversion.TypeConversion;
+import org.dalesbred.internal.instantiation.TypeConversion;
 import org.dalesbred.internal.instantiation.Instantiator;
 import org.dalesbred.internal.instantiation.InstantiatorArguments;
 import org.dalesbred.internal.instantiation.InstantiatorProvider;

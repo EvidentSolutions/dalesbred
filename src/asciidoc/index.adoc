@@ -308,30 +308,20 @@ Custom type-conversions
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Sometimes you need to convert database values to your own custom types and vice versa. To do that,
-you can register your own {javadocBase}org/dalesbred/instantiation/TypeConversion.html[TypeConversion]-implementations
-to {javadocBase}org/dalesbred/instantiation/TypeConversionRegistry.html[TypeConversionRegistry]:
-
-[source,java,indent=0]
-----
-        TypeConversionRegistry conversions = db.getTypeConversionRegistry();
-        conversions.registerConversionFromDatabaseType(new StringToEmailAddressConversion());
-        conversions.registerConversionToDatabaseType(new EmailAddressToStringConversion());
-----
-
-You can register type-conversions using lambdas or method references as well:
+you can register your functions to {javadocBase}org/dalesbred/instantiation/TypeConversionRegistry.html[TypeConversionRegistry]:
 
 [source,java,indent=0]
 ----
         TypeConversionRegistry conversions = db.getTypeConversionRegistry();
 
         // register conversions from database and to database types separately
-        conversions.registerNonNullConversionFromDatabaseType(
+        conversions.registerConversionFromDatabase(
             String.class, EmailAddress.class, MyConversions::stringToEmail);
-        conversions.registerNonNullConversionToDatabaseType(
+        conversions.registerConversionToDatabase(
             EmailAddress.class, String.class, MyConversions::emailToString);
 
         // or register both conversions with one call
-        conversions.registerNonNullConversions(
+        conversions.registerConversions(
             String.class, EmailAddress.class, MyConversions::stringToEmail, MyConversions::emailToString);
 ----
 
