@@ -125,14 +125,10 @@ public class DatabaseTest {
         assertThat(db.findUnique(Integer.class, "values (42)"), is(42));
     }
 
-    @Test
+    @Test(expected = NonUniqueResultException.class)
     public void findUnique_nonUniqueResult() {
-        try {
-            db.findUnique(Integer.class, "VALUES (1), (2)");
-            fail("Expected NonUniqueResultException");
-        } catch (NonUniqueResultException e) {
-            assertThat(e.getCount(), is(2));
-        }
+        db.findUnique(Integer.class, "VALUES (1), (2)");
+        fail("Expected NonUniqueResultException");
     }
 
     @Test(expected = EmptyResultException.class)

@@ -77,7 +77,7 @@ public interface RowMapper<T> {
             else if (results.isEmpty())
                 throw new EmptyResultException();
             else
-                throw new NonUniqueResultException(results.size());
+                throw new NonUniqueResultException();
         };
     }
 
@@ -94,7 +94,7 @@ public interface RowMapper<T> {
             else if (results.isEmpty())
                 return Optional.empty();
             else
-                throw new NonUniqueResultException(results.size());
+                throw new NonUniqueResultException();
         };
     }
 }

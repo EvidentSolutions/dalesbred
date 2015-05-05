@@ -23,28 +23,24 @@
 package org.dalesbred;
 
 import org.dalesbred.query.SqlQuery;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * Exception thrown when expecting a unique result from a call, but invalid number
+ * Exception thrown when expecting a unique result from a call, but more then one row
  * of results was returned by the database.
  *
  * @see Database#findUnique(Class, SqlQuery)
+ * @see Database#findOptional(Class, SqlQuery)
  * @see Database#findUniqueOrNull(Class, SqlQuery)
  * @see EmptyResultException
  */
 public class NonUniqueResultException extends UnexpectedResultException {
 
-    private final int count;
-
-    public NonUniqueResultException(int count) {
-        super("Expected unique result but got " + count + " rows.");
-        this.count = count;
+    public NonUniqueResultException() {
+        super("Expected unique result but received more than one row");
     }
 
-    /**
-     * Returns the number of rows actually returned.
-     */
-    public int getCount() {
-        return count;
+    protected NonUniqueResultException(@NotNull String message) {
+        super(message);
     }
 }

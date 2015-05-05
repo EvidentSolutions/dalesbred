@@ -22,11 +22,17 @@
 
 package org.dalesbred;
 
+import org.dalesbred.query.SqlQuery;
+
 /**
  * Exception thrown when expecting a unique result from a call, but got no results.
+ *
+ * @see Database#findUnique(Class, SqlQuery)
+ * @see NonUniqueResultException
  */
 public class EmptyResultException extends NonUniqueResultException {
+
     public EmptyResultException() {
-        super(0);
+        super("Expected unique result, but got no rows");
     }
 }

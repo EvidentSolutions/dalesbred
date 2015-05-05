@@ -8,6 +8,8 @@
 
   - Removed `InstantiatorRegistry`, `Instantiator` and related/classes and methods from public API.
   - Moved `TypeConversion` and `TypeConversionRegistry` to `org.dalesbred.conversion`.
+  - Removed `getCount` from `NonUniqueResultException` so that its possible to throw the exception 
+    without reading all rows from database.
 
 ## 1.0.0-alpha.2 (2015-05-04)
 
