@@ -32,7 +32,6 @@ import org.dalesbred.internal.jdbc.ResultSetUtils;
 import org.dalesbred.result.ResultSetProcessor;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
@@ -72,7 +71,7 @@ public final class MapResultSetProcessor<K,V> implements ResultSetProcessor<Map<
             throw new UnexpectedResultException("Expected ResultSet with at least 2 columns, but got " + types.size() + " columns.");
 
         NamedTypeList valueTypes = types.subList(1, types.size());
-        TypeConversion<Object, K> keyConversion = getConversion(types.getType(0), keyType);
+        TypeConversion keyConversion = instantiatorRegistry.getConversionFromDbValue(types.getType(0), keyType);
         Instantiator<V> valueInstantiator = instantiatorRegistry.findInstantiator(valueType, valueTypes);
 
         // For performance reasons we reuse the same arguments-array and InstantiatorArguments-object for all rows.
@@ -81,7 +80,7 @@ public final class MapResultSetProcessor<K,V> implements ResultSetProcessor<Map<
         InstantiatorArguments instantiatorArguments = new InstantiatorArguments(valueTypes, valueArguments);
 
         while (resultSet.next()) {
-            K key = keyConversion.convert(resultSet.getObject(1));
+            K key = keyType.cast(keyConversion.convert(resultSet.getObject(1)));
 
             for (int i = 0; i < valueArguments.length; i++)
                 valueArguments[i] = resultSet.getObject(i+2);
@@ -94,8 +93,4 @@ public final class MapResultSetProcessor<K,V> implements ResultSetProcessor<Map<
         return result;
     }
 
-    @NotNull
-    private <T> TypeConversion<Object, T> getConversion(@NotNull Type sourceType, @NotNull Class<T> targetType) {
-        return instantiatorRegistry.getCoercionFromDbValue(sourceType, targetType).unsafeCast(targetType);
-    }
 }

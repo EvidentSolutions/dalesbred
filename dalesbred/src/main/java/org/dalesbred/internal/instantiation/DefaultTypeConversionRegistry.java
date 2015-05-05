@@ -38,12 +38,12 @@ final class DefaultTypeConversionRegistry implements TypeConversionRegistry {
     private final ConversionMap storeConversions = new ConversionMap();
 
     @NotNull
-    public Optional<TypeConversion<?,?>> findCoercionFromDbValue(@NotNull Type source, @NotNull Type target) {
+    public Optional<TypeConversion> findCoercionFromDbValue(@NotNull Type source, @NotNull Type target) {
         return loadConversions.findConversion(source, target);
     }
 
     @NotNull
-    public Optional<TypeConversion<?,?>> findCoercionToDb(@NotNull Type type) {
+    public Optional<TypeConversion> findConversionToDb(@NotNull Type type) {
         return storeConversions.findConversion(type, Object.class);
     }
 

@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-class SqlArrayConversion<T> extends TypeConversion<Array, T> {
+class SqlArrayConversion<T> extends TypeConversion {
 
     @NotNull
     private final Type elementType;
@@ -61,9 +61,9 @@ class SqlArrayConversion<T> extends TypeConversion<Array, T> {
 
     @Nullable
     @Override
-    public T convert(@Nullable Array value) {
+    public Object convert(@Nullable Object value) {
         if (value != null) {
-            return createResult.apply(readArray(value));
+            return createResult.apply(readArray((Array) value));
         } else {
             return null;
         }

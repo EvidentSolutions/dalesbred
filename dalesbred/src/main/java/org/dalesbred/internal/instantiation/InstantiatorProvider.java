@@ -79,9 +79,9 @@ public final class InstantiatorProvider {
     public Object valueToDatabase(@Nullable Object value) {
         if (value == null) return null;
 
-        TypeConversion<?, ?> coercion = typeConversionRegistry.findCoercionToDb(value.getClass()).orElse(null);
-        if (coercion != null)
-            return coercion.unsafeCast(Object.class).convert(value);
+        TypeConversion conversion = typeConversionRegistry.findConversionToDb(value.getClass()).orElse(null);
+        if (conversion != null)
+            return conversion.convert(value);
         else
             return dialect.valueToDatabase(value);
     }
@@ -96,9 +96,7 @@ public final class InstantiatorProvider {
     public Instantiator<?> findInstantiator(@NotNull Type type, @NotNull NamedTypeList types) {
         // First check if we have an immediate coercion registered. If so, we'll just use that.
         if (types.size() == 1) {
-            @SuppressWarnings("unchecked")
-            TypeConversion<Object, ?> conversion =
-                    (TypeConversion<Object, ?>) findConversionFromDbValue(types.getType(0), type).orElse(null);
+            TypeConversion conversion = findConversionFromDbValue(types.getType(0), type).orElse(null);
             if (conversion != null)
                 return args -> conversion.convert(args.getSingleValue());
         }
@@ -175,35 +173,32 @@ public final class InstantiatorProvider {
      * to targetTypes, or null if coercions can't be done.
      */
     @NotNull
-    private Optional<TypeConversion<Object,?>[]> resolveCoercions(@NotNull NamedTypeList sourceTypes, @NotNull Type[] targetTypes) {
+    private Optional<TypeConversion[]> resolveCoercions(@NotNull NamedTypeList sourceTypes, @NotNull Type[] targetTypes) {
         if (targetTypes.length != sourceTypes.size())
             return Optional.empty();
 
-        TypeConversion<?,?>[] conversions = new TypeConversion[targetTypes.length];
+        TypeConversion[] conversions = new TypeConversion[targetTypes.length];
 
         for (int i = 0; i < targetTypes.length; i++) {
-            TypeConversion<?,?> conversion = findConversionFromDbValue(sourceTypes.getType(i), targetTypes[i]).orElse(null);
+            TypeConversion conversion = findConversionFromDbValue(sourceTypes.getType(i), targetTypes[i]).orElse(null);
             if (conversion != null)
                 conversions[i] = conversion;
             else
                 return Optional.empty();
         }
 
-        @SuppressWarnings("unchecked")
-        TypeConversion<Object, ?>[] result = (TypeConversion<Object, ?>[]) conversions;
-        return Optional.of(result);
+        return Optional.of(conversions);
     }
 
     /**
      * Returns coercion for converting value of source-type to target-type, or throws exception if
      * there's no such coercion.
      */
-    @SuppressWarnings("unchecked")
     @NotNull
-    public <S,T> TypeConversion<? super S, ? extends T> getCoercionFromDbValue(@NotNull Type source, @NotNull Type target) {
-        TypeConversion<?, ?> coercion = findConversionFromDbValue(source, target).orElse(null);
-        if (coercion != null)
-            return (TypeConversion<S,T>) coercion;
+    public TypeConversion getConversionFromDbValue(@NotNull Type source, @NotNull Type target) {
+        TypeConversion conversion = findConversionFromDbValue(source, target).orElse(null);
+        if (conversion != null)
+            return conversion;
         else
             throw new InstantiationException("could not find a conversion from " + source.getTypeName() + " to " + target.getTypeName());
     }
@@ -212,23 +207,23 @@ public final class InstantiatorProvider {
      * Returns coercion for converting value of source to target, or returns null if there's no such coercion.
      */
     @NotNull
-    private Optional<TypeConversion<?, ?>> findConversionFromDbValue(@NotNull Type source, @NotNull Type target) {
+    private Optional<TypeConversion> findConversionFromDbValue(@NotNull Type source, @NotNull Type target) {
         if (isAssignable(target, source))
             return Optional.of(TypeConversion.identity(target));
 
-        Optional<TypeConversion<?,?>> directConversion = typeConversionRegistry.findCoercionFromDbValue(source, target);
+        Optional<TypeConversion> directConversion = typeConversionRegistry.findCoercionFromDbValue(source, target);
         if (directConversion.isPresent())
             return directConversion;
 
-        Optional<TypeConversion<?, ?>> arrayConversion = findArrayConversion(source, target);
+        Optional<TypeConversion> arrayConversion = findArrayConversion(source, target);
         if (arrayConversion.isPresent())
             return arrayConversion;
 
-        Optional<TypeConversion<?, ?>> optionalConversion = findOptionalConversion(source, target);
+        Optional<TypeConversion> optionalConversion = findOptionalConversion(source, target);
         if (optionalConversion.isPresent())
             return optionalConversion;
 
-        Optional<TypeConversion<?, ?>> enumConversion = findEnumConversion(target);
+        Optional<TypeConversion> enumConversion = findEnumConversion(target);
         if (enumConversion.isPresent())
             return enumConversion;
 
@@ -236,7 +231,7 @@ public final class InstantiatorProvider {
     }
 
     @NotNull
-    private Optional<TypeConversion<?, ?>> findEnumConversion(@NotNull Type target) {
+    private Optional<TypeConversion> findEnumConversion(@NotNull Type target) {
         if (isEnum(target)) {
             @SuppressWarnings("rawtypes")
             Class<? extends Enum> cl = rawType(target).asSubclass(Enum.class);
@@ -247,7 +242,7 @@ public final class InstantiatorProvider {
     }
 
     @NotNull
-    private Optional<TypeConversion<?, ?>> findArrayConversion(@NotNull Type source, @NotNull Type target) {
+    private Optional<TypeConversion> findArrayConversion(@NotNull Type source, @NotNull Type target) {
         Class<?> rawTarget = rawType(target);
 
         if (isAssignable(Array.class, source)) {
@@ -265,7 +260,7 @@ public final class InstantiatorProvider {
     }
 
     @NotNull
-    private Optional<TypeConversion<?, ?>> findOptionalConversion(@NotNull Type source, @NotNull Type target) {
+    private Optional<TypeConversion> findOptionalConversion(@NotNull Type source, @NotNull Type target) {
         Class<?> rawTarget = rawType(target);
 
         if (rawTarget == Optional.class) {
@@ -287,7 +282,7 @@ public final class InstantiatorProvider {
 
     @SuppressWarnings("unchecked")
     @NotNull
-    private <T> Optional<TypeConversion<?, ?>> optionalConversion(@NotNull Type source, @NotNull Type target, @NotNull Type result, @NotNull Function<T,?> function) {
+    private <T> Optional<TypeConversion> optionalConversion(@NotNull Type source, @NotNull Type target, @NotNull Type result, @NotNull Function<T,?> function) {
         return findConversionFromDbValue(source, target)
                 .map(cv -> cv.compose(result, v -> function.apply((T) v)));
     }

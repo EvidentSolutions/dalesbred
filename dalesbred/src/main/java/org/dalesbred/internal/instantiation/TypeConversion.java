@@ -23,7 +23,6 @@
 package org.dalesbred.internal.instantiation;
 
 import org.dalesbred.internal.utils.Primitives;
-import org.dalesbred.internal.utils.TypeUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +34,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * A conversion from S into T.
  */
-public abstract class TypeConversion<S,T> {
+public abstract class TypeConversion {
 
     @NotNull
     private final Type source;
@@ -49,13 +48,13 @@ public abstract class TypeConversion<S,T> {
     }
 
     @NotNull
-    public static <S,T> TypeConversion<S,T> fromNonNullFunction(@NotNull Class<S> source, @NotNull Class<T> target, @NotNull Function<S, T> function) {
-        return new TypeConversion<S, T>(source, target) {
+    public static <S,T> TypeConversion fromNonNullFunction(@NotNull Class<S> source, @NotNull Class<T> target, @NotNull Function<S, T> function) {
+        return new TypeConversion(source, target) {
 
             @Nullable
             @Override
-            public T convert(@Nullable S value) {
-                return value != null ? function.apply(value) : null;
+            public Object convert(@Nullable Object value) {
+                return value != null ? function.apply(source.cast(value)) : null;
             }
         };
     }
@@ -71,17 +70,18 @@ public abstract class TypeConversion<S,T> {
     }
 
     @Nullable
-    public abstract T convert(@Nullable S value);
+    public abstract Object convert(@Nullable Object value);
 
     @NotNull
-    public <R> TypeConversion<S,R> compose(@NotNull Type result, @NotNull Function<T,R> function) {
-        TypeConversion<S,T> self = this;
+    public <T,R> TypeConversion compose(@NotNull Type result, @NotNull Function<T,R> function) {
+        TypeConversion self = this;
 
-        return new TypeConversion<S, R>(source, result) {
+        return new TypeConversion(source, result) {
+            @SuppressWarnings("unchecked")
             @Nullable
             @Override
-            public R convert(@Nullable S value) {
-                return function.apply(self.convert(value));
+            public Object convert(@Nullable Object value) {
+                return function.apply((T) self.convert(value));
             }
         };
     }
@@ -90,39 +90,12 @@ public abstract class TypeConversion<S,T> {
      * Returns identity-coercion, ie. a coercion that does nothing.
      */
     @NotNull
-    public static <T> TypeConversion<T,T> identity(@NotNull Type type) {
-        return new TypeConversion<T, T>(type, type) {
+    public static TypeConversion identity(@NotNull Type type) {
+        return new TypeConversion(type, type) {
             @Override
             @Nullable
-            public T convert(@Nullable T value) {
+            public Object convert(@Nullable Object value) {
                 return value;
-            }
-        };
-    }
-
-    /**
-     * Safely casts this coercion into a coercion from {@code S} to {@code T} or throws an exception
-     * if coercion is not compatible.
-     */
-    @NotNull
-    private <F, R> TypeConversion<F, R> cast(@NotNull Type requiredSource, @NotNull Type requiredTarget) {
-        if (canConvert(requiredSource, requiredTarget)) {
-            @SuppressWarnings("unchecked")
-            TypeConversion<F, R> result = (TypeConversion<F, R>) this;
-            return result;
-        } else
-            throw new RuntimeException("can't cast " + this + " to coercion from " + requiredSource + " to " + requiredTarget);
-    }
-
-    @NotNull
-    public <R> TypeConversion<Object,R> unsafeCast(@NotNull Class<R> requiredTarget) {
-        TypeConversion<S,R> self = cast(source, requiredTarget);
-        return new TypeConversion<Object, R>(Object.class, requiredTarget) {
-            @SuppressWarnings("unchecked")
-            @Nullable
-            @Override
-            public R convert(@Nullable Object value) {
-                return self.convert((S) value);
             }
         };
     }
@@ -131,13 +104,5 @@ public abstract class TypeConversion<S,T> {
     @Override
     public String toString() {
         return getClass().getName() + " [" + source + " -> " + target + ']';
-    }
-
-    /**
-     * Returns true if this coercion knows hows to convert instances of {@code requiredSource} to
-     * instances of {@code requiredTarget}.
-     */
-    private boolean canConvert(@NotNull Type requiredSource, @NotNull Type requiredTarget) {
-        return TypeUtils.isAssignable(source, requiredSource) && TypeUtils.isAssignable(requiredTarget, target);
     }
 }

@@ -39,7 +39,7 @@ final class ReflectionInstantiator<T> implements Instantiator<T> {
     private final Constructor<T> constructor;
 
     @NotNull
-    private final TypeConversion<Object, ?>[] conversions;
+    private final TypeConversion[] conversions;
 
     @NotNull
     private final PropertyAccessor[] accessors;
@@ -47,7 +47,7 @@ final class ReflectionInstantiator<T> implements Instantiator<T> {
     private final int constructorParameterCount;
 
     ReflectionInstantiator(@NotNull Constructor<T> constructor,
-                           @NotNull TypeConversion<Object, ?>[] conversions,
+                           @NotNull TypeConversion[] conversions,
                            @NotNull PropertyAccessor[] accessors) {
         this.constructor = requireNonNull(constructor);
         this.conversions = requireNonNull(conversions);

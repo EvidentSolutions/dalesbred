@@ -113,7 +113,7 @@ public abstract class Dialect {
     }
 
     @NotNull
-    public <T extends Enum<T>> TypeConversion<Object, T> getEnumCoercion(@NotNull Class<T> enumType) {
+    public <T extends Enum<T>> TypeConversion getEnumCoercion(@NotNull Class<T> enumType) {
         return TypeConversion.fromNonNullFunction(Object.class, enumType, value -> parseDatabaseEnum(enumType, value));
     }
 
