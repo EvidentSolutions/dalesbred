@@ -326,7 +326,8 @@ public final class Database {
     /**
      * Finds a unique result from database, using given {@link RowMapper} to convert the row.
      *
-     * @throws NonUniqueResultException if there are no rows or multiple rows
+     * @throws NonUniqueResultException if there is more then one row
+     * @throws EmptyResultException if there are no rows
      */
     public <T> T findUnique(@NotNull RowMapper<T> mapper, @NotNull SqlQuery query) {
         return executeQuery(mapper.unique(), query);
@@ -335,7 +336,8 @@ public final class Database {
     /**
      * Finds a unique result from database, using given {@link RowMapper} to convert the row.
      *
-     * @throws NonUniqueResultException if there are no rows or multiple rows
+     * @throws NonUniqueResultException if there is more then one row
+     * @throws EmptyResultException if there are no rows
      */
     public <T> T findUnique(@NotNull RowMapper<T> mapper, @NotNull @SQL String sql, Object... args) {
         return findUnique(mapper, SqlQuery.query(sql, args));
@@ -344,7 +346,8 @@ public final class Database {
     /**
      * Finds a unique result from database, converting the database row to given class using default mechanisms.
      *
-     * @throws NonUniqueResultException if there are no rows or multiple rows
+     * @throws NonUniqueResultException if there is more then one row
+     * @throws EmptyResultException if there are no rows
      */
     public <T> T findUnique(@NotNull Class<T> cl, @NotNull SqlQuery query) {
         return executeQuery(rowMapperForClass(cl).unique(), query);
@@ -353,7 +356,8 @@ public final class Database {
     /**
      * Finds a unique result from database, converting the database row to given class using default mechanisms.
      *
-     * @throws NonUniqueResultException if there are no rows or multiple rows
+     * @throws NonUniqueResultException if there is more then one row
+     * @throws EmptyResultException if there are no rows
      */
     public <T> T findUnique(@NotNull Class<T> cl, @NotNull @SQL String sql, Object... args) {
         return findUnique(cl, SqlQuery.query(sql, args));
@@ -438,7 +442,8 @@ public final class Database {
     /**
      * A convenience method for retrieving a single non-null boolean.
      *
-     * @throws NonUniqueResultException if there are no rows or multiple rows
+     * @throws NonUniqueResultException if there is more then one row
+     * @throws EmptyResultException if there are no rows
      */
     public boolean findUniqueBoolean(@NotNull SqlQuery query) {
         return executeQuery(rowMapperForClass(boolean.class).unique(), query);
@@ -447,7 +452,8 @@ public final class Database {
     /**
      * A convenience method for retrieving a single non-null boolean.
      *
-     * @throws NonUniqueResultException if there are no rows or multiple rows
+     * @throws NonUniqueResultException if there is more then one row
+     * @throws EmptyResultException if there are no rows
      */
     public boolean findUniqueBoolean(@NotNull @SQL String sql, Object... args) {
         return findUniqueBoolean(SqlQuery.query(sql, args));
@@ -456,7 +462,8 @@ public final class Database {
     /**
      * A convenience method for retrieving a single non-null integer.
      *
-     * @throws NonUniqueResultException if there are no rows or multiple rows
+     * @throws NonUniqueResultException if there is more then one row
+     * @throws EmptyResultException if there are no rows
      */
     public int findUniqueInt(@NotNull SqlQuery query) {
         return executeQuery(rowMapperForClass(int.class).unique(), query);
@@ -465,7 +472,8 @@ public final class Database {
     /**
      * A convenience method for retrieving a single non-null integer.
      *
-     * @throws NonUniqueResultException if there are no rows or multiple rows
+     * @throws NonUniqueResultException if there is more then one row
+     * @throws EmptyResultException if there are no rows
      */
     public int findUniqueInt(@NotNull @SQL String sql, Object... args) {
         return findUniqueInt(SqlQuery.query(sql, args));
@@ -473,13 +481,19 @@ public final class Database {
 
     /**
      * A convenience method for retrieving a single non-null long.
+     *
+     * @throws NonUniqueResultException if there is more then one row
+     * @throws EmptyResultException if there are no rows
      */
     public long findUniqueLong(@NotNull SqlQuery query) {
         return executeQuery(rowMapperForClass(long.class).unique(), query);
     }
 
     /**
-     * A convenience method for retrieving a single non-null integer.
+     * A convenience method for retrieving a single non-null long.
+     *
+     * @throws NonUniqueResultException if there is more then one row
+     * @throws EmptyResultException if there are no rows
      */
     public long findUniqueLong(@NotNull @SQL String sql, Object... args) {
         return findUniqueLong(SqlQuery.query(sql, args));
