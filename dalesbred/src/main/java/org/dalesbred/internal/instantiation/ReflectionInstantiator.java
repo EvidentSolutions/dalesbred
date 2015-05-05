@@ -39,16 +39,16 @@ final class ReflectionInstantiator<T> implements Instantiator<T> {
     private final Constructor<T> constructor;
 
     @NotNull
-    private final TypeConversion[] conversions;
+    private final List<TypeConversion> conversions;
 
     @NotNull
-    private final PropertyAccessor[] accessors;
+    private final List<PropertyAccessor> accessors;
 
     private final int constructorParameterCount;
 
     ReflectionInstantiator(@NotNull Constructor<T> constructor,
-                           @NotNull TypeConversion[] conversions,
-                           @NotNull PropertyAccessor[] accessors) {
+                           @NotNull List<TypeConversion> conversions,
+                           @NotNull List<PropertyAccessor> accessors) {
         this.constructor = requireNonNull(constructor);
         this.conversions = requireNonNull(conversions);
         this.accessors = requireNonNull(accessors);
@@ -70,11 +70,11 @@ final class ReflectionInstantiator<T> implements Instantiator<T> {
     private void bindRemainingProperties(@NotNull T result, @NotNull InstantiatorArguments arguments) {
         List<?> values = arguments.getValues();
 
-        for (int i = 0; i < accessors.length; i++) {
+        for (int i = 0, len = accessors.size(); i < len; i++) {
             int argumentIndex = i + constructorParameterCount;
             Object originalValue = values.get(argumentIndex);
-            Object convertedValue = conversions[argumentIndex].convert(originalValue);
-            accessors[i].set(result, convertedValue);
+            Object convertedValue = conversions.get(argumentIndex).convert(originalValue);
+            accessors.get(i).set(result, convertedValue);
         }
     }
 
@@ -83,7 +83,7 @@ final class ReflectionInstantiator<T> implements Instantiator<T> {
         Object[] result = new Object[constructorParameterCount];
 
         for (int i = 0; i < result.length; i++)
-            result[i] = conversions[i].convert(arguments.get(i));
+            result[i] = conversions.get(i).convert(arguments.get(i));
 
         return result;
     }

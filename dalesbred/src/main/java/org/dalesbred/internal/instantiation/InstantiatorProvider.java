@@ -40,6 +40,7 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import static java.lang.reflect.Modifier.isPublic;
+import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 import static org.dalesbred.internal.utils.CollectionUtils.arrayOfType;
@@ -121,19 +122,21 @@ public final class InstantiatorProvider {
         if (!isPublic(constructor.getModifiers()))
             return Optional.empty();
 
-        return findTargetTypes(constructor, types).flatMap(targetTypes ->
-                resolveCoercions(types, targetTypes).map(conversions ->
-                    new ReflectionInstantiator<>(constructor, conversions, createPropertyAccessorsForValuesNotCoveredByConstructor(constructor, types.getNames()))));
+        List<String> columnNames = types.getNames();
+        return findTargetTypes(constructor, columnNames)
+                .flatMap(targetTypes -> resolveCoercions(types, targetTypes)
+                        .map(conversions -> new ReflectionInstantiator<>(constructor, conversions, createPropertyAccessorsForValuesNotCoveredByConstructor(constructor, columnNames))));
     }
 
     @NotNull
-    private static PropertyAccessor[] createPropertyAccessorsForValuesNotCoveredByConstructor(@NotNull Constructor<?> constructor,
-                                                                                              @NotNull List<String> names) {
+    private static List<PropertyAccessor> createPropertyAccessorsForValuesNotCoveredByConstructor(@NotNull Constructor<?> constructor,
+                                                                                                  @NotNull List<String> names) {
         int constructorParameterCount = constructor.getParameterTypes().length;
-        PropertyAccessor[] accessors = new PropertyAccessor[names.size() - constructorParameterCount];
+        int accessorCount = names.size() - constructorParameterCount;
+        ArrayList<PropertyAccessor> accessors = new ArrayList<>(accessorCount);
 
-        for (int i = 0; i < accessors.length; i++)
-            accessors[i] = createAccessor(i + constructorParameterCount, constructor.getDeclaringClass(), names);
+        for (int i = 0; i < accessorCount; i++)
+            accessors.add(createAccessor(i + constructorParameterCount, constructor.getDeclaringClass(), names));
 
         return accessors;
     }
@@ -149,23 +152,35 @@ public final class InstantiatorProvider {
      * parameter types as we have and then the types of properties of object as given by names of result-set.
      */
     @NotNull
-    private static Optional<Type[]> findTargetTypes(@NotNull Constructor<?> ctor, @NotNull NamedTypeList resultSetTypes) {
-        Type[] constructorParameterTypes = ctor.getGenericParameterTypes();
-        if (constructorParameterTypes.length > resultSetTypes.size()) return Optional.empty();
-        if (constructorParameterTypes.length == resultSetTypes.size()) return Optional.of(constructorParameterTypes);
+    private static Optional<List<Type>> findTargetTypes(@NotNull Constructor<?> ctor, @NotNull List<String> resultSetColumns) {
+        List<Type> constructorParameterTypes = asList(ctor.getGenericParameterTypes());
 
-        Type[] result = new Type[resultSetTypes.size()];
-        System.arraycopy(constructorParameterTypes, 0, result, 0, constructorParameterTypes.length);
+        int constructorParameterCount = constructorParameterTypes.size();
 
-        for (int i = constructorParameterTypes.length; i < result.length; i++) {
-            Type type = PropertyAccessor.findPropertyType(ctor.getDeclaringClass(), resultSetTypes.getName(i)).orElse(null);
-            if (type != null)
-                result[i] = type;
-            else
-                return Optional.empty();
+        if (constructorParameterCount > resultSetColumns.size()) {
+            // We don't have enough columns in ResultSet to instantiate this constructor, discard it.
+            return Optional.empty();
+
+        } else if (constructorParameterCount == resultSetColumns.size()) {
+            // We have exactly enough column in ResultSet. Use the constructor as it is.
+            return Optional.of(constructorParameterTypes);
+
+        } else {
+            // Get the types of remaining properties
+            ArrayList<Type> result = new ArrayList<>(resultSetColumns.size());
+            result.addAll(constructorParameterTypes);
+
+            List<String> propertyNames = resultSetColumns.subList(constructorParameterCount, resultSetColumns.size());
+            for (String name : propertyNames) {
+                Type type = PropertyAccessor.findPropertyType(ctor.getDeclaringClass(), name).orElse(null);
+                if (type != null)
+                    result.add(type);
+                else
+                    return Optional.empty();
+            }
+
+            return Optional.of(result);
         }
-
-        return Optional.of(result);
     }
 
     /**
@@ -173,16 +188,16 @@ public final class InstantiatorProvider {
      * to targetTypes, or null if coercions can't be done.
      */
     @NotNull
-    private Optional<TypeConversion[]> resolveCoercions(@NotNull NamedTypeList sourceTypes, @NotNull Type[] targetTypes) {
-        if (targetTypes.length != sourceTypes.size())
+    private Optional<List<TypeConversion>> resolveCoercions(@NotNull NamedTypeList sourceTypes, @NotNull List<Type> targetTypes) {
+        if (targetTypes.size() != sourceTypes.size())
             return Optional.empty();
 
-        TypeConversion[] conversions = new TypeConversion[targetTypes.length];
+        ArrayList<TypeConversion> conversions = new ArrayList<>(targetTypes.size());
 
-        for (int i = 0; i < targetTypes.length; i++) {
-            TypeConversion conversion = findConversionFromDbValue(sourceTypes.getType(i), targetTypes[i]).orElse(null);
+        for (int i = 0, len = targetTypes.size(); i < len; i++) {
+            TypeConversion conversion = findConversionFromDbValue(sourceTypes.getType(i), targetTypes.get(i)).orElse(null);
             if (conversion != null)
-                conversions[i] = conversion;
+                conversions.add(conversion);
             else
                 return Optional.empty();
         }
@@ -264,27 +279,25 @@ public final class InstantiatorProvider {
         Class<?> rawTarget = rawType(target);
 
         if (rawTarget == Optional.class) {
-            return optionalConversion(source, typeParameter(target), target, Optional::ofNullable);
+            return optionalConversion(source, typeParameter(target), Optional::ofNullable);
 
         } else if (rawTarget == OptionalInt.class) {
-            return optionalConversion(source, Integer.class, target, OptionalUtils::optionalIntOfNullable);
+            return optionalConversion(source, Integer.class, OptionalUtils::optionalIntOfNullable);
 
         } else if (rawTarget == OptionalLong.class) {
-            return optionalConversion(source, Long.class, target, OptionalUtils::optionalLongOfNullable);
+            return optionalConversion(source, Long.class, OptionalUtils::optionalLongOfNullable);
 
         } else if (rawTarget == OptionalDouble.class) {
-            return optionalConversion(source, Double.class, target, OptionalUtils::optionalDoubleOfNullable);
+            return optionalConversion(source, Double.class, OptionalUtils::optionalDoubleOfNullable);
 
         } else {
             return Optional.empty();
         }
     }
 
-    @SuppressWarnings("unchecked")
     @NotNull
-    private <T> Optional<TypeConversion> optionalConversion(@NotNull Type source, @NotNull Type target, @NotNull Type result, @NotNull Function<T,?> function) {
-        return findConversionFromDbValue(source, target)
-                .map(cv -> cv.compose(v -> function.apply((T) v)));
+    private <T> Optional<TypeConversion> optionalConversion(@NotNull Type source, @NotNull Type target, @NotNull Function<T, ?> function) {
+        return findConversionFromDbValue(source, target).map(cv -> cv.compose((Function<T, Object>) function::apply));
     }
 
     @NotNull
