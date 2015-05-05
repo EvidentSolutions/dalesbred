@@ -42,56 +42,56 @@ public class ConversionMapTest {
 
     @Test
     public void searchBasedOnExactMatch() {
-        TypeConversion conversion = dummyConversion(Integer.class, String.class);
-        registry.register(conversion);
+        TypeConversion conversion = dummyConversion();
+        registry.register(Integer.class, String.class, conversion);
 
         assertSame(conversion, registry.findConversion(Integer.class, String.class).orElse(null));
     }
 
     @Test
     public void searchBasedOnResultCovariance() {
-        TypeConversion conversion = dummyConversion(Integer.class, String.class);
-        registry.register(conversion);
+        TypeConversion conversion = dummyConversion();
+        registry.register(Integer.class, String.class, conversion);
 
         assertSame(conversion, registry.findConversion(Integer.class, Object.class).orElse(null));
     }
 
     @Test
     public void searchBasedOnParamContravariance() {
-        TypeConversion conversion = dummyConversion(Number.class, String.class);
-        registry.register(conversion);
+        TypeConversion conversion = dummyConversion();
+        registry.register(Number.class, String.class, conversion);
 
         assertSame(conversion, registry.findConversion(Integer.class, String.class).orElse(null));
     }
 
     @Test
     public void primitivesAndWrappersAreConsideredSame() {
-        TypeConversion conversion = dummyConversion(Integer.class, Long.class);
-        registry.register(conversion);
+        TypeConversion conversion = dummyConversion();
+        registry.register(Integer.class, Long.class, conversion);
 
         assertSame(conversion, registry.findConversion(int.class, long.class).orElse(null));
     }
 
     @Test
     public void sourceContravarianceOnInterfaces() {
-        TypeConversion conversion = dummyConversion(CharSequence.class, Long.class);
-        registry.register(conversion);
+        TypeConversion conversion = dummyConversion();
+        registry.register(CharSequence.class, Long.class, conversion);
 
         assertSame(conversion, registry.findConversion(String.class, Long.class).orElse(null));
     }
 
     @Test
     public void laterAdditionsOverrideEarlierOnes() {
-        TypeConversion conversion1 = dummyConversion(String.class, Long.class);
-        TypeConversion conversion2 = dummyConversion(String.class, Long.class);
-        registry.register(conversion1);
-        registry.register(conversion2);
+        TypeConversion conversion1 = dummyConversion();
+        TypeConversion conversion2 = dummyConversion();
+        registry.register(String.class, Long.class, conversion1);
+        registry.register(String.class, Long.class, conversion2);
 
         assertSame(conversion2, registry.findConversion(String.class, Long.class).orElse(null));
     }
 
     @NotNull
-    private static TypeConversion dummyConversion(@NotNull Class<?> source, @NotNull Class<?> target) {
-        return TypeConversion.fromNonNullFunction(source, target, x -> { throw new UnsupportedOperationException(); });
+    private static TypeConversion dummyConversion() {
+        return TypeConversion.fromNonNullFunction(x -> { throw new UnsupportedOperationException(); });
     }
 }

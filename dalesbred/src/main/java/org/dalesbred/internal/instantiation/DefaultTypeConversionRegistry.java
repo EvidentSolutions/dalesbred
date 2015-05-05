@@ -49,11 +49,11 @@ final class DefaultTypeConversionRegistry implements TypeConversionRegistry {
 
     @Override
     public <S, T> void registerConversionFromDatabase(@NotNull Class<S> source, @NotNull Class<T> target, @NotNull Function<S, T> conversion) {
-        loadConversions.register(TypeConversion.fromNonNullFunction(source, target, conversion));
+        loadConversions.register(source, target, TypeConversion.fromNonNullFunction(conversion));
     }
 
     @Override
     public <S, T> void registerConversionToDatabase(@NotNull Class<S> source, @NotNull Class<T> target, @NotNull Function<S, T> conversion) {
-        storeConversions.register(TypeConversion.fromNonNullFunction(source, target, conversion));
+        storeConversions.register(source, target, TypeConversion.fromNonNullFunction(conversion));
     }
 }

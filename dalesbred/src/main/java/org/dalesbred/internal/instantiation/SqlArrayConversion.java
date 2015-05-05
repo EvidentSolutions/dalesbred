@@ -28,7 +28,6 @@ import org.dalesbred.internal.jdbc.ResultSetUtils;
 import org.dalesbred.internal.jdbc.SqlUtils;
 import org.dalesbred.internal.utils.TypeUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.sql.Array;
@@ -38,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-class SqlArrayConversion<T> extends TypeConversion {
+final class SqlArrayConversion {
 
     @NotNull
     private final Type elementType;
@@ -46,27 +45,19 @@ class SqlArrayConversion<T> extends TypeConversion {
     @NotNull
     private final InstantiatorProvider instantiatorRegistry;
 
-    private final Function<List<?>,T> createResult;
-
-    public SqlArrayConversion(@NotNull Type target,
-                              @NotNull Type elementType,
-                              @NotNull InstantiatorProvider instantiatorRegistry,
-                              @NotNull Function<List<?>, T> createResult) {
-        super(Array.class, target);
+    private SqlArrayConversion(@NotNull Type elementType,
+                               @NotNull InstantiatorProvider instantiatorRegistry) {
 
         this.elementType = elementType;
         this.instantiatorRegistry = instantiatorRegistry;
-        this.createResult = createResult;
     }
 
-    @Nullable
-    @Override
-    public Object convert(@Nullable Object value) {
-        if (value != null) {
-            return createResult.apply(readArray((Array) value));
-        } else {
-            return null;
-        }
+    @NotNull
+    public static TypeConversion sqlArray(@NotNull Type elementType, @NotNull InstantiatorProvider instantiatorProvider,
+                                          @NotNull Function<List<?>, ?> createResult) {
+        SqlArrayConversion conv = new SqlArrayConversion(elementType, instantiatorProvider);
+
+        return TypeConversion.fromNonNullFunction((Array array) -> createResult.apply(conv.readArray(array)));
     }
 
     @NotNull

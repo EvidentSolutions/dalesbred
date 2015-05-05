@@ -26,8 +26,8 @@ import org.dalesbred.DatabaseException;
 import org.dalesbred.DatabaseSQLException;
 import org.dalesbred.connection.ConnectionProvider;
 import org.dalesbred.connection.DataSourceConnectionProvider;
-import org.dalesbred.internal.instantiation.TypeConversion;
 import org.dalesbred.conversion.TypeConversionRegistry;
+import org.dalesbred.internal.instantiation.TypeConversion;
 import org.dalesbred.internal.jdbc.ArgumentBinder;
 import org.dalesbred.transaction.TransactionManager;
 import org.dalesbred.transaction.TransactionRollbackException;
@@ -114,7 +114,7 @@ public abstract class Dialect {
 
     @NotNull
     public <T extends Enum<T>> TypeConversion getEnumCoercion(@NotNull Class<T> enumType) {
-        return TypeConversion.fromNonNullFunction(Object.class, enumType, value -> parseDatabaseEnum(enumType, value));
+        return TypeConversion.fromNonNullFunction(value -> parseDatabaseEnum(enumType, value));
     }
 
     @Override

@@ -22,87 +22,45 @@
 
 package org.dalesbred.internal.instantiation;
 
-import org.dalesbred.internal.utils.Primitives;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Type;
 import java.util.function.Function;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * A conversion from S into T.
  */
-public abstract class TypeConversion {
+public class TypeConversion {
 
     @NotNull
-    private final Type source;
+    private final Function<Object,Object> conversion;
 
-    @NotNull
-    private final Type target;
-
-    public TypeConversion(@NotNull Type source, @NotNull Type target) {
-        this.source = Primitives.wrap(requireNonNull(source));
-        this.target = Primitives.wrap(requireNonNull(target));
+    @SuppressWarnings("unchecked")
+    private TypeConversion(@NotNull Function<?, ?> conversion) {
+        this.conversion = (Function<Object,Object>) conversion;
     }
 
     @NotNull
-    public static <S,T> TypeConversion fromNonNullFunction(@NotNull Class<S> source, @NotNull Class<T> target, @NotNull Function<S, T> function) {
-        return new TypeConversion(source, target) {
-
-            @Nullable
-            @Override
-            public Object convert(@Nullable Object value) {
-                return value != null ? function.apply(source.cast(value)) : null;
-            }
-        };
-    }
-
-    @NotNull
-    public Type getSource() {
-        return source;
-    }
-
-    @NotNull
-    public Type getTarget() {
-        return target;
-    }
-
-    @Nullable
-    public abstract Object convert(@Nullable Object value);
-
-    @NotNull
-    public <T,R> TypeConversion compose(@NotNull Type result, @NotNull Function<T,R> function) {
-        TypeConversion self = this;
-
-        return new TypeConversion(source, result) {
-            @SuppressWarnings("unchecked")
-            @Nullable
-            @Override
-            public Object convert(@Nullable Object value) {
-                return function.apply((T) self.convert(value));
-            }
-        };
+    public static <S,T> TypeConversion fromNonNullFunction(@NotNull Function<S, T> function) {
+        return new TypeConversion((S value) -> value != null ? function.apply(value) : null);
     }
 
     /**
      * Returns identity-coercion, ie. a coercion that does nothing.
      */
     @NotNull
-    public static TypeConversion identity(@NotNull Type type) {
-        return new TypeConversion(type, type) {
-            @Override
-            @Nullable
-            public Object convert(@Nullable Object value) {
-                return value;
-            }
-        };
+    public static TypeConversion identity() {
+        return fromNonNullFunction(Function.identity());
     }
 
+    @Nullable
+    public Object convert(@Nullable Object value) {
+        return conversion.apply(value);
+    }
+
+    @SuppressWarnings("unchecked")
     @NotNull
-    @Override
-    public String toString() {
-        return getClass().getName() + " [" + source + " -> " + target + ']';
+    public TypeConversion compose(@NotNull Function<?,?> function) {
+        return new TypeConversion(conversion.andThen((Function<Object,Object>) function));
     }
 }

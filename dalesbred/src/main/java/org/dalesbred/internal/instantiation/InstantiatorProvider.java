@@ -209,7 +209,7 @@ public final class InstantiatorProvider {
     @NotNull
     private Optional<TypeConversion> findConversionFromDbValue(@NotNull Type source, @NotNull Type target) {
         if (isAssignable(target, source))
-            return Optional.of(TypeConversion.identity(target));
+            return Optional.of(TypeConversion.identity());
 
         Optional<TypeConversion> directConversion = typeConversionRegistry.findCoercionFromDbValue(source, target);
         if (directConversion.isPresent())
@@ -247,13 +247,13 @@ public final class InstantiatorProvider {
 
         if (isAssignable(Array.class, source)) {
             if (rawTarget.equals(Set.class))
-                return Optional.of(new SqlArrayConversion<>(List.class, typeParameter(target), this, LinkedHashSet::new));
+                return Optional.of(SqlArrayConversion.sqlArray(typeParameter(target), this, LinkedHashSet::new));
 
             if (rawTarget.isAssignableFrom(List.class))
-                return Optional.of(new SqlArrayConversion<>(List.class, typeParameter(target), this, Function.identity()));
+                return Optional.of(SqlArrayConversion.sqlArray(typeParameter(target), this, Function.identity()));
 
             if (rawTarget.isArray())
-                return Optional.of(new SqlArrayConversion<>(rawTarget, rawTarget.getComponentType(), this, list -> arrayOfType(rawTarget.getComponentType(), list)));
+                return Optional.of(SqlArrayConversion.sqlArray(rawTarget.getComponentType(), this, list -> arrayOfType(rawTarget.getComponentType(), list)));
         }
 
         return Optional.empty();
@@ -284,7 +284,7 @@ public final class InstantiatorProvider {
     @NotNull
     private <T> Optional<TypeConversion> optionalConversion(@NotNull Type source, @NotNull Type target, @NotNull Type result, @NotNull Function<T,?> function) {
         return findConversionFromDbValue(source, target)
-                .map(cv -> cv.compose(result, v -> function.apply((T) v)));
+                .map(cv -> cv.compose(v -> function.apply((T) v)));
     }
 
     @NotNull

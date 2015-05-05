@@ -34,12 +34,10 @@ import static org.dalesbred.internal.utils.TypeUtils.*;
 final class ConversionMap {
 
     @NotNull
-    private final Map<Type, List<TypeConversion>> mappings = new HashMap<>();
+    private final Map<Type, List<ConversionRegistration>> mappings = new HashMap<>();
 
-    void register(@NotNull TypeConversion coercion) {
-        Type source = wrap(coercion.getSource());
-
-        mappings.computeIfAbsent(source, a -> new ArrayList<>()).add(coercion);
+    void register(@NotNull Type source, @NotNull Type target, @NotNull TypeConversion conversion) {
+        mappings.computeIfAbsent(wrap(source), a -> new ArrayList<>()).add(new ConversionRegistration(target, conversion));
     }
 
     @NotNull
@@ -61,14 +59,28 @@ final class ConversionMap {
 
     @NotNull
     private Optional<TypeConversion> findConversionsRegisteredFor(@NotNull Type source, @NotNull Type target) {
-        List<TypeConversion> candidates = mappings.getOrDefault(source, emptyList());
+        List<ConversionRegistration> candidates = mappings.getOrDefault(source, emptyList());
 
         for (int i = candidates.size() - 1; i >= 0; i--) {
-            TypeConversion conversion = candidates.get(i);
-            if (isAssignable(target, conversion.getTarget()))
-                return Optional.of(conversion);
+            ConversionRegistration conversion = candidates.get(i);
+            if (isAssignable(target, conversion.target))
+                return Optional.of(conversion.conversion);
         }
 
         return Optional.empty();
+    }
+
+    private static final class ConversionRegistration {
+
+        @NotNull
+        private final Type target;
+
+        @NotNull
+        private final TypeConversion conversion;
+
+        private ConversionRegistration(@NotNull Type target, @NotNull TypeConversion conversion) {
+            this.target = target;
+            this.conversion = conversion;
+        }
     }
 }
