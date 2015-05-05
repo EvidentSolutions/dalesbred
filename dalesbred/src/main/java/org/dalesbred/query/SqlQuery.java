@@ -29,6 +29,7 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
@@ -154,6 +155,6 @@ public final class SqlQuery implements Serializable {
 
     @Override
     public int hashCode() {
-        return sql.hashCode() * 31 + args.hashCode();
+        return Objects.hash(sql, args);
     }
 }

@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import static java.util.Objects.requireNonNull;
@@ -102,7 +103,7 @@ public class DatabaseCustomCoercionsTest {
 
         @Override
         public int hashCode() {
-            return user.hashCode() * 31 + host.hashCode();
+            return Objects.hash(user, host);
         }
     }
 }
