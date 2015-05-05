@@ -660,14 +660,6 @@ public final class Database {
     }
 
     /**
-     * Returns a transactional proxy for given object.
-     */
-    @NotNull
-    public <T> T createTransactionalProxyFor(@NotNull Class<T> iface, @NotNull T target) {
-        return TransactionalProxyFactory.createTransactionalProxyFor(this, iface, target);
-    }
-
-    /**
      * Returns the used transaction isolation level.
      */
     @NotNull

@@ -32,6 +32,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
+import static org.dalesbred.transaction.TransactionalProxyFactory.createTransactionalProxyFor;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -45,7 +46,7 @@ public class DatabaseTransactionalProxyTest {
 
     @Test
     public void serviceWithTransactionalMethods() {
-        ServiceWithTransactionalMethods service = db.createTransactionalProxyFor(ServiceWithTransactionalMethods.class, new ServiceWithTransactionalMethods() {
+        ServiceWithTransactionalMethods service = createTransactionalProxyFor(db, ServiceWithTransactionalMethods.class, new ServiceWithTransactionalMethods() {
             @Override
             public int transactionalMethod() {
                 assertInTransaction();
@@ -65,7 +66,7 @@ public class DatabaseTransactionalProxyTest {
 
     @Test
     public void transactionalService() {
-        TransactionalService service = db.createTransactionalProxyFor(TransactionalService.class, new TransactionalService() {
+        TransactionalService service = createTransactionalProxyFor(db, TransactionalService.class, new TransactionalService() {
             @Override
             public int methodWithoutSpecificSettings() {
                 assertInTransaction();
@@ -89,7 +90,7 @@ public class DatabaseTransactionalProxyTest {
 
     @Test
     public void overridingTransactionAttributesInTargetDefinition() {
-        ServiceWithTransactionalMethods service = db.createTransactionalProxyFor(ServiceWithTransactionalMethods.class, new ServiceWithTransactionalMethods() {
+        ServiceWithTransactionalMethods service = createTransactionalProxyFor(db, ServiceWithTransactionalMethods.class, new ServiceWithTransactionalMethods() {
             @Override
             @DalesbredTransactional(propagation = Propagation.MANDATORY)
             public int transactionalMethod() {
@@ -117,7 +118,7 @@ public class DatabaseTransactionalProxyTest {
     @Test
     @SuppressLogging
     public void uncheckedExceptionsAreThrownThroughUnchanged() {
-        ServiceWithTransactionalMethods service = db.createTransactionalProxyFor(ServiceWithTransactionalMethods.class, new ServiceWithTransactionalMethods() {
+        ServiceWithTransactionalMethods service = createTransactionalProxyFor(db, ServiceWithTransactionalMethods.class, new ServiceWithTransactionalMethods() {
             @Override
             public int transactionalMethod() {
                 throw new IllegalArgumentException();
@@ -145,7 +146,7 @@ public class DatabaseTransactionalProxyTest {
     @Test
     @SuppressLogging
     public void checkedExceptionsAreThrownThroughUnchanged() {
-        ServiceWithCheckedExceptions service = db.createTransactionalProxyFor(ServiceWithCheckedExceptions.class, new ServiceWithCheckedExceptions() {
+        ServiceWithCheckedExceptions service = createTransactionalProxyFor(db, ServiceWithCheckedExceptions.class, new ServiceWithCheckedExceptions() {
             @Override
             public void transactionalMethod() throws IOException {
                 throw new IOException();

@@ -247,7 +247,7 @@ Instead of using transaction callbacks you can also build transactional proxies 
 
         ...
 
-        MyService myService = db.createTransactionalProxyFor(MyService.class, new MyRealService());
+        MyService myService = TransactionalProxyFactory.createTransactionalProxyFor(db, MyService.class, new MyRealService());
         service.frobnicate(); // this call will have a transaction wrapped around it
 ----
 

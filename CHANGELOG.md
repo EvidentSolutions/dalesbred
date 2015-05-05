@@ -16,6 +16,7 @@
     `Type` and raw class can be returned with `getRawType`.
   - Renamed `VariableResolvers.resolverForMap/resolverForBean` to `VariableResolver.forMap/forBean`.
   - Made `TransactionContext` an interface instead of abstract class.
+  - Removed `Database.createTransactionalProxyFor`. Use `TransactionalProxyFactory.createTransactionalProxyFor`instead.
 
 ## 1.0.0-alpha.2 (2015-05-04)
 
