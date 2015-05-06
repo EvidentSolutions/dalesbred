@@ -1,4 +1,4 @@
-## x.y.z (yyyy-mm-dd)
+## 1.0.0-alpha.3 (2015-05-06)
 
 ### New features
 
