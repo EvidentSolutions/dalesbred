@@ -420,7 +420,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="details">
 <span id="author" class="author">Juha Komulainen</span><br>
 <span id="email" class="email"><a href="mailto:juha.komulainen@evident.fi">juha.komulainen@evident.fi</a></span><br>
-<span id="revnumber">version 1.0.0-SNAPSHOT</span>
+<span id="revnumber">version 1.0.0-alpha.3</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -451,16 +451,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_miscellaneous_features">Miscellaneous features</a>
 <ul class="sectlevel2">
 <li><a href="#_large_objects">Large objects</a></li>
-<li><a href="#_confidential_values">Confidential values</a></li>
 <li><a href="#_custom_type_conversions">Custom type-conversions</a></li>
-<li><a href="#_custom_instantiators">Custom instantiators</a></li>
-<li><a href="#_instantiationlisteners">InstantiationListeners</a></li>
 </ul>
 </li>
 <li><a href="#_integrations">Integrations</a>
 <ul class="sectlevel2">
+<li><a href="#_java">Java</a></li>
 <li><a href="#_joda_time">Joda-Time</a></li>
-<li><a href="#_java_8">Java 8</a></li>
 <li><a href="#_spring">Spring</a></li>
 <li><a href="#_guice">Guice</a></li>
 <li><a href="#_intellij_idea">IntelliJ IDEA</a></li>
@@ -575,7 +572,11 @@ public final class Department {
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">Map&lt;Integer,String&gt; namesByIds = db.findMap(
-        Integer.class, String.class, "select id, name from department");</code></pre>
+        Integer.class, String.class, "select id, name from department");
+
+// first column is used for key, rest for instantiating the value
+Map&lt;Integer,Department&gt; departmentsByIds = db.findMap(
+        Integer.class, Department.class, "select id, id, name from department");</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -622,14 +623,14 @@ of the class and handle the result sets manually, but usually this should be unn
 <h3 id="_sqlquery_vs_query_parameters">SqlQuery vs. query parameters</h3>
 <div class="paragraph">
 <p>All methods come in two variants: there&#8217;s an implementation that takes
-an <a href="http://dalesbred.org/docs/api/?org/dalesbred/SqlQuery.html">SqlQuery</a> as a parameter and there&#8217;s another
+an <a href="http://dalesbred.org/docs/api/?org/dalesbred/query/SqlQuery.html">SqlQuery</a> as a parameter and there&#8217;s another
 implementation that takes <a href="http://download.java.net/jdk8/docs/api/?java/lang/String.html">String</a> and variable arguments of parameters.
 The latter is just convenience method for the further, meaning that the following code fragments are
 identical in functionality:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">import static org.dalesbred.SqlQuery.query;
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">import static org.dalesbred.query.SqlQuery.query;
 
 SqlQuery query = query("select id, name from department where update_timestamp &gt; ?", date);
 db.findAll(Department.class, query);
@@ -657,9 +658,9 @@ the query dynamically:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">import static org.dalesbred.SqlQuery.namedQuery;
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">import static org.dalesbred.query.SqlQuery.namedQuery;
 
-Map&lt;String,Object&gt; values = new HashMap&lt;String,Object&gt;();
+Map&lt;String,Object&gt; values = new HashMap&lt;&gt;();
 values.put("firstName", "John");
 values.put("lastName", "Doe");
 
@@ -710,27 +711,6 @@ or <a href="http://dalesbred.org/docs/api/?org/dalesbred/VoidTransactionCallback
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">db.withTransaction(new TransactionCallback&lt;Result&gt;() {
-    public Result execute(TransactionContext tx) throws SQLException {
-        // transactional operations
-        ...
-        return result;
-    });
-});
-
-db.withVoidTransaction(new VoidTransactionCallback() {
-    public void execute(TransactionContext tx) throws SQLException {
-        // transactional operations
-        ...
-    });
-});</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>If you are using Java 8, you can use the lighter lambda syntax:</p>
-</div>
-<div class="listingblock">
-<div class="content">
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">db.withTransaction(tx -&gt; {
     // transactional operations
     ...
@@ -747,9 +727,7 @@ db.withVoidTransaction(tx -&gt; {
 <div class="sect2">
 <h3 id="_annotation_based_transactions">Annotation based transactions</h3>
 <div class="paragraph">
-<p>If you are not using Java 8, the anonymous inner classes required by transaction callbacks
-are quite verbose. Therefore Dalesbred provides
-a simple support for building transactional proxies for services:</p>
+<p>Instead of using transaction callbacks you can also build transactional proxies for your services:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -759,7 +737,7 @@ a simple support for building transactional proxies for services:</p>
 
 public class MyRealService implements MyService {
 
-     @Transactional
+     @DalesbredTransactional
      public void frobnicate() {
          ...
      }
@@ -767,7 +745,7 @@ public class MyRealService implements MyService {
 
 ...
 
-MyService myService = db.createTransactionalProxyFor(MyService.class, new MyRealService());
+MyService myService = TransactionalProxyFactory.createTransactionalProxyFor(db, MyService.class, new MyRealService());
 service.frobnicate(); // this call will have a transaction wrapped around it</code></pre>
 </div>
 </div>
@@ -776,7 +754,7 @@ service.frobnicate(); // this call will have a transaction wrapped around it</co
 <h3 id="_external_transaction_manager">External transaction manager</h3>
 <div class="paragraph">
 <p>If you are using <a href="http://projects.spring.io/spring-framework/">Spring Framework</a> or
-<a href="https://code.google.com/p/google-guice/">Guice</a>, Dalesbred can integrated with them for transaction
+<a href="https://code.google.com/p/google-guice/">Guice</a>, Dalesbred can integrate with them for transaction
 management. Consult the <a href="#_integrations">Integrations</a>-section for details.</p>
 </div>
 </div>
@@ -800,7 +778,7 @@ which case exceptions are thrown for calls without an active transaction:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">db.withTransaction(Propagation.NESTED, new TransactionCallback&lt;Result&gt;() {
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">db.withTransaction(Propagation.NESTED, tx -&gt; {
     ...
 });</code></pre>
 </div>
@@ -844,84 +822,25 @@ Note that the returned InputStream or Reader is only valid for the duration of t
 </div>
 </div>
 <div class="sect2">
-<h3 id="_confidential_values">Confidential values</h3>
-<div class="paragraph">
-<p>Dalesbred tries to provide detailed exceptions and logs which include all the parameters of queries. While
-this is generally useful, it could mean that sensitive information such as passwords or credit card numbers
-might end up in logs or error messages. When building a query, you can wrap such values with <code>SqlQuery.confidential</code>
-so that only asterisks will be displayed whenever those values are printed, but they are still sent to database
-correctly:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">import static org.dalesbred.SqlQuery.confidential;
-
-...
-
-db.update("insert into credit_card (number) values (?)", confidential(creditCardNumber));</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
 <h3 id="_custom_type_conversions">Custom type-conversions</h3>
 <div class="paragraph">
 <p>Sometimes you need to convert database values to your own custom types and vice versa. To do that,
-you can register your own <a href="http://dalesbred.org/docs/api/?org/dalesbred/instantiation/TypeConversion.html">TypeConversion</a>-implementations
-to <a href="http://dalesbred.org/docs/api/?org/dalesbred/instantiation/TypeConversionRegistry.html">TypeConversionRegistry</a>:</p>
+you can register your functions to <a href="http://dalesbred.org/docs/api/?org/dalesbred/instantiation/TypeConversionRegistry.html">TypeConversionRegistry</a>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">TypeConversionRegistry conversions = db.getTypeConversionRegistry();
-conversions.registerConversionFromDatabaseType(new StringToEmailAddressConversion());
-conversions.registerConversionToDatabaseType(new EmailAddressToStringConversion());</code></pre>
+
+// register conversions from database and to database types separately
+conversions.registerConversionFromDatabase(
+    String.class, EmailAddress.class, MyConversions::stringToEmail);
+conversions.registerConversionToDatabase(
+    EmailAddress.class, String.class, MyConversions::emailToString);
+
+// or register both conversions with one call
+conversions.registerConversions(
+    String.class, EmailAddress.class, MyConversions::stringToEmail, MyConversions::emailToString);</code></pre>
 </div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_custom_instantiators">Custom instantiators</h3>
-<div class="paragraph">
-<p>Sometimes you have objects that you can&#8217;t instantiate using just constructors and setters, but you&#8217;d
-still like to be able to build from results. You can register custom instantiators for such objects:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">db.getInstantiatorRegistry().registerInstantiator(Foo.class, new Instantiator&lt;Foo&gt;() {
-    @Override
-    public Foo instantiate(@NotNull InstantiatorArguments arguments) {
-        List&lt;?&gt; args = arguments.getValues();
-        FooBuilder fooBuilder = new FooBuilder();
-        fooBuilder.setBar(args.get(0));
-        fooBuilder.setBaz(args.get(1));
-        return fooBuilder.build();
-    }
-});</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Dalesbred will use this instantiator in place of the custom instantiator whenever it needs to build
-results of type <code>Foo</code>.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_instantiationlisteners">InstantiationListeners</h3>
-<div class="paragraph">
-<p>You can configure a listener to receive notifications whenever Dalesbred creates new instances. The built-in
-<a href="#_guice">Guice-support</a> uses this feature to wire the dependencies of newly created objects, but you can use this
-callback anything you like:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">db.getInstantiatorRegistry().addInstantiationListener(new InstantiationListener() {
-    @Override
-    public void onInstantiation(@NotNull Object object) {
-        System.out.println("instantiated " + object);
-    }
-});</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Note that currently instantiation listeners are not called for objects instantiated by custom instantiators
-registered by users. This limitation could be lifted in the future.</p>
 </div>
 </div>
 </div>
@@ -930,6 +849,98 @@ registered by users. This limitation could be lifted in the future.</p>
 <h2 id="_integrations">Integrations</h2>
 <div class="sectionbody">
 <div class="sect2">
+<h3 id="_java">Java</h3>
+<div class="paragraph">
+<p>Dalesbred provides built-in <a href="#_custom_type_conversions">type-conversions</a> for the following classes:</p>
+</div>
+<table class="tableblock frame-topbot grid-all spread">
+<colgroup>
+<col style="width: 33%;">
+<col style="width: 33%;">
+<col style="width: 33%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Model type</th>
+<th class="tableblock halign-left valign-top"></th>
+<th class="tableblock halign-left valign-top">Database type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.net.URI</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592; &#8594;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.net.URL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592; &#8594;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.util.TimeZone</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592; &#8594;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Short/Integer/Long/Float/Double</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BigInteger/BigDecimal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BigInteger</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&#8594;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BigDecimal</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String/java.io.Reader</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Clob</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">byte/java.io.InputStream</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Blob</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">org.w3c.dom.Document</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SQLXML</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.time.Instant</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592; &#8594;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Timestamp</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.time.LocalDateTime</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592; &#8594;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Timestamp</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.time.LocalTime</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592; &#8594;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Time</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.time.ZoneId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592; &#8594;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.time.LocalDate</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592; &#8594;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java.util.Date/java.sql.Date</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
 <h3 id="_joda_time">Joda-Time</h3>
 <div class="paragraph">
 <p>If from <a href="http://www.joda.org/joda-time/">Joda-Time</a> is detected on classpath, Dalesbred will automatically
@@ -937,15 +948,6 @@ register <a href="#_custom_type_conversions">type-conversions</a> between <a hre
 <a href="http://www.joda.org/joda-time/apidocs/?org/joda/time/DateTime.html">DateTime</a>, <a href="http://www.joda.org/joda-time/apidocs/?org/joda/time/LocalDate.html">LocalDate</a>
 and <a href="http://www.joda.org/joda-time/apidocs/?org/joda/time/LocalTime.html">LocalTime</a> to <a href="http://download.java.net/jdk8/docs/api/?java/sql/Timestamp.html">java.sql.Timestamp</a>,
 <a href="http://download.java.net/jdk8/docs/api/?java/sql/Date.html">java.sql.Date</a> and <a href="http://download.java.net/jdk8/docs/api/?java/sql/Time.html">java.sql.Time</a>.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_java_8">Java 8</h3>
-<div class="paragraph">
-<p>When running on Java 8, <a href="#_custom_type_conversions">type-conversions</a> for <a href="http://download.java.net/jdk8/docs/api/?java/time/Instant.html">Instant</a>,
-<a href="http://download.java.net/jdk8/docs/api/?java/time/LocalDate.html">LocalDate</a>, <a href="http://download.java.net/jdk8/docs/api/?java/time/LocalDateTime.html">LocalDateTime</a>,
-<a href="http://download.java.net/jdk8/docs/api/?java/time/LocalTime.html">LocalTime</a> and <a href="http://download.java.net/jdk8/docs/api/?java/time/ZoneId.html">ZoneId</a> from
-<a href="http://download.java.net/jdk8/docs/api/?java/time/package-summary.html">java.time</a>-package are automatically registered.</p>
 </div>
 </div>
 <div class="sect2">
@@ -983,9 +985,9 @@ public class MyDatabaseConfiguration extends DalesbredConfigurationSupport {
 <div class="sect2">
 <h3 id="_guice">Guice</h3>
 <div class="paragraph">
-<p>Dalesbred has support for integration with <a href="https://code.google.com/p/google-guice/">Guice 3</a>. You can just pass in
+<p>Dalesbred has support for integration with <a href="https://code.google.com/p/google-guice/">Guice 3</a>. Provided
+that you have defined a binding for <code>DataSource</code>, you can just pass in
 <a href="http://dalesbred.org/docs/api/?org/dalesbred/support/guice/DataSourceDatabaseModule.html">DataSourceDatabaseModule</a>
-or <a href="http://dalesbred.org/docs/api/?org/dalesbred/support/guice/DriverManagerDatabaseModule.html">DriverManagerDatabaseModule</a>
 when constructing your injector and you&#8217;ll get automatic support for annotation based transactions and can
 @Inject your database wherever you need it.</p>
 </div>
@@ -993,10 +995,6 @@ when constructing your injector and you&#8217;ll get automatic support for annot
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">Injector injector = Guice.createInjector(new DataSourceDatabaseModule(), new MyOtherModule());</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>When using either of the Guice modules, you&#8217;ll also get automatic support for using <code>@Inject</code> in the
-results returned from database.</p>
 </div>
 <div class="paragraph">
 <p>See the <a href="http://dalesbred.org/docs/api/?">Javadoc</a> of the modules for details of their configuration.</p>
@@ -1060,7 +1058,7 @@ for more usage examples.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-    compile 'org.dalesbred:dalesbred:1.0.0-SNAPSHOT'
+    compile 'org.dalesbred:dalesbred:1.0.0-alpha.3'
 }
 
 repositories {
@@ -1074,7 +1072,7 @@ repositories {
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-    testCompile 'org.dalesbred:dalesbred-junit:1.0.0-SNAPSHOT'
+    testCompile 'org.dalesbred:dalesbred-junit:1.0.0-alpha.3'
 }</code></pre>
 </div>
 </div>
@@ -1090,7 +1088,7 @@ dependency to your <code>pom.xml</code>:</p>
 <pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
     &lt;groupId&gt;org.dalesbred&lt;/groupId&gt;
     &lt;artifactId&gt;dalesbred&lt;/artifactId&gt;
-    &lt;version&gt;1.0.0-SNAPSHOT&lt;/version&gt;
+    &lt;version&gt;1.0.0-alpha.3&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
@@ -1102,7 +1100,7 @@ dependency to your <code>pom.xml</code>:</p>
 <pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
     &lt;groupId&gt;org.dalesbred&lt;/groupId&gt;
     &lt;artifactId&gt;dalesbred-junit&lt;/artifactId&gt;
-    &lt;version&gt;1.0.0-SNAPSHOT&lt;/version&gt;
+    &lt;version&gt;1.0.0-alpha.3&lt;/version&gt;
     &lt;scope&gt;test&lt;/scope&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
@@ -1112,7 +1110,7 @@ dependency to your <code>pom.xml</code>:</p>
 <h3 id="_without_dependency_manager">Without dependency manager</h3>
 <div class="paragraph">
 <p>To use Dalesbred without a dependency management system, you&#8217;ll need to
-download <a href="http://repo1.maven.org/maven2/org/dalesbred/dalesbred/1.0.0-SNAPSHOT/dalesbred-1.0.0-SNAPSHOT.jar">dalesbred-1.0.0-SNAPSHOT.jar</a>
+download <a href="http://repo1.maven.org/maven2/org/dalesbred/dalesbred/1.0.0-alpha.3/dalesbred-1.0.0-alpha.3.jar">dalesbred-1.0.0-alpha.3.jar</a>
 and it to your classpath. There are no other required dependencies.</p>
 </div>
 </div>
@@ -1142,8 +1140,8 @@ and is used by <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0.0-SNAPSHOT<br>
-Last updated 2015-04-29 00:50:50 EEST
+Version 1.0.0-alpha.3<br>
+Last updated 2015-05-06 00:03:58 EEST
 </div>
 </div>
 </body>
