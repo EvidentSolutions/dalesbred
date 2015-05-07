@@ -1,5 +1,8 @@
 <component name="CopyrightManager">
-  <settings default="MIT">
+  <settings default="">
+    <module2copyright>
+      <element module="Java code" copyright="MIT" />
+    </module2copyright>
     <LanguageOptions name="Properties">
       <option name="fileTypeOverride" value="1" />
     </LanguageOptions>
