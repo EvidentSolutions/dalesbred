@@ -1,0 +1,84 @@
+Migrating from 0.x to 1.0
+=========================
+Juha Komulainen <juha.komulainen@evident.fi>
+
+Dalesbred 1.0 is not source compatible with 0.x because of the following changes:
+
+  - Changed package structure.
+  - Some less commonly used APIs were simplified.
+  - Few obscure APIs were completely eliminated.
+
+However, the migration should be relatively simple process. This guide provides the details.
+
+New package structure
+~~~~~~~~~~~~~~~~~~~~~
+
+Base package is now `org.dalesbred` instead of `fi.evident.dalesbred`. Furthermore some classes were
+moved to new packages (e.g. `fi.evident.dalesbred.SqlQuery` is now `org.dalesbred.query.SqlQuery`).
+All the changes are not listed here -- let your IDE's autocomplete fix the imports.
+
+Classes that are not part of public API, but need to be `public` for technical reasons are placed
+under `org.dalesbred.internal`. Do not use classes defined there since they are not guaranteed
+to stay compatible between releases.
+
+Java 1.8
+~~~~~~~~
+
+Dalesbred now requires Java 1.8. This enables some nice improvements such as enabling uses of
+lambdas and `Optional<T>` in APIs.
+
+Removed instantiators
+~~~~~~~~~~~~~~~~~~~~~
+
+`Instantiator`, `InstantiatorRegistry` and related classes and methods were completely removed since they
+seldom used and were too much complication for their weight. Instead of registering instantiator for `Foo`
+globally, you can simply use a custom `ResultSetProcessor` in queries for `Foo`.
+
+Simplified type-conversion registration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`TypeConversion` is no longer part of public API and you don't need to implement it to register
+type-conversions. Instead, you can register normal functions as conversions using `TypeConversionRegistry`.
+
+Transaction management changes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  - Made `TransactionContext` an interface instead of abstract class.
+  - Removed support for configuring default propagation. Default propagation is now always `REQUIRED`, but you
+    can override this on per-transaction basis.
+  - Removed `getIsolation` and `setIsolation` from `Database`. You can use `Database.getTransactionManager` to
+    access isolation settings in `TransactionManager`.
+  - Renamed `fi.evident.dalesbred.Transactional` to `org.dalesbred.annotation.DalesbredTransactional`
+    so that it does not clash with Spring's `@Transactional` and cause accidental misconfiguration when
+    both are included in a project.
+
+Moved functionality
+~~~~~~~~~~~~~~~~~~~
+
+  - Changed `ResultTable.getColumnTypes` and `ResultTable.ColumnMetadata.getType` to return `Type`-objects
+    instead of `Class<?>`-objects. Previous functionality is available with `ResultTable.getRawColumnTypes`
+    and `ResultTable.ColumnMetadata.getRawType`.
+  - Removed `VariableResolvers`-class and moved its `resolverForMap` to `VariableResolver.forMap` and `resolverForBean`
+    to `VariableResolver.forBean`.
+  - Removed the convenience method `Database.createTransactionalProxyFor`. You can use
+    `TransactionalProxyFactory.createTransactionalProxyFor` instead.
+  - Removed `NamedParameterQueries.namedQuery`. Use `SqlQuery.namedQuery` instead.
+  - Removed `fi.evident.dalesbred.connection.DriverManagerDataSourceProvider`.
+    New `org.dalesbred.connection.DriverManagerConnectionProvider` can be used instead.
+
+Removed functionality
+~~~~~~~~~~~~~~~~~~~~~
+
+  - Removed `getCount` from `NonUniqueResultException` so that its possible to throw the exception
+    without reading all rows from database. If you really need to have the count, you can ask for
+    list of results and check for uniqueness yourself.
+  - Removed `SqlQuery.confidential`. Some database drivers will print the values passed to
+    database in exceptions anyway, so the only safe way to make sure that values are not
+    revealed inadvertently is not to show exceptions at all.
+  - Moved `fi.evident.dalesbred.Reflective` to test folder so that it's not visible in API.
+    Dalesbred did not use it for anything and it doesn't really make sense for Dalesbred to
+    include such an annotation. You can always define one yourself if you need one in your
+    project.
+  - Removed `fi.evident.dalesbred.instantiation.InstantiationListener` completely. This was hardly
+    ever used. If you need to perform initialization on objects returned by Dalesbred, you can
+    always do it yourself.
