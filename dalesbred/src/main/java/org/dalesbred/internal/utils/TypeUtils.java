@@ -40,7 +40,8 @@ public final class TypeUtils {
             return rawType(((ParameterizedType) type).getRawType());
 
         } else if (type instanceof TypeVariable<?>) {
-            // TODO we could return one of the bounds, but it won't work if there are multiple bounds
+            // We could return one of the bounds, but it won't work if there are multiple bounds.
+            // Therefore just return object.
             return Object.class;
 
         } else if (type instanceof WildcardType) {
