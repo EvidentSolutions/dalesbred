@@ -49,8 +49,8 @@ configure(subprojects) { project ->
     project.version = rootProject.version.toString()
 
     ext.isReleaseVersion = { !version.endsWith("SNAPSHOT") }
-    ext.springVersion = '4.0.3.RELEASE'
-    ext.junitVersion = '4.11'
+    ext.springVersion = '4.1.6.RELEASE'
+    ext.junitVersion = '4.12'
     ext.jetbrainsAnnotationsVersion = '13.0'
     ext.hsqldbVersion = '2.3.2'
 }
@@ -75,20 +75,20 @@ project(':dalesbred') {
     description = 'Dalesbred - a database access library'
 
     dependencies {
-        compile 'joda-time:joda-time:2.3'
-        compile 'org.threeten:threetenbp:1.0'
+        compile 'joda-time:joda-time:2.7'
+        compile 'org.threeten:threetenbp:1.2'
         compile 'aopalliance:aopalliance:1.0'
         compile 'com.google.inject:guice:3.0'
         compile "org.springframework:spring-context:$springVersion"
         compile "org.springframework:spring-jdbc:$springVersion"
         compile "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
 
-        compile 'org.postgresql:postgresql:9.3-1101-jdbc41'
+        compile 'org.postgresql:postgresql:9.4-1201-jdbc41'
 
         testCompile "org.hsqldb:hsqldb:$hsqldbVersion"
-        testCompile 'mysql:mysql-connector-java:5.1.30'
+        testCompile 'mysql:mysql-connector-java:5.1.35'
         testCompile "junit:junit:$junitVersion"
-        testCompile 'org.mockito:mockito-core:1.9.5'
+        testCompile 'org.mockito:mockito-core:1.10.19'
     }
 
     apply plugin: 'osgi'
