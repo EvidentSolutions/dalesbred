@@ -12,7 +12,7 @@
 
 ### Breaking changes
 
-  - Removed `InstantiatorRegistry`, `Instantiator` and related/classes and methods from public API.
+  - Removed `InstantiatorRegistry`, `Instantiator` and related classes/methods from public API.
   - Moved `TypeConversionRegistry` to `org.dalesbred.conversion` and removed `TypedConversion` from
     public API. Register conversion functions to TypeConversionRegistry instead.
   - Removed `getCount` from `NonUniqueResultException` so that its possible to throw the exception 
