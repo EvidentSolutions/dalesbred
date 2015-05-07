@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.2">
 <meta name="author" content="Juha Komulainen">
-<title>Dalesbred Reference Documentation</title>
+<title>Migrating from 0.x to 1.0</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -416,7 +416,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-right">
 <div id="header">
-<h1>Dalesbred Reference Documentation</h1>
+<h1>Migrating from 0.x to 1.0</h1>
 <div class="details">
 <span id="author" class="author">Juha Komulainen</span><br>
 <span id="email" class="email"><a href="mailto:juha.komulainen@evident.fi">juha.komulainen@evident.fi</a></span><br>
@@ -424,733 +424,159 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
-<ul class="sectlevel1">
-<li><a href="#_basic_usage">Basic usage</a>
 <ul class="sectlevel2">
-<li><a href="#_configuring_the_database_connection">Configuring the database connection</a></li>
-<li><a href="#_finding_stuff">Finding stuff</a></li>
-<li><a href="#_updates">Updates</a></li>
-</ul>
-</li>
-<li><a href="#_queries">Queries</a>
-<ul class="sectlevel2">
-<li><a href="#_sqlquery_vs_query_parameters">SqlQuery vs. query parameters</a></li>
-<li><a href="#_named_queries">Named queries</a></li>
-<li><a href="#_building_queries_dynamically">Building queries dynamically</a></li>
-</ul>
-</li>
-<li><a href="#_transactions">Transactions</a>
-<ul class="sectlevel2">
-<li><a href="#_transaction_callbacks">Transaction callbacks</a></li>
-<li><a href="#_annotation_based_transactions">Annotation based transactions</a></li>
-<li><a href="#_external_transaction_manager">External transaction manager</a></li>
-<li><a href="#_implicit_transactions">Implicit transactions</a></li>
-<li><a href="#_nested_transactions">Nested transactions</a></li>
-</ul>
-</li>
-<li><a href="#_miscellaneous_features">Miscellaneous features</a>
-<ul class="sectlevel2">
-<li><a href="#_large_objects">Large objects</a></li>
-<li><a href="#_custom_type_conversions">Custom type-conversions</a></li>
-</ul>
-</li>
-<li><a href="#_integrations">Integrations</a>
-<ul class="sectlevel2">
-<li><a href="#_java">Java</a></li>
-<li><a href="#_joda_time">Joda-Time</a></li>
-<li><a href="#_spring">Spring</a></li>
-<li><a href="#_guice">Guice</a></li>
-<li><a href="#_intellij_idea">IntelliJ IDEA</a></li>
-</ul>
-</li>
-<li><a href="#_test_support">Test support</a></li>
-<li><a href="#_more_examples">More examples</a></li>
-<li><a href="#_downloading">Downloading</a>
-<ul class="sectlevel2">
-<li><a href="#_gradle">Gradle</a></li>
-<li><a href="#_maven">Maven</a></li>
-<li><a href="#_without_dependency_manager">Without dependency manager</a></li>
-</ul>
-</li>
-<li><a href="#_migration_from_0_x">Migration from 0.x</a></li>
-<li><a href="#_contributors">Contributors</a></li>
-<li><a href="#_attributions">Attributions</a></li>
+<li><a href="#_new_package_structure">New package structure</a></li>
+<li><a href="#_java_1_8">Java 1.8</a></li>
+<li><a href="#_removed_instantiators">Removed instantiators</a></li>
+<li><a href="#_simplified_type_conversion_registration">Simplified type-conversion registration</a></li>
+<li><a href="#_transaction_management_changes">Transaction management changes</a></li>
+<li><a href="#_moved_functionality">Moved functionality</a></li>
+<li><a href="#_removed_functionality">Removed functionality</a></li>
 </ul>
 </div>
 </div>
 <div id="content">
-<div class="sect1">
-<h2 id="_basic_usage">Basic usage</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_configuring_the_database_connection">Configuring the database connection</h3>
-<div class="paragraph">
-<p>Most things in Dalesbred happen through an instance of <a href="http://dalesbred.org/docs/api/?org/dalesbred/Database.html">Database</a>.
-The easiest way to get hold of one is to specify the settings manually:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">Database db = Database.forUrlAndCredentials("jdbc:example-url", "login", "password");</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Note that this performs no connection pooling and is therefore probably not
-your preferred way of configuring the system in production. In a container
-you&#8217;ll probably want to use a named <a href="http://download.java.net/jdk8/docs/api/?javax/sql/DataSource.html">DataSource</a> lookup up from JNDI:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">Database db = Database.forJndiDataSource("java:comp/env/jdbc/ExampleDb");</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Alternatively, you might setup a <a href="http://download.java.net/jdk8/docs/api/?javax/sql/DataSource.html">DataSource</a> yourself, in which case you can
-just create a <a href="http://dalesbred.org/docs/api/?org/dalesbred/Database.html">Database</a> out of that:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">Database db = Database.forDataSource(myDataSource);</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>If you are using <a href="http://projects.spring.io/spring-framework/">Spring Framework</a> or
-<a href="https://code.google.com/p/google-guice/">Guice</a>, see the <a href="#_integrations">Integrations</a>-section
-on how to integrate Dalesbred with them.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_finding_stuff">Finding stuff</h3>
-<div class="paragraph">
-<p>Finding simple results consisting of just basic types is simple:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">List&lt;Integer&gt; newIds = db.findAll(Integer.class,
-    "select id from department where created_date &gt; ?", date);</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>To fetch results with multiple columns, usually you&#8217;d use a class with matching constructor:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">List&lt;Department&gt; departments =
-    db.findAll(Department.class, "select id, name from department");
-
-public final class Department {
-    private final int id;
-    private final String name;
-
-    public Department(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>If there are more columns in the result-set than can be given to a constructor, then the rest of the
-columns are set using properties or direct field access. So even the following would work:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">List&lt;Department&gt; departments =
-    db.findAll(Department.class, "select id, name from department");
-
-...
-
-public final class Department {
-    public int id;
-    public String name;
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You can also convert the results directly to a map:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">Map&lt;Integer,String&gt; namesByIds = db.findMap(
-        Integer.class, String.class, "select id, name from department");
-
-// first column is used for key, rest for instantiating the value
-Map&lt;Integer,Department&gt; departmentsByIds = db.findMap(
-        Integer.class, Department.class, "select id, id, name from department");</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>If for some reason you don&#8217;t want to map the results into your own class, you can ask for
-a <a href="http://dalesbred.org/docs/api/?org/dalesbred/ResultTable.html">ResultTable</a>, which is basically a detached
-representation of a <a href="http://download.java.net/jdk8/docs/api/?java/sql/ResultSet.html">ResultSet</a>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">ResultTable employees = db.findTable("select * from employee");</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Alternatively, you can supply your own <a href="http://dalesbred.org/docs/api/?org/dalesbred/results/RowMapper.html">RowMapper</a> or
-<a href="http://dalesbred.org/docs/api/?org/dalesbred/results/ResultSetProcessor.html">ResultSetProcessor</a>-implementation in place
-of the class and handle the result sets manually, but usually this should be unnecessary.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_updates">Updates</h3>
-<div class="paragraph">
-<p>Normal updates are straightforward, since we don&#8217;t need to do much work to map the results:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">int modifiedRows = db.update("delete from user where id=?", 42);</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>If you plan to return stuff from updates, they are queries as far as Dalesbred is concerned:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">int id = db.findUniqueInt("insert into department (name) values ('foo') returning id");</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_queries">Queries</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_sqlquery_vs_query_parameters">SqlQuery vs. query parameters</h3>
-<div class="paragraph">
-<p>All methods come in two variants: there&#8217;s an implementation that takes
-an <a href="http://dalesbred.org/docs/api/?org/dalesbred/query/SqlQuery.html">SqlQuery</a> as a parameter and there&#8217;s another
-implementation that takes <a href="http://download.java.net/jdk8/docs/api/?java/lang/String.html">String</a> and variable arguments of parameters.
-The latter is just convenience method for the further, meaning that the following code fragments are
-identical in functionality:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">import static org.dalesbred.query.SqlQuery.query;
-
-SqlQuery query = query("select id, name from department where update_timestamp &gt; ?", date);
-db.findAll(Department.class, query);
-
-db.findAll(Department.class,
-    "select id, name from department where update_timestamp &gt; ?", date);</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Normally you want to use the latter form, but every once in a while it&#8217;s
-useful to be able to pass the query around with its parameters. In those
-cases you&#8217;d want to use the first form. An example is when you build
-the query dynamically:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">db.findAll(Department.class, buildDepartmentQuery(form));</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_named_queries">Named queries</h3>
-<div class="paragraph">
-<p>In addition to using positional parameters in your SQL statements, you can also you named parameters:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">import static org.dalesbred.query.SqlQuery.namedQuery;
-
-Map&lt;String,Object&gt; values = new HashMap&lt;&gt;();
-values.put("firstName", "John");
-values.put("lastName", "Doe");
-
-db.findAll(Department.class, namedQuery("select id from employee " +
-                                        " where first_name = :firstName " +
-                                        "   and last_name = :lastName", values));</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Instead of <a href="http://download.java.net/jdk8/docs/api/?java/util/Map.html">Map</a>s, you can also pass just regular objects to <code>namedQuery</code> as
-the source of values. The parameter names are mapped to properties or fields of the objects. Finally, if you want
-detailed control, you can pass your own implementation of
-<a href="http://dalesbred.org/docs/api/?org/dalesbred/query/VariableResolver.html">VariableResolver</a> to resolve the variables.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_building_queries_dynamically">Building queries dynamically</h3>
-<div class="paragraph">
-<p>At the moment there&#8217;s no high-level API for building queries, but there is a
-<a href="http://dalesbred.org/docs/api/?org/dalesbred/query/QueryBuilder.html">QueryBuilder</a> that
-is basically just a <a href="http://download.java.net/jdk8/docs/api/?java/util/StringBuilder.html">StringBuilder</a> which remembers
-the query-parameters, so you can say things like:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">QueryBuilder qb = new QueryBuilder("select id, name, status from document");
-if (status != null)
-    qb.append(" where status=?", status);
-
-db.findAll(Document.class, qb.build());</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>For all but simplest dynamic queries, you&#8217;ll probably want to have a higher level API that understands
-the structure of the SQL.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_transactions">Transactions</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_transaction_callbacks">Transaction callbacks</h3>
-<div class="paragraph">
-<p>To perform a bunch of operations in transaction, use <a href="http://dalesbred.org/docs/api/?org/dalesbred/TransactionCallback.html">TransactionCallback</a>
-or <a href="http://dalesbred.org/docs/api/?org/dalesbred/VoidTransactionCallback.html">VoidTransactionCallback</a>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">db.withTransaction(tx -&gt; {
-    // transactional operations
-    ...
-    return result;
-});
-
-db.withVoidTransaction(tx -&gt; {
-    // transactional operations
-    ...
-});</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_annotation_based_transactions">Annotation based transactions</h3>
-<div class="paragraph">
-<p>Instead of using transaction callbacks you can also build transactional proxies for your services:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public interface MyService {
-     void frobnicate();
-}
-
-public class MyRealService implements MyService {
-
-     @DalesbredTransactional
-     public void frobnicate() {
-         ...
-     }
-}
-
-...
-
-MyService myService = TransactionalProxyFactory.createTransactionalProxyFor(db, MyService.class, new MyRealService());
-service.frobnicate(); // this call will have a transaction wrapped around it</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_external_transaction_manager">External transaction manager</h3>
-<div class="paragraph">
-<p>If you are using <a href="http://projects.spring.io/spring-framework/">Spring Framework</a> or
-<a href="https://code.google.com/p/google-guice/">Guice</a>, Dalesbred can integrate with them for transaction
-management. Consult the <a href="#_integrations">Integrations</a>-section for details.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_implicit_transactions">Implicit transactions</h3>
-<div class="paragraph">
-<p>If you make calls to <a href="http://dalesbred.org/docs/api/?org/dalesbred/Database.html">Database</a> without and explicit transaction, by default
-a new transaction is started for each call, but you can disallow this, in
-which case exceptions are thrown for calls without an active transaction:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">db.setAllowImplicitTransactions(false);</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_nested_transactions">Nested transactions</h3>
-<div class="paragraph">
-<p>Nested transactions are supported if your database supports them:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">db.withTransaction(Propagation.NESTED, tx -&gt; {
-    ...
-});</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_miscellaneous_features">Miscellaneous features</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_large_objects">Large objects</h3>
-<div class="paragraph">
-<p>You can stream large objects (blobs and clobs) to database by just passing <a href="http://download.java.net/jdk8/docs/api/?java/io/InputStream.html">InputStream</a>
-or <a href="http://download.java.net/jdk8/docs/api/?java/io/Reader.html">Reader</a> to query. Similarly you can read them by asking back for InputStream
-or Reader.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">try (InputStream in = new FileInputStream(name)) {
-    db.update("insert into my_file (name, contents) values (?,?)", name, in);
-}
-
-try (InputStream in = db.findUnique(InputStream.class,
-                        "select contents from my_file where name=?", name)) {
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-Note that the returned InputStream or Reader is only valid for the duration of the active transaction.
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_custom_type_conversions">Custom type-conversions</h3>
-<div class="paragraph">
-<p>Sometimes you need to convert database values to your own custom types and vice versa. To do that,
-you can register your functions to <a href="http://dalesbred.org/docs/api/?org/dalesbred/instantiation/TypeConversionRegistry.html">TypeConversionRegistry</a>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">TypeConversionRegistry conversions = db.getTypeConversionRegistry();
-
-// register conversions from database and to database types separately
-conversions.registerConversionFromDatabase(
-    String.class, EmailAddress.class, MyConversions::stringToEmail);
-conversions.registerConversionToDatabase(
-    EmailAddress.class, String.class, MyConversions::emailToString);
-
-// or register both conversions with one call
-conversions.registerConversions(
-    String.class, EmailAddress.class, MyConversions::stringToEmail, MyConversions::emailToString);</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_integrations">Integrations</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_java">Java</h3>
-<div class="paragraph">
-<p>Dalesbred provides built-in <a href="#_custom_type_conversions">type-conversions</a> for the following classes:</p>
-</div>
-<table class="tableblock frame-topbot grid-all spread">
-<colgroup>
-<col style="width: 33%;">
-<col style="width: 33%;">
-<col style="width: 33%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Model type</th>
-<th class="tableblock halign-left valign-top"></th>
-<th class="tableblock halign-left valign-top">Database type</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">java.net.URI</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592; &#8594;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">java.net.URL</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592; &#8594;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">java.util.TimeZone</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592; &#8594;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Short/Integer/Long/Float/Double</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Number</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">BigInteger/BigDecimal</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Number</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">BigInteger</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&#8594;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">BigDecimal</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">String/java.io.Reader</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Clob</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">byte/java.io.InputStream</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Blob</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">org.w3c.dom.Document</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">SQLXML</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">java.time.Instant</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592; &#8594;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Timestamp</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">java.time.LocalDateTime</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592; &#8594;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Timestamp</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">java.time.LocalTime</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592; &#8594;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Time</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">java.time.ZoneId</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592; &#8594;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">java.time.LocalDate</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&#8592; &#8594;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">java.util.Date/java.sql.Date</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect2">
-<h3 id="_joda_time">Joda-Time</h3>
-<div class="paragraph">
-<p>If from <a href="http://www.joda.org/joda-time/">Joda-Time</a> is detected on classpath, Dalesbred will automatically
-register <a href="#_custom_type_conversions">type-conversions</a> between <a href="http://www.joda.org/joda-time/">Joda-Time</a>'s
-<a href="http://www.joda.org/joda-time/apidocs/?org/joda/time/DateTime.html">DateTime</a>, <a href="http://www.joda.org/joda-time/apidocs/?org/joda/time/LocalDate.html">LocalDate</a>
-and <a href="http://www.joda.org/joda-time/apidocs/?org/joda/time/LocalTime.html">LocalTime</a> to <a href="http://download.java.net/jdk8/docs/api/?java/sql/Timestamp.html">java.sql.Timestamp</a>,
-<a href="http://download.java.net/jdk8/docs/api/?java/sql/Date.html">java.sql.Date</a> and <a href="http://download.java.net/jdk8/docs/api/?java/sql/Time.html">java.sql.Time</a>.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_spring">Spring</h3>
-<div class="paragraph">
-<p>Dalesbred has support for integration with <a href="http://projects.spring.io/spring-framework/">Spring Framework</a>
-and its transaction management. To integrate Dalesbred, create a configuration class inheriting from
-<a href="http://dalesbred.org/docs/api/?org/dalesbred/support/spring/DalesbredConfigurationSupport.html">DalesbredConfigurationSupport</a>
-and specify beans for <a href="http://download.java.net/jdk8/docs/api/?javax/sql/DataSource.html">DataSource</a> and
-<a href="http://docs.spring.io/spring/docs/current/javadoc-api/?org/springframework/transaction/PlatformTransactionManager.html">PlatformTransactionManager</a>.
-A minimal configuration would therefore be something like the following:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Configuration
-@EnableTransactionManagement
-public class MyDatabaseConfiguration extends DalesbredConfigurationSupport {
-
-    @Bean
-    public DataSource dataSource() {
-        return new JndiDataSourceLookup().getDataSource("jdbc/my-database");
-    }
-
-    @Bean
-    public PlatformTransactionManager transactionManager() {
-        return new DataSourceTransactionManager(dataSource());
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>After this you can inject <a href="http://dalesbred.org/docs/api/?org/dalesbred/Database.html">Database</a> normally in your beans.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_guice">Guice</h3>
-<div class="paragraph">
-<p>Dalesbred has support for integration with <a href="https://code.google.com/p/google-guice/">Guice 3</a>. Provided
-that you have defined a binding for <code>DataSource</code>, you can just pass in
-<a href="http://dalesbred.org/docs/api/?org/dalesbred/support/guice/DataSourceDatabaseModule.html">DataSourceDatabaseModule</a>
-when constructing your injector and you&#8217;ll get automatic support for annotation based transactions and can
-@Inject your database wherever you need it.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">Injector injector = Guice.createInjector(new DataSourceDatabaseModule(), new MyOtherModule());</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>See the <a href="http://dalesbred.org/docs/api/?">Javadoc</a> of the modules for details of their configuration.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_intellij_idea">IntelliJ IDEA</h3>
-<div class="paragraph">
-<p>If you&#8217;re using <a href="https://www.jetbrains.com/idea/">IntelliJ IDEA</a>, check out
-<a href="https://github.com/EvidentSolutions/dalesbred-idea-plugin">Dalesbred IDEA Plugin</a>,
-which provides inspections for common errors (e.g. mismatch between query parameters
-and query).</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_test_support">Test support</h2>
+<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>By including the <em>dalesbred-junit</em> artifact in your project as a test dependency,
-you&#8217;ll get support for writing transactional test cases:</p>
+<p>Dalesbred 1.0 is not source compatible with 0.x because of the following changes:</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public class MyTest {
-
-    private final Database db =
-        TestDatabaseProvider.databaseForProperties("testdb.properties");
-
-    @Rule
-    public final TransactionalTests tx = new TransactionalTests(db);
-
-    @Test
-    public void simpleTest() {
-        assertEquals("hello, world!",
-            db.queryForUnique(String.class "select 'hello, world!'");
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_more_examples">More examples</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Check out the test cases under <a href="https://github.com/EvidentSolutions/dalesbred/tree/master/dalesbred/src/test/java/org/dalesbred">dalesbred/src/test/java</a>
-for more usage examples.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_downloading">Downloading</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_gradle">Gradle</h3>
-<div class="paragraph">
-<p>Add the following to your project:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-    compile 'org.dalesbred:dalesbred:1.0.0-alpha.4'
-}
-
-repositories {
-    mavenCentral()
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>For the JUnit test-support classes, add the following:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-    testCompile 'org.dalesbred:dalesbred-junit:1.0.0-alpha.4'
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_maven">Maven</h3>
-<div class="paragraph">
-<p>Dalesbred is available on the central Maven repository, so just add the following
-dependency to your <code>pom.xml</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
-    &lt;groupId&gt;org.dalesbred&lt;/groupId&gt;
-    &lt;artifactId&gt;dalesbred&lt;/artifactId&gt;
-    &lt;version&gt;1.0.0-alpha.4&lt;/version&gt;
-&lt;/dependency&gt;</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>For the JUnit test-support classes, add the following:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
-    &lt;groupId&gt;org.dalesbred&lt;/groupId&gt;
-    &lt;artifactId&gt;dalesbred-junit&lt;/artifactId&gt;
-    &lt;version&gt;1.0.0-alpha.4&lt;/version&gt;
-    &lt;scope&gt;test&lt;/scope&gt;
-&lt;/dependency&gt;</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_without_dependency_manager">Without dependency manager</h3>
-<div class="paragraph">
-<p>To use Dalesbred without a dependency management system, you&#8217;ll need to
-download <a href="http://repo1.maven.org/maven2/org/dalesbred/dalesbred/1.0.0-alpha.4/dalesbred-1.0.0-alpha.4.jar">dalesbred-1.0.0-alpha.4.jar</a>
-and it to your classpath. There are no other required dependencies.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_migration_from_0_x">Migration from 0.x</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>If you are migrating from an old version of Dalesbred, be sure to check the <a href="migration.html">migration guide</a>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_contributors">Contributors</h2>
-<div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://bitbucket.org/christophgr">Christoph Gritschenberger</a></p>
+<p>Changed package structure.</p>
+</li>
+<li>
+<p>Some less commonly used APIs were simplified.</p>
+</li>
+<li>
+<p>Few obscure APIs were completely eliminated.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>However, the migration should be relatively simple process. This guide provides the details.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_new_package_structure">New package structure</h3>
+<div class="paragraph">
+<p>Base package is now <code>org.dalesbred</code> instead of <code>fi.evident.dalesbred</code>. Furthermore some classes were
+moved to new packages (e.g. <code>fi.evident.dalesbred.SqlQuery</code> is now <code>org.dalesbred.query.SqlQuery</code>).
+All the changes are not listed here&#8201;&#8212;&#8201;let your IDE&#8217;s autocomplete fix the imports.</p>
+</div>
+<div class="paragraph">
+<p>Classes that are not part of public API, but need to be <code>public</code> for technical reasons are placed
+under <code>org.dalesbred.internal</code>. Do not use classes defined there since they are not guaranteed
+to stay compatible between releases.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_java_1_8">Java 1.8</h3>
+<div class="paragraph">
+<p>Dalesbred now requires Java 1.8. This enables some nice improvements such as enabling uses of
+lambdas and <code>Optional&lt;T&gt;</code> in APIs.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_removed_instantiators">Removed instantiators</h3>
+<div class="paragraph">
+<p><code>Instantiator</code>, <code>InstantiatorRegistry</code> and related classes and methods were completely removed since they
+seldom used and were too much complication for their weight. Instead of registering instantiator for <code>Foo</code>
+globally, you can simply use a custom <code>ResultSetProcessor</code> in queries for <code>Foo</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_simplified_type_conversion_registration">Simplified type-conversion registration</h3>
+<div class="paragraph">
+<p><code>TypeConversion</code> is no longer part of public API and you don&#8217;t need to implement it to register
+type-conversions. Instead, you can register normal functions as conversions using <code>TypeConversionRegistry</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_transaction_management_changes">Transaction management changes</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Made <code>TransactionContext</code> an interface instead of abstract class.</p>
+</li>
+<li>
+<p>Removed support for configuring default propagation. Default propagation is now always <code>REQUIRED</code>, but you
+can override this on per-transaction basis.</p>
+</li>
+<li>
+<p>Removed <code>getIsolation</code> and <code>setIsolation</code> from <code>Database</code>. You can use <code>Database.getTransactionManager</code> to
+access isolation settings in <code>TransactionManager</code>.</p>
+</li>
+<li>
+<p>Renamed <code>fi.evident.dalesbred.Transactional</code> to <code>org.dalesbred.annotation.DalesbredTransactional</code>
+so that it does not clash with Spring&#8217;s <code>@Transactional</code> and cause accidental misconfiguration when
+both are included in a project.</p>
 </li>
 </ul>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_moved_functionality">Moved functionality</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Changed <code>ResultTable.getColumnTypes</code> and <code>ResultTable.ColumnMetadata.getType</code> to return <code>Type</code>-objects
+instead of <code>Class&lt;?&gt;</code>-objects. Previous functionality is available with <code>ResultTable.getRawColumnTypes</code>
+and <code>ResultTable.ColumnMetadata.getRawType</code>.</p>
+</li>
+<li>
+<p>Removed <code>VariableResolvers</code>-class and moved its <code>resolverForMap</code> to <code>VariableResolver.forMap</code> and <code>resolverForBean</code>
+to <code>VariableResolver.forBean</code>.</p>
+</li>
+<li>
+<p>Removed the convenience method <code>Database.createTransactionalProxyFor</code>. You can use
+<code>TransactionalProxyFactory.createTransactionalProxyFor</code> instead.</p>
+</li>
+<li>
+<p>Removed <code>NamedParameterQueries.namedQuery</code>. Use <code>SqlQuery.namedQuery</code> instead.</p>
+</li>
+<li>
+<p>Removed <code>fi.evident.dalesbred.connection.DriverManagerDataSourceProvider</code>.
+New <code>org.dalesbred.connection.DriverManagerConnectionProvider</code> can be used instead.</p>
+</li>
+</ul>
 </div>
-<div class="sect1">
-<h2 id="_attributions">Attributions</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Image of dalesbred used on the website is by <a href="http://www.flickr.com/photos/48235612@N00/338947492">NicePics on Flickr</a>
-and is used by <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA 2.0</a>.</p>
 </div>
+<div class="sect2">
+<h3 id="_removed_functionality">Removed functionality</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Removed <code>getCount</code> from <code>NonUniqueResultException</code> so that its possible to throw the exception
+without reading all rows from database. If you really need to have the count, you can ask for
+list of results and check for uniqueness yourself.</p>
+</li>
+<li>
+<p>Removed <code>SqlQuery.confidential</code>. Some database drivers will print the values passed to
+database in exceptions anyway, so the only safe way to make sure that values are not
+revealed inadvertently is not to show exceptions at all.</p>
+</li>
+<li>
+<p>Moved <code>fi.evident.dalesbred.Reflective</code> to test folder so that it&#8217;s not visible in API.
+Dalesbred did not use it for anything and it doesn&#8217;t really make sense for Dalesbred to
+include such an annotation. You can always define one yourself if you need one in your
+project.</p>
+</li>
+<li>
+<p>Removed <code>fi.evident.dalesbred.instantiation.InstantiationListener</code> completely. This was hardly
+ever used. If you need to perform initialization on objects returned by Dalesbred, you can
+always do it yourself.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 1.0.0-alpha.4<br>
-Last updated 2015-05-08 00:09:22 EEST
+Last updated 2015-05-08 00:06:19 EEST
 </div>
 </div>
 </body>
