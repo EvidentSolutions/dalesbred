@@ -1,8 +1,9 @@
-## x.y.z (yyyy-mm-dd)
+## 1.0.0-alpha.4 (2015-05-08)
 
 ### New features
 
   - New `updateBatchAndProcessGeneratedKeys` for performing batch updates and returning generated keys. ([#9](https://github.com/EvidentSolutions/dalesbred/issues/9))
+  - Guide for migration from 0.x. ([#4](https://github.com/EvidentSolutions/dalesbred/issues/4))
 
 ## 1.0.0-alpha.3 (2015-05-06)
 
