@@ -22,15 +22,19 @@
 
 package org.dalesbred;
 
-import org.dalesbred.query.SqlQuery;
+import org.dalesbred.result.ResultSetProcessor;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static org.dalesbred.query.SqlQuery.query;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -58,6 +62,21 @@ public class DatabaseBatchUpdatesTest {
     }
 
     @Test
+    public void batchUpdateWithGeneratedKeys() {
+        db.update("drop table if exists my_table");
+        db.update("create temporary table my_table (id identity primary key, str varchar(64), num int)");
+
+        List<List<?>> argLists = asList(
+                asList("foo", 1),
+                asList("bar", 2),
+                asList("baz", 3));
+
+        List<Integer> result = db.updateBatchAndProcessGeneratedKeys(new CollectKeysResultSetProcessor(), singletonList("ID"), "INSERT INTO my_table (str, num) VALUES (?,?)", argLists);
+
+        assertThat(result, is(asList(0, 1, 2)));
+    }
+
+    @Test
     public void exceptionsContainReferenceToOriginalQuery() {
         List<List<String>> data = new ArrayList<>();
         data.add(singletonList("foo"));
@@ -66,7 +85,17 @@ public class DatabaseBatchUpdatesTest {
             db.updateBatch("insert into nonexistent_table (foo) values (?)", data);
             fail("Expected DatabaseException");
         } catch (DatabaseException e) {
-            assertThat(e.getQuery(), is(SqlQuery.query("insert into nonexistent_table (foo) values (?)", "<batch-update>")));
+            assertThat(e.getQuery(), is(query("insert into nonexistent_table (foo) values (?)", "<batch-update>")));
+        }
+    }
+
+    private static final class CollectKeysResultSetProcessor implements ResultSetProcessor<List<Integer>> {
+        @Override
+        public List<Integer> process(@NotNull ResultSet resultSet) throws SQLException {
+            List<Integer> result = new ArrayList<>();
+            while (resultSet.next())
+                result.add(resultSet.getInt(1));
+            return result;
         }
     }
 }

@@ -575,7 +575,7 @@ public final class Database {
     }
 
     /**
-     * Executes an update against the database and executes
+     * Executes an update against the database and return generated keys as extracted by generatedKeysProcessor.
      *
      * @param generatedKeysProcessor processor for handling the generated keys
      * @param columnNames names of columns that contain the generated keys. Can be empty, in which case the
@@ -634,6 +634,42 @@ public final class Database {
                 int[] counts = ps.executeBatch();
                 logQueryExecution(query, currentTimeMillis() - startTime);
                 return counts;
+            }
+        });
+    }
+
+    /**
+     * Executes batch of updates against the database and return generated keys as extracted by generatedKeysProcessor.
+     *
+     * @param generatedKeysProcessor processor for handling the generated keys
+     * @param columnNames names of columns that contain the generated keys. Can be empty, in which case the
+     *                    returned columns depend on the database
+     * @param sql to execute
+     * @param argumentLists List of argument lists for items of batch
+     * @return Result of processing the results with {@code generatedKeysProcessor}.
+     */
+    public <T> T updateBatchAndProcessGeneratedKeys(@NotNull ResultSetProcessor<T> generatedKeysProcessor,
+                                                    @NotNull List<String> columnNames,
+                                                    @NotNull @SQL String sql,
+                                                    @NotNull List<? extends List<?>> argumentLists) {
+        SqlQuery query = SqlQuery.query(sql, "<batch-update>");
+
+        return withCurrentTransaction(query, tx -> {
+            logQuery(query);
+
+            try (PreparedStatement ps = prepareStatement(tx.getConnection(), sql, columnNames)) {
+                for (List<?> arguments : argumentLists) {
+                    bindArguments(ps, arguments);
+                    ps.addBatch();
+                }
+
+                long startTime = currentTimeMillis();
+                ps.executeBatch();
+                logQueryExecution(query, currentTimeMillis() - startTime);
+
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    return generatedKeysProcessor.process(rs);
+                }
             }
         });
     }

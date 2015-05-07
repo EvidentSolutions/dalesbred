@@ -1,8 +1,14 @@
+## x.y.z (yyyy-mm-dd)
+
+### New features
+
+  - New `updateBatchAndProcessGeneratedKeys` for performing batch updates and returning generated keys. ([#9](https://github.com/EvidentSolutions/dalesbred/issues/9))
+
 ## 1.0.0-alpha.3 (2015-05-06)
 
 ### New features
 
-  - Generalized `findMap` to allow more than one column for instantiating the value. (Closes [#2](https://github.com/EvidentSolutions/dalesbred/issues/2))
+  - Generalized `findMap` to allow more than one column for instantiating the value. ([#2](https://github.com/EvidentSolutions/dalesbred/issues/2))
 
 ### Breaking changes
 
