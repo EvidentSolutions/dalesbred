@@ -1,3 +1,0 @@
-<component name="DependencyValidationManager">
-  <scope name="Java 8" pattern="file[dalesbred]:src/main/java/org/dalesbred/support/java8//*||file[dalesbred]:src/test/java/org/dalesbred/support/java8//*" />
-</component>
