@@ -31,7 +31,7 @@ Removed instantiators
 ~~~~~~~~~~~~~~~~~~~~~
 
 `Instantiator`, `InstantiatorRegistry` and related classes and methods were completely removed since they
-seldom used and were too much complication for their weight. Instead of registering instantiator for `Foo`
+were seldom used and added too much complication for their weight. Instead of registering instantiator for `Foo`
 globally, you can simply use a custom `ResultSetProcessor` in queries for `Foo`.
 
 Simplified type-conversion registration
