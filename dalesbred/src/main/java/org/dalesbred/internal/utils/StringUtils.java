@@ -24,7 +24,8 @@ package org.dalesbred.internal.utils;
 
 import org.jetbrains.annotations.NotNull;
 
-import static java.lang.Character.*;
+import static java.lang.Character.toLowerCase;
+import static java.lang.Character.toUpperCase;
 
 /**
  * Utilities for strings.
@@ -32,31 +33,6 @@ import static java.lang.Character.*;
 public final class StringUtils {
 
     private StringUtils() { }
-
-    /**
-     * Converts words <em>CamelCasedWords</em> to <em>underscore_separated_words.</em>
-     */
-    @NotNull
-    public static String upperCamelToLowerUnderscore(@NotNull CharSequence cs) {
-        StringBuilder sb = new StringBuilder(cs.length() + 5);
-
-        boolean candidateWordEnd = false;
-        for (int i = 0, len = cs.length(); i < len; i++) {
-            char ch = cs.charAt(i);
-
-            if (isUpperCase(ch) && candidateWordEnd) {
-                sb.append('_');
-                candidateWordEnd = false;
-
-            } else if (!isUpperCase(ch) && ch != '_') {
-                candidateWordEnd = true;
-            }
-
-            sb.append(toLowerCase(ch));
-        }
-
-        return sb.toString();
-    }
 
     /**
      * Returns given string with its first letter in uppercase.

@@ -41,8 +41,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
-import static org.dalesbred.internal.utils.EnumUtils.enumByOrdinal;
-
 /**
  * Abstracts away the differences of databases.
  */
@@ -53,54 +51,17 @@ public abstract class Dialect {
     private static final Logger log = Logger.getLogger(Dialect.class.getName());
 
     @NotNull
-    private EnumMode enumMode = EnumMode.NATIVE;
-
-    @NotNull
     public Object valueToDatabase(@NotNull Object value) {
-        if (value instanceof Enum<?>)
-            return createDatabaseEnum((Enum<?>) value);
-        else
-            return value;
-    }
-
-    /**
-     * Returns a database representation for given enum-value.
-     */
-    @NotNull
-    private Object createDatabaseEnum(@NotNull Enum<?> value) {
-        switch (enumMode) {
-            case NAME:
-                return value.name();
-            case ORDINAL:
-                return value.ordinal();
-            case NATIVE:
-                return createNativeDatabaseEnum(value);
-        }
-
-        throw new IllegalStateException("unknown enumMode: " + enumMode);
+        return value;
     }
 
     @NotNull
-    public final  <T extends Enum<T>> T parseDatabaseEnum(@NotNull Class<T> enumType, @NotNull Object value) {
-        switch (enumMode) {
-            case NAME:
-                return Enum.valueOf(enumType, value.toString());
-            case ORDINAL:
-                return enumByOrdinal(enumType, ((Number) value).intValue());
-            case NATIVE:
-                return parseNativeDatabaseEnum(enumType, value);
-        }
-
-        throw new IllegalStateException("unknown enumMode: " + enumMode);
-    }
-
-    @NotNull
-    protected Object createNativeDatabaseEnum(@NotNull Enum<?> value) {
+    public Object createNativeDatabaseEnum(@NotNull Enum<?> value, @NotNull String typeName) {
         return value.name();
     }
 
     @NotNull
-    protected <T extends Enum<T>> T parseNativeDatabaseEnum(@NotNull Class<T> enumType, @NotNull Object value) {
+    public <T extends Enum<T>> T parseNativeDatabaseEnum(@NotNull Class<T> enumType, @NotNull Object value) {
         return Enum.valueOf(enumType, value.toString());
     }
 
@@ -186,21 +147,6 @@ public abstract class Dialect {
 
     public void registerTypeConversions(@NotNull TypeConversionRegistry typeConversionRegistry) {
 
-    }
-
-    /**
-     * Sets the way enumerations are persisted.
-     */
-    public void setEnumMode(@NotNull EnumMode enumMode) {
-        this.enumMode = enumMode;
-    }
-
-    /**
-     * Gets the way enumerations are persisted.
-     */
-    @NotNull
-    public EnumMode getEnumMode() {
-        return enumMode;
     }
 
     /**

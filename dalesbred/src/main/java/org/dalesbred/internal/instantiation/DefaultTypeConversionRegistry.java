@@ -23,6 +23,7 @@
 package org.dalesbred.internal.instantiation;
 
 import org.dalesbred.conversion.TypeConversionRegistry;
+import org.dalesbred.dialect.Dialect;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
@@ -34,8 +35,39 @@ import java.util.function.Function;
  */
 final class DefaultTypeConversionRegistry implements TypeConversionRegistry {
 
+    @NotNull
+    private final Dialect dialect;
+
+    @NotNull
     private final ConversionMap loadConversions = new ConversionMap();
+
+    @NotNull
     private final ConversionMap storeConversions = new ConversionMap();
+
+    public DefaultTypeConversionRegistry(@NotNull Dialect dialect) {
+        this.dialect = dialect;
+    }
+
+    @Override
+    public <T extends Enum<T>> void registerEnumConversion(@NotNull Class<T> enumType, @NotNull Function<T, ?> keyFunction) {
+        registerConversionFromDatabase(Object.class, enumType, value -> {
+            for (T enumConstant : enumType.getEnumConstants()) {
+                if (value.equals(keyFunction.apply(enumConstant)))
+                    return enumConstant;
+            }
+
+            throw new IllegalArgumentException("could not find enum constant of type " + enumType.getName() + " for " + value);
+        });
+
+        registerConversionToDatabase(enumType, Object.class, keyFunction::apply);
+    }
+
+    @Override
+    public <T extends Enum<T>> void registerNativeEnumConversion(@NotNull Class<T> enumType, @NotNull String typeName) {
+        registerConversions(Object.class, enumType,
+                value -> dialect.parseNativeDatabaseEnum(enumType, value),
+                value -> dialect.createNativeDatabaseEnum(value, typeName));
+    }
 
     @NotNull
     public Optional<TypeConversion> findCoercionFromDbValue(@NotNull Type source, @NotNull Type target) {

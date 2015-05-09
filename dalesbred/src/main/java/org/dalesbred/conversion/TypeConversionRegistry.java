@@ -52,4 +52,15 @@ public interface TypeConversionRegistry {
         registerConversionFromDatabase(databaseType, javaType, fromDatabase);
         registerConversionToDatabase(javaType, databaseType, toDatabase);
     }
+
+    /**
+     * Registers simple enum conversion that uses keyFunction to produce saved value and uses
+     * same function on enum constants to convert values back.
+     */
+    <T extends Enum<T>> void registerEnumConversion(@NotNull Class<T> enumType, @NotNull Function<T,?> keyFunction);
+
+    /**
+     * Returns given enum-type to be saved as database native enum of given type name.
+     */
+    <T extends Enum<T>> void registerNativeEnumConversion(@NotNull Class<T> enumType, @NotNull String typeName);
 }

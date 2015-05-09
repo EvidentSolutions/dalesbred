@@ -1,7 +1,14 @@
 ## 1.0.0-??? (yyyy-mm-dd)
 
+### New features
+
+  - Simplified APi for registering enum conversions through `TypeConversionRegistry`. ([#14](https://github.com/EvidentSolutions/dalesbred/issues/14))
+
 ### Breaking changes
 
+  - Database native enums are no longer the default because they depended on ugly hack to 
+    guess the database type name. By default enums are bound using name, but you can use
+    methods in `TypeConversionRegistry` to customize this. 
   - Removed support for setting configuring default isolation level. If you need to set
     the default isolation, set it for the connections at your connection-provider.
 

@@ -55,13 +55,14 @@ public final class InstantiatorProvider {
     private final Dialect dialect;
 
     @NotNull
-    private final DefaultTypeConversionRegistry typeConversionRegistry = new DefaultTypeConversionRegistry();
+    private final DefaultTypeConversionRegistry typeConversionRegistry;
 
     @NotNull
     private static final Logger log = Logger.getLogger(InstantiatorProvider.class.getName());
 
     public InstantiatorProvider(@NotNull Dialect dialect) {
         this.dialect = requireNonNull(dialect);
+        this.typeConversionRegistry = new DefaultTypeConversionRegistry(dialect);
 
         DefaultTypeConversions.register(typeConversionRegistry);
 
@@ -83,6 +84,8 @@ public final class InstantiatorProvider {
         TypeConversion conversion = typeConversionRegistry.findConversionToDb(value.getClass()).orElse(null);
         if (conversion != null)
             return conversion.convert(value);
+        else if (value instanceof Enum<?>)
+            return dialect.valueToDatabase(((Enum<?>) value).name());
         else
             return dialect.valueToDatabase(value);
     }
@@ -246,11 +249,12 @@ public final class InstantiatorProvider {
     }
 
     @NotNull
-    private Optional<TypeConversion> findEnumConversion(@NotNull Type target) {
+    private static Optional<TypeConversion> findEnumConversion(@NotNull Type target) {
         if (isEnum(target)) {
             @SuppressWarnings("rawtypes")
             Class<? extends Enum> cl = rawType(target).asSubclass(Enum.class);
-            return Optional.ofNullable(TypeConversion.fromNonNullFunction(value -> dialect.parseDatabaseEnum(cl, value)));
+
+            return Optional.ofNullable(TypeConversion.fromNonNullFunction(value -> Enum.valueOf(cl, value.toString())));
         }
 
         return Optional.empty();

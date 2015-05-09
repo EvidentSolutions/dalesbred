@@ -28,7 +28,6 @@ import org.dalesbred.connection.DataSourceConnectionProvider;
 import org.dalesbred.connection.DriverManagerConnectionProvider;
 import org.dalesbred.conversion.TypeConversionRegistry;
 import org.dalesbred.dialect.Dialect;
-import org.dalesbred.dialect.EnumMode;
 import org.dalesbred.internal.instantiation.InstantiatorProvider;
 import org.dalesbred.internal.result.InstantiatorRowMapper;
 import org.dalesbred.internal.result.MapResultSetProcessor;
@@ -723,21 +722,6 @@ public final class Database {
      */
     public void setAllowImplicitTransactions(boolean allowImplicitTransactions) {
         this.allowImplicitTransactions = allowImplicitTransactions;
-    }
-
-    /**
-     * Sets the way enumerations are persisted.
-     */
-    public void setEnumMode(@NotNull EnumMode enumMode) {
-        dialect.setEnumMode(enumMode);
-    }
-
-    /**
-     * Gets the way enumerations are persisted.
-     */
-    @NotNull
-    public EnumMode getEnumMode() {
-        return dialect.getEnumMode();
     }
 
     /**

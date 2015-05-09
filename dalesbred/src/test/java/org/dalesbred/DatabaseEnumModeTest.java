@@ -22,7 +22,6 @@
 
 package org.dalesbred;
 
-import org.dalesbred.dialect.EnumMode;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -37,13 +36,8 @@ public class DatabaseEnumModeTest {
     public final TransactionalTestsRule rule = new TransactionalTestsRule(db);
 
     @Test
-    public void defaultEnumModeIsNative() {
-        assertThat(db.getEnumMode(), is(EnumMode.NATIVE));
-    }
-
-    @Test
     public void nameEnumMode() {
-        db.setEnumMode(EnumMode.NAME);
+        db.getTypeConversionRegistry().registerEnumConversion(MyEnum.class, MyEnum::name);
 
         db.update("drop table if exists enum_mode_test");
         db.update("create temporary table enum_mode_test (name varchar(10), value varchar(10))");
@@ -56,7 +50,7 @@ public class DatabaseEnumModeTest {
 
     @Test
     public void ordinalEnumMode() {
-        db.setEnumMode(EnumMode.ORDINAL);
+        db.getTypeConversionRegistry().registerEnumConversion(MyEnum.class, MyEnum::ordinal);
 
         db.update("drop table if exists enum_mode_test");
         db.update("create temporary table enum_mode_test (name varchar(10), value int)");

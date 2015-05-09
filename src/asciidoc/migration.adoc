@@ -40,6 +40,18 @@ Simplified type-conversion registration
 `TypeConversion` is no longer part of public API and you don't need to implement it to register
 type-conversions. Instead, you can register normal functions as conversions using `TypeConversionRegistry`.
 
+Enum binding changes
+--------------------
+
+`Database` no longer has `EnumMode` for setting globally how enum types are persisted. Rather you can
+customize the persistence through `TypeConversionRegistry` just like for any other types. By default
+enums are persisted using their name.
+
+Previously enums on PostgreSQL were persisted as native enums in database using database type name that was
+guessed based on the enum. So if your enum was named `FooBar`, you needed to have enum type named `foo_bar`
+in database. Now they are persisted by name by default, but you can use the previous functionality by
+calling `typeConversionRegistry.registerNativeEnumConversion(FooBar.class, "foo_bar")`
+
 Transaction management changes
 ------------------------------
 

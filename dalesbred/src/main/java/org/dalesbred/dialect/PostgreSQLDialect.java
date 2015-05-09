@@ -23,7 +23,6 @@
 package org.dalesbred.dialect;
 
 import org.dalesbred.conversion.TypeConversionRegistry;
-import org.dalesbred.internal.utils.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.postgresql.util.PGobject;
 
@@ -38,10 +37,10 @@ public class PostgreSQLDialect extends Dialect {
 
     @NotNull
     @Override
-    protected Object createNativeDatabaseEnum(@NotNull Enum<?> value) {
+    public Object createNativeDatabaseEnum(@NotNull Enum<?> value, @NotNull String typeName) {
         try {
             PGobject object = new PGobject();
-            object.setType(StringUtils.upperCamelToLowerUnderscore(value.getClass().getSimpleName()));
+            object.setType(typeName);
             object.setValue(value.name());
             return object;
         } catch (SQLException e) {

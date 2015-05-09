@@ -54,6 +54,8 @@ public class PostgreSQLDialectTest {
 
     @Test
     public void enumsAsConstructorParameters() {
+        db.getTypeConversionRegistry().registerNativeEnumConversion(Mood.class, "mood");
+
         db.update("drop type if exists mood cascade");
         db.update("create type mood as enum ('SAD', 'HAPPY')");
 
