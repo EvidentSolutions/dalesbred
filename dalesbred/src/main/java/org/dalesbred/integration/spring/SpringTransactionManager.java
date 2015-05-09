@@ -55,9 +55,6 @@ public final class SpringTransactionManager implements TransactionManager {
     @NotNull
     private final PlatformTransactionManager platformTransactionManager;
 
-    @NotNull
-    private Isolation defaultIsolation = Isolation.DEFAULT;
-
     /**
      * Constructs new SpringTransactionManager to use.
      */
@@ -98,17 +95,6 @@ public final class SpringTransactionManager implements TransactionManager {
         return conHolder != null && (conHolder.getConnectionHandle() != null || conHolder.isSynchronizedWithTransaction());
     }
 
-    @NotNull
-    @Override
-    public Isolation getDefaultIsolation() {
-        return defaultIsolation;
-    }
-
-    @Override
-    public void setDefaultIsolation(@NotNull Isolation isolation) {
-        this.defaultIsolation = requireNonNull(isolation);
-    }
-
     static int springIsolationCode(@NotNull Isolation isolation) {
         if (isolation == Isolation.DEFAULT)
             return TransactionDefinition.ISOLATION_DEFAULT;
@@ -131,12 +117,12 @@ public final class SpringTransactionManager implements TransactionManager {
     }
 
     @NotNull
-    private DefaultTransactionDefinition settingsToSpringDefinition(@NotNull TransactionSettings settings) {
+    private static DefaultTransactionDefinition settingsToSpringDefinition(@NotNull TransactionSettings settings) {
         if (settings.getRetries() != 0)
             throw new DatabaseException("retries are not supported with Spring managed transactions");
 
         DefaultTransactionDefinition df = new DefaultTransactionDefinition();
-        df.setIsolationLevel(springIsolationCode(settings.getIsolation().normalize(defaultIsolation)));
+        df.setIsolationLevel(springIsolationCode(settings.getIsolation()));
         df.setPropagationBehavior(springPropagationCode(settings.getPropagation()));
         return df;
     }

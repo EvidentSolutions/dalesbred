@@ -41,17 +41,14 @@ public class DatabaseTransactionIsolationTest {
     @Test(expected = TransactionSerializationException.class)
     @SuppressLogging
     public void concurrentUpdatesInSerializableTransactionThrowTransactionSerializationException() {
-        db1.getTransactionManager().setDefaultIsolation(SERIALIZABLE);
-        db2.getTransactionManager().setDefaultIsolation(SERIALIZABLE);
-
         db1.update("drop table if exists isolation_test");
         db1.update("create table isolation_test (value int)");
         db1.update("insert into isolation_test (value) values (1)");
 
-        db1.withVoidTransaction(tx -> {
+        db1.withVoidTransaction(SERIALIZABLE, tx -> {
             db1.findUniqueInt("select value from isolation_test");
 
-            db2.withVoidTransaction(tx1 -> {
+            db2.withVoidTransaction(SERIALIZABLE, tx1 -> {
                 db2.findUniqueInt("select value from isolation_test");
                 db2.update("update isolation_test set value=2");
             });

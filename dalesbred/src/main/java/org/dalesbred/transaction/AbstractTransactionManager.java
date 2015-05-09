@@ -29,12 +29,6 @@ import java.util.Optional;
 
 public abstract class AbstractTransactionManager implements TransactionManager {
 
-    /**
-     * The isolation level to use for transactions that have not specified an explicit level.
-     */
-    @NotNull
-    private Isolation defaultIsolation = Isolation.DEFAULT;
-
     @NotNull
     protected abstract Optional<DefaultTransaction> getActiveTransaction();
 
@@ -51,7 +45,7 @@ public abstract class AbstractTransactionManager implements TransactionManager {
     @Override
     public <T> T withTransaction(@NotNull TransactionSettings settings, @NotNull TransactionCallback<T> callback, @NotNull Dialect dialect) {
         Propagation propagation = settings.getPropagation();
-        Isolation isolation = settings.getIsolation().normalize(defaultIsolation);
+        Isolation isolation = settings.getIsolation();
         int retries = settings.getRetries();
 
         DefaultTransaction existingTransaction = getActiveTransaction().orElse(null);
@@ -82,16 +76,5 @@ public abstract class AbstractTransactionManager implements TransactionManager {
     @Override
     public boolean hasActiveTransaction() {
         return getActiveTransaction().isPresent();
-    }
-
-    @Override
-    @NotNull
-    public Isolation getDefaultIsolation() {
-        return defaultIsolation;
-    }
-
-    @Override
-    public void setDefaultIsolation(@NotNull Isolation isolation) {
-        this.defaultIsolation = isolation;
     }
 }

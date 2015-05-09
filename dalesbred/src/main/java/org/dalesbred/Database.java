@@ -710,14 +710,6 @@ public final class Database {
     }
 
     /**
-     * Returns the TransactionManager that database uses.
-     */
-    @NotNull
-    public TransactionManager getTransactionManager() {
-        return transactionManager;
-    }
-
-    /**
      * If flag is set to true (by default it's false) queries without active transaction will
      * not throw exception but will start a fresh transaction.
      */

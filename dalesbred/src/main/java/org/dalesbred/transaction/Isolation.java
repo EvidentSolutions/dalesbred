@@ -76,11 +76,6 @@ public enum Isolation {
         return jdbcLevel;
     }
 
-    @NotNull
-    public Isolation normalize(@NotNull Isolation defaultValue) {
-        return (this == DEFAULT) ? defaultValue : this;
-    }
-
     @MagicConstant(intValues = { TRANSACTION_NONE, TRANSACTION_READ_COMMITTED, TRANSACTION_READ_UNCOMMITTED, TRANSACTION_REPEATABLE_READ, TRANSACTION_SERIALIZABLE })
     private @interface JdbcIsolation { }
 }

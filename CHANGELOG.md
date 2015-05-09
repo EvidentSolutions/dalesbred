@@ -1,3 +1,10 @@
+## 1.0.0-??? (yyyy-mm-dd)
+
+### Breaking changes
+
+  - Removed support for setting configuring default isolation level. If you need to set
+    the default isolation, set it for the connections at your connection-provider.
+
 ## 1.0.0-alpha.4 (2015-05-08)
 
 ### New features

@@ -44,15 +44,4 @@ public interface TransactionManager {
      * Returns true if the code is executing inside transaction.
      */
     boolean hasActiveTransaction();
-
-    /**
-     * Returns the used transaction isolation level.
-     */
-    @NotNull
-    Isolation getDefaultIsolation();
-
-    /**
-     * Sets the transaction isolation level to use.
-     */
-    void setDefaultIsolation(@NotNull Isolation isolation);
 }

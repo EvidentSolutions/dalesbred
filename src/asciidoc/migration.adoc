@@ -46,8 +46,8 @@ Transaction management changes
   - Made `TransactionContext` an interface instead of abstract class.
   - Removed support for configuring default propagation. Default propagation is now always `REQUIRED`, but you
     can override this on per-transaction basis.
-  - Removed `getIsolation` and `setIsolation` from `Database`. You can use `Database.getTransactionManager` to
-    access isolation settings in `TransactionManager`.
+  - Removed support for setting configuring default isolation level. If you need to set
+    the default isolation, set it for the connections at your connection-provider.
   - Renamed `fi.evident.dalesbred.Transactional` to `org.dalesbred.annotation.DalesbredTransactional`
     so that it does not clash with Spring's `@Transactional` and cause accidental misconfiguration when
     both are included in a project.
