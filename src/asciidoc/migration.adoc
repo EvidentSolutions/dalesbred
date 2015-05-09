@@ -11,7 +11,7 @@ Dalesbred 1.0 is not source compatible with 0.x because of the following changes
 However, the migration should be relatively simple process. This guide provides the details.
 
 New package structure
-~~~~~~~~~~~~~~~~~~~~~
+---------------------
 
 Base package is now `org.dalesbred` instead of `fi.evident.dalesbred`. Furthermore some classes were
 moved to new packages (e.g. `fi.evident.dalesbred.SqlQuery` is now `org.dalesbred.query.SqlQuery`).
@@ -22,26 +22,26 @@ under `org.dalesbred.internal`. Do not use classes defined there since they are 
 to stay compatible between releases.
 
 Java 1.8
-~~~~~~~~
+--------
 
 Dalesbred now requires Java 1.8. This enables some nice improvements such as enabling uses of
 lambdas and `Optional<T>` in APIs.
 
 Removed instantiators
-~~~~~~~~~~~~~~~~~~~~~
+---------------------
 
 `Instantiator`, `InstantiatorRegistry` and related classes and methods were completely removed since they
 were seldom used and added too much complication for their weight. Instead of registering instantiator for `Foo`
 globally, you can simply use a custom `ResultSetProcessor` in queries for `Foo`.
 
 Simplified type-conversion registration
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------------
 
 `TypeConversion` is no longer part of public API and you don't need to implement it to register
 type-conversions. Instead, you can register normal functions as conversions using `TypeConversionRegistry`.
 
 Transaction management changes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------
 
   - Made `TransactionContext` an interface instead of abstract class.
   - Removed support for configuring default propagation. Default propagation is now always `REQUIRED`, but you
@@ -53,7 +53,7 @@ Transaction management changes
     both are included in a project.
 
 Moved functionality
-~~~~~~~~~~~~~~~~~~~
+-------------------
 
   - Changed `ResultTable.getColumnTypes` and `ResultTable.ColumnMetadata.getType` to return `Type`-objects
     instead of `Class<?>`-objects. Previous functionality is available with `ResultTable.getRawColumnTypes`
@@ -67,7 +67,7 @@ Moved functionality
     New `org.dalesbred.connection.DriverManagerConnectionProvider` can be used instead.
 
 Removed functionality
-~~~~~~~~~~~~~~~~~~~~~
+---------------------
 
   - Removed `getCount` from `NonUniqueResultException` so that its possible to throw the exception
     without reading all rows from database. If you really need to have the count, you can ask for
