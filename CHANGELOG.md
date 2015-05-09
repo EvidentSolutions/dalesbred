@@ -2,7 +2,7 @@
 
 ### New features
 
-  - Simplified APi for registering enum conversions through `TypeConversionRegistry`. ([#14](https://github.com/EvidentSolutions/dalesbred/issues/14))
+  - Simplified API for registering enum conversions through `TypeConversionRegistry`. ([#14](https://github.com/EvidentSolutions/dalesbred/issues/14))
 
 ### Breaking changes
 
