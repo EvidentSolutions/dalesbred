@@ -33,7 +33,7 @@ public class MySQLDialectTest {
 
     @Test
     public void detectMySqlDialect() {
-        Dialect dialect = Dialect.detect(TestDatabaseProvider.createInMemoryHSQLConnectionProvider());
+        Dialect dialect = Dialect.detect(TestDatabaseProvider.createMySQLConnectionProvider());
         assertThat(dialect, is(instanceOf(MySQLDialect.class)));
     }
 }

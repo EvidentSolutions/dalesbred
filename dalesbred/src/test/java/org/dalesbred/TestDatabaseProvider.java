@@ -56,6 +56,11 @@ public final class TestDatabaseProvider {
     }
 
     @NotNull
+    public static ConnectionProvider createMySQLConnectionProvider() {
+        return createConnectionProvider("mysql-connection.properties");
+    }
+
+    @NotNull
     public static ConnectionProvider createInMemoryHSQLConnectionProvider() {
         return new DriverManagerConnectionProvider("jdbc:hsqldb:.", "sa", "");
     }
