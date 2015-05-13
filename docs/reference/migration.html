@@ -420,15 +420,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="details">
 <span id="author" class="author">Juha Komulainen</span><br>
 <span id="email" class="email"><a href="mailto:juha.komulainen@evident.fi">juha.komulainen@evident.fi</a></span><br>
-<span id="revnumber">version 1.0.0-alpha.4</span>
+<span id="revnumber">version 1.0.0-rc.1</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
-<ul class="sectlevel2">
+<ul class="sectlevel1">
 <li><a href="#_new_package_structure">New package structure</a></li>
 <li><a href="#_java_1_8">Java 1.8</a></li>
 <li><a href="#_removed_instantiators">Removed instantiators</a></li>
 <li><a href="#_simplified_type_conversion_registration">Simplified type-conversion registration</a></li>
+<li><a href="#_enum_binding_changes">Enum binding changes</a></li>
 <li><a href="#_transaction_management_changes">Transaction management changes</a></li>
 <li><a href="#_moved_functionality">Moved functionality</a></li>
 <li><a href="#_removed_functionality">Removed functionality</a></li>
@@ -459,8 +460,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_new_package_structure">New package structure</h3>
+<div class="sect1">
+<h2 id="_new_package_structure">New package structure</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Base package is now <code>org.dalesbred</code> instead of <code>fi.evident.dalesbred</code>. Furthermore some classes were
 moved to new packages (e.g. <code>fi.evident.dalesbred.SqlQuery</code> is now <code>org.dalesbred.query.SqlQuery</code>).
@@ -472,30 +474,54 @@ under <code>org.dalesbred.internal</code>. Do not use classes defined there sinc
 to stay compatible between releases.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_java_1_8">Java 1.8</h3>
+</div>
+<div class="sect1">
+<h2 id="_java_1_8">Java 1.8</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Dalesbred now requires Java 1.8. This enables some nice improvements such as enabling uses of
 lambdas and <code>Optional&lt;T&gt;</code> in APIs.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_removed_instantiators">Removed instantiators</h3>
+</div>
+<div class="sect1">
+<h2 id="_removed_instantiators">Removed instantiators</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p><code>Instantiator</code>, <code>InstantiatorRegistry</code> and related classes and methods were completely removed since they
-seldom used and were too much complication for their weight. Instead of registering instantiator for <code>Foo</code>
+were seldom used and added too much complication for their weight. Instead of registering instantiator for <code>Foo</code>
 globally, you can simply use a custom <code>ResultSetProcessor</code> in queries for <code>Foo</code>.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_simplified_type_conversion_registration">Simplified type-conversion registration</h3>
+</div>
+<div class="sect1">
+<h2 id="_simplified_type_conversion_registration">Simplified type-conversion registration</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p><code>TypeConversion</code> is no longer part of public API and you don&#8217;t need to implement it to register
 type-conversions. Instead, you can register normal functions as conversions using <code>TypeConversionRegistry</code>.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_transaction_management_changes">Transaction management changes</h3>
+</div>
+<div class="sect1">
+<h2 id="_enum_binding_changes">Enum binding changes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>Database</code> no longer has <code>EnumMode</code> for setting globally how enum types are persisted. Rather you can
+customize the persistence through <code>TypeConversionRegistry</code> just like for any other types. By default
+enums are persisted using their name.</p>
+</div>
+<div class="paragraph">
+<p>Previously enums on PostgreSQL were persisted as native enums in database using database type name that was
+guessed based on the enum. So if your enum was named <code>FooBar</code>, you needed to have enum type named <code>foo_bar</code>
+in database. Now they are persisted by name by default, but you can use the previous functionality by
+calling <code>typeConversionRegistry.registerNativeEnumConversion(FooBar.class, "foo_bar")</code></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_transaction_management_changes">Transaction management changes</h2>
+<div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
@@ -506,8 +532,8 @@ type-conversions. Instead, you can register normal functions as conversions usin
 can override this on per-transaction basis.</p>
 </li>
 <li>
-<p>Removed <code>getIsolation</code> and <code>setIsolation</code> from <code>Database</code>. You can use <code>Database.getTransactionManager</code> to
-access isolation settings in <code>TransactionManager</code>.</p>
+<p>Removed support for setting configuring default isolation level. If you need to set
+the default isolation, set it for the connections at your connection-provider.</p>
 </li>
 <li>
 <p>Renamed <code>fi.evident.dalesbred.Transactional</code> to <code>org.dalesbred.annotation.DalesbredTransactional</code>
@@ -517,8 +543,10 @@ both are included in a project.</p>
 </ul>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_moved_functionality">Moved functionality</h3>
+</div>
+<div class="sect1">
+<h2 id="_moved_functionality">Moved functionality</h2>
+<div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
@@ -544,8 +572,10 @@ New <code>org.dalesbred.connection.DriverManagerConnectionProvider</code> can be
 </ul>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_removed_functionality">Removed functionality</h3>
+</div>
+<div class="sect1">
+<h2 id="_removed_functionality">Removed functionality</h2>
+<div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
@@ -569,14 +599,18 @@ project.</p>
 ever used. If you need to perform initialization on objects returned by Dalesbred, you can
 always do it yourself.</p>
 </li>
+<li>
+<p>Removed <code>Database.getDialect</code>. There should not be a need to access the Dialect directly.</p>
+</li>
 </ul>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0.0-alpha.4<br>
-Last updated 2015-05-08 00:06:19 EEST
+Version 1.0.0-rc.1<br>
+Last updated 2015-05-13 23:56:30 EEST
 </div>
 </div>
 </body>
