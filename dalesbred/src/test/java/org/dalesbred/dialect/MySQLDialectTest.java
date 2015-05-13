@@ -22,10 +22,7 @@
 
 package org.dalesbred.dialect;
 
-import org.dalesbred.Database;
 import org.dalesbred.TestDatabaseProvider;
-import org.dalesbred.TransactionalTestsRule;
-import org.junit.Rule;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -34,13 +31,9 @@ import static org.junit.Assert.assertThat;
 
 public class MySQLDialectTest {
 
-    private final Database db = TestDatabaseProvider.createMySQLDatabase();
-
-    @Rule
-    public final TransactionalTestsRule rule = new TransactionalTestsRule(db);
-
     @Test
-    public void correctDialectIsDetected() {
-        assertThat(db.getDialect(), is(instanceOf(MySQLDialect.class)));
+    public void detectMySqlDialect() {
+        Dialect dialect = Dialect.detect(TestDatabaseProvider.createInMemoryHSQLConnectionProvider());
+        assertThat(dialect, is(instanceOf(MySQLDialect.class)));
     }
 }
