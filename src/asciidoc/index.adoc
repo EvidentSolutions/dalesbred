@@ -98,7 +98,7 @@ You can also convert the results directly to a map:
 ----
 
 If for some reason you don't want to map the results into your own class, you can ask for
-a {javadocBase}org/dalesbred/ResultTable.html[ResultTable], which is basically a detached
+a {javadocBase}org/dalesbred/result/ResultTable.html[ResultTable], which is basically a detached
 representation of a {jdkJavadocBase}java/sql/ResultSet.html[ResultSet]:
 
 [source,java,indent=0]
@@ -106,8 +106,8 @@ representation of a {jdkJavadocBase}java/sql/ResultSet.html[ResultSet]:
         ResultTable employees = db.findTable("select * from employee");
 ----
 
-Alternatively, you can supply your own {javadocBase}org/dalesbred/results/RowMapper.html[RowMapper] or
-{javadocBase}org/dalesbred/results/ResultSetProcessor.html[ResultSetProcessor]-implementation in place
+Alternatively, you can supply your own {javadocBase}org/dalesbred/result/RowMapper.html[RowMapper] or
+{javadocBase}org/dalesbred/result/ResultSetProcessor.html[ResultSetProcessor]-implementation in place
 of the class and handle the result sets manually, but usually this should be unnecessary.
 
 Updates
@@ -209,8 +209,8 @@ Transactions
 Transaction callbacks
 ~~~~~~~~~~~~~~~~~~~~~
 
-To perform a bunch of operations in transaction, use {javadocBase}org/dalesbred/TransactionCallback.html[TransactionCallback]
-or {javadocBase}org/dalesbred/VoidTransactionCallback.html[VoidTransactionCallback]:
+To perform a bunch of operations in transaction, use {javadocBase}org/dalesbred/transaction/TransactionCallback.html[TransactionCallback]
+or {javadocBase}org/dalesbred/transaction/VoidTransactionCallback.html[VoidTransactionCallback]:
 
 [source,java,indent=0]
 ----
@@ -308,7 +308,7 @@ Custom type-conversions
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Sometimes you need to convert database values to your own custom types and vice versa. To do that,
-you can register your functions to {javadocBase}org/dalesbred/instantiation/TypeConversionRegistry.html[TypeConversionRegistry]:
+you can register your functions to {javadocBase}org/dalesbred/conversion/TypeConversionRegistry.html[TypeConversionRegistry]:
 
 [source,java,indent=0]
 ----
@@ -367,7 +367,7 @@ Spring
 
 Dalesbred has support for integration with http://projects.spring.io/spring-framework/[Spring Framework]
 and its transaction management. To integrate Dalesbred, create a configuration class inheriting from
-{javadocBase}org/dalesbred/support/spring/DalesbredConfigurationSupport.html[DalesbredConfigurationSupport]
+{javadocBase}org/dalesbred/integration/spring/DalesbredConfigurationSupport.html[DalesbredConfigurationSupport]
 and specify beans for {jdkJavadocBase}javax/sql/DataSource.html[DataSource] and
 {springJavadocBase}org/springframework/transaction/PlatformTransactionManager.html[PlatformTransactionManager].
 A minimal configuration would therefore be something like the following:
@@ -397,7 +397,7 @@ Guice
 
 Dalesbred has support for integration with https://code.google.com/p/google-guice/[Guice 3]. Provided
 that you have defined a binding for `DataSource`, you can just pass in
-{javadocBase}org/dalesbred/support/guice/DataSourceDatabaseModule.html[DataSourceDatabaseModule]
+{javadocBase}org/dalesbred/integration/guice/DataSourceDatabaseModule.html[DataSourceDatabaseModule]
 when constructing your injector and you'll get automatic support for annotation based transactions and can
 @Inject your database wherever you need it.
 
