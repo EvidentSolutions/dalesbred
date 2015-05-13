@@ -20,3 +20,6 @@ After a while, the artifacts will be synced to Maven Central.
 Now that the release is done, go back to master:
 
     git checkout master
+
+Finally, create [release notes in GitHub](https://github.com/EvidentSolutions/dalesbred/releases) using data from
+the CHANGELOG.
