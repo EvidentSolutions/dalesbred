@@ -12,7 +12,7 @@ It won't publish the artifacts, though. Next, we'll do that. Start by checking o
 
 Then publish all artifacts and docs:
 
-    ./gradlew clean uploadArchives publishWebsite
+    ./gradlew clean uploadArchives publishGhPages
 
 Go to [Sonatype Nexus](https://oss.sonatype.org/) _Staging Repositories_ section, close and release the repository.
 After a while, the artifacts will be synced to Maven Central.
