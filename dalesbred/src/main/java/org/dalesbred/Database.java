@@ -72,7 +72,7 @@ public final class Database {
     @NotNull
     private final Logger log = Logger.getLogger(getClass().getName());
 
-    /** Default propagation for new transactions */
+    /** Should we create transactions implicitly when individual operations are invoked outside transaction */
     private boolean allowImplicitTransactions = true;
 
     /** The dialect that the database uses */
