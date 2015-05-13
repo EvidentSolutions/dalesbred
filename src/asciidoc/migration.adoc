@@ -94,3 +94,4 @@ Removed functionality
   - Removed `fi.evident.dalesbred.instantiation.InstantiationListener` completely. This was hardly
     ever used. If you need to perform initialization on objects returned by Dalesbred, you can
     always do it yourself.
+  - Removed `Database.getDialect`. There should not be a need to access the Dialect directly.

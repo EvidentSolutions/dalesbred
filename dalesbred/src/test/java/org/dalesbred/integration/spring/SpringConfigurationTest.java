@@ -24,10 +24,7 @@ package org.dalesbred.integration.spring;
 
 import org.dalesbred.Database;
 import org.dalesbred.TestDatabaseProvider;
-import org.dalesbred.dialect.Dialect;
-import org.dalesbred.dialect.PostgreSQLDialect;
 import org.dalesbred.transaction.Propagation;
-import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -39,7 +36,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -76,14 +72,6 @@ public class SpringConfigurationTest {
         assertThat(db.findUniqueInt("select count(*) from spring_tx_test"), is(0));
     }
 
-    @Test
-    public void overridingDialect() {
-        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(ConfigurationWithHsqlAndPostgresDialect.class);
-        Database db = ctx.getBean(Database.class);
-
-        assertThat(db.getDialect(), is(instanceOf(PostgreSQLDialect.class)));
-    }
-
     @Configuration
     public static class SimpleConfiguration extends DalesbredConfigurationSupport {
 
@@ -95,26 +83,6 @@ public class SpringConfigurationTest {
         @Bean
         public PlatformTransactionManager transactionManager() {
             return new DataSourceTransactionManager(dataSource());
-        }
-    }
-
-    @Configuration
-    public static class ConfigurationWithHsqlAndPostgresDialect extends DalesbredConfigurationSupport {
-
-        @Bean
-        public DataSource dataSource() {
-            return TestDatabaseProvider.createInMemoryHSQLDataSource();
-        }
-
-        @Bean
-        public PlatformTransactionManager transactionManager() {
-            return new DataSourceTransactionManager(dataSource());
-        }
-
-        @Nullable
-        @Override
-        protected Dialect dialect() {
-            return new PostgreSQLDialect();
         }
     }
 }

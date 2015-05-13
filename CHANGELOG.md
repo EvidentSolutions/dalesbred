@@ -1,4 +1,4 @@
-## 1.0.0-??? (yyyy-mm-dd)
+## 1.0.0-rc.1 (2015-05-14)
 
 ### New features
 
@@ -11,6 +11,7 @@
     methods in `TypeConversionRegistry` to customize this. 
   - Removed support for setting configuring default isolation level. If you need to set
     the default isolation, set it for the connections at your connection-provider.
+  - Removed `Database.getDialect`. There should not be a need to access the Dialect directly.
 
 ## 1.0.0-alpha.4 (2015-05-08)
 
