@@ -8,17 +8,22 @@ buildscript {
 }
 
 plugins {
-    id 'net.researchgate.release' version '2.0.2'
     id 'org.asciidoctor.convert' version '1.5.2'
     id 'org.ajoberstar.github-pages' version '1.1.0'
+    id 'pl.allegro.tech.build.axion-release' version '1.2.4'
 }
 
-release {
-    tagPrefix = 'v'
+scmVersion {
+    localOnly = true
+    tag {
+        prefix = 'v'
+        versionSeparator = ''
+    }
 }
 
 configure(allprojects) { project ->
     group = 'org.dalesbred'
+    project.version = scmVersion.version
 
     repositories {
         jcenter()
@@ -40,6 +45,10 @@ configure(rootProject) { project ->
                 javadocBase: "http://dalesbred.org/docs/api/?"
         ]
     }
+
+    task publish {
+        description 'Publishes both the artifacts and the website'
+    }
 }
 
 configure(subprojects) { project ->
@@ -59,6 +68,8 @@ configure([project(':dalesbred'), project(':dalesbred-junit')]) {
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
+
+    publish.dependsOn uploadArchives
 
     javadoc {
         options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
@@ -143,6 +154,7 @@ project(':website') {
     assemble.dependsOn copyReference
 
     publishGhPages.dependsOn assemble
+    publish.dependsOn publishGhPages
 
     githubPages {
         repoUri = 'git@github.com:EvidentSolutions/dalesbred.git'

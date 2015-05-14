@@ -1,25 +1,19 @@
 # Making releases
 
-First, create a release:
+First, test your build:
 
-    ./gradlew clean release
+    ./gradlew clean test
 
-This will run all tests, check that you don't have unpushed commits and prompt you for released version. 
-Then it will tag the release to version control and bump the version to next development version.
-It won't publish the artifacts, though. Next, we'll do that. Start by checking out the created release-tag:
+If everything went ok, tag your release:
 
-    git checkout v<release-version>
+    git tag v1.2.3
 
-Then publish all artifacts and docs:
+Now publish your changes:
 
-    ./gradlew clean uploadArchives publishGhPages
+    ./gradlew publish
 
 Go to [Sonatype Nexus](https://oss.sonatype.org/) _Staging Repositories_ section, close and release the repository.
 After a while, the artifacts will be synced to Maven Central.
-
-Now that the release is done, go back to master:
-
-    git checkout master
 
 Finally, create [release notes in GitHub](https://github.com/EvidentSolutions/dalesbred/releases) using data from
 the CHANGELOG.
