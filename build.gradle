@@ -48,7 +48,6 @@ configure(subprojects) { project ->
 
     project.version = rootProject.version.toString()
 
-    ext.isReleaseVersion = { !version.endsWith("SNAPSHOT") }
     ext.springVersion = '4.1.6.RELEASE'
     ext.junitVersion = '4.12'
     ext.jetbrainsAnnotationsVersion = '13.0'
