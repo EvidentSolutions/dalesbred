@@ -55,8 +55,6 @@ configure(subprojects) { project ->
     apply plugin: 'com.bmuschko.nexus'
     apply from: "${rootProject.projectDir}/gradle/publish-maven.gradle"
 
-    project.version = rootProject.version.toString()
-
     ext.springVersion = '4.1.6.RELEASE'
     ext.junitVersion = '4.12'
     ext.jetbrainsAnnotationsVersion = '13.0'
