@@ -33,9 +33,8 @@ just create a {javadocBase}org/dalesbred/Database.html[Database] out of that:
 [source,java,indent=0]
 Database db = Database.forDataSource(myDataSource);
 
-If you are using http://projects.spring.io/spring-framework/[Spring Framework] or
-https://code.google.com/p/google-guice/[Guice], see the <<_integrations,Integrations>>-section
-on how to integrate Dalesbred with them.
+If you are using http://projects.spring.io/spring-framework/[Spring Framework], see the
+<<_spring,Spring>>-section on how to integrate Dalesbred with it.
 
 Finding stuff
 ~~~~~~~~~~~~~
@@ -226,37 +225,11 @@ or {javadocBase}org/dalesbred/transaction/VoidTransactionCallback.html[VoidTrans
         });
 ----
 
-Annotation based transactions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Instead of using transaction callbacks you can also build transactional proxies for your services:
-
-[source,java,indent=0]
-----
-        public interface MyService {
-             void frobnicate();
-        }
-
-        public class MyRealService implements MyService {
-
-             @DalesbredTransactional
-             public void frobnicate() {
-                 ...
-             }
-        }
-
-        ...
-
-        MyService myService = TransactionalProxyFactory.createTransactionalProxyFor(db, MyService.class, new MyRealService());
-        service.frobnicate(); // this call will have a transaction wrapped around it
-----
-
 External transaction manager
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you are using http://projects.spring.io/spring-framework/[Spring Framework] or
-https://code.google.com/p/google-guice/[Guice], Dalesbred can integrate with them for transaction
-management. Consult the <<_integrations,Integrations>>-section for details.
+If you are using http://projects.spring.io/spring-framework/[Spring Framework], Dalesbred can integrate with
+Spring's transaction-manager. Consult the <<_spring,Spring>>-section for details.
 
 Implicit transactions
 ~~~~~~~~~~~~~~~~~~~~~
@@ -391,22 +364,6 @@ A minimal configuration would therefore be something like the following:
 ----
 
 After this you can inject {javadocBase}org/dalesbred/Database.html[Database] normally in your beans.
-
-Guice
-~~~~~
-
-Dalesbred has support for integration with https://code.google.com/p/google-guice/[Guice 3]. Provided
-that you have defined a binding for `DataSource`, you can just pass in
-{javadocBase}org/dalesbred/integration/guice/DataSourceDatabaseModule.html[DataSourceDatabaseModule]
-when constructing your injector and you'll get automatic support for annotation based transactions and can
-@Inject your database wherever you need it.
-
-[source,java,indent=0]
-----
-        Injector injector = Guice.createInjector(new DataSourceDatabaseModule(), new MyOtherModule());
-----
-
-See the {javadocBase}[Javadoc] of the modules for details of their configuration.
 
 IntelliJ IDEA
 ~~~~~~~~~~~~~

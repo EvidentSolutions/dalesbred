@@ -85,8 +85,6 @@ project(':dalesbred') {
     dependencies {
         compile 'joda-time:joda-time:2.7'
         compile 'org.threeten:threetenbp:1.2'
-        compile 'aopalliance:aopalliance:1.0'
-        compile 'com.google.inject:guice:3.0'
         compile "org.springframework:spring-context:$springVersion"
         compile "org.springframework:spring-jdbc:$springVersion"
         compile "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
@@ -104,9 +102,7 @@ project(':dalesbred') {
     jar {
         manifest {
             instruction 'Import-Package', '' +
-                    'com.google.inject.*;resolution:=optional,' +
                     'javax.inject.*;resolution:=optional,' +
-                    'org.aopalliance.intercept.*;resolution:=optional,' +
                     'org.joda.time.*;resolution:=optional,' +
                     'org.springframework.*;resolution:=optional,' +
                     'org.postgresql.*;resolution:=optional,' +

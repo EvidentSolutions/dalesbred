@@ -66,6 +66,15 @@ Transaction management changes
     so that it does not clash with Spring's `@Transactional` and cause accidental misconfiguration when
     both are included in a project.
 
+Guice and AOP Alliance support removed
+--------------------------------------
+
+Dalesbred no longer ships with support out-of-the box support for Guice and AOP Alliance. If you need the support,
+you can port the classes from 0.x branch:
+
+  - https://github.com/EvidentSolutions/dalesbred/tree/0.x/dalesbred/src/main/java/fi/evident/dalesbred/support/aopalliance[fi.evident.dalesbred.support.aopalliance]
+  - https://github.com/EvidentSolutions/dalesbred/tree/0.x/dalesbred/src/main/java/fi/evident/dalesbred/support/guice[fi.evident.dalesbred.support.guice]
+
 Moved functionality
 -------------------
 

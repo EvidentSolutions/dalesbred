@@ -1,3 +1,9 @@
+## 1.0.0-rc.2 (2015-05-15)
+
+### Breaking changes
+
+  - Removed support for Guice and AOP Alliance.
+
 ## 1.0.0-rc.1 (2015-05-14)
 
 ### New features
