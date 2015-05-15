@@ -45,12 +45,14 @@ Enum binding changes
 
 `Database` no longer has `EnumMode` for setting globally how enum types are persisted. Rather you can
 customize the persistence through `TypeConversionRegistry` just like for any other types. By default
-enums are persisted using their name.
+enums are persisted as varchars using their constant names. (This corresponds to the previous `EnumMode.NAME`
+functionality.)
 
-Previously enums on PostgreSQL were persisted as native enums in database using database type name that was
-guessed based on the enum. So if your enum was named `FooBar`, you needed to have enum type named `foo_bar`
-in database. Now they are persisted by name by default, but you can use the previous functionality by
-calling `typeConversionRegistry.registerNativeEnumConversion(FooBar.class, "foo_bar")`
+Previously enums on PostgreSQL were persisted as native enums in database using database enum type that was
+guessed based on the class name of the enum. So if your enum class was named `FooBar`, you needed to have
+enum type named `foo_bar` in database. Now they are persisted as varchars using constant by name by default,
+but you can use the previous functionality by calling
+`typeConversionRegistry.registerNativeEnumConversion(FooBar.class, "foo_bar")`
 
 Transaction management changes
 ------------------------------
