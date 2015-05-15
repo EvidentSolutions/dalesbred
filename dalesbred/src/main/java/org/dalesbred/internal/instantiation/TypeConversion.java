@@ -46,11 +46,11 @@ public class TypeConversion {
     }
 
     /**
-     * Returns identity-coercion, ie. a coercion that does nothing.
+     * Returns identity-conversion, ie. a conversion that does nothing.
      */
     @NotNull
     public static TypeConversion identity() {
-        return fromNonNullFunction(Function.identity());
+        return new TypeConversion(Function.identity());
     }
 
     @Nullable

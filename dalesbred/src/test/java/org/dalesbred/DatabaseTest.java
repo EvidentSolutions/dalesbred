@@ -99,7 +99,7 @@ public class DatabaseTest {
     }
 
     @Test
-    public void mapWithNullCoercion() {
+    public void mapWithNullConversion() {
         Map<String, String> map = db.findMap(String.class, String.class, "values ('foo', cast (null as clob)), (cast (null as clob), 'bar')");
 
         assertThat(map.size(), is(2));

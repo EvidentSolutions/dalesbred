@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 import static java.util.Objects.requireNonNull;
 import static org.junit.Assert.assertEquals;
 
-public class DatabaseCustomCoercionsTest {
+public class DatabaseCustomConversionTest {
 
     private final Database db = TestDatabaseProvider.createInMemoryHSQLDatabase();
 

@@ -64,7 +64,7 @@ final class DefaultTypeConversionRegistry implements TypeConversionRegistry {
     }
 
     @NotNull
-    public Optional<TypeConversion> findCoercionFromDbValue(@NotNull Type source, @NotNull Type target) {
+    public Optional<TypeConversion> findConversionFromDbValue(@NotNull Type source, @NotNull Type target) {
         return loadConversions.findConversion(source, target);
     }
 

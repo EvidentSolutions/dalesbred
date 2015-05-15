@@ -98,7 +98,7 @@ public final class InstantiatorProvider {
 
     @NotNull
     public Instantiator<?> findInstantiator(@NotNull Type type, @NotNull NamedTypeList types) {
-        // First check if we have an immediate coercion registered. If so, we'll just use that.
+        // First check if we have an immediate conversion registered. If so, we'll just use that.
         if (types.size() == 1) {
             TypeConversion conversion = findConversionFromDbValue(types.getType(0), type).orElse(null);
             if (conversion != null)
@@ -118,7 +118,7 @@ public final class InstantiatorProvider {
 
     /**
      * Returns an instantiator that uses given constructor and given types to create instances,
-     * or null if there are no coercions that can be made to instantiate the type.
+     * or empty if there are no conversions that can be made to instantiate the type.
      */
     @NotNull
     private <T> Optional<Instantiator<T>> instantiatorFrom(@NotNull Constructor<T> constructor, @NotNull NamedTypeList types) {
@@ -127,7 +127,7 @@ public final class InstantiatorProvider {
 
         List<String> columnNames = types.getNames();
         return findTargetTypes(constructor, columnNames)
-                .flatMap(targetTypes -> resolveCoercions(types, targetTypes)
+                .flatMap(targetTypes -> resolveConversions(types, targetTypes)
                         .map(conversions -> new ReflectionInstantiator<>(constructor, conversions, createPropertyAccessorsForValuesNotCoveredByConstructor(constructor, columnNames))));
     }
 
@@ -151,7 +151,7 @@ public final class InstantiatorProvider {
     }
 
     /**
-     * Returns the target types that need to have coercions. The types contain first as many constructor
+     * Returns the target types that need to have conversion. The types contain first as many constructor
      * parameter types as we have and then the types of properties of object as given by names of result-set.
      */
     @NotNull
@@ -187,11 +187,11 @@ public final class InstantiatorProvider {
     }
 
     /**
-     * Returns the list of coercions that need to be performed to convert sourceTypes
-     * to targetTypes, or null if coercions can't be done.
+     * Returns the list of conversions that need to be performed to convert sourceTypes
+     * to targetTypes, or empty if conversions can't be done.
      */
     @NotNull
-    private Optional<List<TypeConversion>> resolveCoercions(@NotNull NamedTypeList sourceTypes, @NotNull List<Type> targetTypes) {
+    private Optional<List<TypeConversion>> resolveConversions(@NotNull NamedTypeList sourceTypes, @NotNull List<Type> targetTypes) {
         if (targetTypes.size() != sourceTypes.size())
             return Optional.empty();
 
@@ -209,8 +209,8 @@ public final class InstantiatorProvider {
     }
 
     /**
-     * Returns coercion for converting value of source-type to target-type, or throws exception if
-     * there's no such coercion.
+     * Returns conversion for converting value of source-type to target-type, or throws exception if
+     * there's no such conversion.
      */
     @NotNull
     public TypeConversion getConversionFromDbValue(@NotNull Type source, @NotNull Type target) {
@@ -222,14 +222,14 @@ public final class InstantiatorProvider {
     }
 
     /**
-     * Returns coercion for converting value of source to target, or returns null if there's no such coercion.
+     * Returns conversion for converting value of source to target, or returns null if there's no such conversion.
      */
     @NotNull
     private Optional<TypeConversion> findConversionFromDbValue(@NotNull Type source, @NotNull Type target) {
         if (isAssignable(target, source))
             return Optional.of(TypeConversion.identity());
 
-        Optional<TypeConversion> directConversion = typeConversionRegistry.findCoercionFromDbValue(source, target);
+        Optional<TypeConversion> directConversion = typeConversionRegistry.findConversionFromDbValue(source, target);
         if (directConversion.isPresent())
             return directConversion;
 

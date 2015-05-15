@@ -26,7 +26,7 @@ import org.dalesbred.DatabaseException;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Exception thrown when there is a problem with instantiation or coercion.
+ * Exception thrown when there is a problem with instantiation or conversion.
  */
 public class InstantiationException extends DatabaseException {
 
