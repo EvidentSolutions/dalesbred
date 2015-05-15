@@ -60,8 +60,8 @@ public final class JodaTypeConversions {
         typeConversionRegistry.registerConversionFromDatabase(Time.class, LocalTime.class, LocalTime::new);
         typeConversionRegistry.registerConversionFromDatabase(String.class, DateTimeZone.class, DateTimeZone::forID);
 
-        typeConversionRegistry.registerConversionToDatabase(LocalDate.class, Date.class, value -> new Date(value.toDateTimeAtStartOfDay().getMillis()));
-        typeConversionRegistry.registerConversionToDatabase(LocalTime.class, Time.class, value -> new Time(value.toDateTimeToday(DateTimeZone.getDefault()).getMillis()));
-        typeConversionRegistry.registerConversionToDatabase(DateTimeZone.class, String.class, DateTimeZone::getID);
+        typeConversionRegistry.registerConversionToDatabase(LocalDate.class, value -> new Date(value.toDateTimeAtStartOfDay().getMillis()));
+        typeConversionRegistry.registerConversionToDatabase(LocalTime.class, value -> new Time(value.toDateTimeToday(DateTimeZone.getDefault()).getMillis()));
+        typeConversionRegistry.registerConversionToDatabase(DateTimeZone.class, DateTimeZone::getID);
     }
 }

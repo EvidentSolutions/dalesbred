@@ -48,7 +48,7 @@ public class DatabaseCustomCoercionsTest {
 
     @Test
     public void customSaveConversions() {
-        db.getTypeConversionRegistry().registerConversionToDatabase(EmailAddress.class, String.class, EmailAddress::toString);
+        db.getTypeConversionRegistry().registerConversionToDatabase(EmailAddress.class, EmailAddress::toString);
 
         db.update("drop table if exists custom_save_conversions_test");
         db.update("create temporary table custom_save_conversions_test (email varchar(32))");

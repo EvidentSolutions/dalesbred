@@ -38,9 +38,9 @@ public interface TypeConversionRegistry {
     <S, T> void registerConversionFromDatabase(@NotNull Class<S> source, @NotNull Class<T> target, @NotNull Function<S, T> conversion);
 
     /**
-     * Registers conversion from given source model type to given target database type.
+     * Registers conversion from given source model type to database type.
      */
-    <S, T> void registerConversionToDatabase(@NotNull Class<S> source, @NotNull Class<T> target, @NotNull Function<S, T> conversion);
+    <T> void registerConversionToDatabase(@NotNull Class<T> source, @NotNull Function<T, ?> conversion);
 
     /**
      * Registers conversions from database type to model type and back.
@@ -50,7 +50,7 @@ public interface TypeConversionRegistry {
                                             @NotNull Function<D, J> fromDatabase,
                                             @NotNull Function<J, D> toDatabase) {
         registerConversionFromDatabase(databaseType, javaType, fromDatabase);
-        registerConversionToDatabase(javaType, databaseType, toDatabase);
+        registerConversionToDatabase(javaType, toDatabase);
     }
 
     /**

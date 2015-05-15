@@ -59,7 +59,7 @@ final class DefaultTypeConversionRegistry implements TypeConversionRegistry {
             throw new IllegalArgumentException("could not find enum constant of type " + enumType.getName() + " for " + value);
         });
 
-        registerConversionToDatabase(enumType, Object.class, keyFunction::apply);
+        registerConversionToDatabase(enumType, keyFunction::apply);
     }
 
     @Override
@@ -85,7 +85,7 @@ final class DefaultTypeConversionRegistry implements TypeConversionRegistry {
     }
 
     @Override
-    public <S, T> void registerConversionToDatabase(@NotNull Class<S> source, @NotNull Class<T> target, @NotNull Function<S, T> conversion) {
-        storeConversions.register(source, target, TypeConversion.fromNonNullFunction(conversion));
+    public <S> void registerConversionToDatabase(@NotNull Class<S> source, @NotNull Function<S, ?> conversion) {
+        storeConversions.register(source, Object.class, TypeConversion.fromNonNullFunction(conversion));
     }
 }

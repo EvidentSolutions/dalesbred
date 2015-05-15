@@ -69,7 +69,7 @@ final class DefaultTypeConversions {
         registry.registerConversionFromDatabase(Blob.class, InputStream.class, DefaultTypeConversions::convertBlobToInputStream);
         registry.registerConversionFromDatabase(SQLXML.class, Document.class, DefaultTypeConversions::convertSQLXMLToDocument);
 
-        registry.registerConversionToDatabase(BigInteger.class, BigDecimal.class, BigDecimal::new);
+        registry.registerConversionToDatabase(BigInteger.class, BigDecimal::new);
 
         // java.time
         registry.registerConversions(Timestamp.class, Instant.class, Timestamp::toInstant, Timestamp::from);
@@ -77,7 +77,7 @@ final class DefaultTypeConversions {
         registry.registerConversions(Time.class, LocalTime.class, Time::toLocalTime, Time::valueOf);
         registry.registerConversions(String.class, ZoneId.class, ZoneId::of, ZoneId::getId);
         registry.registerConversionFromDatabase(java.util.Date.class, LocalDate.class, DefaultTypeConversions::convertDateToLocalDate);
-        registry.registerConversionToDatabase(LocalDate.class, Date.class, Date::valueOf);
+        registry.registerConversionToDatabase(LocalDate.class, Date::valueOf);
     }
 
     @SuppressWarnings("ObjectToString")

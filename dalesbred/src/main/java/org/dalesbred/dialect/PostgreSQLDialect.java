@@ -50,6 +50,6 @@ public class PostgreSQLDialect extends Dialect {
 
     @Override
     public void registerTypeConversions(@NotNull TypeConversionRegistry typeConversionRegistry) {
-        typeConversionRegistry.registerConversionToDatabase(Date.class, Timestamp.class, v -> new Timestamp(v.getTime()));
+        typeConversionRegistry.registerConversionToDatabase(Date.class, v -> new Timestamp(v.getTime()));
     }
 }

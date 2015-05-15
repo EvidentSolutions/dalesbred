@@ -62,7 +62,7 @@ public final class ThreeTenTypeConversions {
         typeConversionRegistry.registerConversions(String.class, ZoneId.class, ZoneId::of, ZoneId::getId);
 
         typeConversionRegistry.registerConversionFromDatabase(java.util.Date.class, LocalDate.class, ThreeTenTypeConversions::convertDateToLocalDate);
-        typeConversionRegistry.registerConversionToDatabase(LocalDate.class, Date.class, ThreeTenTypeConversions::convertLocalDateToSqlDate);
+        typeConversionRegistry.registerConversionToDatabase(LocalDate.class, ThreeTenTypeConversions::convertLocalDateToSqlDate);
     }
 
     @NotNull
