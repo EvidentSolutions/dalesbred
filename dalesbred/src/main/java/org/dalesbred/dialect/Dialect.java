@@ -39,6 +39,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.function.Function;
 import java.util.logging.Logger;
 
 /**
@@ -56,13 +57,13 @@ public abstract class Dialect {
     }
 
     @NotNull
-    public Object createNativeDatabaseEnum(@NotNull Enum<?> value, @NotNull String typeName) {
-        return value.name();
+    public Function<Enum<?>, ?> createNativeEnumToDatabaseConversion(@NotNull String typeName) {
+        throw new UnsupportedOperationException("native enums are not supported by " + getClass().getName());
     }
 
     @NotNull
-    public <T extends Enum<T>> T parseNativeDatabaseEnum(@NotNull Class<T> enumType, @NotNull Object value) {
-        return Enum.valueOf(enumType, value.toString());
+    public <T extends Enum<T>> Function<Object, T> createNativeEnumFromDatabaseConversion(@NotNull Class<T> enumType) {
+        throw new UnsupportedOperationException("native enums are not supported by " + getClass().getName());
     }
 
     @Override

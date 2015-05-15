@@ -29,6 +29,7 @@ import org.postgresql.util.PGobject;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.function.Function;
 
 /**
  * Support for PostgreSQL.
@@ -37,11 +38,22 @@ public class PostgreSQLDialect extends Dialect {
 
     @NotNull
     @Override
-    public Object createNativeDatabaseEnum(@NotNull Enum<?> value, @NotNull String typeName) {
+    public Function<Enum<?>, ?> createNativeEnumToDatabaseConversion(@NotNull String typeName) {
+        return value -> createPgObject(value.name(), typeName);
+    }
+
+    @NotNull
+    @Override
+    public <T extends Enum<T>> Function<Object, T> createNativeEnumFromDatabaseConversion(@NotNull Class<T> enumType) {
+        return value -> Enum.valueOf(enumType, value.toString());
+    }
+
+    @NotNull
+    private Object createPgObject(@NotNull String value, @NotNull String typeName) {
         try {
             PGobject object = new PGobject();
             object.setType(typeName);
-            object.setValue(value.name());
+            object.setValue(value);
             return object;
         } catch (SQLException e) {
             throw convertException(e);

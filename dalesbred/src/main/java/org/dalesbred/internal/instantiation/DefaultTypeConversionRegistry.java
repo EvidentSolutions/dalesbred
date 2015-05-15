@@ -65,8 +65,8 @@ final class DefaultTypeConversionRegistry implements TypeConversionRegistry {
     @Override
     public <T extends Enum<T>> void registerNativeEnumConversion(@NotNull Class<T> enumType, @NotNull String typeName) {
         registerConversions(Object.class, enumType,
-                value -> dialect.parseNativeDatabaseEnum(enumType, value),
-                value -> dialect.createNativeDatabaseEnum(value, typeName));
+                dialect.createNativeEnumFromDatabaseConversion(enumType),
+                dialect.createNativeEnumToDatabaseConversion(typeName)::apply);
     }
 
     @NotNull
