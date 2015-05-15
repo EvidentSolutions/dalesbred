@@ -62,9 +62,9 @@ Transaction management changes
     can override this on per-transaction basis.
   - Removed support for setting configuring default isolation level. If you need to set
     the default isolation, set it for the connections at your connection-provider.
-  - Renamed `fi.evident.dalesbred.Transactional` to `org.dalesbred.annotation.DalesbredTransactional`
-    so that it does not clash with Spring's `@Transactional` and cause accidental misconfiguration when
-    both are included in a project.
+  - `@Transactional` annotation and `TransactionalProxyFactory` along with `Database.createTransactionalProxyFor`
+    were removed, since the functionality really belongs to the runtime environment instead of Dalesbred. If you
+    really need the functionality, copy https://github.com/EvidentSolutions/dalesbred/blob/0.x/dalesbred/src/main/java/fi/evident/dalesbred/support/proxy/TransactionalProxyFactory.java[TransactionalProxyFactory of Dalesbred 0.8].
 
 Guice and AOP Alliance support removed
 --------------------------------------
@@ -83,8 +83,6 @@ Moved functionality
     and `ResultTable.ColumnMetadata.getRawType`.
   - Removed `VariableResolvers`-class and moved its `resolverForMap` to `VariableResolver.forMap` and `resolverForBean`
     to `VariableResolver.forBean`.
-  - Removed the convenience method `Database.createTransactionalProxyFor`. You can use
-    `TransactionalProxyFactory.createTransactionalProxyFor` instead.
   - Removed `NamedParameterQueries.namedQuery`. Use `SqlQuery.namedQuery` instead.
   - Removed `fi.evident.dalesbred.connection.DriverManagerDataSourceProvider`.
     New `org.dalesbred.connection.DriverManagerConnectionProvider` can be used instead.

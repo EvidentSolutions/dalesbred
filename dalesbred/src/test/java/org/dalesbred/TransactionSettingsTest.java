@@ -22,17 +22,12 @@
 
 package org.dalesbred;
 
-import org.dalesbred.annotation.DalesbredTransactional;
 import org.dalesbred.transaction.Isolation;
 import org.dalesbred.transaction.Propagation;
 import org.dalesbred.transaction.TransactionSettings;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
-import java.lang.annotation.Annotation;
-
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 
 public class TransactionSettingsTest {
 
@@ -50,48 +45,5 @@ public class TransactionSettingsTest {
     @Test(expected=IllegalArgumentException.class)
     public void negativeRetries() {
         new TransactionSettings().setRetries(-1);
-    }
-
-    @Test
-    public void initializeFromAnnotation() {
-        MyDalesbredTransactional transactional = new MyDalesbredTransactional();
-        transactional.isolation = Isolation.SERIALIZABLE;
-        transactional.propagation = Propagation.NESTED;
-        transactional.retries = 4;
-
-        TransactionSettings settings = TransactionSettings.fromAnnotation(transactional);
-        assertSame(transactional.isolation(), settings.getIsolation());
-        assertSame(transactional.propagation(), settings.getPropagation());
-        assertSame(transactional.retries(), settings.getRetries());
-    }
-
-    @SuppressWarnings("ClassExplicitlyAnnotation")
-    private static final class MyDalesbredTransactional implements DalesbredTransactional {
-        Isolation isolation = Isolation.REPEATABLE_READ;
-        Propagation propagation = Propagation.REQUIRED;
-        int retries = 0;
-
-        @NotNull
-        @Override
-        public Propagation propagation() {
-            return propagation;
-        }
-
-        @NotNull
-        @Override
-        public Isolation isolation() {
-            return isolation;
-        }
-
-        @Override
-        public int retries() {
-            return retries;
-        }
-
-        @NotNull
-        @Override
-        public Class<? extends Annotation> annotationType() {
-            return DalesbredTransactional.class;
-        }
     }
 }

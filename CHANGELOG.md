@@ -3,6 +3,7 @@
 ### Breaking changes
 
   - Removed support for Guice and AOP Alliance.
+  - Removed `@DalesbredTransactional` and `TransactionalProxyFactor .
 
 ## 1.0.0-rc.1 (2015-05-14)
 
