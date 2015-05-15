@@ -24,6 +24,7 @@ package org.dalesbred.internal.instantiation;
 
 import org.dalesbred.conversion.TypeConversionRegistry;
 import org.dalesbred.dialect.Dialect;
+import org.dalesbred.internal.utils.EnumUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
@@ -48,17 +49,10 @@ final class DefaultTypeConversionRegistry implements TypeConversionRegistry {
         this.dialect = dialect;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T extends Enum<T>> void registerEnumConversion(@NotNull Class<T> enumType, @NotNull Function<T, ?> keyFunction) {
-        registerConversionFromDatabase(Object.class, enumType, value -> {
-            for (T enumConstant : enumType.getEnumConstants()) {
-                if (value.equals(keyFunction.apply(enumConstant)))
-                    return enumConstant;
-            }
-
-            throw new InstantiationException("could not find enum constant of type " + enumType.getName() + " for " + value);
-        });
-
+    public <T extends Enum<T>,K> void registerEnumConversion(@NotNull Class<T> enumType, @NotNull Function<T, K> keyFunction) {
+        registerConversionFromDatabase(Object.class, enumType, value -> EnumUtils.enumByKey(enumType, keyFunction, (K) value));
         registerConversionToDatabase(enumType, keyFunction::apply);
     }
 

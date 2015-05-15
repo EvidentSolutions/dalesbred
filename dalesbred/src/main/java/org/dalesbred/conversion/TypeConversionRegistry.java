@@ -57,7 +57,7 @@ public interface TypeConversionRegistry {
      * Registers simple enum conversion that uses keyFunction to produce saved value and uses
      * same function on enum constants to convert values back.
      */
-    <T extends Enum<T>> void registerEnumConversion(@NotNull Class<T> enumType, @NotNull Function<T,?> keyFunction);
+    <T extends Enum<T>,K> void registerEnumConversion(@NotNull Class<T> enumType, @NotNull Function<T,K> keyFunction);
 
     /**
      * Returns given enum-type to be saved as database native enum of given type name.

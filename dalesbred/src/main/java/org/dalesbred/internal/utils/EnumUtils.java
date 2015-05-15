@@ -23,7 +23,11 @@
 package org.dalesbred.internal.utils;
 
 import org.dalesbred.DatabaseException;
+import org.dalesbred.internal.instantiation.InstantiationException;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
+import java.util.function.Function;
 
 public final class EnumUtils {
 
@@ -36,5 +40,14 @@ public final class EnumUtils {
             return enumType.cast(constants[ordinal]);
         else
             throw new DatabaseException("invalid ordinal " + ordinal + " for enum type " + enumType.getName());
+    }
+
+    @NotNull
+    public static <T extends Enum<T>,K> T enumByKey(@NotNull Class<T> enumType, @NotNull Function<T, K> keyFunction, @NotNull K key) {
+        for (T enumConstant : enumType.getEnumConstants())
+            if (Objects.equals(key, keyFunction.apply(enumConstant)))
+                return enumConstant;
+
+        throw new InstantiationException("could not find enum constant of type " + enumType.getName() + " for " + key);
     }
 }
