@@ -65,6 +65,7 @@ Transaction management changes
   - `@Transactional` annotation and `TransactionalProxyFactory` along with `Database.createTransactionalProxyFor`
     were removed, since the functionality really belongs to the runtime environment instead of Dalesbred. If you
     really need the functionality, copy https://github.com/EvidentSolutions/dalesbred/blob/0.x/dalesbred/src/main/java/fi/evident/dalesbred/support/proxy/TransactionalProxyFactory.java[TransactionalProxyFactory of Dalesbred 0.8].
+  - Removed support for transaction retries. They were hardly useful and not supported for Spring integration.
 
 Guice and AOP Alliance support removed
 --------------------------------------

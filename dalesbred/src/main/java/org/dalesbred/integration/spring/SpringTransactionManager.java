@@ -22,7 +22,6 @@
 
 package org.dalesbred.integration.spring;
 
-import org.dalesbred.DatabaseException;
 import org.dalesbred.connection.ConnectionProvider;
 import org.dalesbred.dialect.Dialect;
 import org.dalesbred.transaction.*;
@@ -118,9 +117,6 @@ public final class SpringTransactionManager implements TransactionManager {
 
     @NotNull
     private static DefaultTransactionDefinition settingsToSpringDefinition(@NotNull TransactionSettings settings) {
-        if (settings.getRetries() != 0)
-            throw new DatabaseException("retries are not supported with Spring managed transactions");
-
         DefaultTransactionDefinition df = new DefaultTransactionDefinition();
         df.setIsolationLevel(springIsolationCode(settings.getIsolation()));
         df.setPropagationBehavior(springPropagationCode(settings.getPropagation()));

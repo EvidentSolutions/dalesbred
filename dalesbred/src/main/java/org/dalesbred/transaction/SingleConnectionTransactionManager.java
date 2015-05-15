@@ -67,7 +67,7 @@ public final class SingleConnectionTransactionManager extends AbstractTransactio
     }
 
     @Override
-    protected <T> T withNewTransaction(@NotNull TransactionCallback<T> callback, @NotNull Dialect dialect, @NotNull Isolation isolation, int retries) {
+    protected <T> T withNewTransaction(@NotNull TransactionCallback<T> callback, @NotNull Dialect dialect, @NotNull Isolation isolation) {
         assert !currentTransaction.isPresent();
 
         try {
@@ -77,7 +77,7 @@ public final class SingleConnectionTransactionManager extends AbstractTransactio
 
             DefaultTransaction newTransaction = new DefaultTransaction(connection);
             currentTransaction = Optional.of(newTransaction);
-            return newTransaction.execute(retries, callback, dialect);
+            return newTransaction.execute(callback, dialect);
         } catch (SQLException e) {
             throw dialect.convertException(e);
         } finally {
@@ -86,7 +86,7 @@ public final class SingleConnectionTransactionManager extends AbstractTransactio
     }
 
     @Override
-    protected <T> T withSuspendedTransaction(@NotNull TransactionCallback<T> callback, @NotNull Isolation isolation, @NotNull Dialect dialect, int retries) {
+    protected <T> T withSuspendedTransaction(@NotNull TransactionCallback<T> callback, @NotNull Isolation isolation, @NotNull Dialect dialect) {
         throw new DatabaseException("SingleConnectionTransactionManager does not support Suspended transactions.");
     }
 }

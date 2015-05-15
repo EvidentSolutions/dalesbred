@@ -53,13 +53,12 @@ public final class DefaultTransactionManager extends AbstractTransactionManager 
     @Override
     protected <T> T withNewTransaction(@NotNull TransactionCallback<T> callback,
                                        @NotNull Dialect dialect,
-                                       @NotNull Isolation isolation,
-                                       int retries) {
+                                       @NotNull Isolation isolation) {
         Connection connection = openConnection(isolation, dialect);
         try {
             DefaultTransaction newTransaction = new DefaultTransaction(connection);
             activeTransaction.set(newTransaction);
-            return newTransaction.execute(retries, callback, dialect);
+            return newTransaction.execute(callback, dialect);
         } finally {
             activeTransaction.set(null);
             releaseConnection(connection, dialect);
@@ -69,14 +68,12 @@ public final class DefaultTransactionManager extends AbstractTransactionManager 
     @Override
     protected <T> T withSuspendedTransaction(@NotNull TransactionCallback<T> callback,
                                              @NotNull Isolation isolation,
-                                             @NotNull Dialect dialect,
-                                             int retries) {
+                                             @NotNull Dialect dialect) {
         DefaultTransaction suspended = getActiveTransaction().orElse(null);
         try {
             activeTransaction.set(null);
 
             TransactionSettings settings = new TransactionSettings();
-            settings.setRetries(retries);
             settings.setPropagation(Propagation.REQUIRED);
             settings.setIsolation(isolation);
             return withTransaction(settings, callback, dialect);
