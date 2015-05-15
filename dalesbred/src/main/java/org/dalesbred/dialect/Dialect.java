@@ -57,12 +57,12 @@ public abstract class Dialect {
     }
 
     @NotNull
-    public Function<Enum<?>, ?> createNativeEnumToDatabaseConversion(@NotNull String typeName) {
+    public <T extends Enum<T>, K> Function<T, ?> createNativeEnumToDatabaseConversion(@NotNull String typeName, @NotNull Function<T, K> keyFunction) {
         throw new UnsupportedOperationException("native enums are not supported by " + getClass().getName());
     }
 
     @NotNull
-    public <T extends Enum<T>> Function<Object, T> createNativeEnumFromDatabaseConversion(@NotNull Class<T> enumType) {
+    public <T extends Enum<T>, K> Function<Object, T> createNativeEnumFromDatabaseConversion(@NotNull Class<T> enumType, @NotNull Function<T, K> keyFunction) {
         throw new UnsupportedOperationException("native enums are not supported by " + getClass().getName());
     }
 
@@ -154,7 +154,7 @@ public abstract class Dialect {
      * Bind object to {@link PreparedStatement}. Can be overridden by subclasses to
      * implement custom argument binding.
      *
-     * @param ps statement to bind object to
+     * @param ps    statement to bind object to
      * @param index index of the parameter
      * @param value to bind
      * @throws SQLException if something fails

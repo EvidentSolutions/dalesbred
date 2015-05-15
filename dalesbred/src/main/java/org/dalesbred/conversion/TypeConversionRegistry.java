@@ -62,5 +62,13 @@ public interface TypeConversionRegistry {
     /**
      * Returns given enum-type to be saved as database native enum of given type name.
      */
-    <T extends Enum<T>> void registerNativeEnumConversion(@NotNull Class<T> enumType, @NotNull String typeName);
+    default <T extends Enum<T>> void registerNativeEnumConversion(@NotNull Class<T> enumType, @NotNull String typeName) {
+        registerNativeEnumConversion(enumType, typeName, Enum::name);
+    }
+
+    /**
+     * Returns given enum-type to be saved as database native enum of given type name. Given function
+     * can be used to map the enum to the stored value.
+     */
+    <T extends Enum<T>, K> void registerNativeEnumConversion(@NotNull Class<T> enumType, @NotNull String typeName, @NotNull Function<T,K> keyFunction);
 }

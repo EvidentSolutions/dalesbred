@@ -1,5 +1,10 @@
 ## 1.0.0-rc.2 (yyyy-mm-dd)
 
+### New features
+
+  - Add support for registering custom key functions for native enums.
+  - Fail faster if registering native enum conversion on Dialect that does not support native enums.
+
 ### Breaking changes
 
   - Removed support for Guice and AOP Alliance.
