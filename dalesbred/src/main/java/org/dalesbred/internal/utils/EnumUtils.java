@@ -23,7 +23,7 @@
 package org.dalesbred.internal.utils;
 
 import org.dalesbred.DatabaseException;
-import org.dalesbred.internal.instantiation.InstantiationException;
+import org.dalesbred.internal.instantiation.InstantiationFailureException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -48,6 +48,6 @@ public final class EnumUtils {
             if (Objects.equals(key, keyFunction.apply(enumConstant)))
                 return enumConstant;
 
-        throw new InstantiationException("could not find enum constant of type " + enumType.getName() + " for " + key);
+        throw new InstantiationFailureException("could not find enum constant of type " + enumType.getName() + " for " + key);
     }
 }

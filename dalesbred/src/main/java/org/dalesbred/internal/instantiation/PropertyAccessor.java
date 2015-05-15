@@ -58,7 +58,7 @@ abstract class PropertyAccessor {
         for (Field field : cl.getFields())
             if (isPublic(field.getModifiers()) && isEqualIgnoringCaseAndUnderscores(name, field.getName()) && !field.isAnnotationPresent(DalesbredIgnore.class)) {
                 if (result != null)
-                    throw new InstantiationException("Conflicting fields for property: " + result + " - " + name);
+                    throw new InstantiationFailureException("Conflicting fields for property: " + result + " - " + name);
                 result = field;
             }
 
@@ -74,7 +74,7 @@ abstract class PropertyAccessor {
 
             if (isPublic(method.getModifiers()) && isEqualIgnoringCaseAndUnderscores(methodName, method.getName()) && method.getParameterTypes().length == 1 && !method.isAnnotationPresent(DalesbredIgnore.class)) {
                 if (result != null)
-                    throw new InstantiationException("Conflicting setters for property: " + result + " - " + name);
+                    throw new InstantiationFailureException("Conflicting setters for property: " + result + " - " + name);
                 result = method;
             }
         }

@@ -28,9 +28,9 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Exception thrown when there is a problem with instantiation or conversion.
  */
-public class InstantiationException extends DatabaseException {
+public class InstantiationFailureException extends DatabaseException {
 
-    public InstantiationException(@NotNull String message) {
+    public InstantiationFailureException(@NotNull String message) {
         super(message);
     }
 }

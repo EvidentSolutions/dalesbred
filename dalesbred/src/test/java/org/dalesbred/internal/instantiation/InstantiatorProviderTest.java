@@ -87,12 +87,12 @@ public class InstantiatorProviderTest {
         assertThat(result.calledConstructor, is(3));
     }
 
-    @Test(expected = InstantiationException.class)
+    @Test(expected = InstantiationFailureException.class)
     public void findingInstantiatorForInaccessibleClassThrowsNiceException() {
         instantiate(InaccessibleClassRef.INACCESSIBLE_CLASS, int.class, 3);
     }
 
-    @Test(expected = InstantiationException.class)
+    @Test(expected = InstantiationFailureException.class)
     public void findingInstantiatorForInaccessibleConstructorThrowsNiceException() {
         instantiate(InaccessibleConstructor.class, int.class, 3);
     }
@@ -108,7 +108,7 @@ public class InstantiatorProviderTest {
         assertThat(result.publicField, is("baz"));
     }
 
-    @Test(expected = InstantiationException.class)
+    @Test(expected = InstantiationFailureException.class)
     public void dontUseIgnoredConstructor() {
         instantiate(TestClass.class, createNamedTypeList(int.class, int.class), 0, 0);
     }

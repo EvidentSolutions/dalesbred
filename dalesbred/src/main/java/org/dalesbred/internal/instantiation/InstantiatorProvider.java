@@ -107,13 +107,13 @@ public final class InstantiatorProvider {
 
         Class<?> cl = rawType(type);
         if (!isPublic(cl.getModifiers()))
-            throw new InstantiationException(type + " can't be instantiated reflectively because it is not public");
+            throw new InstantiationFailureException(type + " can't be instantiated reflectively because it is not public");
 
         return candidateConstructorsSortedByDescendingParameterCount(cl)
                 .map(ctor -> instantiatorFrom(ctor, types).orElse(null))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> new InstantiationException("could not find a way to instantiate " + type + " with parameters " + types));
+                .orElseThrow(() -> new InstantiationFailureException("could not find a way to instantiate " + type + " with parameters " + types));
     }
 
     /**
@@ -147,7 +147,7 @@ public final class InstantiatorProvider {
     @NotNull
     private static PropertyAccessor createAccessor(int index, @NotNull Class<?> cl, @NotNull List<String> names) {
         return PropertyAccessor.findAccessor(cl, names.get(index)).orElseThrow(() ->
-            new InstantiationException("Could not find neither setter nor field for '" + names.get(index) + '\''));
+            new InstantiationFailureException("Could not find neither setter nor field for '" + names.get(index) + '\''));
     }
 
     /**
@@ -218,7 +218,7 @@ public final class InstantiatorProvider {
         if (conversion != null)
             return conversion;
         else
-            throw new InstantiationException("could not find a conversion from " + source.getTypeName() + " to " + target.getTypeName());
+            throw new InstantiationFailureException("could not find a conversion from " + source.getTypeName() + " to " + target.getTypeName());
     }
 
     /**

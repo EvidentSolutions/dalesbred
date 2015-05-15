@@ -14,6 +14,8 @@
 
 ### Breaking changes
 
+  - Renamed `InstantiationException` to `InstantiationFailureException` because the former
+    was already used in `java.lang`.
   - Database native enums are no longer the default because they depended on ugly hack to 
     guess the database type name. By default enums are bound using name, but you can use
     methods in `TypeConversionRegistry` to customize this. 

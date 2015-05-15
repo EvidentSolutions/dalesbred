@@ -76,6 +76,12 @@ you can port the classes from 0.x branch:
   - https://github.com/EvidentSolutions/dalesbred/tree/0.x/dalesbred/src/main/java/fi/evident/dalesbred/support/aopalliance[fi.evident.dalesbred.support.aopalliance]
   - https://github.com/EvidentSolutions/dalesbred/tree/0.x/dalesbred/src/main/java/fi/evident/dalesbred/support/guice[fi.evident.dalesbred.support.guice]
 
+Renamed classes
+---------------
+
+  - Renamed `InstantiationException` to `InstantiationFailureException` because the former
+    was already used in `java.lang`.
+
 Moved functionality
 -------------------
 
