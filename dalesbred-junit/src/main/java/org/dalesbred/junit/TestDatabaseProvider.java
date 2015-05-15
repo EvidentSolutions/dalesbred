@@ -34,6 +34,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import static org.junit.Assume.assumeTrue;
+
 /**
  * <p>
  *   Helper methods for creating databases using a properties-file in classpath.
@@ -86,11 +88,10 @@ public final class TestDatabaseProvider {
     }
 
     @NotNull
-    @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
     private static Properties loadConnectionProperties(@NotNull String propertiesName) {
         InputStream in = TransactionCallback.class.getClassLoader().getResourceAsStream(propertiesName);
-        if (in == null)
-            throw new AssumptionViolatedException("Could not find database configuration file '" + propertiesName + "'.");
+        assumeTrue("Could not find database configuration file '" + propertiesName + "'.", in != null);
+        assert in != null;
         try {
             try {
                 Properties properties = new Properties();
