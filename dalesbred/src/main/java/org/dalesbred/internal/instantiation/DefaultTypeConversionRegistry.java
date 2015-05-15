@@ -56,7 +56,7 @@ final class DefaultTypeConversionRegistry implements TypeConversionRegistry {
                     return enumConstant;
             }
 
-            throw new IllegalArgumentException("could not find enum constant of type " + enumType.getName() + " for " + value);
+            throw new InstantiationException("could not find enum constant of type " + enumType.getName() + " for " + value);
         });
 
         registerConversionToDatabase(enumType, keyFunction::apply);
