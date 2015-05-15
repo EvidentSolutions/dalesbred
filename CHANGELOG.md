@@ -1,4 +1,4 @@
-## 1.0.0-rc.2 (2015-05-15)
+## 1.0.0-rc.2 (yyyy-mm-dd)
 
 ### Breaking changes
 
