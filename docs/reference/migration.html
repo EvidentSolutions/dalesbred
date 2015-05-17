@@ -420,7 +420,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="details">
 <span id="author" class="author">Juha Komulainen</span><br>
 <span id="email" class="email"><a href="mailto:juha.komulainen@evident.fi">juha.komulainen@evident.fi</a></span><br>
-<span id="revnumber">version 1.0.0-rc.1</span>
+<span id="revnumber">version 1.0.0-rc.2</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -431,6 +431,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_simplified_type_conversion_registration">Simplified type-conversion registration</a></li>
 <li><a href="#_enum_binding_changes">Enum binding changes</a></li>
 <li><a href="#_transaction_management_changes">Transaction management changes</a></li>
+<li><a href="#_guice_and_aop_alliance_support_removed">Guice and AOP Alliance support removed</a></li>
+<li><a href="#_renamed_classes">Renamed classes</a></li>
 <li><a href="#_moved_functionality">Moved functionality</a></li>
 <li><a href="#_removed_functionality">Removed functionality</a></li>
 </ul>
@@ -509,13 +511,15 @@ type-conversions. Instead, you can register normal functions as conversions usin
 <div class="paragraph">
 <p><code>Database</code> no longer has <code>EnumMode</code> for setting globally how enum types are persisted. Rather you can
 customize the persistence through <code>TypeConversionRegistry</code> just like for any other types. By default
-enums are persisted using their name.</p>
+enums are persisted as varchars using their constant names. (This corresponds to the previous <code>EnumMode.NAME</code>
+functionality.)</p>
 </div>
 <div class="paragraph">
-<p>Previously enums on PostgreSQL were persisted as native enums in database using database type name that was
-guessed based on the enum. So if your enum was named <code>FooBar</code>, you needed to have enum type named <code>foo_bar</code>
-in database. Now they are persisted by name by default, but you can use the previous functionality by
-calling <code>typeConversionRegistry.registerNativeEnumConversion(FooBar.class, "foo_bar")</code></p>
+<p>Previously enums on PostgreSQL were persisted as native enums in database using database enum type that was
+guessed based on the class name of the enum. So if your enum class was named <code>FooBar</code>, you needed to have
+enum type named <code>foo_bar</code> in database. Now they are persisted as varchars using constant by name by default,
+but you can use the previous functionality by calling
+<code>typeConversionRegistry.registerNativeEnumConversion(FooBar.class, "foo_bar")</code></p>
 </div>
 </div>
 </div>
@@ -536,9 +540,44 @@ can override this on per-transaction basis.</p>
 the default isolation, set it for the connections at your connection-provider.</p>
 </li>
 <li>
-<p>Renamed <code>fi.evident.dalesbred.Transactional</code> to <code>org.dalesbred.annotation.DalesbredTransactional</code>
-so that it does not clash with Spring&#8217;s <code>@Transactional</code> and cause accidental misconfiguration when
-both are included in a project.</p>
+<p><code>@Transactional</code> annotation and <code>TransactionalProxyFactory</code> along with <code>Database.createTransactionalProxyFor</code>
+were removed, since the functionality really belongs to the runtime environment instead of Dalesbred. If you
+really need the functionality, copy <a href="https://github.com/EvidentSolutions/dalesbred/blob/0.x/dalesbred/src/main/java/fi/evident/dalesbred/support/proxy/TransactionalProxyFactory.java">TransactionalProxyFactory of Dalesbred 0.8</a>.</p>
+</li>
+<li>
+<p>Removed support for transaction retries. They were hardly useful and not supported for Spring integration.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_guice_and_aop_alliance_support_removed">Guice and AOP Alliance support removed</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Dalesbred no longer ships with support out-of-the box support for Guice and AOP Alliance. If you need the support,
+you can port the classes from 0.x branch:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/EvidentSolutions/dalesbred/tree/0.x/dalesbred/src/main/java/fi/evident/dalesbred/support/aopalliance">fi.evident.dalesbred.support.aopalliance</a></p>
+</li>
+<li>
+<p><a href="https://github.com/EvidentSolutions/dalesbred/tree/0.x/dalesbred/src/main/java/fi/evident/dalesbred/support/guice">fi.evident.dalesbred.support.guice</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_renamed_classes">Renamed classes</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Renamed <code>InstantiationException</code> to <code>InstantiationFailureException</code> because the former
+was already used in <code>java.lang</code>.</p>
 </li>
 </ul>
 </div>
@@ -557,10 +596,6 @@ and <code>ResultTable.ColumnMetadata.getRawType</code>.</p>
 <li>
 <p>Removed <code>VariableResolvers</code>-class and moved its <code>resolverForMap</code> to <code>VariableResolver.forMap</code> and <code>resolverForBean</code>
 to <code>VariableResolver.forBean</code>.</p>
-</li>
-<li>
-<p>Removed the convenience method <code>Database.createTransactionalProxyFor</code>. You can use
-<code>TransactionalProxyFactory.createTransactionalProxyFor</code> instead.</p>
 </li>
 <li>
 <p>Removed <code>NamedParameterQueries.namedQuery</code>. Use <code>SqlQuery.namedQuery</code> instead.</p>
@@ -609,8 +644,8 @@ always do it yourself.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0.0-rc.1<br>
-Last updated 2015-05-13 23:56:30 EEST
+Version 1.0.0-rc.2<br>
+Last updated 2015-05-16 00:12:12 EEST
 </div>
 </div>
 </body>

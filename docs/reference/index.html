@@ -420,7 +420,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="details">
 <span id="author" class="author">Juha Komulainen</span><br>
 <span id="email" class="email"><a href="mailto:juha.komulainen@evident.fi">juha.komulainen@evident.fi</a></span><br>
-<span id="revnumber">version 1.0.0-rc.1</span>
+<span id="revnumber">version 1.0.0-rc.2</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -442,7 +442,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_transactions">Transactions</a>
 <ul class="sectlevel2">
 <li><a href="#_transaction_callbacks">Transaction callbacks</a></li>
-<li><a href="#_annotation_based_transactions">Annotation based transactions</a></li>
 <li><a href="#_external_transaction_manager">External transaction manager</a></li>
 <li><a href="#_implicit_transactions">Implicit transactions</a></li>
 <li><a href="#_nested_transactions">Nested transactions</a></li>
@@ -459,7 +458,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_java">Java</a></li>
 <li><a href="#_joda_time">Joda-Time</a></li>
 <li><a href="#_spring">Spring</a></li>
-<li><a href="#_guice">Guice</a></li>
 <li><a href="#_intellij_idea">IntelliJ IDEA</a></li>
 </ul>
 </li>
@@ -513,9 +511,8 @@ just create a <a href="http://dalesbred.org/docs/api/?org/dalesbred/Database.htm
 </div>
 </div>
 <div class="paragraph">
-<p>If you are using <a href="http://projects.spring.io/spring-framework/">Spring Framework</a> or
-<a href="https://code.google.com/p/google-guice/">Guice</a>, see the <a href="#_integrations">Integrations</a>-section
-on how to integrate Dalesbred with them.</p>
+<p>If you are using <a href="http://projects.spring.io/spring-framework/">Spring Framework</a>, see the
+<a href="#_spring">Spring</a>-section on how to integrate Dalesbred with it.</p>
 </div>
 </div>
 <div class="sect2">
@@ -582,7 +579,7 @@ Map&lt;Integer,Department&gt; departmentsByIds = db.findMap(
 </div>
 <div class="paragraph">
 <p>If for some reason you don&#8217;t want to map the results into your own class, you can ask for
-a <a href="http://dalesbred.org/docs/api/?org/dalesbred/ResultTable.html">ResultTable</a>, which is basically a detached
+a <a href="http://dalesbred.org/docs/api/?org/dalesbred/result/ResultTable.html">ResultTable</a>, which is basically a detached
 representation of a <a href="http://download.java.net/jdk8/docs/api/?java/sql/ResultSet.html">ResultSet</a>:</p>
 </div>
 <div class="listingblock">
@@ -591,8 +588,8 @@ representation of a <a href="http://download.java.net/jdk8/docs/api/?java/sql/Re
 </div>
 </div>
 <div class="paragraph">
-<p>Alternatively, you can supply your own <a href="http://dalesbred.org/docs/api/?org/dalesbred/results/RowMapper.html">RowMapper</a> or
-<a href="http://dalesbred.org/docs/api/?org/dalesbred/results/ResultSetProcessor.html">ResultSetProcessor</a>-implementation in place
+<p>Alternatively, you can supply your own <a href="http://dalesbred.org/docs/api/?org/dalesbred/result/RowMapper.html">RowMapper</a> or
+<a href="http://dalesbred.org/docs/api/?org/dalesbred/result/ResultSetProcessor.html">ResultSetProcessor</a>-implementation in place
 of the class and handle the result sets manually, but usually this should be unnecessary.</p>
 </div>
 </div>
@@ -707,8 +704,8 @@ the structure of the SQL.</p>
 <div class="sect2">
 <h3 id="_transaction_callbacks">Transaction callbacks</h3>
 <div class="paragraph">
-<p>To perform a bunch of operations in transaction, use <a href="http://dalesbred.org/docs/api/?org/dalesbred/TransactionCallback.html">TransactionCallback</a>
-or <a href="http://dalesbred.org/docs/api/?org/dalesbred/VoidTransactionCallback.html">VoidTransactionCallback</a>:</p>
+<p>To perform a bunch of operations in transaction, use <a href="http://dalesbred.org/docs/api/?org/dalesbred/transaction/TransactionCallback.html">TransactionCallback</a>
+or <a href="http://dalesbred.org/docs/api/?org/dalesbred/transaction/VoidTransactionCallback.html">VoidTransactionCallback</a>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -726,37 +723,10 @@ db.withVoidTransaction(tx -&gt; {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_annotation_based_transactions">Annotation based transactions</h3>
-<div class="paragraph">
-<p>Instead of using transaction callbacks you can also build transactional proxies for your services:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public interface MyService {
-     void frobnicate();
-}
-
-public class MyRealService implements MyService {
-
-     @DalesbredTransactional
-     public void frobnicate() {
-         ...
-     }
-}
-
-...
-
-MyService myService = TransactionalProxyFactory.createTransactionalProxyFor(db, MyService.class, new MyRealService());
-service.frobnicate(); // this call will have a transaction wrapped around it</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
 <h3 id="_external_transaction_manager">External transaction manager</h3>
 <div class="paragraph">
-<p>If you are using <a href="http://projects.spring.io/spring-framework/">Spring Framework</a> or
-<a href="https://code.google.com/p/google-guice/">Guice</a>, Dalesbred can integrate with them for transaction
-management. Consult the <a href="#_integrations">Integrations</a>-section for details.</p>
+<p>If you are using <a href="http://projects.spring.io/spring-framework/">Spring Framework</a>, Dalesbred can integrate with
+Spring&#8217;s transaction-manager. Consult the <a href="#_spring">Spring</a>-section for details.</p>
 </div>
 </div>
 <div class="sect2">
@@ -826,7 +796,7 @@ Note that the returned InputStream or Reader is only valid for the duration of t
 <h3 id="_custom_type_conversions">Custom type-conversions</h3>
 <div class="paragraph">
 <p>Sometimes you need to convert database values to your own custom types and vice versa. To do that,
-you can register your functions to <a href="http://dalesbred.org/docs/api/?org/dalesbred/instantiation/TypeConversionRegistry.html">TypeConversionRegistry</a>:</p>
+you can register your functions to <a href="http://dalesbred.org/docs/api/?org/dalesbred/conversion/TypeConversionRegistry.html">TypeConversionRegistry</a>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -956,7 +926,7 @@ and <a href="http://www.joda.org/joda-time/apidocs/?org/joda/time/LocalTime.html
 <div class="paragraph">
 <p>Dalesbred has support for integration with <a href="http://projects.spring.io/spring-framework/">Spring Framework</a>
 and its transaction management. To integrate Dalesbred, create a configuration class inheriting from
-<a href="http://dalesbred.org/docs/api/?org/dalesbred/support/spring/DalesbredConfigurationSupport.html">DalesbredConfigurationSupport</a>
+<a href="http://dalesbred.org/docs/api/?org/dalesbred/integration/spring/DalesbredConfigurationSupport.html">DalesbredConfigurationSupport</a>
 and specify beans for <a href="http://download.java.net/jdk8/docs/api/?javax/sql/DataSource.html">DataSource</a> and
 <a href="http://docs.spring.io/spring/docs/current/javadoc-api/?org/springframework/transaction/PlatformTransactionManager.html">PlatformTransactionManager</a>.
 A minimal configuration would therefore be something like the following:</p>
@@ -981,24 +951,6 @@ public class MyDatabaseConfiguration extends DalesbredConfigurationSupport {
 </div>
 <div class="paragraph">
 <p>After this you can inject <a href="http://dalesbred.org/docs/api/?org/dalesbred/Database.html">Database</a> normally in your beans.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_guice">Guice</h3>
-<div class="paragraph">
-<p>Dalesbred has support for integration with <a href="https://code.google.com/p/google-guice/">Guice 3</a>. Provided
-that you have defined a binding for <code>DataSource</code>, you can just pass in
-<a href="http://dalesbred.org/docs/api/?org/dalesbred/support/guice/DataSourceDatabaseModule.html">DataSourceDatabaseModule</a>
-when constructing your injector and you&#8217;ll get automatic support for annotation based transactions and can
-@Inject your database wherever you need it.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">Injector injector = Guice.createInjector(new DataSourceDatabaseModule(), new MyOtherModule());</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>See the <a href="http://dalesbred.org/docs/api/?">Javadoc</a> of the modules for details of their configuration.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1059,7 +1011,7 @@ for more usage examples.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-    compile 'org.dalesbred:dalesbred:1.0.0-rc.1'
+    compile 'org.dalesbred:dalesbred:1.0.0-rc.2'
 }
 
 repositories {
@@ -1073,7 +1025,7 @@ repositories {
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-    testCompile 'org.dalesbred:dalesbred-junit:1.0.0-rc.1'
+    testCompile 'org.dalesbred:dalesbred-junit:1.0.0-rc.2'
 }</code></pre>
 </div>
 </div>
@@ -1089,7 +1041,7 @@ dependency to your <code>pom.xml</code>:</p>
 <pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
     &lt;groupId&gt;org.dalesbred&lt;/groupId&gt;
     &lt;artifactId&gt;dalesbred&lt;/artifactId&gt;
-    &lt;version&gt;1.0.0-rc.1&lt;/version&gt;
+    &lt;version&gt;1.0.0-rc.2&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
@@ -1101,7 +1053,7 @@ dependency to your <code>pom.xml</code>:</p>
 <pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
     &lt;groupId&gt;org.dalesbred&lt;/groupId&gt;
     &lt;artifactId&gt;dalesbred-junit&lt;/artifactId&gt;
-    &lt;version&gt;1.0.0-rc.1&lt;/version&gt;
+    &lt;version&gt;1.0.0-rc.2&lt;/version&gt;
     &lt;scope&gt;test&lt;/scope&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
@@ -1111,7 +1063,7 @@ dependency to your <code>pom.xml</code>:</p>
 <h3 id="_without_dependency_manager">Without dependency manager</h3>
 <div class="paragraph">
 <p>To use Dalesbred without a dependency management system, you&#8217;ll need to
-download <a href="http://repo1.maven.org/maven2/org/dalesbred/dalesbred/1.0.0-rc.1/dalesbred-1.0.0-rc.1.jar">dalesbred-1.0.0-rc.1.jar</a>
+download <a href="http://repo1.maven.org/maven2/org/dalesbred/dalesbred/1.0.0-rc.2/dalesbred-1.0.0-rc.2.jar">dalesbred-1.0.0-rc.2.jar</a>
 and it to your classpath. There are no other required dependencies.</p>
 </div>
 </div>
@@ -1149,8 +1101,8 @@ and is used by <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0.0-rc.1<br>
-Last updated 2015-05-08 00:09:22 EEST
+Version 1.0.0-rc.2<br>
+Last updated 2015-05-15 23:20:15 EEST
 </div>
 </div>
 </body>

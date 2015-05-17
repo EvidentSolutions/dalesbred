@@ -4,8 +4,6 @@ org.dalesbred.connection
 org.dalesbred.conversion
 org.dalesbred.datatype
 org.dalesbred.dialect
-org.dalesbred.integration.aopalliance
-org.dalesbred.integration.guice
 org.dalesbred.integration.joda
 org.dalesbred.integration.spring
 org.dalesbred.integration.threeten
