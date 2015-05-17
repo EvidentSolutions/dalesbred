@@ -22,6 +22,7 @@
 
 package org.dalesbred.internal.instantiation;
 
+import org.dalesbred.conversion.TypeConversionPair;
 import org.dalesbred.conversion.TypeConversionRegistry;
 import org.dalesbred.dialect.Dialect;
 import org.dalesbred.internal.utils.EnumUtils;
@@ -57,10 +58,9 @@ final class DefaultTypeConversionRegistry implements TypeConversionRegistry {
     }
 
     @Override
-    public  <T extends Enum<T>, K> void registerNativeEnumConversion(@NotNull Class<T> enumType, @NotNull String typeName, @NotNull Function<T,K> keyFunction) {
-        registerConversions(Object.class, enumType,
-                dialect.createNativeEnumFromDatabaseConversion(enumType, keyFunction),
-                dialect.createNativeEnumToDatabaseConversion(typeName, keyFunction)::apply);
+    public <T extends Enum<T>, K> void registerNativeEnumConversion(@NotNull Class<T> enumType, @NotNull String typeName, @NotNull Function<T,K> keyFunction) {
+        TypeConversionPair<Object, T> conversions = dialect.createNativeEnumConversions(enumType, typeName, keyFunction);
+        registerConversions(Object.class, enumType, conversions::convertFromDatabase, conversions::convertToDatabase);
     }
 
     @NotNull

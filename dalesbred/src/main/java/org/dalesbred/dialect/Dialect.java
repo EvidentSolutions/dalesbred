@@ -26,6 +26,7 @@ import org.dalesbred.DatabaseException;
 import org.dalesbred.DatabaseSQLException;
 import org.dalesbred.connection.ConnectionProvider;
 import org.dalesbred.connection.DataSourceConnectionProvider;
+import org.dalesbred.conversion.TypeConversionPair;
 import org.dalesbred.conversion.TypeConversionRegistry;
 import org.dalesbred.internal.jdbc.ArgumentBinder;
 import org.dalesbred.transaction.TransactionManager;
@@ -57,12 +58,7 @@ public abstract class Dialect {
     }
 
     @NotNull
-    public <T extends Enum<T>, K> Function<T, ?> createNativeEnumToDatabaseConversion(@NotNull String typeName, @NotNull Function<T, K> keyFunction) {
-        throw new UnsupportedOperationException("native enums are not supported by " + getClass().getName());
-    }
-
-    @NotNull
-    public <T extends Enum<T>, K> Function<Object, T> createNativeEnumFromDatabaseConversion(@NotNull Class<T> enumType, @NotNull Function<T, K> keyFunction) {
+    public <T extends Enum<T>, K> TypeConversionPair<Object,T> createNativeEnumConversions(@NotNull Class<T> enumType, @NotNull String typeName, @NotNull Function<T,K> keyFunction) {
         throw new UnsupportedOperationException("native enums are not supported by " + getClass().getName());
     }
 

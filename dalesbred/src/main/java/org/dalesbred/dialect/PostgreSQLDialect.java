@@ -22,6 +22,7 @@
 
 package org.dalesbred.dialect;
 
+import org.dalesbred.conversion.TypeConversionPair;
 import org.dalesbred.conversion.TypeConversionRegistry;
 import org.dalesbred.internal.utils.EnumUtils;
 import org.jetbrains.annotations.NotNull;
@@ -39,15 +40,19 @@ public class PostgreSQLDialect extends Dialect {
 
     @NotNull
     @Override
-    public <T extends Enum<T>, K> Function<T, ?> createNativeEnumToDatabaseConversion(@NotNull String typeName, @NotNull Function<T, K> keyFunction) {
-        return value -> createPgObject(String.valueOf(keyFunction.apply(value)), typeName);
-    }
+    public <T extends Enum<T>, K> TypeConversionPair<Object,T> createNativeEnumConversions(@NotNull Class<T> enumType, @NotNull String typeName, @NotNull Function<T,K> keyFunction) {
+        return new TypeConversionPair<Object, T>() {
+            @Override
+            public Object convertToDatabase(T obj) {
+                return createPgObject(String.valueOf(keyFunction.apply(obj)), typeName);
+            }
 
-    @SuppressWarnings("unchecked")
-    @NotNull
-    @Override
-    public <T extends Enum<T>, K> Function<Object, T> createNativeEnumFromDatabaseConversion(@NotNull Class<T> enumType, @NotNull Function<T, K> keyFunction) {
-        return value -> EnumUtils.enumByKey(enumType, keyFunction, (K) value);
+            @Override
+            @SuppressWarnings("unchecked")
+            public T convertFromDatabase(Object obj) {
+                return EnumUtils.enumByKey(enumType, keyFunction, (K) obj);
+            }
+        };
     }
 
     @NotNull
