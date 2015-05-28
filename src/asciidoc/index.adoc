@@ -473,14 +473,3 @@ Migration from 0.x
 ------------------
 
 If you are migrating from an old version of Dalesbred, be sure to check the link:migration.html[migration guide].
-
-Contributors
-------------
-
-- https://bitbucket.org/christophgr[Christoph Gritschenberger]
-
-Attributions
-------------
-
-Image of dalesbred used on the website is by http://www.flickr.com/photos/48235612@N00/338947492[NicePics on Flickr]
-and is used by http://creativecommons.org/licenses/by-sa/2.0/[CC BY-SA 2.0].
