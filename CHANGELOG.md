@@ -1,3 +1,9 @@
+## x.y.z (yyyy-mm-dd)
+
+### Changes
+
+  - Relax `SqlArray.of` and `SqlArray.varchars` to accept any `Collection` instead of just `List`s.
+
 ## 1.0.0-rc.2 (2015-05-17)
 
 ### New features

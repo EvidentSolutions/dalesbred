@@ -25,6 +25,7 @@ package org.dalesbred.datatype;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -45,7 +46,7 @@ public final class SqlArray {
     @NotNull
     private final List<?> values;
 
-    private SqlArray(@NotNull String type, @NotNull List<?> values) {
+    private SqlArray(@NotNull String type, @NotNull Collection<?> values) {
         this.type = requireNonNull(type);
         this.values = unmodifiableList(new ArrayList<>(values));
     }
@@ -57,7 +58,7 @@ public final class SqlArray {
      * @param values for the array
      */
     @NotNull
-    public static SqlArray of(@NotNull String type, @NotNull List<?> values) {
+    public static SqlArray of(@NotNull String type, @NotNull Collection<?> values) {
         return new SqlArray(type, values);
     }
 
@@ -76,7 +77,7 @@ public final class SqlArray {
      * Constructs varchar array of given values.
      */
     @NotNull
-    public static SqlArray varchars(@NotNull List<String> values) {
+    public static SqlArray varchars(@NotNull Collection<String> values) {
         return of("varchar", values);
     }
 
