@@ -20,21 +20,22 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.internal.instantiation;
+package org.dalesbred.annotation;
 
-import org.dalesbred.DatabaseException;
-import org.jetbrains.annotations.NotNull;
+import java.lang.annotation.*;
 
 /**
- * Exception thrown when there is a problem with instantiation or conversion.
+ * <p>
+ * Marks a constructor as Dalesbred instantiator. This means that when Dalesbred tries to instantiate
+ * classes of this type, it skips the normal lookup resolution and will always use this constructor.
+ * It will not search for other constructors, nor will it set any properties.
+ * </p>
+ * <p>
+ * It is an error to mark multiple constructors as instantiators.
+ * </p>
  */
-public class InstantiationFailureException extends DatabaseException {
-
-    public InstantiationFailureException(@NotNull String message) {
-        super(message);
-    }
-
-    public InstantiationFailureException(@NotNull String message, @NotNull Throwable cause) {
-        super(message, cause);
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Target(ElementType.CONSTRUCTOR)
+public @interface DalesbredInstantiator {
 }

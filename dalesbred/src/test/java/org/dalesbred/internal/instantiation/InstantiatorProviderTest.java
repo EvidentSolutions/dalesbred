@@ -23,6 +23,7 @@
 package org.dalesbred.internal.instantiation;
 
 import org.dalesbred.annotation.DalesbredIgnore;
+import org.dalesbred.annotation.DalesbredInstantiator;
 import org.dalesbred.annotation.Reflective;
 import org.dalesbred.dialect.DefaultDialect;
 import org.dalesbred.internal.instantiation.test.InaccessibleClassRef;
@@ -113,6 +114,49 @@ public class InstantiatorProviderTest {
         instantiate(TestClass.class, createNamedTypeList(int.class, int.class), 0, 0);
     }
 
+    @Test(expected = InstantiationFailureException.class)
+    public void explicitConstructorIsUsedInsteadOfValidConstructor() {
+        NamedTypeList types = NamedTypeList.builder(1)
+                .add("publicField", String.class).build();
+
+        instantiate(TestClassWithExplicitConstructor.class, types, "foo");
+    }
+
+    @Test(expected = InstantiationFailureException.class)
+    public void explicitConstructorIsUsedInsteadOfValidPropertyAccessor() {
+        NamedTypeList types = NamedTypeList.builder(1)
+                .add("propertyWithAccessors", String.class).build();
+
+        instantiate(TestClassWithExplicitConstructor.class, types, "bar");
+    }
+
+    @Test
+    public void explicitPrivateConstructor() {
+        NamedTypeList types = NamedTypeList.builder(1)
+                .add("publicField", String.class).build();
+
+        TestClassWithExplicitPrivateConstructor result = instantiate(TestClassWithExplicitPrivateConstructor.class, types, "foo");
+
+        assertNotNull(result);
+        assertThat(result.calledConstructor, is(2));
+        assertThat(result.publicField, is("foo"));
+    }
+
+    @Test(expected = InstantiationFailureException.class)
+    public void multipleConstructorAnnotationsGivesNiceError() {
+        instantiate(TestClassWithMultipleExplicitConstructors.class, int.class, 1);
+    }
+
+    @Test
+    public void privateClassesCanBeInstantiatedWithExplicitAnnotation() {
+        NamedTypeList types = NamedTypeList.builder(1)
+                .add("publicField", String.class).build();
+        PrivateTestClassWithExplicitInstantiator result = instantiate(PrivateTestClassWithExplicitInstantiator.class, types, "foo");
+
+        assertNotNull(result);
+        assertThat(result.publicField, is("foo"));
+    }
+
     public static class TestClass {
         private final int calledConstructor;
 
@@ -141,6 +185,70 @@ public class InstantiatorProviderTest {
         @Reflective
         public void setPropertyWithAccessors(String propertyWithAccessors) {
             this.propertyWithAccessors = propertyWithAccessors;
+        }
+    }
+
+    public static class TestClassWithExplicitConstructor {
+        public String publicField = "";
+
+        private String propertyWithAccessors = "";
+
+        @SuppressWarnings("UnusedDeclaration")
+        public TestClassWithExplicitConstructor() {}
+
+        @SuppressWarnings("UnusedDeclaration")
+        public TestClassWithExplicitConstructor(String publicField) {
+            this.publicField = publicField;
+        }
+
+        @DalesbredInstantiator
+        public TestClassWithExplicitConstructor(int wrongType) {
+            this.publicField = String.valueOf(wrongType);
+        }
+
+        @SuppressWarnings("unused")
+        public String getPropertyWithAccessors() {
+            return propertyWithAccessors;
+        }
+
+        @Reflective
+        public void setPropertyWithAccessors(String propertyWithAccessors) {
+            this.propertyWithAccessors = propertyWithAccessors;
+        }
+    }
+
+    public static class TestClassWithExplicitPrivateConstructor {
+        private final int calledConstructor;
+        public String publicField = "";
+
+        @SuppressWarnings("UnusedDeclaration")
+        public TestClassWithExplicitPrivateConstructor() {
+            calledConstructor = 1;
+        }
+
+        @DalesbredInstantiator
+        private TestClassWithExplicitPrivateConstructor(String publicField) {
+            calledConstructor = 2;
+            this.publicField = publicField;
+        }
+    }
+
+    public static class TestClassWithMultipleExplicitConstructors {
+        @DalesbredInstantiator
+        public TestClassWithMultipleExplicitConstructors() {
+        }
+
+        @DalesbredInstantiator
+        public TestClassWithMultipleExplicitConstructors(String foo) {
+        }
+    }
+
+    private static class PrivateTestClassWithExplicitInstantiator {
+        public String publicField = "";
+
+        @DalesbredInstantiator
+        private PrivateTestClassWithExplicitInstantiator(String publicField) {
+            this.publicField = publicField;
         }
     }
 

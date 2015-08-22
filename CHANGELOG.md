@@ -1,3 +1,10 @@
+## 1.x.y (yyyy-mm-dd)
+
+## New features
+
+  - Allow annotating constructors with `@DalesbredInstantiator` to suppress automatic
+    constructor detection and always use the specified constructor.
+
 ## 1.0.0 (2015-05-29)
 
 ### Changes

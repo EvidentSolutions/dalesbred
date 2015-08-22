@@ -24,9 +24,12 @@ package org.dalesbred.internal.utils;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Optional;
+
+import static java.lang.reflect.Modifier.isPublic;
 
 public final class ReflectionUtils {
 
@@ -55,5 +58,10 @@ public final class ReflectionUtils {
                 return Optional.empty();
             }
         }
+    }
+
+    public static void makeAccessible(@NotNull Constructor<?> constructor) throws SecurityException {
+        if(!isPublic(constructor.getModifiers()))
+            constructor.setAccessible(true);
     }
 }

@@ -23,11 +23,13 @@
 package org.dalesbred.internal.instantiation;
 
 import org.dalesbred.annotation.DalesbredIgnore;
+import org.dalesbred.annotation.DalesbredInstantiator;
 import org.dalesbred.conversion.TypeConversionRegistry;
 import org.dalesbred.dialect.Dialect;
 import org.dalesbred.integration.joda.JodaTypeConversions;
 import org.dalesbred.integration.threeten.ThreeTenTypeConversions;
 import org.dalesbred.internal.utils.OptionalUtils;
+import org.dalesbred.internal.utils.ReflectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,6 +45,7 @@ import static java.lang.reflect.Modifier.isPublic;
 import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 import static org.dalesbred.internal.utils.CollectionUtils.arrayOfType;
 import static org.dalesbred.internal.utils.TypeUtils.*;
 
@@ -106,14 +109,46 @@ public final class InstantiatorProvider {
         }
 
         Class<?> cl = rawType(type);
+
+        Instantiator<?> instantiator = findExplicitInstantiatorFor(cl, types).orElse(null);
+        if (instantiator != null)
+            return instantiator;
+
         if (!isPublic(cl.getModifiers()))
-            throw new InstantiationFailureException(type + " can't be instantiated reflectively because it is not public");
+            throw new InstantiationFailureException(type + " can't be instantiated reflectively because it is not public or missing a @DalesbredConstructor-annotation");
 
         return candidateConstructorsSortedByDescendingParameterCount(cl)
-                .map(ctor -> instantiatorFrom(ctor, types).orElse(null))
+                .map(ctor -> implicitInstantiatorFrom(ctor, types).orElse(null))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(() -> new InstantiationFailureException("could not find a way to instantiate " + type + " with parameters " + types));
+    }
+
+    @NotNull
+    private Optional<Instantiator<?>> findExplicitInstantiatorFor(Class<?> cl, @NotNull NamedTypeList types) throws InstantiationFailureException {
+        Constructor<?> constructor = dalesbredConstructor(cl).orElse(null);
+
+        if(constructor == null)
+            return Optional.empty();
+
+        try {
+            ReflectionUtils.makeAccessible(constructor);
+        } catch (SecurityException e) {
+            throw new InstantiationFailureException("Cannot instantiate " + constructor.getDeclaringClass().getName() +" using non-public constructor due to Security exception", e);
+        }
+
+        List<String> columnNames = types.getNames();
+        List<Type> constructorParameterTypes = asList(constructor.getGenericParameterTypes());
+
+        if (constructorParameterTypes.size() != columnNames.size())
+            throw new InstantiationFailureException(String.format("Cannot instantiate %s, constructor takes %d arguments, but result set has %d",
+                    constructor.getDeclaringClass().getName(), constructorParameterTypes.size(), columnNames.size()));
+
+        ReflectionInstantiator<?> instantiator = resolveConversions(types, constructorParameterTypes)
+                .map(conversions -> new ReflectionInstantiator<>(constructor, conversions, Collections.emptyList()))
+                .orElseThrow(() -> new InstantiationFailureException("could not find a way to instantiate " + constructor.getDeclaringClass().getName() + " with parameters " + types));
+
+        return Optional.of(instantiator);
     }
 
     /**
@@ -121,7 +156,7 @@ public final class InstantiatorProvider {
      * or empty if there are no conversions that can be made to instantiate the type.
      */
     @NotNull
-    private <T> Optional<Instantiator<T>> instantiatorFrom(@NotNull Constructor<T> constructor, @NotNull NamedTypeList types) {
+    private <T> Optional<Instantiator<T>> implicitInstantiatorFrom(@NotNull Constructor<T> constructor, @NotNull NamedTypeList types) {
         if (!isPublic(constructor.getModifiers()))
             return Optional.empty();
 
@@ -147,7 +182,7 @@ public final class InstantiatorProvider {
     @NotNull
     private static PropertyAccessor createAccessor(int index, @NotNull Class<?> cl, @NotNull List<String> names) {
         return PropertyAccessor.findAccessor(cl, names.get(index)).orElseThrow(() ->
-            new InstantiationFailureException("Could not find neither setter nor field for '" + names.get(index) + '\''));
+                new InstantiationFailureException("Could not find neither setter nor field for '" + names.get(index) + '\''));
     }
 
     /**
@@ -302,6 +337,20 @@ public final class InstantiatorProvider {
     @NotNull
     private <T> Optional<TypeConversion> optionalConversion(@NotNull Type source, @NotNull Type target, @NotNull Function<T, ?> function) {
         return findConversionFromDbValue(source, target).map(cv -> cv.compose((Function<T, Object>) function::apply));
+    }
+
+    @NotNull
+    private static Optional<Constructor<?>> dalesbredConstructor(@NotNull Class<?> cl) {
+        List<Constructor<?>> candidates = Stream.of(cl.getDeclaredConstructors())
+                .filter(ctor -> ctor.isAnnotationPresent(DalesbredInstantiator.class))
+                .collect(toList());
+
+        if (candidates.size() == 1)
+            return Optional.of(candidates.get(0));
+        else if (candidates.size() > 1)
+            throw new InstantiationFailureException("only one constructor of " + cl.getName() + " can be marked with @DalesbredConstructor. Found " + candidates.size());
+        else
+            return Optional.empty();
     }
 
     @NotNull

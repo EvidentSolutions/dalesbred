@@ -256,6 +256,14 @@ Nested transactions are supported if your database supports them:
 Miscellaneous features
 ----------------------
 
+Explicit instantiators
+~~~~~~~~~~~~~~~~~~~~~~
+
+Normally Dalesbred will automatically detect the best way to instantiate your classes based on database results.
+This can sometimes lead to surprising results. If you wish to be more explicit, you can annotate your preferred
+constructor with {javadocBase}org/dalesbred/annotation/DalesbredInstantiator.html[DalesbredInstantiator]. This
+will cause Dalesbred to ignore all other constructors.
+
 Large objects
 ~~~~~~~~~~~~~
 
