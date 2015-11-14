@@ -2,8 +2,8 @@
 
 ## New features
 
-  - Allow annotating constructors with `@DalesbredInstantiator` to suppress automatic
-    constructor detection and always use the specified constructor.
+  - Allow annotating constructors with `@DalesbredInstantiator` to always use the
+    annotated constructor instead of trying to detect constructor automatically.
   - Support binding arrays on Oracle, which does not support standard JDBC API.
 
 ## 1.0.0 (2015-05-29)
