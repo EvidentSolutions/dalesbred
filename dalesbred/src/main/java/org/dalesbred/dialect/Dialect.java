@@ -107,6 +107,10 @@ public abstract class Dialect {
                     log.fine("Automatically detected dialect HSQLDB.");
                     return new HsqldbDialect();
 
+                case "H2":
+                    log.fine("Automatically detected dialect H2.");
+                    return new H2Dialect();
+
                 case "MySQL":
                     log.fine("Automatically detected dialect MySQL.");
                     return new MySQLDialect();
