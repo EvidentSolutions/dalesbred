@@ -4,8 +4,9 @@
 
   - Allow annotating constructors with `@DalesbredInstantiator` to always use the
     annotated constructor instead of trying to detect constructor automatically.
+    ([#19](https://github.com/EvidentSolutions/dalesbred/issues/19))
   - Support binding arrays on Oracle, which does not support standard JDBC API.
-  - Add dialect for H2.
+  - Add dialect for H2. ([#20](https://github.com/EvidentSolutions/dalesbred/issues/20))
 
 ## 1.0.0 (2015-05-29)
 
