@@ -24,12 +24,14 @@ package org.dalesbred.internal.instantiation;
 
 import org.dalesbred.annotation.DalesbredIgnore;
 import org.dalesbred.annotation.Reflective;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 public class PropertyAccessorTest {
@@ -54,6 +56,53 @@ public class PropertyAccessorTest {
         assertThat(PropertyAccessor.findAccessor(IgnoredValues.class, "ignoredField"), is(Optional.empty()));
     }
 
+    @Test
+    public void nestedPathsWithIntermediateFields() {
+        PropertyAccessor accessor = PropertyAccessor.findAccessor(NestedPaths.class, "namedField.name").orElse(null);
+
+        assertNotNull(accessor);
+
+        NestedPaths paths = new NestedPaths();
+        accessor.set(paths, "foo");
+
+        assertThat(paths.namedField.name, is("foo"));
+    }
+
+    @Test
+    public void nestedPathsWithIntermediateGetters() {
+        PropertyAccessor accessor = PropertyAccessor.findAccessor(NestedPaths.class, "namedGetter.name").orElse(null);
+
+        assertNotNull(accessor);
+
+        NestedPaths paths = new NestedPaths();
+        accessor.set(paths, "foo");
+
+        assertThat(paths.getNamedGetter().name, is("foo"));
+    }
+
+    @Test(expected = InstantiationFailureException.class)
+    public void nestedPathsWithNullFields() {
+        PropertyAccessor accessor = PropertyAccessor.findAccessor(NestedPaths.class, "nullField.name").orElse(null);
+
+        assertNotNull(accessor);
+
+        accessor.set(new NestedPaths(), "foo");
+    }
+
+    @Test(expected = InstantiationFailureException.class)
+    public void nestedPathsWithNullGetters() {
+        PropertyAccessor accessor = PropertyAccessor.findAccessor(NestedPaths.class, "nullGetter.name").orElse(null);
+
+        assertNotNull(accessor);
+
+        accessor.set(new NestedPaths(), "foo");
+    }
+
+    @Test
+    public void invalidPathElements() {
+        assertThat(PropertyAccessor.findAccessor(Named.class, "foo.name"), is(Optional.empty()));
+    }
+
     private static class DepartmentWithFields {
         @Reflective
         public String departmentName;
@@ -71,6 +120,29 @@ public class PropertyAccessorTest {
         public void setDepartmentName(String departmentName) {
             this.departmentName = departmentName;
         }
+    }
+
+    public static class NestedPaths {
+        public final Named namedField = new Named();
+
+        @Reflective
+        public final Named nullField = null;
+
+        @Reflective
+        public Named getNamedGetter() {
+            return namedField;
+        }
+
+        @Nullable
+        @Reflective
+        public Named getNullGetter() {
+            return null;
+        }
+    }
+
+    public static class Named {
+        @Reflective
+        public String name;
     }
 
     @SuppressWarnings("unused")

@@ -83,6 +83,26 @@ columns are set using properties or direct field access. So even the following w
         }
 ----
 
+And if you have nested objects, you can bind to them as well as long as all objects in the path are instantiated:
+
+[source,java,indent=0]
+----
+        List<Employee> departments =
+            db.findAll(Employee.class, "select id, first_name as \"name.first\", last_name as \"name.last\" from employee");
+
+        ...
+
+        public final class Employee {
+            public int id;
+            public final Name name = new Name();
+        }
+
+        public final class Name {
+            public String first;
+            public String last;
+        }
+----
+
 You can also convert the results directly to a map:
 
 [source,java,indent=0]
