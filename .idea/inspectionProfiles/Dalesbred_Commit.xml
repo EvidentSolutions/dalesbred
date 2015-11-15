@@ -365,6 +365,7 @@
     <inspection_tool class="BashSimpleArrayUse" enabled="false" level="INFO" enabled_by_default="true" />
     <inspection_tool class="BashSimpleVarUsage" enabled="false" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="BashUnknownFileDescriptor" enabled="false" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="BashUnregisterGlobalVariable" enabled="false" level="INFO" enabled_by_default="true" />
     <inspection_tool class="BashUnregisterGlobalVariableInspection" enabled="false" level="INFO" enabled_by_default="true" />
     <inspection_tool class="BashUnresolvedVariable" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="BashUnusedFunction" enabled="false" level="WARNING" enabled_by_default="true" />
