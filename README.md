@@ -66,9 +66,3 @@ If you're using [IntelliJ IDEA](https://www.jetbrains.com/idea/), check out
 [Dalesbred IDEA Plugin](https://github.com/EvidentSolutions/dalesbred-idea-plugin),
 which provides inspections for common errors (e.g. mismatch between query parameters
 and query).
-
-Attributions
-============
-
-Image of dalesbred used on the website is by [NicePics on Flickr](http://www.flickr.com/photos/48235612@N00/338947492)
-and is used by [CC BY-SA 2.0](http://creativecommons.org/licenses/by-sa/2.0/).
