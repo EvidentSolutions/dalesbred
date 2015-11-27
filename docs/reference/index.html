@@ -420,7 +420,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="details">
 <span id="author" class="author">Juha Komulainen</span><br>
 <span id="email" class="email"><a href="mailto:juha.komulainen@evident.fi">juha.komulainen@evident.fi</a></span><br>
-<span id="revnumber">version 1.0.0</span>
+<span id="revnumber">version 1.1.0</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -449,6 +449,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_miscellaneous_features">Miscellaneous features</a>
 <ul class="sectlevel2">
+<li><a href="#_explicit_instantiators">Explicit instantiators</a></li>
 <li><a href="#_large_objects">Large objects</a></li>
 <li><a href="#_custom_type_conversions">Custom type-conversions</a></li>
 </ul>
@@ -559,6 +560,27 @@ columns are set using properties or direct field access. So even the following w
 public final class Department {
     public int id;
     public String name;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And if you have nested objects, you can bind to them as well as long as all objects in the path are instantiated:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">List&lt;Employee&gt; departments =
+    db.findAll(Employee.class, "select id, first_name as \"name.first\", last_name as \"name.last\" from employee");
+
+...
+
+public final class Employee {
+    public int id;
+    public final Name name = new Name();
+}
+
+public final class Name {
+    public String first;
+    public String last;
 }</code></pre>
 </div>
 </div>
@@ -758,6 +780,15 @@ which case exceptions are thrown for calls without an active transaction:</p>
 <div class="sect1">
 <h2 id="_miscellaneous_features">Miscellaneous features</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_explicit_instantiators">Explicit instantiators</h3>
+<div class="paragraph">
+<p>Normally Dalesbred will automatically detect the best way to instantiate your classes based on database results.
+This can sometimes lead to surprising results. If you wish to be more explicit, you can annotate your preferred
+constructor with <a href="http://dalesbred.org/docs/api/?org/dalesbred/annotation/DalesbredInstantiator.html">DalesbredInstantiator</a>. This
+will cause Dalesbred to ignore all other constructors.</p>
+</div>
+</div>
 <div class="sect2">
 <h3 id="_large_objects">Large objects</h3>
 <div class="paragraph">
@@ -1009,7 +1040,7 @@ for more usage examples.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-    compile 'org.dalesbred:dalesbred:1.0.0'
+    compile 'org.dalesbred:dalesbred:1.1.0'
 }
 
 repositories {
@@ -1023,7 +1054,7 @@ repositories {
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-    testCompile 'org.dalesbred:dalesbred-junit:1.0.0'
+    testCompile 'org.dalesbred:dalesbred-junit:1.1.0'
 }</code></pre>
 </div>
 </div>
@@ -1039,7 +1070,7 @@ dependency to your <code>pom.xml</code>:</p>
 <pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
     &lt;groupId&gt;org.dalesbred&lt;/groupId&gt;
     &lt;artifactId&gt;dalesbred&lt;/artifactId&gt;
-    &lt;version&gt;1.0.0&lt;/version&gt;
+    &lt;version&gt;1.1.0&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
@@ -1051,7 +1082,7 @@ dependency to your <code>pom.xml</code>:</p>
 <pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
     &lt;groupId&gt;org.dalesbred&lt;/groupId&gt;
     &lt;artifactId&gt;dalesbred-junit&lt;/artifactId&gt;
-    &lt;version&gt;1.0.0&lt;/version&gt;
+    &lt;version&gt;1.1.0&lt;/version&gt;
     &lt;scope&gt;test&lt;/scope&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
@@ -1061,7 +1092,7 @@ dependency to your <code>pom.xml</code>:</p>
 <h3 id="_without_dependency_manager">Without dependency manager</h3>
 <div class="paragraph">
 <p>To use Dalesbred without a dependency management system, you&#8217;ll need to
-download <a href="http://repo1.maven.org/maven2/org/dalesbred/dalesbred/1.0.0/dalesbred-1.0.0.jar">dalesbred-1.0.0.jar</a>
+download <a href="http://repo1.maven.org/maven2/org/dalesbred/dalesbred/1.1.0/dalesbred-1.1.0.jar">dalesbred-1.1.0.jar</a>
 and it to your classpath. There are no other required dependencies.</p>
 </div>
 </div>
@@ -1078,8 +1109,8 @@ and it to your classpath. There are no other required dependencies.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.0.0<br>
-Last updated 2015-05-28 23:28:06 EEST
+Version 1.1.0<br>
+Last updated 2015-11-16 15:21:51 EET
 </div>
 </div>
 </body>
