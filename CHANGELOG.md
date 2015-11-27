@@ -1,4 +1,4 @@
-## 1.x.y (yyyy-mm-dd)
+## 1.1.0 (2015-11-27)
 
 ## New features
 
