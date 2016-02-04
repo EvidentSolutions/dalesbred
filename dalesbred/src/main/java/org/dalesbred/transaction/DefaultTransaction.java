@@ -25,12 +25,12 @@ package org.dalesbred.transaction;
 import org.dalesbred.dialect.Dialect;
 import org.dalesbred.internal.utils.Throwables;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Savepoint;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static java.util.Objects.requireNonNull;
 
@@ -40,7 +40,7 @@ final class DefaultTransaction {
     private final Connection connection;
 
     @NotNull
-    private static final Logger log = Logger.getLogger(DefaultTransaction.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(DefaultTransaction.class);
 
     DefaultTransaction(@NotNull Connection connection) {
         this.connection = requireNonNull(connection);
@@ -59,7 +59,7 @@ final class DefaultTransaction {
 
             } catch (Exception e) {
                 connection.rollback();
-                log.log(Level.WARNING, "rolled back transaction because of exception: " + e, e);
+                log.warn("rolled back transaction because of exception.", e);
                 throw Throwables.propagate(e, SQLException.class);
             }
         } catch (SQLException e) {
@@ -81,7 +81,7 @@ final class DefaultTransaction {
 
             } catch (Exception e) {
                 connection.rollback(savepoint);
-                log.log(Level.WARNING, "rolled back nested transaction because of exception: " + e, e);
+                log.warn("rolled back nested transaction because of exception.", e);
                 throw Throwables.propagate(e, SQLException.class);
             }
         } catch (SQLException e) {

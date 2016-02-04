@@ -35,13 +35,14 @@ import org.dalesbred.transaction.TransactionSerializationException;
 import org.dalesbred.transaction.TransactionSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.function.Function;
-import java.util.logging.Logger;
 
 /**
  * Abstracts away the differences of databases.
@@ -50,7 +51,7 @@ public abstract class Dialect {
 
     private static final String SERIALIZATION_FAILURE = "40001";
 
-    private static final Logger log = Logger.getLogger(Dialect.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(Dialect.class);
 
     @NotNull
     public Object valueToDatabase(@NotNull Object value) {
@@ -100,27 +101,27 @@ public abstract class Dialect {
 
             switch (productName) {
                 case "PostgreSQL":
-                    log.fine("Automatically detected dialect PostgreSQL.");
+                    log.debug("Automatically detected dialect PostgreSQL.");
                     return new PostgreSQLDialect();
 
                 case "HSQL Database Engine":
-                    log.fine("Automatically detected dialect HSQLDB.");
+                    log.debug("Automatically detected dialect HSQLDB.");
                     return new HsqldbDialect();
 
                 case "H2":
-                    log.fine("Automatically detected dialect H2.");
+                    log.debug("Automatically detected dialect H2.");
                     return new H2Dialect();
 
                 case "MySQL":
-                    log.fine("Automatically detected dialect MySQL.");
+                    log.debug("Automatically detected dialect MySQL.");
                     return new MySQLDialect();
 
                 case "Oracle":
-                    log.fine("Automatically detected dialect Oracle.");
+                    log.debug("Automatically detected dialect Oracle.");
                     return new OracleDialect();
 
                 case "Microsoft SQL Server":
-                    log.fine("Automatically detected dialect SQLServer.");
+                    log.debug("Automatically detected dialect SQLServer.");
                     return new SQLServerDialect();
 
                 default:

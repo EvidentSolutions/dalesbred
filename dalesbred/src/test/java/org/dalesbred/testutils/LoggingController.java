@@ -22,16 +22,16 @@
 
 package org.dalesbred.testutils;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * A rules that allows logging to be controlled on level of individual tests.
+ * A rule that allows logging to be controlled on level of individual tests.
  */
 public final class LoggingController implements TestRule {
     @NotNull
@@ -43,7 +43,7 @@ public final class LoggingController implements TestRule {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                Logger rootLogger = Logger.getLogger("");
+                Logger rootLogger = (Logger)LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
                 Level oldLevel = rootLogger.getLevel();
                 try {
                     rootLogger.setLevel(Level.OFF);

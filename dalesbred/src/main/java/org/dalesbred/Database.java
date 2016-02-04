@@ -38,19 +38,20 @@ import org.dalesbred.result.*;
 import org.dalesbred.transaction.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.requireNonNull;
 import static org.dalesbred.internal.utils.OptionalUtils.unwrapOptionalAsNull;
 import static org.dalesbred.transaction.TransactionCallback.fromVoidCallback;
+
 
 /**
  * <p>
@@ -70,7 +71,7 @@ public final class Database {
 
     /** Logger in which we log actions */
     @NotNull
-    private final Logger log = Logger.getLogger(getClass().getName());
+    private final Logger log = LoggerFactory.getLogger(Database.class);
 
     /** Should we create transactions implicitly when individual operations are invoked outside transaction */
     private boolean allowImplicitTransactions = true;
@@ -674,13 +675,11 @@ public final class Database {
     }
 
     private void logQuery(@NotNull SqlQuery query) {
-        if (log.isLoggable(Level.FINER))
-            log.finer("executing query " + query);
+        log.debug("executing query {}", query);
     }
 
     private void logQueryExecution(@NotNull SqlQuery query, long millis) {
-        if (log.isLoggable(Level.FINE))
-            log.fine("executed query in " + millis + " ms: " + query);
+        log.debug("executed query in {} ms: {}", millis, query);
     }
 
     private void bindArguments(@NotNull PreparedStatement ps, @NotNull Iterable<?> args) throws SQLException {
