@@ -1,6 +1,12 @@
+## Unreleased
+
+### Changes
+
+  - Use [SLF4J](http://www.slf4j.org/) instead of `java.util.logging` for logging ([#25](https://github.com/EvidentSolutions/dalesbred/issues/25))
+
 ## 1.1.0 (2015-11-27)
 
-## New features
+### New features
 
   - Allow annotating constructors with `@DalesbredInstantiator` to always use the
     annotated constructor instead of trying to detect constructor automatically.
