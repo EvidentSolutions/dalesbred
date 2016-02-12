@@ -2059,7 +2059,7 @@
     <inspection_tool class="PhpWrongCatchClausesOrderInspection" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="PhpWrongForeachArgumentTypeInspection" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="PhpWrongStringConcatenationInspection" enabled="false" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="PlaceholderCountMatchesArgumentCount" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="PlaceholderCountMatchesArgumentCount" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="PlatformDetectionJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="Play2BadFileNameInspection" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="Play2RoutingActionInspection" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -2611,7 +2611,7 @@
       <option name="ignoreInTestCode" value="false" />
       <option name="ignoreInToString" value="false" />
     </inspection_tool>
-    <inspection_tool class="StringConcatenationArgumentToLogCall" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="StringConcatenationArgumentToLogCall" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="StringConcatenationInFormatCall" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="StringConcatenationInLoops" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="m_ignoreUnlessAssigned" value="true" />
