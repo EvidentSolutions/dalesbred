@@ -83,6 +83,7 @@ project(':dalesbred') {
     description = 'Dalesbred - a database access library'
 
     dependencies {
+        compile 'org.slf4j:slf4j-api:1.7.14'
         compile 'joda-time:joda-time:2.7'
         compile 'org.threeten:threetenbp:1.2'
         compile "org.springframework:spring-context:$springVersion"
@@ -96,6 +97,8 @@ project(':dalesbred') {
         testCompile 'mysql:mysql-connector-java:5.1.35'
         testCompile "junit:junit:$junitVersion"
         testCompile 'org.mockito:mockito-core:1.10.19'
+        testCompile 'ch.qos.logback:logback-core:1.1.3'
+        testCompile 'ch.qos.logback:logback-classic:1.1.3'
     }
 
     apply plugin: 'osgi'
@@ -123,6 +126,8 @@ project(':dalesbred-junit') {
         compile "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
 
         testCompile "org.hsqldb:hsqldb:$hsqldbVersion"
+        testCompile 'ch.qos.logback:logback-core:1.1.3'
+        testCompile 'ch.qos.logback:logback-classic:1.1.3'
     }
 }
 

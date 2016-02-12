@@ -32,13 +32,14 @@ import org.dalesbred.internal.utils.OptionalUtils;
 import org.dalesbred.internal.utils.ReflectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
 import java.sql.Array;
 import java.util.*;
 import java.util.function.Function;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import static java.lang.reflect.Modifier.isPublic;
@@ -61,7 +62,7 @@ public final class InstantiatorProvider {
     private final DefaultTypeConversionRegistry typeConversionRegistry;
 
     @NotNull
-    private static final Logger log = Logger.getLogger(InstantiatorProvider.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(InstantiatorProvider.class);
 
     public InstantiatorProvider(@NotNull Dialect dialect) {
         this.dialect = requireNonNull(dialect);
@@ -70,12 +71,12 @@ public final class InstantiatorProvider {
         DefaultTypeConversions.register(typeConversionRegistry);
 
         if (JodaTypeConversions.hasJoda()) {
-            log.fine("Detected Joda Time in classpath. Registering type conversions for Joda.");
+            log.debug("Detected Joda Time in classpath. Registering type conversions for Joda.");
             JodaTypeConversions.register(typeConversionRegistry);
         }
 
         if (ThreeTenTypeConversions.hasThreeTen()) {
-            log.fine("Detected ThreeTen in classpath. Registering type conversions for it.");
+            log.debug("Detected ThreeTen in classpath. Registering type conversions for it.");
             ThreeTenTypeConversions.register(typeConversionRegistry);
         }
     }
