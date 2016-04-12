@@ -755,6 +755,7 @@
     <inspection_tool class="DartAnalysisServerGlobalInspectionTool" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="DartDeprecatedApiUsage" enabled="false" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="DartGlobalInspectionTool" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="DartOutdatedDependencies" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="DartPathPackageReference" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="DartSdkIsNotConfigured" enabled="false" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="DartUnresolvedImport" enabled="false" level="WARNING" enabled_by_default="false" />
