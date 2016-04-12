@@ -288,9 +288,8 @@ public final class InstantiatorProvider {
     private static Optional<TypeConversion> findEnumConversion(@NotNull Type target) {
         if (isEnum(target)) {
             @SuppressWarnings("rawtypes")
-            Class<? extends Enum> cl = rawType(target).asSubclass(Enum.class);
-
-            return Optional.ofNullable(TypeConversion.fromNonNullFunction(value -> Enum.valueOf(cl, value.toString())));
+            Class cl = rawType(target).asSubclass(Enum.class);
+            return Optional.of(TypeConversion.fromNonNullFunction(value -> Enum.valueOf(cl, value.toString())));
         }
 
         return Optional.empty();
@@ -354,8 +353,9 @@ public final class InstantiatorProvider {
             return Optional.empty();
     }
 
+    @SuppressWarnings("TypeParameterExtendsFinalClass")
     @NotNull
-    private static Stream<Constructor<?>> candidateConstructorsSortedByDescendingParameterCount(@NotNull Class<?> cl) {
+    private static Stream<? extends Constructor<?>> candidateConstructorsSortedByDescendingParameterCount(@NotNull Class<?> cl) {
         return Stream.of(cl.getConstructors())
                 .filter(ctor -> !ctor.isAnnotationPresent(DalesbredIgnore.class))
                 .sorted(comparing((Constructor<?> ctor) -> ctor.getParameterTypes().length).reversed());
