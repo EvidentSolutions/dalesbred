@@ -1,3 +1,9 @@
+## 1.2.1 (2016-04-12)
+
+### Bug fixes
+
+  - `org.slf4j:slf4j-api` was marked as optional dependency in POM, although it's required. 
+
 ## 1.2.0 (2016-04-12)
 
 ### Changes

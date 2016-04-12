@@ -45,7 +45,8 @@ modifyPom {
         // For the main project we'll mark all dependencies as optional
         if (name == 'dalesbred') {
             for (dep in dependencies)
-                dep.optional = true
+                if (dep.artifactId != 'slf4j-api')
+                    dep.optional = true
         }
     }
 }
