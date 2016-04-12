@@ -490,13 +490,6 @@ For the JUnit test-support classes, add the following:
         </dependency>
 ----
 
-Without dependency manager
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-To use Dalesbred without a dependency management system, you'll need to
-download http://repo1.maven.org/maven2/org/dalesbred/dalesbred/{revnumber}/dalesbred-{revnumber}.jar[dalesbred-{revnumber}.jar]
-and it to your classpath. There are no other required dependencies.
-
 Migration from 0.x
 ------------------
 
