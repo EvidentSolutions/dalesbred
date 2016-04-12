@@ -4,6 +4,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3"
     }
 }
 
@@ -12,6 +13,7 @@ plugins {
     id 'org.ajoberstar.github-pages' version '1.1.0'
     id 'pl.allegro.tech.build.axion-release' version '1.2.4'
 }
+apply plugin: 'io.codearte.nexus-staging'
 
 scmVersion {
     localOnly = true
