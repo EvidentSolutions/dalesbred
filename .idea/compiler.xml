@@ -18,5 +18,11 @@
         <processorPath useClasspath="true" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="dalesbred-junit_main" target="1.8" />
+      <module name="dalesbred-junit_test" target="1.8" />
+      <module name="dalesbred_main" target="1.8" />
+      <module name="dalesbred_test" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
