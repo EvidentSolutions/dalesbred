@@ -32,9 +32,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
@@ -158,6 +156,36 @@ public class DatabaseTest {
     @Test
     public void findOptional_emptyResult() {
         assertThat(db.findOptional(Integer.class, "select * from (values (1)) n where false"), is(Optional.empty()));
+    }
+
+    @Test
+    public void findOptionalInt_singleResult() {
+        assertThat(db.findOptionalInt("values (42)"), is(OptionalInt.of(42)));
+    }
+
+    @Test
+    public void findOptionalInt_emptyResult() {
+        assertThat(db.findOptionalInt("values (cast (null as int))"), is(OptionalInt.empty()));
+    }
+
+    @Test
+    public void findOptionalLong_singleResult() {
+        assertThat(db.findOptionalLong("values (42)"), is(OptionalLong.of(42)));
+    }
+
+    @Test
+    public void findOptionalLong_emptyResult() {
+        assertThat(db.findOptionalLong("values (cast (null as int))"), is(OptionalLong.empty()));
+    }
+
+    @Test
+    public void findOptionalDouble_singleResult() {
+        assertThat(db.findOptionalDouble("values (42.3)"), is(OptionalDouble.of(42.3)));
+    }
+
+    @Test
+    public void findOptionalDouble_emptyResult() {
+        assertThat(db.findOptionalDouble("values (cast (null as float))"), is(OptionalDouble.empty()));
     }
 
     @Test(expected = NonUniqueResultException.class)

@@ -43,9 +43,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.requireNonNull;
@@ -417,6 +415,75 @@ public final class Database {
     @NotNull
     public <T> Optional<T> findOptional(@NotNull Class<T> cl, @NotNull @SQL String sql, Object... args) {
         return findOptional(cl, SqlQuery.query(sql, args));
+    }
+
+    /**
+     * Finds a unique result from database, converting the database row to int using default mechanisms.
+     * Returns empty if there are no results or if single null result is returned.
+     *
+     * @throws NonUniqueResultException if there are multiple result rows
+     */
+    @NotNull
+    public OptionalInt findOptionalInt(@NotNull @SQL String sql, Object... args) {
+        return findOptionalInt(SqlQuery.query(sql, args));
+    }
+
+    /**
+     * Finds a unique result from database, converting the database row to int using default mechanisms.
+     * Returns empty if there are no results or if single null result is returned.
+     *
+     * @throws NonUniqueResultException if there are multiple result rows
+     */
+    @NotNull
+    public OptionalInt findOptionalInt(@NotNull SqlQuery query) {
+        Optional<Integer> value = findOptional(Integer.class, query);
+        return value.isPresent() ? OptionalInt.of(value.get()) : OptionalInt.empty();
+    }
+
+    /**
+     * Finds a unique result from database, converting the database row to long using default mechanisms.
+     * Returns empty if there are no results or if single null result is returned.
+     *
+     * @throws NonUniqueResultException if there are multiple result rows
+     */
+    @NotNull
+    public OptionalLong findOptionalLong(@NotNull @SQL String sql, Object... args) {
+        return findOptionalLong(SqlQuery.query(sql, args));
+    }
+
+    /**
+     * Finds a unique result from database, converting the database row to long using default mechanisms.
+     * Returns empty if there are no results or if single null result is returned.
+     *
+     * @throws NonUniqueResultException if there are multiple result rows
+     */
+    @NotNull
+    public OptionalLong findOptionalLong(@NotNull SqlQuery query) {
+        Optional<Long> value = findOptional(Long.class, query);
+        return value.isPresent() ? OptionalLong.of(value.get()) : OptionalLong.empty();
+    }
+
+    /**
+     * Finds a unique result from database, converting the database row to double using default mechanisms.
+     * Returns empty if there are no results or if single null result is returned.
+     *
+     * @throws NonUniqueResultException if there are multiple result rows
+     */
+    @NotNull
+    public OptionalDouble findOptionalDouble(@NotNull @SQL String sql, Object... args) {
+        return findOptionalDouble(SqlQuery.query(sql, args));
+    }
+
+    /**
+     * Finds a unique result from database, converting the database row to double using default mechanisms.
+     * Returns empty if there are no results or if single null result is returned.
+     *
+     * @throws NonUniqueResultException if there are multiple result rows
+     */
+    @NotNull
+    public OptionalDouble findOptionalDouble(@NotNull SqlQuery query) {
+        Optional<Double> value = findOptional(Double.class, query);
+        return value.isPresent() ? OptionalDouble.of(value.get()) : OptionalDouble.empty();
     }
 
     /**

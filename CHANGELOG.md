@@ -1,3 +1,9 @@
+## Unreleased
+
+### New features
+
+  - Add `findOptionalInt`, `findOptionalLong` and `findOptionalDouble` methods to `Database`.
+
 ## 1.2.1 (2016-04-12)
 
 ### Bug fixes
