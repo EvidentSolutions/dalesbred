@@ -71,9 +71,9 @@ public class DatabaseTest {
 
     @Test
     public void autoDetectingTypes() {
-        assertThat(db.findUnique(Object.class, "values (42)"), is((Object) 42));
-        assertThat(db.findUnique(Object.class, "values ('foo')"), is((Object) "foo"));
-        assertThat(db.findUnique(Object.class, "values (true)"), is((Object) true));
+        assertThat(db.findUnique(Object.class, "values (42)"), is(42));
+        assertThat(db.findUnique(Object.class, "values ('foo')"), is("foo"));
+        assertThat(db.findUnique(Object.class, "values (true)"), is(true));
     }
 
     @Test
