@@ -37,6 +37,9 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * ResultSetProcessor that expects results with two columns and creates map from them.
+ *
+ * <p>This processor updates the map in order in which the rows are read. Therefore, if
+ * the keys of the result are not distinct, the result contains the last binding of given key.
  */
 public final class MapResultSetProcessor<K,V> implements ResultSetProcessor<Map<K,V>> {
 
@@ -60,7 +63,6 @@ public final class MapResultSetProcessor<K,V> implements ResultSetProcessor<Map<
     @NotNull
     @Override
     public Map<K, V> process(@NotNull ResultSet resultSet) throws SQLException {
-        Map<K,V> result = new LinkedHashMap<>();
 
         NamedTypeList types = ResultSetUtils.getTypes(resultSet.getMetaData());
         if (types.size() < 2)
@@ -75,6 +77,7 @@ public final class MapResultSetProcessor<K,V> implements ResultSetProcessor<Map<
         Object[] valueArguments = new Object[valueTypes.size()];
         InstantiatorArguments instantiatorArguments = new InstantiatorArguments(valueTypes, valueArguments);
 
+        Map<K, V> result = new LinkedHashMap<>();
         while (resultSet.next()) {
             K key = keyType.cast(keyConversion.convert(resultSet.getObject(1)));
 

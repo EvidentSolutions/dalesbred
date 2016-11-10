@@ -581,6 +581,8 @@ public final class Database {
     /**
      * Executes a query that returns at least two values and creates a map from the results,
      * using the first value as the key and rest of the values for instantiating {@code V}.
+     *
+     * <p>If the keys of the result are not distinct, the result contains the last binding of given key.
      */
     @NotNull
     public <K,V> Map<K, V> findMap(@NotNull Class<K> keyType,
@@ -591,7 +593,9 @@ public final class Database {
 
     /**
      * Executes a query that returns at least two values and creates a map from the results,
-     * using the first value as the key and rest of the values for instantiating {@code V}
+     * using the first value as the key and rest of the values for instantiating {@code V}.
+     *
+     * <p>If the keys of the result are not distinct, the result contains the last binding of given key.
      */
     @NotNull
     public <K,V> Map<K, V> findMap(@NotNull Class<K> keyType,
