@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2016 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -116,6 +116,18 @@ public final class QueryBuilder {
         query.append('?');
         for (int i = 1; i < count; i++)
             query.append(",?");
+
+        return this;
+    }
+
+    /**
+     * Adds placeholders for all elements of collection and then adds then values
+     * of collection itself.
+     */
+    @NotNull
+    public QueryBuilder appendPlaceholders(@NotNull Collection<?> args) {
+        appendPlaceholders(args.size());
+        addArguments(args);
 
         return this;
     }

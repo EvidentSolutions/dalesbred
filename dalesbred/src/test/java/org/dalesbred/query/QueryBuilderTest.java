@@ -24,6 +24,7 @@ package org.dalesbred.query;
 
 import org.junit.Test;
 
+import static java.util.Arrays.asList;
 import static org.dalesbred.query.SqlQuery.query;
 import static org.junit.Assert.assertEquals;
 
@@ -57,6 +58,14 @@ public class QueryBuilderTest {
         SqlQuery query = qb.append(" where id in (").appendPlaceholders(4).append(")").addArguments(1,2,3).addArgument(4).build();
 
         assertEquals(query("select * from document where id in (?,?,?,?)", 1, 2, 3, 4), query);
+    }
+
+    @Test
+    public void placeholdersForCollection() {
+        QueryBuilder qb = new QueryBuilder("select * from document");
+        SqlQuery query = qb.append(" where id in (").appendPlaceholders(asList(1, 2, 3)).append(")").build();
+
+        assertEquals(query("select * from document where id in (?,?,?)", 1, 2, 3), query);
     }
 
     @Test(expected = IllegalArgumentException.class)
