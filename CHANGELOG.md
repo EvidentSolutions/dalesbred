@@ -1,4 +1,4 @@
-## Unreleased
+## 1.2.3 (2016-12-01)
 
 ### New features
 
