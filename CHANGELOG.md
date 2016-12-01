@@ -1,3 +1,9 @@
+## Unreleased
+
+### New features
+
+  - New convenience methods for `QueryBuilder`.
+
 ## 1.2.2 (2016-08-15)
 
 ### New features

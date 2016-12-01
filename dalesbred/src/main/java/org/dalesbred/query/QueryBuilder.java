@@ -133,6 +133,20 @@ public final class QueryBuilder {
     }
 
     /**
+     * Is the query string empty?
+     */
+    public boolean isEmpty() {
+       return query.length() == 0;
+    }
+
+    /**
+     * Does this query have any arguments?
+     */
+    public boolean hasArguments() {
+        return !arguments.isEmpty();
+    }
+
+    /**
      * Adds an argument to this query.
      */
     @NotNull

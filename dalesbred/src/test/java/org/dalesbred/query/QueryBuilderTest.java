@@ -26,7 +26,7 @@ import org.junit.Test;
 
 import static java.util.Arrays.asList;
 import static org.dalesbred.query.SqlQuery.query;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class QueryBuilderTest {
 
@@ -58,6 +58,20 @@ public class QueryBuilderTest {
         SqlQuery query = qb.append(" where id in (").appendPlaceholders(4).append(")").addArguments(1,2,3).addArgument(4).build();
 
         assertEquals(query("select * from document where id in (?,?,?,?)", 1, 2, 3, 4), query);
+    }
+
+    @Test
+    public void empty() {
+        assertTrue(new QueryBuilder().isEmpty());
+        assertTrue(new QueryBuilder().append("").isEmpty());
+        assertFalse(new QueryBuilder("foo").isEmpty());
+        assertFalse(new QueryBuilder().append("foo").isEmpty());
+    }
+
+    @Test
+    public void arguments() {
+        assertFalse(new QueryBuilder().hasArguments());
+        assertTrue(new QueryBuilder().addArgument(null).hasArguments());
     }
 
     @Test
