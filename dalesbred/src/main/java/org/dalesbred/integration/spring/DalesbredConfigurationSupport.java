@@ -67,6 +67,7 @@ public abstract class DalesbredConfigurationSupport {
      * Subclasses can override this to return the {@link Dialect} to use. By default
      * {@code null} is returned, which means that dialect is auto-detected.
      */
+    @SuppressWarnings("SameReturnValue")
     @Nullable
     protected Dialect dialect() {
         return null;

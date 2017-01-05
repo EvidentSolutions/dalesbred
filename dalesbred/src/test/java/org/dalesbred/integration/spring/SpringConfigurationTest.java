@@ -39,6 +39,7 @@ import javax.sql.DataSource;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+@SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
 public class SpringConfigurationTest {
 
     @Test

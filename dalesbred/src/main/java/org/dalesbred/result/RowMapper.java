@@ -41,8 +41,6 @@ public interface RowMapper<T> {
      * <p>
      * The implementation should not call {@link ResultSet#next()} or other methods to move
      * the current position of the {@link ResultSet}, caller is responsible for that.
-     *
-     * @throws SQLException
      */
     T mapRow(@NotNull ResultSet resultSet) throws SQLException;
 

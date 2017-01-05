@@ -59,6 +59,7 @@ public final class InstantiatorRowMapper<T> implements RowMapper<T> {
         this.instantiatorProvider = requireNonNull(instantiatorProvider);
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public T mapRow(@NotNull ResultSet resultSet) throws SQLException {
         if (types == null) {

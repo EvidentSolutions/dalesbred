@@ -30,10 +30,10 @@ import org.junit.Test;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -59,7 +59,7 @@ public class DatabaseGeneratedKeysTest {
         db.update("drop table if exists my_table");
         db.update("create temporary table my_table (id identity primary key, my_text varchar(100))");
 
-        List<Integer> keys = db.updateAndProcessGeneratedKeys(new CollectKeysResultSetProcessor(), Collections.<String>emptyList(), "insert into my_table (my_text) values ('foo'), ('bar'), ('baz')");
+        List<Integer> keys = db.updateAndProcessGeneratedKeys(new CollectKeysResultSetProcessor(), emptyList(), "insert into my_table (my_text) values ('foo'), ('bar'), ('baz')");
         assertThat(keys, is(asList(0, 1, 2)));
     }
 

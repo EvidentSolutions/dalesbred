@@ -121,7 +121,7 @@ public final class TestDatabaseProvider {
         }
 
         @Override
-        public Connection getConnection(String username, String password) throws SQLException {
+        public Connection getConnection(@Nullable String username, @Nullable String password) throws SQLException {
             return DriverManager.getConnection(url, username, password);
         }
 

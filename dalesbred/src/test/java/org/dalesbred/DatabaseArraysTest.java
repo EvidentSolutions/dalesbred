@@ -80,8 +80,8 @@ public class DatabaseArraysTest {
     @Test
     public void databaseArraysAsCollections() {
         CollectionContainer object = db.findUnique(CollectionContainer.class, "select (cast ('{1,5,3}' as numeric array)) as intCollection, (cast ('{foo, bar, baz}' as varchar array)) as stringCollection");
-        assertThat(object.intCollection, is((Collection<Integer>) asList(1, 5, 3)));
-        assertThat(object.stringCollection, is((Collection<String>) asList("foo", "bar", "baz")));
+        assertThat(object.intCollection, is(asList(1, 5, 3)));
+        assertThat(object.stringCollection, is(asList("foo", "bar", "baz")));
     }
 
     @Test

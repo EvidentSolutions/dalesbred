@@ -22,7 +22,6 @@
 
 package org.dalesbred.internal.utils;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -47,7 +46,7 @@ public class ThrowablesTest {
 
         Exception propagated = Throwables.propagate(exception);
         assertThat(propagated, is(instanceOf(RuntimeException.class)));
-        assertThat(propagated.getCause(), CoreMatchers.<Throwable>is(exception));
+        assertThat(propagated.getCause(), is(exception));
     }
 
     @Test
@@ -76,7 +75,7 @@ public class ThrowablesTest {
             throw Throwables.propagate(exception, IOException.class);
 
         } catch (RuntimeException e) {
-            assertThat(e.getCause(), CoreMatchers.<Throwable>is(exception));
+            assertThat(e.getCause(), is(exception));
         }
     }
 

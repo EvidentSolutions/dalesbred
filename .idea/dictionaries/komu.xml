@@ -2,36 +2,54 @@
   <dictionary name="komu">
     <words>
       <w>accessors</w>
+      <w>ajoberstar</w>
       <w>amélie</w>
       <w>analyzation</w>
       <w>aopalliance</w>
       <w>apidocs</w>
+      <w>appname</w>
       <w>asciidoc</w>
       <w>asciidoctor</w>
+      <w>autocomplete</w>
+      <w>axion</w>
       <w>backport</w>
       <w>bigdecimal</w>
       <w>bitbucket</w>
+      <w>bmuschko</w>
+      <w>bootstrapcdn</w>
       <w>buildnumber</w>
       <w>bytea</w>
       <w>changelog</w>
       <w>charsets</w>
       <w>clobs</w>
+      <w>codearte</w>
       <w>codehaus</w>
       <w>contravariance</w>
       <w>ctor</w>
       <w>dalesbred</w>
       <w>dalesbred's</w>
       <w>database's</w>
+      <w>didn</w>
+      <w>dirname</w>
+      <w>dists</w>
+      <w>dont</w>
+      <w>dorg</w>
       <w>droneio</w>
+      <w>dropdown</w>
       <w>endian</w>
       <w>endif</w>
       <w>enum's</w>
+      <w>errorlevel</w>
       <w>erubis</w>
       <w>evidentsolutions</w>
       <w>fixme</w>
       <w>flickr</w>
       <w>foobaz</w>
       <w>frobnicate</w>
+      <w>github</w>
+      <w>glyphicon</w>
+      <w>goto</w>
+      <w>gradle</w>
       <w>gritschenberger</w>
       <w>guice</w>
       <w>hamcrest</w>
@@ -42,6 +60,7 @@
       <w>instantiator</w>
       <w>instantiators</w>
       <w>intelli</w>
+      <w>javacmd</w>
       <w>javadocs</w>
       <w>jdbc</w>
       <w>jndi</w>
@@ -57,28 +76,40 @@
       <w>mockito</w>
       <w>mojo</w>
       <w>mvcc</w>
+      <w>navbar</w>
+      <w>netdna</w>
       <w>noninfringement</w>
       <w>notanamedparameter</w>
       <w>notnamedparameter</w>
       <w>notparameter</w>
+      <w>nullable</w>
+      <w>opensource</w>
+      <w>osgi</w>
       <w>pluggable</w>
       <w>postgre</w>
       <w>postgresql</w>
       <w>prettyprint</w>
       <w>propdeps</w>
       <w>puppa</w>
+      <w>quux</w>
       <w>revnumber</w>
       <w>scpexe</w>
+      <w>setlocal</w>
+      <w>shouldn</w>
       <w>skippable</w>
       <w>sonatype</w>
       <w>spring's</w>
+      <w>sqlxml</w>
       <w>sshexec</w>
       <w>sunrsasign</w>
       <w>taskdefs</w>
       <w>testdb</w>
+      <w>threeten</w>
+      <w>threetenbp</w>
       <w>throwables</w>
       <w>toolchain</w>
       <w>toolchains</w>
+      <w>topbot</w>
       <w>transactionally</w>
       <w>unflattening</w>
       <w>unpushed</w>
@@ -86,6 +117,7 @@
       <w>varchars</w>
       <w>viewports</w>
       <w>xdoclint</w>
+      <w>xyzzy</w>
       <w>yyyy</w>
     </words>
   </dictionary>

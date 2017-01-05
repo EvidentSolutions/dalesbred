@@ -37,5 +37,5 @@ public enum Propagation {
     REQUIRES_NEW,
 
     /** Start a nested transaction if there is a current transaction, otherwise start a new normal transaction. */
-    NESTED;
+    NESTED
 }

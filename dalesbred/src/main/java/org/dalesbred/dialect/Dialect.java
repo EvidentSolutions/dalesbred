@@ -125,7 +125,7 @@ public abstract class Dialect {
                     return new SQLServerDialect();
 
                 default:
-                    log.info("Could not detect dialect for product name '" + productName + "', falling back to default.");
+                    log.info("Could not detect dialect for product name '{}', falling back to default.", productName);
                     return new DefaultDialect();
             }
         } catch (SQLException e) {

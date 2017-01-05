@@ -22,7 +22,6 @@
 
 package org.dalesbred.internal.utils;
 
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
@@ -49,8 +48,8 @@ public class PrimitivesTest {
 
     @Test
     public void convertingArraysToObjectArray() {
-        assertThat(Primitives.arrayAsObjectArray(new String[]{"foo", "bar"}), CoreMatchers.<Object[]>is(new String[]{"foo", "bar"}));
-        assertThat(Primitives.arrayAsObjectArray(new int[]{1, 4}), CoreMatchers.<Object[]>is(new Integer[]{1, 4}));
+        assertThat(Primitives.arrayAsObjectArray(new String[]{"foo", "bar"}), is(new String[]{"foo", "bar"}));
+        assertThat(Primitives.arrayAsObjectArray(new int[]{1, 4}), is(new Integer[]{1, 4}));
     }
 
     private static Matcher<Object> sameClass(Class<?> cl) {

@@ -285,9 +285,9 @@ public final class InstantiatorProvider {
     }
 
     @NotNull
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private static Optional<TypeConversion> findEnumConversion(@NotNull Type target) {
         if (isEnum(target)) {
-            @SuppressWarnings("rawtypes")
             Class cl = rawType(target).asSubclass(Enum.class);
             return Optional.of(TypeConversion.fromNonNullFunction(value -> Enum.valueOf(cl, value.toString())));
         }

@@ -45,9 +45,7 @@ public class DatabaseTransactionPropagationTest {
 
     @Test
     public void mandatoryPropagationWithExistingTransactionProceedsNormally() {
-        String result = db.withTransaction(REQUIRED, tx -> {
-            return db.withTransaction(MANDATORY, tx1 -> "ok");
-        });
+        String result = db.withTransaction(REQUIRED, tx -> db.withTransaction(MANDATORY, tx1 -> "ok"));
 
         assertEquals("ok", result);
     }
@@ -89,9 +87,8 @@ public class DatabaseTransactionPropagationTest {
         db.withVoidTransaction(tx -> {
             db.update("update test_table set text='bar'");
 
-            db.withVoidTransaction(REQUIRES_NEW, tx1 -> {
-                assertThat(db.findUnique(String.class, "select text from test_table"), is("foo"));
-            });
+            db.withVoidTransaction(REQUIRES_NEW, tx1 ->
+                    assertThat(db.findUnique(String.class, "select text from test_table"), is("foo")));
 
             assertThat(db.findUnique(String.class, "select text from test_table"), is("bar"));
         });

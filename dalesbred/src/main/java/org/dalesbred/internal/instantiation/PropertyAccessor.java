@@ -39,7 +39,7 @@ import static org.dalesbred.internal.utils.StringUtils.isEqualIgnoringCaseAndUnd
 
 abstract class PropertyAccessor {
 
-    abstract void set(Object object, Object value);
+    abstract void set(@NotNull Object object, @Nullable Object value);
 
     abstract Type getType();
 
@@ -153,7 +153,7 @@ abstract class PropertyAccessor {
         }
 
         @Override
-        void set(Object object, Object value) {
+        void set(@NotNull Object object, Object value) {
             try {
                 field.set(object, value);
             } catch (IllegalAccessException e) {
@@ -177,7 +177,7 @@ abstract class PropertyAccessor {
         }
 
         @Override
-        void set(Object object, Object value) {
+        void set(@NotNull Object object, Object value) {
             try {
                 setter.invoke(object, value);
             } catch (Exception e) {
@@ -209,7 +209,7 @@ abstract class PropertyAccessor {
         }
 
         @Override
-        void set(Object object, Object value) {
+        void set(@NotNull Object object, Object value) {
             accessor.set(resolveFinalObject(object), value);
         }
 
@@ -236,6 +236,7 @@ abstract class PropertyAccessor {
     }
 
     private interface PropertyReader {
+        @SuppressWarnings("RedundantThrows")
         @Nullable
         Object propertyValue(@NotNull Object o) throws IllegalAccessException, InvocationTargetException;
     }

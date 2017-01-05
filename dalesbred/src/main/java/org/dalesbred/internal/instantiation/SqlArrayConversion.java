@@ -55,9 +55,9 @@ final class SqlArrayConversion {
     @NotNull
     public static TypeConversion sqlArray(@NotNull Type elementType, @NotNull InstantiatorProvider instantiatorProvider,
                                           @NotNull Function<List<?>, ?> createResult) {
-        SqlArrayConversion conv = new SqlArrayConversion(elementType, instantiatorProvider);
+        SqlArrayConversion conversion = new SqlArrayConversion(elementType, instantiatorProvider);
 
-        return TypeConversion.fromNonNullFunction((Array array) -> createResult.apply(conv.readArray(array)));
+        return TypeConversion.fromNonNullFunction((Array array) -> createResult.apply(conversion.readArray(array)));
     }
 
     @NotNull
