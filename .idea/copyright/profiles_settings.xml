@@ -1,7 +1,8 @@
 <component name="CopyrightManager">
-  <settings default="">
+  <settings>
     <module2copyright>
       <element module="Java code" copyright="MIT" />
+      <element module="Kotlin code" copyright="MIT" />
     </module2copyright>
     <LanguageOptions name="Properties">
       <option name="fileTypeOverride" value="1" />
