@@ -64,11 +64,12 @@ task publish {
     description 'Publishes both the artifacts and the website'
 
     dependsOn ':website:publishGhPages',
-            ':dalesbred:uploadArchives'
-            ':dalesbred-junit:uploadArchives'
+            ':dalesbred:uploadArchives',
+            ':dalesbred-junit:uploadArchives',
+            ':dalesbred-kotlin:uploadArchives'
 }
 
-configure([project(':dalesbred'), project(':dalesbred-junit')]) {
+configure([project(':dalesbred'), project(':dalesbred-junit'), project(':dalesbred-kotlin')]) {
     apply plugin: 'java'
     apply plugin: 'com.bmuschko.nexus'
     apply from: "${rootProject.projectDir}/gradle/publish-maven.gradle"
