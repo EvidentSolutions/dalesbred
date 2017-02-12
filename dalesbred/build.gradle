@@ -1,5 +1,8 @@
 description = 'Dalesbred - a database access library'
 
+apply plugin: 'kotlin'
+apply plugin: 'osgi'
+
 dependencies {
     compile 'org.slf4j:slf4j-api:1.7.22'
     compile 'joda-time:joda-time:2.9.7'
@@ -10,6 +13,8 @@ dependencies {
 
     compile 'org.postgresql:postgresql:9.4.1212'
 
+    testCompile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    testCompile "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
     testCompile "org.hsqldb:hsqldb:$hsqldbVersion"
     testCompile "com.h2database:h2:1.4.193"
     testCompile 'mysql:mysql-connector-java:5.1.35'
@@ -18,8 +23,6 @@ dependencies {
     testCompile "ch.qos.logback:logback-core:$logbackVersion"
     testCompile "ch.qos.logback:logback-classic:$logbackVersion"
 }
-
-apply plugin: 'osgi'
 
 jar {
     manifest {
