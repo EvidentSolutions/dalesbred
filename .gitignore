@@ -6,6 +6,7 @@ out
 .idea/workspace.xml
 .idea/ant.xml
 .idea/uiDesigner.xml
+.idea/dataSources/*
 .idea/dataSources.xml
 .idea/dataSources.ids
 .idea/dataSources.local.xml
