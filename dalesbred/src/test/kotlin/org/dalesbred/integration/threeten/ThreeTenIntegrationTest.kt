@@ -24,7 +24,6 @@ package org.dalesbred.integration.threeten
 
 import org.dalesbred.TestDatabaseProvider
 import org.dalesbred.TransactionalTestsRule
-import org.dalesbred.annotation.Reflective
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Rule
@@ -141,7 +140,5 @@ class ThreeTenIntegrationTest {
         assertThat(db.findUnique(ZoneId::class.java, "SELECT zone_id FROM timezones"), `is`(helsinkiTimeZone))
     }
 
-    class DateContainer
-    @Reflective
-    constructor(internal val dateTime: LocalDateTime, internal val date: LocalDate, internal val time: LocalTime)
+    class DateContainer(val dateTime: LocalDateTime, val date: LocalDate, val time: LocalTime)
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,83 +20,76 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.query;
+package org.dalesbred.query
 
-import org.dalesbred.annotation.SQL;
-import org.junit.Test;
+import org.dalesbred.annotation.SQL
+import org.junit.Test
+import kotlin.test.assertEquals
 
-import java.util.List;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
-public class NamedParameterSqlParserTest {
+class NamedParameterSqlParserTest {
 
     @Test
-    public void simpleQuery() {
+    fun simpleQuery() {
         assertNamedParameters("SELECT * FROM foo WHERE col = :col", "SELECT * FROM foo WHERE col = ?",
-                singletonList("col"));
+                listOf("col"))
     }
 
     @Test
-    public void queryLiteralLikeNamedParameter() {
+    fun queryLiteralLikeNamedParameter() {
         assertNamedParameters("SELECT * FROM foobaz f WHERE f.id = :id AND f.col = ':notanamedparameter'",
                 "SELECT * FROM foobaz f WHERE f.id = ? AND f.col = ':notanamedparameter'",
-                singletonList("id"));
+                listOf("id"))
     }
 
     @Test
-    public void queryWithLineCommentWithoutLineEnd() {
+    fun queryWithLineCommentWithoutLineEnd() {
         assertNamedParameters("SELECT *, f.col::TEXT FROM foobar f WHERE f.id = :id -- comment :notnamedparameter",
                 "SELECT *, f.col::TEXT FROM foobar f WHERE f.id = ? -- comment :notnamedparameter",
-                singletonList("id"));
+                listOf("id"))
     }
 
     @Test
-    public void queryWithLineComment() {
+    fun queryWithLineComment() {
         assertNamedParameters("SELECT *, f.col::TEXT FROM foobar f -- comment :notnamedparameter \n WHERE f.id = :id",
                 "SELECT *, f.col::TEXT FROM foobar f -- comment :notnamedparameter \n WHERE f.id = ?",
-                singletonList("id"));
+                listOf("id"))
     }
 
     @Test
-    public void queryWithBlockComment() {
+    fun queryWithBlockComment() {
         assertNamedParameters("SELECT *, f.col::TEXT /* comment :notanamedparameter */ FROM foobar f WHERE f.id = :id",
                 "SELECT *, f.col::TEXT /* comment :notanamedparameter */ FROM foobar f WHERE f.id = ?",
-                singletonList("id"));
+                listOf("id"))
     }
 
     @Test
-    public void queryWithPostgresqlCast() {
+    fun queryWithPostgresqlCast() {
         assertNamedParameters("SELECT *, f.col::TEXT FROM foobar f WHERE f.id = :id",
                 "SELECT *, f.col::TEXT FROM foobar f WHERE f.id = ?",
-                singletonList("id"));
+                listOf("id"))
     }
 
     @Test
-    public void complexQuery() {
+    fun complexQuery() {
         assertNamedParameters("SELECT *, 1::TEXT FROM foobar f WHERE f.id = :id AND /* comment :notparameter */ f.qwerty = :bar*/snafu*/ AND f.literal = 'laalaa :pai puppa' AND f.test =:test /*what*/   /*  */ -- ef  ",
                 "SELECT *, 1::TEXT FROM foobar f WHERE f.id = ? AND /* comment :notparameter */ f.qwerty = ?*/snafu*/ AND f.literal = 'laalaa :pai puppa' AND f.test =? /*what*/   /*  */ -- ef  ",
-                asList("id", "bar", "test"));
+                listOf("id", "bar", "test"))
     }
 
     @Test
-    public void quotedStrings() {
-        assertNamedParameters("select 'foo '' :bar'", "select 'foo '' :bar'", emptyList());
+    fun quotedStrings() {
+        assertNamedParameters("select 'foo '' :bar'", "select 'foo '' :bar'", emptyList<String>())
     }
 
     @Test
-    public void doubleQuotes() {
-        assertNamedParameters("select \" :bar  \"", "select \" :bar  \"", emptyList());
+    fun doubleQuotes() {
+        assertNamedParameters("select \" :bar  \"", "select \" :bar  \"", emptyList<String>())
     }
 
-    private static void assertNamedParameters(@SQL String sql, @SQL String expected, List<String> parameters) {
-        NamedParameterSql result = NamedParameterSqlParser.parseSqlStatement(sql);
+    private fun assertNamedParameters(@SQL sql: String, @SQL expected: String, parameters: List<String>) {
+        val result = NamedParameterSqlParser.parseSqlStatement(sql)
 
-        assertThat(result.getSql(), is(expected));
-        assertThat(result.getParameterNames(), is(parameters));
+        assertEquals(expected, result.sql)
+        assertEquals(parameters, result.parameterNames)
     }
 }

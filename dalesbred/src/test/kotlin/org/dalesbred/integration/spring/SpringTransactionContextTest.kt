@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,12 +20,34 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.testutils;
+package org.dalesbred.integration.spring
 
+import org.dalesbred.TestDatabaseProvider
+import org.junit.Test
+import org.springframework.transaction.support.SimpleTransactionStatus
+import kotlin.test.assertEquals
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+class SpringTransactionContextTest {
 
-@Retention(RetentionPolicy.RUNTIME)
-public @interface SuppressLogging {
+    @Test
+    @Suppress("ConvertTryFinallyToUseCall") // 'use' does not actually work for java.sql.Connection
+    fun rollingBackDelegatesToOriginalContexts() {
+        val connection = TestDatabaseProvider.createInMemoryHSQLDataSource().connection
+        try {
+            val status = SimpleTransactionStatus()
+            val context = SpringTransactionContext(status, connection)
+
+            assertEquals(connection, context.connection)
+
+            assertEquals(false, context.isRollbackOnly)
+            assertEquals(false, status.isRollbackOnly)
+
+            context.setRollbackOnly()
+
+            assertEquals(true, context.isRollbackOnly)
+            assertEquals(true, status.isRollbackOnly)
+        } finally {
+            connection.close()
+        }
+    }
 }

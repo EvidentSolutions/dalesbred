@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,38 +20,34 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.testutils;
+package org.dalesbred.testutils
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
-import org.slf4j.LoggerFactory;
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.Logger
+import org.junit.rules.TestRule
+import org.junit.runner.Description
+import org.junit.runners.model.Statement
+import org.slf4j.LoggerFactory
 
 /**
  * A rule that allows logging to be controlled on level of individual tests.
  */
-public final class LoggingController implements TestRule {
-    @NotNull
-    @Override
-    public Statement apply(@NotNull Statement base, @NotNull Description description) {
-        if (description.getAnnotation(SuppressLogging.class) == null)
-            return base;
+class LoggingController : TestRule {
+    override fun apply(base: Statement, description: Description): Statement {
+        if (description.getAnnotation(SuppressLogging::class.java) == null)
+            return base
 
-        return new Statement() {
-            @Override
-            public void evaluate() throws Throwable {
-                Logger rootLogger = (Logger)LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-                Level oldLevel = rootLogger.getLevel();
+        return object : Statement() {
+            override fun evaluate() {
+                val rootLogger = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME) as Logger
+                val oldLevel = rootLogger.level
                 try {
-                    rootLogger.setLevel(Level.OFF);
-                    base.evaluate();
+                    rootLogger.level = Level.OFF
+                    base.evaluate()
                 } finally {
-                    rootLogger.setLevel(oldLevel);
+                    rootLogger.level = oldLevel
                 }
             }
-        };
+        }
     }
 }
