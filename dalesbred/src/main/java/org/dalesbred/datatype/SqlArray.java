@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,12 +39,10 @@ import static java.util.Objects.requireNonNull;
 public final class SqlArray {
 
     /** Database specific type name of the array */
-    @NotNull
-    private final String type;
+    private final @NotNull String type;
 
     /** Values for the array */
-    @NotNull
-    private final List<?> values;
+    private final @NotNull List<?> values;
 
     private SqlArray(@NotNull String type, @NotNull Collection<?> values) {
         this.type = requireNonNull(type);
@@ -57,8 +55,7 @@ public final class SqlArray {
      * @param type database type for the array
      * @param values for the array
      */
-    @NotNull
-    public static SqlArray of(@NotNull String type, @NotNull Collection<?> values) {
+    public static @NotNull SqlArray of(@NotNull String type, @NotNull Collection<?> values) {
         return new SqlArray(type, values);
     }
 
@@ -68,40 +65,35 @@ public final class SqlArray {
      * @param type database type for the array
      * @param values for the array
      */
-    @NotNull
-    public static SqlArray of(@NotNull String type, @NotNull Object[] values) {
+    public static @NotNull SqlArray of(@NotNull String type, @NotNull Object[] values) {
         return of(type, asList(values));
     }
 
     /**
      * Constructs varchar array of given values.
      */
-    @NotNull
-    public static SqlArray varchars(@NotNull Collection<String> values) {
+    public static @NotNull SqlArray varchars(@NotNull Collection<String> values) {
         return of("varchar", values);
     }
 
     /**
      * Constructs varchar array of given values.
      */
-    @NotNull
-    public static SqlArray varchars(@NotNull String... values) {
+    public static @NotNull SqlArray varchars(@NotNull String... values) {
         return varchars(asList(values));
     }
 
     /**
      * Returns the database type for the array.
      */
-    @NotNull
-    public String getType() {
+    public @NotNull String getType() {
         return type;
     }
 
     /**
      * Returns the values of the array.
      */
-    @NotNull
-    public List<?> getValues() {
+    public @NotNull List<?> getValues() {
         return values;
     }
 

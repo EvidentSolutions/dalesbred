@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,8 +40,7 @@ final class NamedParameterSqlParser {
 
     private static final Pattern IDENTIFIER_PATTERN = Pattern.compile("\\w+");
 
-    @NotNull
-    private final Lexer lexer;
+    private final @NotNull Lexer lexer;
     private final StringBuilder sqlBuilder;
     private final List<String> parameterNames = new ArrayList<>();
 
@@ -50,8 +49,7 @@ final class NamedParameterSqlParser {
         this.sqlBuilder = new StringBuilder(sql.length());
     }
 
-    @NotNull
-    public static NamedParameterSql parseSqlStatement(@NotNull @SQL String sql) {
+    public static @NotNull NamedParameterSql parseSqlStatement(@NotNull @SQL String sql) {
         NamedParameterSqlParser parser = new NamedParameterSqlParser(requireNonNull(sql));
 
         while (parser.lexer.hasMore())
@@ -80,8 +78,7 @@ final class NamedParameterSqlParser {
         }
     }
 
-    @NotNull
-    private String parseName() {
+    private @NotNull String parseName() {
         lexer.expect(":");
         CharSequence name = lexer.readRegexp(IDENTIFIER_PATTERN);
         if (name != null)
@@ -90,8 +87,7 @@ final class NamedParameterSqlParser {
             throw new SqlSyntaxException("SQL cannot end to named parameter without name", lexer.sql);
     }
 
-    @NotNull
-    public String readUntil(@NotNull String end) {
+    public @NotNull String readUntil(@NotNull String end) {
         int startOffset = lexer.offset;
 
         int nextHit = lexer.findNext(end);
@@ -126,8 +122,7 @@ final class NamedParameterSqlParser {
                 throw new SqlSyntaxException("expected '" + prefix + '\'', sql);
         }
 
-        @Nullable
-        private CharSequence readRegexp(@NotNull Pattern pattern) {
+        private @Nullable CharSequence readRegexp(@NotNull Pattern pattern) {
             Matcher matcher = pattern.matcher(this);
             if (matcher.lookingAt()) {
                 CharSequence result = subSequence(0, matcher.end());

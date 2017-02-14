@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,11 +40,9 @@ public final class DefaultTransactionManager extends AbstractTransactionManager 
     /**
      * The current active transaction of this thread, or null
      */
-    @NotNull
-    private final ThreadLocal<DefaultTransaction> activeTransaction = new ThreadLocal<>();
+    private final @NotNull ThreadLocal<DefaultTransaction> activeTransaction = new ThreadLocal<>();
 
-    @NotNull
-    private final ConnectionProvider connectionProvider;
+    private final @NotNull ConnectionProvider connectionProvider;
 
     public DefaultTransactionManager(@NotNull ConnectionProvider connectionProvider) {
         this.connectionProvider = requireNonNull(connectionProvider);
@@ -83,13 +81,11 @@ public final class DefaultTransactionManager extends AbstractTransactionManager 
     }
 
     @Override
-    @NotNull
-    protected Optional<DefaultTransaction> getActiveTransaction() {
+    protected @NotNull Optional<DefaultTransaction> getActiveTransaction() {
         return Optional.ofNullable(activeTransaction.get());
     }
 
-    @NotNull
-    private Connection openConnection(@NotNull Isolation isolation, @NotNull Dialect dialect) {
+    private @NotNull Connection openConnection(@NotNull Isolation isolation, @NotNull Dialect dialect) {
         try {
             Connection connection = connectionProvider.getConnection();
             connection.setAutoCommit(false);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,8 +31,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class DatabaseException extends RuntimeException {
 
-    @Nullable
-    private final SqlQuery query = DebugContext.getCurrentQuery();
+    private final @Nullable SqlQuery query = DebugContext.getCurrentQuery();
 
     public DatabaseException(@NotNull String message) {
         super(message);
@@ -50,14 +49,12 @@ public class DatabaseException extends RuntimeException {
      * If this exception was thrown during an execution of a query, returns the query. Otherwise
      * returns {@code null}.
      */
-    @Nullable
-    public SqlQuery getQuery() {
+    public @Nullable SqlQuery getQuery() {
         return query;
     }
 
-    @NotNull
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         String basicToString = super.toString();
         if (query != null)
             return basicToString + " (query: " + query + ')';

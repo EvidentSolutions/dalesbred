@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -64,37 +64,31 @@ import static org.dalesbred.transaction.TransactionCallback.fromVoidCallback;
 public final class Database {
 
     /** Class responsible for transaction handling */
-    @NotNull
-    private final TransactionManager transactionManager;
+    private final @NotNull TransactionManager transactionManager;
 
     /** Logger in which we log actions */
-    @NotNull
-    private final Logger log = LoggerFactory.getLogger(Database.class);
+    private final @NotNull Logger log = LoggerFactory.getLogger(Database.class);
 
     /** Should we create transactions implicitly when individual operations are invoked outside transaction */
     private boolean allowImplicitTransactions = true;
 
     /** The dialect that the database uses */
-    @NotNull
-    private final Dialect dialect;
+    private final @NotNull Dialect dialect;
 
     /** Contains the instantiators and data-converters */
-    @NotNull
-    private final InstantiatorProvider instantiatorRegistry;
+    private final @NotNull InstantiatorProvider instantiatorRegistry;
 
     /**
      * Returns a new Database that uses given {@link DataSource} to retrieve connections.
      */
-    @NotNull
-    public static Database forDataSource(@NotNull DataSource dataSource) {
+    public static @NotNull Database forDataSource(@NotNull DataSource dataSource) {
         return new Database(new DataSourceConnectionProvider(dataSource));
     }
 
     /**
      * Returns a new Database that uses {@link DataSource} with given JNDI-name.
      */
-    @NotNull
-    public static Database forJndiDataSource(@NotNull String jndiName) {
+    public static @NotNull Database forJndiDataSource(@NotNull String jndiName) {
         return forDataSource(JndiUtils.lookupJndiDataSource(jndiName));
     }
 
@@ -104,8 +98,7 @@ public final class Database {
      *
      * @see DriverManagerConnectionProvider
      */
-    @NotNull
-    public static Database forUrlAndCredentials(@NotNull String url, @Nullable String username, @Nullable String password) {
+    public static @NotNull Database forUrlAndCredentials(@NotNull String url, @Nullable String username, @Nullable String password) {
         return new Database(new DriverManagerConnectionProvider(url, username, password));
     }
 
@@ -303,8 +296,7 @@ public final class Database {
      * Executes a query and processes each row of the result with given {@link RowMapper}
      * to produce a list of results.
      */
-    @NotNull
-    public <T> List<T> findAll(@NotNull RowMapper<T> rowMapper, @NotNull SqlQuery query) {
+    public @NotNull <T> List<T> findAll(@NotNull RowMapper<T> rowMapper, @NotNull SqlQuery query) {
         return executeQuery(rowMapper.list(), query);
     }
 
@@ -312,24 +304,21 @@ public final class Database {
      * Executes a query and processes each row of the result with given {@link RowMapper}
      * to produce a list of results.
      */
-    @NotNull
-    public <T> List<T> findAll(@NotNull RowMapper<T> rowMapper, @NotNull @SQL String sql, Object... args) {
+    public @NotNull <T> List<T> findAll(@NotNull RowMapper<T> rowMapper, @NotNull @SQL String sql, Object... args) {
         return findAll(rowMapper, SqlQuery.query(sql, args));
     }
 
     /**
      * Executes a query and converts the results to instances of given class using default mechanisms.
      */
-    @NotNull
-    public <T> List<T> findAll(@NotNull Class<T> cl, @NotNull SqlQuery query) {
+    public @NotNull <T> List<T> findAll(@NotNull Class<T> cl, @NotNull SqlQuery query) {
         return executeQuery(resultProcessorForClass(cl), query);
     }
 
     /**
      * Executes a query and converts the results to instances of given class using default mechanisms.
      */
-    @NotNull
-    public <T> List<T> findAll(@NotNull Class<T> cl, @NotNull @SQL String sql, Object... args) {
+    public @NotNull <T> List<T> findAll(@NotNull Class<T> cl, @NotNull @SQL String sql, Object... args) {
         return findAll(cl, SqlQuery.query(sql, args));
     }
 
@@ -379,8 +368,7 @@ public final class Database {
      *
      * @throws NonUniqueResultException if there are multiple result rows
      */
-    @NotNull
-    public <T> Optional<T> findOptional(@NotNull RowMapper<T> rowMapper, @NotNull SqlQuery query) {
+    public @NotNull <T> Optional<T> findOptional(@NotNull RowMapper<T> rowMapper, @NotNull SqlQuery query) {
         return executeQuery(rowMapper.optional(), query);
     }
 
@@ -390,8 +378,7 @@ public final class Database {
      *
      * @throws NonUniqueResultException if there are multiple result rows
      */
-    @NotNull
-    public <T> Optional<T> findOptional(@NotNull RowMapper<T> rowMapper, @NotNull @SQL String sql, Object... args) {
+    public @NotNull <T> Optional<T> findOptional(@NotNull RowMapper<T> rowMapper, @NotNull @SQL String sql, Object... args) {
         return findOptional(rowMapper, SqlQuery.query(sql, args));
     }
 
@@ -401,8 +388,7 @@ public final class Database {
      *
      * @throws NonUniqueResultException if there are multiple result rows
      */
-    @NotNull
-    public <T> Optional<T> findOptional(@NotNull Class<T> cl, @NotNull SqlQuery query) {
+    public @NotNull <T> Optional<T> findOptional(@NotNull Class<T> cl, @NotNull SqlQuery query) {
         return executeQuery(rowMapperForClass(cl).optional(), query);
     }
 
@@ -412,8 +398,7 @@ public final class Database {
      *
      * @throws NonUniqueResultException if there are multiple result rows
      */
-    @NotNull
-    public <T> Optional<T> findOptional(@NotNull Class<T> cl, @NotNull @SQL String sql, Object... args) {
+    public @NotNull <T> Optional<T> findOptional(@NotNull Class<T> cl, @NotNull @SQL String sql, Object... args) {
         return findOptional(cl, SqlQuery.query(sql, args));
     }
 
@@ -423,8 +408,7 @@ public final class Database {
      *
      * @throws NonUniqueResultException if there are multiple result rows
      */
-    @NotNull
-    public OptionalInt findOptionalInt(@NotNull @SQL String sql, Object... args) {
+    public @NotNull OptionalInt findOptionalInt(@NotNull @SQL String sql, Object... args) {
         return findOptionalInt(SqlQuery.query(sql, args));
     }
 
@@ -434,8 +418,7 @@ public final class Database {
      *
      * @throws NonUniqueResultException if there are multiple result rows
      */
-    @NotNull
-    public OptionalInt findOptionalInt(@NotNull SqlQuery query) {
+    public @NotNull OptionalInt findOptionalInt(@NotNull SqlQuery query) {
         Optional<Integer> value = findOptional(Integer.class, query);
         return value.isPresent() ? OptionalInt.of(value.get()) : OptionalInt.empty();
     }
@@ -446,8 +429,7 @@ public final class Database {
      *
      * @throws NonUniqueResultException if there are multiple result rows
      */
-    @NotNull
-    public OptionalLong findOptionalLong(@NotNull @SQL String sql, Object... args) {
+    public @NotNull OptionalLong findOptionalLong(@NotNull @SQL String sql, Object... args) {
         return findOptionalLong(SqlQuery.query(sql, args));
     }
 
@@ -457,8 +439,7 @@ public final class Database {
      *
      * @throws NonUniqueResultException if there are multiple result rows
      */
-    @NotNull
-    public OptionalLong findOptionalLong(@NotNull SqlQuery query) {
+    public @NotNull OptionalLong findOptionalLong(@NotNull SqlQuery query) {
         Optional<Long> value = findOptional(Long.class, query);
         return value.isPresent() ? OptionalLong.of(value.get()) : OptionalLong.empty();
     }
@@ -469,8 +450,7 @@ public final class Database {
      *
      * @throws NonUniqueResultException if there are multiple result rows
      */
-    @NotNull
-    public OptionalDouble findOptionalDouble(@NotNull @SQL String sql, Object... args) {
+    public @NotNull OptionalDouble findOptionalDouble(@NotNull @SQL String sql, Object... args) {
         return findOptionalDouble(SqlQuery.query(sql, args));
     }
 
@@ -480,8 +460,7 @@ public final class Database {
      *
      * @throws NonUniqueResultException if there are multiple result rows
      */
-    @NotNull
-    public OptionalDouble findOptionalDouble(@NotNull SqlQuery query) {
+    public @NotNull OptionalDouble findOptionalDouble(@NotNull SqlQuery query) {
         Optional<Double> value = findOptional(Double.class, query);
         return value.isPresent() ? OptionalDouble.of(value.get()) : OptionalDouble.empty();
     }
@@ -489,32 +468,28 @@ public final class Database {
     /**
      * Alias for {@code findOptional(rowMapper, query).orElse(null)}.
      */
-    @Nullable
-    public <T> T findUniqueOrNull(@NotNull RowMapper<T> rowMapper, @NotNull SqlQuery query) {
+    public @Nullable <T> T findUniqueOrNull(@NotNull RowMapper<T> rowMapper, @NotNull SqlQuery query) {
         return findOptional(rowMapper, query).orElse(null);
     }
 
     /**
      * Alias for {findUniqueOrNull(rowMapper, SqlQuery.query(sql, args))}.
      */
-    @Nullable
-    public <T> T findUniqueOrNull(@NotNull RowMapper<T> rowMapper, @NotNull @SQL String sql, Object... args) {
+    public @Nullable <T> T findUniqueOrNull(@NotNull RowMapper<T> rowMapper, @NotNull @SQL String sql, Object... args) {
         return findUniqueOrNull(rowMapper, SqlQuery.query(sql, args));
     }
 
     /**
      * Alias for {@code findOptional(cl, query).orElse(null)}.
      */
-    @Nullable
-    public <T> T findUniqueOrNull(@NotNull Class<T> cl, @NotNull SqlQuery query) {
+    public @Nullable <T> T findUniqueOrNull(@NotNull Class<T> cl, @NotNull SqlQuery query) {
         return findOptional(cl, query).orElse(null);
     }
 
     /**
      * Alias for {@code findOptional(cl, sql, args).orElse(null)}.
      */
-    @Nullable
-    public <T> T findUniqueOrNull(@NotNull Class<T> cl, @NotNull @SQL String sql, Object... args) {
+    public @Nullable <T> T findUniqueOrNull(@NotNull Class<T> cl, @NotNull @SQL String sql, Object... args) {
         return findOptional(cl, sql, args).orElse(null);
     }
 
@@ -584,8 +559,7 @@ public final class Database {
      *
      * <p>If the keys of the result are not distinct, the result contains the last binding of given key.
      */
-    @NotNull
-    public <K,V> Map<K, V> findMap(@NotNull Class<K> keyType,
+    public @NotNull <K,V> Map<K, V> findMap(@NotNull Class<K> keyType,
                                    @NotNull Class<V> valueType,
                                    @NotNull SqlQuery query) {
         return executeQuery(new MapResultSetProcessor<>(keyType, valueType, instantiatorRegistry), query);
@@ -597,8 +571,7 @@ public final class Database {
      *
      * <p>If the keys of the result are not distinct, the result contains the last binding of given key.
      */
-    @NotNull
-    public <K,V> Map<K, V> findMap(@NotNull Class<K> keyType,
+    public @NotNull <K,V> Map<K, V> findMap(@NotNull Class<K> keyType,
                                    @NotNull Class<V> valueType,
                                    @NotNull @SQL String sql,
                                    Object... args) {
@@ -608,16 +581,14 @@ public final class Database {
     /**
      * Executes a query and creates a {@link ResultTable} from the results.
      */
-    @NotNull
-    public ResultTable findTable(@NotNull SqlQuery query) {
+    public @NotNull ResultTable findTable(@NotNull SqlQuery query) {
         return executeQuery(new ResultTableResultSetProcessor(), query);
     }
 
     /**
      * Executes a query and creates a {@link ResultTable} from the results.
      */
-    @NotNull
-    public ResultTable findTable(@NotNull @SQL String sql, Object... args) {
+    public @NotNull ResultTable findTable(@NotNull @SQL String sql, Object... args) {
         return findTable(SqlQuery.query(sql, args));
     }
 
@@ -671,8 +642,7 @@ public final class Database {
         });
     }
 
-    @NotNull
-    private static PreparedStatement prepareStatement(@NotNull Connection connection, @NotNull String sql, @NotNull List<String> columnNames) throws SQLException {
+    private static @NotNull PreparedStatement prepareStatement(@NotNull Connection connection, @NotNull String sql, @NotNull List<String> columnNames) throws SQLException {
         if (columnNames.isEmpty())
             return connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         else
@@ -760,21 +730,18 @@ public final class Database {
             dialect.bindArgument(ps, i++, instantiatorRegistry.valueToDatabase(unwrapOptionalAsNull(arg)));
     }
 
-    @NotNull
-    private <T> ResultSetProcessor<List<T>> resultProcessorForClass(@NotNull Class<T> cl) {
+    private @NotNull <T> ResultSetProcessor<List<T>> resultProcessorForClass(@NotNull Class<T> cl) {
         return rowMapperForClass(cl).list();
     }
 
-    @NotNull
-    private <T> RowMapper<T> rowMapperForClass(@NotNull Class<T> cl) {
+    private @NotNull <T> RowMapper<T> rowMapperForClass(@NotNull Class<T> cl) {
         return new InstantiatorRowMapper<>(cl, instantiatorRegistry);
     }
 
     /**
      * Returns {@link TypeConversionRegistry} that can be used to register new type-conversions.
      */
-    @NotNull
-    public TypeConversionRegistry getTypeConversionRegistry() {
+    public @NotNull TypeConversionRegistry getTypeConversionRegistry() {
         return instantiatorRegistry.getTypeConversionRegistry();
     }
 
@@ -798,8 +765,7 @@ public final class Database {
      * Returns a string containing useful debug information about the state of this object.
      */
     @Override
-    @NotNull
-    public String toString() {
+    public @NotNull String toString() {
         return "Database [dialect=" + dialect + ", allowImplicitTransactions=" + allowImplicitTransactions + ']';
     }
 }

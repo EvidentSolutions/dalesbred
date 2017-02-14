@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,11 +43,9 @@ abstract class PropertyAccessor {
 
     abstract Type getType();
 
-    @NotNull
-    private static final Pattern PERIOD = Pattern.compile("\\.");
+    private static final @NotNull Pattern PERIOD = Pattern.compile("\\.");
 
-    @NotNull
-    static Optional<PropertyAccessor> findAccessor(@NotNull Class<?> cl, @NotNull String path) {
+    static @NotNull Optional<PropertyAccessor> findAccessor(@NotNull Class<?> cl, @NotNull String path) {
         String[] segments = PERIOD.split(path, -1);
 
         assert segments.length != 0; // split will always return non-empty array
@@ -78,8 +76,7 @@ abstract class PropertyAccessor {
         return accessor.map(a -> new NestedPathAccessor(readers, path, a));
     }
 
-    @NotNull
-    private static Optional<PropertyAccessor> findFinalAccessor(@NotNull Class<?> currentClass, @NotNull String name) {
+    private static @NotNull Optional<PropertyAccessor> findFinalAccessor(@NotNull Class<?> currentClass, @NotNull String name) {
         Optional<PropertyAccessor> setter = findSetter(currentClass, name).map(SetterPropertyAccessor::new);
 
         if (setter.isPresent()) {
@@ -89,8 +86,7 @@ abstract class PropertyAccessor {
         }
     }
 
-    @NotNull
-    private static Optional<Field> findField(@NotNull Class<?> cl, @NotNull String name) {
+    private static @NotNull Optional<Field> findField(@NotNull Class<?> cl, @NotNull String name) {
         Field result = null;
 
         for (Field field : cl.getFields())
@@ -103,18 +99,15 @@ abstract class PropertyAccessor {
         return Optional.ofNullable(result);
     }
 
-    @NotNull
-    private static Optional<Method> findSetter(@NotNull Class<?> cl, @NotNull String name) {
+    private static @NotNull Optional<Method> findSetter(@NotNull Class<?> cl, @NotNull String name) {
         return findGetterOrSetter(cl, name, false);
     }
 
-    @NotNull
-    private static Optional<Method> findGetter(@NotNull Class<?> cl, @NotNull String name) {
+    private static @NotNull Optional<Method> findGetter(@NotNull Class<?> cl, @NotNull String name) {
         return findGetterOrSetter(cl, name, true);
     }
 
-    @NotNull
-    private static Optional<Method> findGetterOrSetter(@NotNull Class<?> cl, @NotNull String propertyName, boolean getter) {
+    private static @NotNull Optional<Method> findGetterOrSetter(@NotNull Class<?> cl, @NotNull String propertyName, boolean getter) {
         String methodName = (getter ? "get" : "set") + propertyName;
         int parameterCount = getter ? 0 : 1;
         Method result = null;
@@ -133,15 +126,13 @@ abstract class PropertyAccessor {
         return Optional.ofNullable(result);
     }
 
-    @NotNull
-    public static Optional<Type> findPropertyType(@NotNull Class<?> cl, @NotNull String name) {
+    public static @NotNull Optional<Type> findPropertyType(@NotNull Class<?> cl, @NotNull String name) {
         return findAccessor(cl, name).map(PropertyAccessor::getType);
     }
 
     private static final class FieldPropertyAccessor extends PropertyAccessor {
 
-        @NotNull
-        private final Field field;
+        private final @NotNull Field field;
 
         private FieldPropertyAccessor(@NotNull Field field) {
             this.field = field;
@@ -164,8 +155,7 @@ abstract class PropertyAccessor {
 
     private static final class SetterPropertyAccessor extends PropertyAccessor {
 
-        @NotNull
-        private final Method setter;
+        private final @NotNull Method setter;
 
         private SetterPropertyAccessor(@NotNull Method setter) {
             this.setter = setter;
@@ -188,14 +178,11 @@ abstract class PropertyAccessor {
 
     private static final class NestedPathAccessor extends PropertyAccessor {
 
-        @NotNull
-        private final PropertyReader[] readers;
+        private final @NotNull PropertyReader[] readers;
 
-        @NotNull
-        private final String path;
+        private final @NotNull String path;
 
-        @NotNull
-        private final PropertyAccessor accessor;
+        private final @NotNull PropertyAccessor accessor;
 
         public NestedPathAccessor(@NotNull PropertyReader[] readers, @NotNull String path, @NotNull PropertyAccessor accessor) {
             this.readers = readers;
@@ -213,8 +200,7 @@ abstract class PropertyAccessor {
             accessor.set(resolveFinalObject(object), value);
         }
 
-        @NotNull
-        private Object resolveFinalObject(@NotNull Object object) {
+        private @NotNull Object resolveFinalObject(@NotNull Object object) {
             try {
                 Object obj = object;
 

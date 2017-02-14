@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,8 +33,7 @@ import static org.dalesbred.internal.utils.TypeUtils.*;
 
 final class ConversionMap {
 
-    @NotNull
-    private final Map<Type, List<ConversionRegistration>> mappings = new HashMap<>();
+    private final @NotNull Map<Type, List<ConversionRegistration>> mappings = new HashMap<>();
 
     void register(@NotNull Type source, @NotNull Type target, @NotNull TypeConversion conversion) {
         mappings.computeIfAbsent(wrap(source), a -> new ArrayList<>()).add(new ConversionRegistration(target, conversion));
@@ -57,8 +56,7 @@ final class ConversionMap {
         return Optional.empty();
     }
 
-    @NotNull
-    private Optional<TypeConversion> findConversionsRegisteredFor(@NotNull Type source, @NotNull Type target) {
+    private @NotNull Optional<TypeConversion> findConversionsRegisteredFor(@NotNull Type source, @NotNull Type target) {
         List<ConversionRegistration> candidates = mappings.getOrDefault(source, emptyList());
 
         for (int i = candidates.size() - 1; i >= 0; i--) {
@@ -72,11 +70,9 @@ final class ConversionMap {
 
     private static final class ConversionRegistration {
 
-        @NotNull
-        private final Type target;
+        private final @NotNull Type target;
 
-        @NotNull
-        private final TypeConversion conversion;
+        private final @NotNull TypeConversion conversion;
 
         private ConversionRegistration(@NotNull Type target, @NotNull TypeConversion conversion) {
             this.target = target;

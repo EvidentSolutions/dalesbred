@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,9 +39,8 @@ import static org.dalesbred.internal.jdbc.ResultSetUtils.getColumnType;
  */
 public final class ResultTableResultSetProcessor implements ResultSetProcessor<ResultTable> {
 
-    @NotNull
     @Override
-    public ResultTable process(@NotNull ResultSet resultSet) throws SQLException {
+    public @NotNull ResultTable process(@NotNull ResultSet resultSet) throws SQLException {
         ResultSetMetaData metaData = resultSet.getMetaData();
         int columnCount = metaData.getColumnCount();
 
@@ -58,8 +57,7 @@ public final class ResultTableResultSetProcessor implements ResultSetProcessor<R
         return builder.build();
     }
 
-    @NotNull
-    private static ResultTable.Builder createBuilder(@NotNull ResultSetMetaData metaData) throws SQLException {
+    private static @NotNull ResultTable.Builder createBuilder(@NotNull ResultSetMetaData metaData) throws SQLException {
         int columnCount = metaData.getColumnCount();
         ColumnMetadata[] result = new ColumnMetadata[columnCount];
 

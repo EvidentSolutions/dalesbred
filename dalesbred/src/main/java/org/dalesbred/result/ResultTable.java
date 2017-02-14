@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,11 +40,9 @@ import static org.dalesbred.internal.utils.CollectionUtils.mapToList;
  */
 public final class ResultTable implements Iterable<ResultTable.ResultRow> {
 
-    @NotNull
-    private final List<ColumnMetadata> columns;
+    private final @NotNull List<ColumnMetadata> columns;
 
-    @NotNull
-    private final List<ResultRow> rows;
+    private final @NotNull List<ResultRow> rows;
 
     private ResultTable(@NotNull List<ColumnMetadata> columns, @NotNull List<ResultRow> rows) {
         this.columns = unmodifiableList(columns);
@@ -73,40 +71,33 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
         return rows.get(row).get(column);
     }
 
-    @NotNull
-    public List<ResultRow> getRows() {
+    public @NotNull List<ResultRow> getRows() {
         return rows;
     }
 
-    @NotNull
-    public List<ColumnMetadata> getColumns() {
+    public @NotNull List<ColumnMetadata> getColumns() {
         return columns;
     }
 
-    @NotNull
-    public List<String> getColumnNames() {
+    public @NotNull List<String> getColumnNames() {
         return mapToList(columns, ColumnMetadata::getName);
     }
 
-    @NotNull
-    public List<Type> getColumnTypes() {
+    public @NotNull List<Type> getColumnTypes() {
         return mapToList(columns, ColumnMetadata::getType);
     }
 
-    @NotNull
-    public List<Class<?>> getRawColumnTypes() {
+    public @NotNull List<Class<?>> getRawColumnTypes() {
         return mapToList(columns, ColumnMetadata::getRawType);
     }
 
     @Override
-    @NotNull
-    public Iterator<ResultRow> iterator() {
+    public @NotNull Iterator<ResultRow> iterator() {
         return rows.iterator();
     }
 
     @Override
-    @NotNull
-    public String toString() {
+    public @NotNull String toString() {
         return "ResultTable [columns=" + columns + ", rows=" + rows.size() + ']';
     }
 
@@ -132,16 +123,14 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
         }
 
         @Override
-        @NotNull
-        public Iterator<Object> iterator() {
+        public @NotNull Iterator<Object> iterator() {
             return values.iterator();
         }
 
         /**
          * Returns a list containing the values of this row.
          */
-        @NotNull
-        public List<Object> asList() {
+        public @NotNull List<Object> asList() {
             return values;
         }
 
@@ -149,8 +138,7 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
          * Returns a string representation of this row.
          */
         @Override
-        @NotNull
-        public String toString() {
+        public @NotNull String toString() {
             return values.toString();
         }
     }
@@ -183,24 +171,21 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
         /**
          * Returns the name of this column.
          */
-        @NotNull
-        public String getName() {
+        public @NotNull String getName() {
             return name;
         }
 
         /**
          * Returns the Java-type of this column.
          */
-        @NotNull
-        public Type getType() {
+        public @NotNull Type getType() {
             return type;
         }
 
         /**
          * Returns the raw Java-type of this column.
          */
-        @NotNull
-        public Class<?> getRawType() {
+        public @NotNull Class<?> getRawType() {
             return TypeUtils.rawType(type);
         }
 
@@ -216,14 +201,12 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
         /**
          * Returns the vendor-specific database type name for this column.
          */
-        @NotNull
-        public String getDatabaseType() {
+        public @NotNull String getDatabaseType() {
             return databaseType;
         }
 
-        @NotNull
         @Override
-        public String toString() {
+        public @NotNull String toString() {
             return name + ": " + type.getTypeName();
         }
     }
@@ -231,8 +214,7 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
     /**
      * Returns a builder for building a ResultTable for given columns.
      */
-    @NotNull
-    public static Builder builder(@NotNull List<ColumnMetadata> columns) {
+    public static @NotNull Builder builder(@NotNull List<ColumnMetadata> columns) {
         return new Builder(columns);
     }
 
@@ -242,8 +224,7 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
     public static class Builder {
 
         private final List<ColumnMetadata> columns;
-        @NotNull
-        private final ColumnIndices indices;
+        private final @NotNull ColumnIndices indices;
         private final List<ResultRow> rows = new ArrayList<>();
 
         public Builder(@NotNull List<ColumnMetadata> columns) {
@@ -258,8 +239,7 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
             rows.add(new ResultRow(row, indices));
         }
 
-        @NotNull
-        public ResultTable build() {
+        public @NotNull ResultTable build() {
             return new ResultTable(columns, rows);
         }
     }
@@ -271,8 +251,7 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
 
         // Just store the names as list. Since the amount of columns is usually small,
         // it's probably faster than HashMap and consumes a lot less memory.
-        @NotNull
-        private final String[] names;
+        private final @NotNull String[] names;
 
         ColumnIndices(@NotNull List<ColumnMetadata> columns) {
             names = new String[columns.size()];

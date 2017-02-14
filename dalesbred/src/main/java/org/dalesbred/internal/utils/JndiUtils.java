@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,8 +34,7 @@ public final class JndiUtils {
     private JndiUtils() {
     }
 
-    @NotNull
-    public static DataSource lookupJndiDataSource(@NotNull String jndiName) {
+    public static @NotNull DataSource lookupJndiDataSource(@NotNull String jndiName) {
         try {
             InitialContext ctx = new InitialContext();
             try {

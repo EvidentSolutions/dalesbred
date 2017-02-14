@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,11 +36,9 @@ import static java.util.Objects.requireNonNull;
 
 final class DefaultTransaction {
 
-    @NotNull
-    private final Connection connection;
+    private final @NotNull Connection connection;
 
-    @NotNull
-    private static final Logger log = LoggerFactory.getLogger(DefaultTransaction.class);
+    private static final @NotNull Logger log = LoggerFactory.getLogger(DefaultTransaction.class);
 
     DefaultTransaction(@NotNull Connection connection) {
         this.connection = requireNonNull(connection);

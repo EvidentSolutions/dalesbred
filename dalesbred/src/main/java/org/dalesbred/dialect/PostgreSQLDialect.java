@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,9 +38,8 @@ import java.util.function.Function;
  */
 public class PostgreSQLDialect extends Dialect {
 
-    @NotNull
     @Override
-    public <T extends Enum<T>, K> TypeConversionPair<Object,T> createNativeEnumConversions(@NotNull Class<T> enumType, @NotNull String typeName, @NotNull Function<T,K> keyFunction) {
+    public @NotNull <T extends Enum<T>, K> TypeConversionPair<Object,T> createNativeEnumConversions(@NotNull Class<T> enumType, @NotNull String typeName, @NotNull Function<T,K> keyFunction) {
         return new TypeConversionPair<Object, T>() {
             @Override
             public Object convertToDatabase(T obj) {
@@ -55,8 +54,7 @@ public class PostgreSQLDialect extends Dialect {
         };
     }
 
-    @NotNull
-    private Object createPgObject(@NotNull String value, @NotNull String typeName) {
+    private @NotNull Object createPgObject(@NotNull String value, @NotNull String typeName) {
         try {
             PGobject object = new PGobject();
             object.setType(typeName);

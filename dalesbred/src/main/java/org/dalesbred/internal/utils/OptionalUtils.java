@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,8 +39,7 @@ public final class OptionalUtils {
      * If object is an empty optional-type, return null. If object is non-empty
      * optional-type, return its value. Otherwise return object as it is.
      */
-    @Nullable
-    public static Object unwrapOptionalAsNull(@Nullable Object o) {
+    public static @Nullable Object unwrapOptionalAsNull(@Nullable Object o) {
         return o instanceof Optional<?> ? unwrap((Optional<?>) o)
                 : o instanceof OptionalInt ? unwrap((OptionalInt) o)
                 : o instanceof OptionalLong ? unwrap((OptionalLong) o)
@@ -48,38 +47,31 @@ public final class OptionalUtils {
                 : o;
     }
 
-    @Nullable
-    private static <T> T unwrap(@NotNull Optional<T> o) {
+    private static @Nullable <T> T unwrap(@NotNull Optional<T> o) {
         return o.orElse(null);
     }
 
-    @Nullable
-    private static Object unwrap(@NotNull OptionalInt o) {
+    private static @Nullable Object unwrap(@NotNull OptionalInt o) {
         return o.isPresent() ? o.getAsInt() : null;
     }
 
-    @Nullable
-    private static Object unwrap(@NotNull OptionalLong o) {
+    private static @Nullable Object unwrap(@NotNull OptionalLong o) {
         return o.isPresent() ? o.getAsLong() : null;
     }
 
-    @Nullable
-    private static Object unwrap(@NotNull OptionalDouble o) {
+    private static @Nullable Object unwrap(@NotNull OptionalDouble o) {
         return o.isPresent() ? o.getAsDouble() : null;
     }
 
-    @NotNull
-    public static OptionalInt optionalIntOfNullable(@Nullable Integer v) {
+    public static @NotNull OptionalInt optionalIntOfNullable(@Nullable Integer v) {
         return v != null ? OptionalInt.of(v) : OptionalInt.empty();
     }
 
-    @NotNull
-    public static OptionalLong optionalLongOfNullable(@Nullable Long v) {
+    public static @NotNull OptionalLong optionalLongOfNullable(@Nullable Long v) {
         return v != null ? OptionalLong.of(v) : OptionalLong.empty();
     }
 
-    @NotNull
-    public static OptionalDouble optionalDoubleOfNullable(@Nullable Double v) {
+    public static @NotNull OptionalDouble optionalDoubleOfNullable(@Nullable Double v) {
         return v != null ? OptionalDouble.of(v) : OptionalDouble.empty();
     }
 }

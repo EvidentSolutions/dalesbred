@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,14 +35,11 @@ import static java.util.Objects.requireNonNull;
  */
 final class ReflectionInstantiator<T> implements Instantiator<T> {
 
-    @NotNull
-    private final Constructor<T> constructor;
+    private final @NotNull Constructor<T> constructor;
 
-    @NotNull
-    private final List<TypeConversion> conversions;
+    private final @NotNull List<TypeConversion> conversions;
 
-    @NotNull
-    private final List<PropertyAccessor> accessors;
+    private final @NotNull List<PropertyAccessor> accessors;
 
     private final int constructorParameterCount;
 
@@ -56,8 +53,7 @@ final class ReflectionInstantiator<T> implements Instantiator<T> {
     }
 
     @Override
-    @NotNull
-    public T instantiate(@NotNull InstantiatorArguments arguments) {
+    public @NotNull T instantiate(@NotNull InstantiatorArguments arguments) {
         try {
             T value = constructor.newInstance(constructorArguments(arguments.getValues()));
             bindRemainingProperties(value, arguments);
@@ -78,8 +74,7 @@ final class ReflectionInstantiator<T> implements Instantiator<T> {
         }
     }
 
-    @NotNull
-    private Object[] constructorArguments(@NotNull List<?> arguments) {
+    private @NotNull Object[] constructorArguments(@NotNull List<?> arguments) {
         Object[] result = new Object[constructorParameterCount];
 
         for (int i = 0; i < result.length; i++)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,13 +37,11 @@ public final class CollectionUtils {
 
     private CollectionUtils() { }
 
-    @NotNull
-    public static <A,B> List<B> mapToList(@NotNull Collection<? extends A> xs, @NotNull Function<? super A, ? extends B> mapper) {
+    public static @NotNull <A,B> List<B> mapToList(@NotNull Collection<? extends A> xs, @NotNull Function<? super A, ? extends B> mapper) {
         return xs.stream().map(mapper).collect(toListWithCapacity(xs.size()));
     }
 
-    @NotNull
-    public static Object arrayOfType(@NotNull Class<?> elementType, @NotNull List<?> values) {
+    public static @NotNull Object arrayOfType(@NotNull Class<?> elementType, @NotNull List<?> values) {
         int length = values.size();
 
         Object result = Array.newInstance(elementType, length);
@@ -53,8 +51,7 @@ public final class CollectionUtils {
         return result;
     }
 
-    @NotNull
-    private static <T> Collector<T, ?, ArrayList<T>> toListWithCapacity(int capacity) {
+    private static @NotNull <T> Collector<T, ?, ArrayList<T>> toListWithCapacity(int capacity) {
         return toCollection(() -> new ArrayList<>(capacity));
     }
 }

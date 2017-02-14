@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,14 +34,11 @@ import static java.util.Objects.requireNonNull;
  */
 public final class TransactionSettings {
 
-    @NotNull
-    private Propagation propagation = Propagation.REQUIRED;
+    private @NotNull Propagation propagation = Propagation.REQUIRED;
 
-    @NotNull
-    private Isolation isolation = Isolation.DEFAULT;
+    private @NotNull Isolation isolation = Isolation.DEFAULT;
 
-    @NotNull
-    public Propagation getPropagation() {
+    public @NotNull Propagation getPropagation() {
         return propagation;
     }
 
@@ -52,8 +49,7 @@ public final class TransactionSettings {
         this.propagation = requireNonNull(propagation);
     }
 
-    @NotNull
-    public Isolation getIsolation() {
+    public @NotNull Isolation getIsolation() {
         return isolation;
     }
 
@@ -64,9 +60,8 @@ public final class TransactionSettings {
         this.isolation = isolation;
     }
 
-    @NotNull
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return "[propagation=" + propagation + ", isolation=" + isolation + ']';
     }
 }

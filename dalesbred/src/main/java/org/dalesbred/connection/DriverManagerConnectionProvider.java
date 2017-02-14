@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,14 +35,11 @@ import java.sql.SQLException;
  */
 public final class DriverManagerConnectionProvider implements ConnectionProvider {
 
-    @NotNull
-    private final String url;
+    private final @NotNull String url;
 
-    @Nullable
-    private final String user;
+    private final @Nullable String user;
 
-    @Nullable
-    private final String password;
+    private final @Nullable String password;
 
     public DriverManagerConnectionProvider(@NotNull String url, @Nullable String user, @Nullable String password) {
         this.url = url;
@@ -50,9 +47,8 @@ public final class DriverManagerConnectionProvider implements ConnectionProvider
         this.password = password;
     }
 
-    @NotNull
     @Override
-    public Connection getConnection() throws SQLException {
+    public @NotNull Connection getConnection() throws SQLException {
         return DriverManager.getConnection(url, user, password);
     }
 

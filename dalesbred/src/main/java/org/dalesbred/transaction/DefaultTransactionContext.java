@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,8 +30,7 @@ import static java.util.Objects.requireNonNull;
 
 final class DefaultTransactionContext implements TransactionContext {
 
-    @NotNull
-    private final Connection connection;
+    private final @NotNull Connection connection;
     private boolean rollbackOnly = false;
 
     DefaultTransactionContext(@NotNull Connection connection) {
@@ -42,8 +41,7 @@ final class DefaultTransactionContext implements TransactionContext {
      * Returns the raw JDBC-connection for this transaction.
      */
     @Override
-    @NotNull
-    public Connection getConnection() {
+    public @NotNull Connection getConnection() {
         return connection;
     }
 

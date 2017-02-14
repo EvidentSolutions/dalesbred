@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,8 +36,7 @@ public final class ReflectionUtils {
     private ReflectionUtils() {
     }
 
-    @NotNull
-    public static Optional<Field> findField(@NotNull Class<?> cl, @NotNull String name) {
+    public static @NotNull Optional<Field> findField(@NotNull Class<?> cl, @NotNull String name) {
         try {
             return Optional.of(cl.getField(name));
         } catch (NoSuchFieldException e) {
@@ -45,8 +44,7 @@ public final class ReflectionUtils {
         }
     }
 
-    @NotNull
-    public static Optional<Method> findGetter(@NotNull Class<?> cl, @NotNull String propertyName) {
+    public static @NotNull Optional<Method> findGetter(@NotNull Class<?> cl, @NotNull String propertyName) {
         String capitalizedName = StringUtils.capitalize(propertyName);
 
         try {

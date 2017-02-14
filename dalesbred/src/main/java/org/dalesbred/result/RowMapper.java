@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -48,8 +48,7 @@ public interface RowMapper<T> {
      * Creates a {@link ResultSetProcessor} that applies this row-mapper to every row
      * and results a list.
      */
-    @NotNull
-    default ResultSetProcessor<List<T>> list() {
+    default @NotNull ResultSetProcessor<List<T>> list() {
         return resultSet -> {
             List<T> result = new ArrayList<>();
 
@@ -63,8 +62,7 @@ public interface RowMapper<T> {
     /**
      * Creates a {@link ResultSetProcessor} that expects a single result row from database.
      */
-    @NotNull
-    default ResultSetProcessor<T> unique() {
+    default @NotNull ResultSetProcessor<T> unique() {
         return resultSet -> {
             if (!resultSet.next())
                 throw new EmptyResultException();
@@ -81,8 +79,7 @@ public interface RowMapper<T> {
     /**
      * Creates a {@link ResultSetProcessor} that no rows or single row from database.
      */
-    @NotNull
-    default ResultSetProcessor<Optional<T>> optional() {
+    default @NotNull ResultSetProcessor<Optional<T>> optional() {
         return resultSet -> {
             if (!resultSet.next())
                 return Optional.empty();

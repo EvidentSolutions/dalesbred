@@ -50,9 +50,8 @@ public class TestDatabaseProviderTest {
     }
 
     private static final class UppercaseDialect extends DefaultDialect {
-        @NotNull
         @Override
-        public Object valueToDatabase(@NotNull Object value) {
+        public @NotNull Object valueToDatabase(@NotNull Object value) {
             return value.toString().toUpperCase();
         }
     }

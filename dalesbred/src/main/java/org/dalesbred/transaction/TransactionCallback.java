@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,8 +41,7 @@ public interface TransactionCallback<T> {
     /**
      * Converts {@code VoidTransactionCallback} to {@code TransactionCallback<Void>}
      */
-    @NotNull
-    static TransactionCallback<Void> fromVoidCallback(@NotNull VoidTransactionCallback callback) {
+    static @NotNull TransactionCallback<Void> fromVoidCallback(@NotNull VoidTransactionCallback callback) {
         return tx -> {
             callback.execute(tx);
             //noinspection ReturnOfNull

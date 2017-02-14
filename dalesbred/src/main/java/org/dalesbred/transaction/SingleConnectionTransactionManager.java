@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,11 +41,9 @@ import static java.util.Objects.requireNonNull;
  */
 public final class SingleConnectionTransactionManager extends AbstractTransactionManager {
 
-    @NotNull
-    private final Connection connection;
+    private final @NotNull Connection connection;
 
-    @NotNull
-    private Optional<DefaultTransaction> currentTransaction;
+    private @NotNull Optional<DefaultTransaction> currentTransaction;
 
     /**
      * Constructs a transaction manager that uses given connection.
@@ -60,9 +58,8 @@ public final class SingleConnectionTransactionManager extends AbstractTransactio
         currentTransaction = insideForeignTransaction ? Optional.of(new DefaultTransaction(connection)) : Optional.empty();
     }
 
-    @NotNull
     @Override
-    protected Optional<DefaultTransaction> getActiveTransaction() {
+    protected @NotNull Optional<DefaultTransaction> getActiveTransaction() {
         return currentTransaction;
     }
 

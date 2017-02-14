@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,35 +32,30 @@ import java.util.function.Function;
  */
 public class TypeConversion {
 
-    @NotNull
-    private final Function<Object,Object> conversion;
+    private final @NotNull Function<Object,Object> conversion;
 
     @SuppressWarnings("unchecked")
     private TypeConversion(@NotNull Function<?, ?> conversion) {
         this.conversion = (Function<Object,Object>) conversion;
     }
 
-    @NotNull
-    public static <S,T> TypeConversion fromNonNullFunction(@NotNull Function<S, T> function) {
+    public static @NotNull <S,T> TypeConversion fromNonNullFunction(@NotNull Function<S, T> function) {
         return new TypeConversion((S value) -> value != null ? function.apply(value) : null);
     }
 
     /**
      * Returns identity-conversion, ie. a conversion that does nothing.
      */
-    @NotNull
-    public static TypeConversion identity() {
+    public static @NotNull TypeConversion identity() {
         return new TypeConversion(Function.identity());
     }
 
-    @Nullable
-    public Object convert(@Nullable Object value) {
+    public @Nullable Object convert(@Nullable Object value) {
         return conversion.apply(value);
     }
 
     @SuppressWarnings("unchecked")
-    @NotNull
-    public TypeConversion compose(@NotNull Function<?,?> function) {
+    public @NotNull TypeConversion compose(@NotNull Function<?,?> function) {
         return new TypeConversion(conversion.andThen((Function<Object,Object>) function));
     }
 }

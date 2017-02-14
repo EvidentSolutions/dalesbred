@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,11 +44,9 @@ import static org.dalesbred.junit.TransactionalTests.RollbackPolicy.*;
  */
 public final class TransactionalTests implements TestRule {
 
-    @NotNull
-    private final Provider<Database> db;
+    private final @NotNull Provider<Database> db;
 
-    @NotNull
-    private final RollbackPolicy rollbackPolicy;
+    private final @NotNull RollbackPolicy rollbackPolicy;
 
     /**
      * Specified the rollback-policy for tests.
@@ -92,9 +90,8 @@ public final class TransactionalTests implements TestRule {
         this.rollbackPolicy = requireNonNull(rollbackPolicy);
     }
 
-    @NotNull
     @Override
-    public Statement apply(@NotNull Statement base, @NotNull Description description) {
+    public @NotNull Statement apply(@NotNull Statement base, @NotNull Description description) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,8 +37,7 @@ public final class ResultSetUtils {
 
     private ResultSetUtils() { }
 
-    @NotNull
-    public static NamedTypeList getTypes(@NotNull ResultSetMetaData metaData) throws SQLException {
+    public static @NotNull NamedTypeList getTypes(@NotNull ResultSetMetaData metaData) throws SQLException {
         int columns = metaData.getColumnCount();
 
         NamedTypeList.Builder result = NamedTypeList.builder(columns);
@@ -49,8 +48,7 @@ public final class ResultSetUtils {
         return result.build();
     }
 
-    @NotNull
-    public static Type getColumnType(@NotNull ResultSetMetaData metaData, int column) throws SQLException {
+    public static @NotNull Type getColumnType(@NotNull ResultSetMetaData metaData, int column) throws SQLException {
         String className = metaData.getColumnClassName(column);
         try {
             return Class.forName(className);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -48,8 +48,7 @@ public interface VariableResolver {
     /**
      * Returns a {@link VariableResolver} that is backed by given map.
      */
-    @NotNull
-    static VariableResolver forMap(@NotNull Map<String, ?> variables) {
+    static @NotNull VariableResolver forMap(@NotNull Map<String, ?> variables) {
         return variable -> {
             Object value = variables.get(variable);
             if (value != null || variables.containsKey(variable))
@@ -63,8 +62,7 @@ public interface VariableResolver {
      * Returns a {@link VariableResolver} that is backed by given bean. When variables are looked up,
      * tries to find a matching getter or accessible field for the variable and returns its value.
      */
-    @NotNull
-    static VariableResolver forBean(@NotNull Object object) {
+    static @NotNull VariableResolver forBean(@NotNull Object object) {
         return variable -> {
             try {
                 Method getter = ReflectionUtils.findGetter(object.getClass(), variable).orElse(null);

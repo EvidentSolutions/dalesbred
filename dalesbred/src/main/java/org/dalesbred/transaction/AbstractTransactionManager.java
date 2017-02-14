@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,8 +29,7 @@ import java.util.Optional;
 
 public abstract class AbstractTransactionManager implements TransactionManager {
 
-    @NotNull
-    protected abstract Optional<DefaultTransaction> getActiveTransaction();
+    protected abstract @NotNull Optional<DefaultTransaction> getActiveTransaction();
 
     protected abstract <T> T withNewTransaction(@NotNull TransactionCallback<T> callback,
                                                 @NotNull Dialect dialect,

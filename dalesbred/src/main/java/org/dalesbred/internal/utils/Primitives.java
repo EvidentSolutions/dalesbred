@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,8 +37,7 @@ public final class Primitives {
     /**
      * Returns the corresponding wrapper type for a primitive type, or the type itself if it is not a primitive type.
      */
-    @NotNull
-    public static <T> Class<T> wrap(@NotNull Class<T> type) {
+    public static @NotNull <T> Class<T> wrap(@NotNull Class<T> type) {
         Class<?> result =
                (type == boolean.class) ? Boolean.class
              : (type == byte.class)    ? Byte.class
@@ -55,8 +54,7 @@ public final class Primitives {
         return casted;
     }
 
-    @NotNull
-    public static Type wrap(@NotNull Type type) {
+    public static @NotNull Type wrap(@NotNull Type type) {
         if (type instanceof Class<?>)
             return wrap((Class<?>) type);
         else
@@ -66,8 +64,7 @@ public final class Primitives {
     /**
      * Returns the corresponding primitive type for a wrapper type, or the type itself if it is not a wrapper.
      */
-    @NotNull
-    public static <T> Class<T> unwrap(@NotNull Class<T> type) {
+    public static @NotNull <T> Class<T> unwrap(@NotNull Class<T> type) {
         Class<?> result =
                (type == Boolean.class)   ? boolean.class
              : (type == Byte.class)      ? byte.class
@@ -84,8 +81,7 @@ public final class Primitives {
         return casted;
     }
 
-    @NotNull
-    public static Object[] arrayAsObjectArray(@NotNull Object o) {
+    public static @NotNull Object[] arrayAsObjectArray(@NotNull Object o) {
         Class<?> type = o.getClass();
         if (!type.isArray()) throw new IllegalArgumentException("not an array: " + o);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,9 +39,8 @@ public class DatabaseSQLException extends DatabaseException {
         super(cause);
     }
 
-    @NotNull
     @Override
-    public synchronized SQLException getCause() {
+    public synchronized @NotNull SQLException getCause() {
         return (SQLException) super.getCause();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -65,14 +65,12 @@ public final class ThreeTenTypeConversions {
         typeConversionRegistry.registerConversionToDatabase(LocalDate.class, ThreeTenTypeConversions::convertLocalDateToSqlDate);
     }
 
-    @NotNull
-    private static LocalDateTime convertTimeStampToLocalDateTime(@NotNull Timestamp value) {
+    private static @NotNull LocalDateTime convertTimeStampToLocalDateTime(@NotNull Timestamp value) {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(value.getTime()), ZoneId.systemDefault());
     }
 
-    @NotNull
     @SuppressWarnings("deprecation")
-    private static Timestamp convertLocalDateTimeToTimestamp(@NotNull LocalDateTime value) {
+    private static @NotNull Timestamp convertLocalDateTimeToTimestamp(@NotNull LocalDateTime value) {
         return new Timestamp(value.getYear() - EPOCH_YEAR,
                 value.getMonthValue() - 1,
                 value.getDayOfMonth(),
@@ -82,15 +80,13 @@ public final class ThreeTenTypeConversions {
                 value.getNano());
     }
 
-    @NotNull
     @SuppressWarnings("deprecation")
-    private static LocalDate convertDateToLocalDate(@NotNull java.util.Date value) {
+    private static @NotNull LocalDate convertDateToLocalDate(@NotNull java.util.Date value) {
         return LocalDate.of(value.getYear() + EPOCH_YEAR, value.getMonth() + 1, value.getDate());
     }
 
     @SuppressWarnings("deprecation")
-    @NotNull
-    private static Date convertLocalDateToSqlDate(@NotNull LocalDate value) {
+    private static @NotNull Date convertLocalDateToSqlDate(@NotNull LocalDate value) {
         return new Date(value.getYear() - EPOCH_YEAR, value.getMonthValue() - 1, value.getDayOfMonth());
     }
 
@@ -99,19 +95,16 @@ public final class ThreeTenTypeConversions {
         return LocalTime.of(value.getHours(), value.getMinutes(), value.getSeconds());
     }
 
-    @NotNull
     @SuppressWarnings("deprecation")
-    private static Time convertLocalTimeToSqlTime(@NotNull LocalTime value) {
+    private static @NotNull Time convertLocalTimeToSqlTime(@NotNull LocalTime value) {
         return new Time(value.getHour(), value.getMinute(), value.getSecond());
     }
 
-    @NotNull
-    private static Instant convertSqlTimeStampToInstant(@NotNull Timestamp value) {
+    private static @NotNull Instant convertSqlTimeStampToInstant(@NotNull Timestamp value) {
         return Instant.ofEpochSecond(value.getTime() / MILLIS_PER_SECOND, value.getNanos());
     }
 
-    @NotNull
-    private static Timestamp convertInstantToSqlTimestamp(@NotNull Instant value) {
+    private static @NotNull Timestamp convertInstantToSqlTimestamp(@NotNull Instant value) {
         try {
             Timestamp stamp = new Timestamp(value.getEpochSecond() * MILLIS_PER_SECOND);
             stamp.setNanos(value.getNano());

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,11 +39,9 @@ import java.util.function.Function;
 
 final class SqlArrayConversion {
 
-    @NotNull
-    private final Type elementType;
+    private final @NotNull Type elementType;
 
-    @NotNull
-    private final InstantiatorProvider instantiatorRegistry;
+    private final @NotNull InstantiatorProvider instantiatorRegistry;
 
     private SqlArrayConversion(@NotNull Type elementType,
                                @NotNull InstantiatorProvider instantiatorRegistry) {
@@ -52,16 +50,14 @@ final class SqlArrayConversion {
         this.instantiatorRegistry = instantiatorRegistry;
     }
 
-    @NotNull
-    public static TypeConversion sqlArray(@NotNull Type elementType, @NotNull InstantiatorProvider instantiatorProvider,
-                                          @NotNull Function<List<?>, ?> createResult) {
+    public static @NotNull TypeConversion sqlArray(@NotNull Type elementType, @NotNull InstantiatorProvider instantiatorProvider,
+                                                   @NotNull Function<List<?>, ?> createResult) {
         SqlArrayConversion conversion = new SqlArrayConversion(elementType, instantiatorProvider);
 
         return TypeConversion.fromNonNullFunction((Array array) -> createResult.apply(conversion.readArray(array)));
     }
 
-    @NotNull
-    private List<?> readArray(@NotNull Array array) {
+    private @NotNull List<?> readArray(@NotNull Array array) {
         try {
             boolean allowNulls = !TypeUtils.isPrimitive(elementType);
             ResultSet resultSet = array.getResultSet();

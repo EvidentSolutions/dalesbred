@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,14 +37,11 @@ import java.util.function.Function;
  */
 final class DefaultTypeConversionRegistry implements TypeConversionRegistry {
 
-    @NotNull
-    private final Dialect dialect;
+    private final @NotNull Dialect dialect;
 
-    @NotNull
-    private final ConversionMap loadConversions = new ConversionMap();
+    private final @NotNull ConversionMap loadConversions = new ConversionMap();
 
-    @NotNull
-    private final ConversionMap storeConversions = new ConversionMap();
+    private final @NotNull ConversionMap storeConversions = new ConversionMap();
 
     public DefaultTypeConversionRegistry(@NotNull Dialect dialect) {
         this.dialect = dialect;
@@ -63,13 +60,11 @@ final class DefaultTypeConversionRegistry implements TypeConversionRegistry {
         registerConversions(Object.class, enumType, conversions::convertFromDatabase, conversions::convertToDatabase);
     }
 
-    @NotNull
-    public Optional<TypeConversion> findConversionFromDbValue(@NotNull Type source, @NotNull Type target) {
+    public @NotNull Optional<TypeConversion> findConversionFromDbValue(@NotNull Type source, @NotNull Type target) {
         return loadConversions.findConversion(source, target);
     }
 
-    @NotNull
-    public Optional<TypeConversion> findConversionToDb(@NotNull Type type) {
+    public @NotNull Optional<TypeConversion> findConversionToDb(@NotNull Type type) {
         return storeConversions.findConversion(type, Object.class);
     }
 

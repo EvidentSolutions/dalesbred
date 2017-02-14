@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -48,8 +48,7 @@ public class OracleDialect extends Dialect {
         }
     }
 
-    @NotNull
-    private static Array createOracleArray(@NotNull  PreparedStatement ps, @NotNull  SqlArray arr) throws SQLException {
+    private static @NotNull Array createOracleArray(@NotNull  PreparedStatement ps, @NotNull  SqlArray arr) throws SQLException {
         // This method is ugly. We'd like to say just:
         //
         //     OracleConnection oracleConnection = ps.getConnection().unwrap(OracleConnection.class);

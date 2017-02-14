@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,11 +34,9 @@ import static java.util.Collections.unmodifiableList;
  */
 public final class InstantiatorArguments {
 
-    @NotNull
-    private final NamedTypeList types;
+    private final @NotNull NamedTypeList types;
 
-    @NotNull
-    private final List<?> values;
+    private final @NotNull List<?> values;
 
     public InstantiatorArguments(@NotNull NamedTypeList types, @NotNull Object[] values) {
         this(types, Arrays.asList(values));
@@ -52,13 +50,11 @@ public final class InstantiatorArguments {
         this.values = unmodifiableList(values);
     }
 
-    @NotNull
-    public NamedTypeList getTypes() {
+    public @NotNull NamedTypeList getTypes() {
         return types;
     }
 
-    @NotNull
-    public List<?> getValues() {
+    public @NotNull List<?> getValues() {
         return values;
     }
 

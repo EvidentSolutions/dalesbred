@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -55,14 +55,11 @@ import static org.dalesbred.internal.utils.TypeUtils.*;
  */
 public final class InstantiatorProvider {
 
-    @NotNull
-    private final Dialect dialect;
+    private final @NotNull Dialect dialect;
 
-    @NotNull
-    private final DefaultTypeConversionRegistry typeConversionRegistry;
+    private final @NotNull DefaultTypeConversionRegistry typeConversionRegistry;
 
-    @NotNull
-    private static final Logger log = LoggerFactory.getLogger(InstantiatorProvider.class);
+    private static final @NotNull Logger log = LoggerFactory.getLogger(InstantiatorProvider.class);
 
     public InstantiatorProvider(@NotNull Dialect dialect) {
         this.dialect = requireNonNull(dialect);
@@ -81,8 +78,7 @@ public final class InstantiatorProvider {
         }
     }
 
-    @Nullable
-    public Object valueToDatabase(@Nullable Object value) {
+    public @Nullable Object valueToDatabase(@Nullable Object value) {
         if (value == null) return null;
 
         TypeConversion conversion = typeConversionRegistry.findConversionToDb(value.getClass()).orElse(null);
@@ -94,14 +90,12 @@ public final class InstantiatorProvider {
             return dialect.valueToDatabase(value);
     }
 
-    @NotNull
     @SuppressWarnings("unchecked")
-    public <T> Instantiator<T> findInstantiator(@NotNull Class<T> type, @NotNull NamedTypeList types) {
+    public @NotNull <T> Instantiator<T> findInstantiator(@NotNull Class<T> type, @NotNull NamedTypeList types) {
         return (Instantiator<T>) findInstantiator((Type) type, types);
     }
 
-    @NotNull
-    public Instantiator<?> findInstantiator(@NotNull Type type, @NotNull NamedTypeList types) {
+    public @NotNull Instantiator<?> findInstantiator(@NotNull Type type, @NotNull NamedTypeList types) {
         // First check if we have an immediate conversion registered. If so, we'll just use that.
         if (types.size() == 1) {
             TypeConversion conversion = findConversionFromDbValue(types.getType(0), type).orElse(null);
@@ -125,8 +119,7 @@ public final class InstantiatorProvider {
                 .orElseThrow(() -> new InstantiationFailureException("could not find a way to instantiate " + type + " with parameters " + types));
     }
 
-    @NotNull
-    private Optional<Instantiator<?>> findExplicitInstantiatorFor(Class<?> cl, @NotNull NamedTypeList types) throws InstantiationFailureException {
+    private @NotNull Optional<Instantiator<?>> findExplicitInstantiatorFor(Class<?> cl, @NotNull NamedTypeList types) throws InstantiationFailureException {
         Constructor<?> constructor = dalesbredConstructor(cl).orElse(null);
 
         if(constructor == null)
@@ -156,8 +149,7 @@ public final class InstantiatorProvider {
      * Returns an instantiator that uses given constructor and given types to create instances,
      * or empty if there are no conversions that can be made to instantiate the type.
      */
-    @NotNull
-    private <T> Optional<Instantiator<T>> implicitInstantiatorFrom(@NotNull Constructor<T> constructor, @NotNull NamedTypeList types) {
+    private @NotNull <T> Optional<Instantiator<T>> implicitInstantiatorFrom(@NotNull Constructor<T> constructor, @NotNull NamedTypeList types) {
         if (!isPublic(constructor.getModifiers()))
             return Optional.empty();
 
@@ -167,9 +159,8 @@ public final class InstantiatorProvider {
                         .map(conversions -> new ReflectionInstantiator<>(constructor, conversions, createPropertyAccessorsForValuesNotCoveredByConstructor(constructor, columnNames))));
     }
 
-    @NotNull
-    private static List<PropertyAccessor> createPropertyAccessorsForValuesNotCoveredByConstructor(@NotNull Constructor<?> constructor,
-                                                                                                  @NotNull List<String> names) {
+    private static @NotNull List<PropertyAccessor> createPropertyAccessorsForValuesNotCoveredByConstructor(@NotNull Constructor<?> constructor,
+                                                                                                           @NotNull List<String> names) {
         int constructorParameterCount = constructor.getParameterTypes().length;
         int accessorCount = names.size() - constructorParameterCount;
         ArrayList<PropertyAccessor> accessors = new ArrayList<>(accessorCount);
@@ -180,8 +171,7 @@ public final class InstantiatorProvider {
         return accessors;
     }
 
-    @NotNull
-    private static PropertyAccessor createAccessor(int index, @NotNull Class<?> cl, @NotNull List<String> names) {
+    private static @NotNull PropertyAccessor createAccessor(int index, @NotNull Class<?> cl, @NotNull List<String> names) {
         return PropertyAccessor.findAccessor(cl, names.get(index)).orElseThrow(() ->
                 new InstantiationFailureException("Could not find neither setter nor field for '" + names.get(index) + '\''));
     }
@@ -190,8 +180,7 @@ public final class InstantiatorProvider {
      * Returns the target types that need to have conversion. The types contain first as many constructor
      * parameter types as we have and then the types of properties of object as given by names of result-set.
      */
-    @NotNull
-    private static Optional<List<Type>> findTargetTypes(@NotNull Constructor<?> ctor, @NotNull List<String> resultSetColumns) {
+    private static @NotNull Optional<List<Type>> findTargetTypes(@NotNull Constructor<?> ctor, @NotNull List<String> resultSetColumns) {
         List<Type> constructorParameterTypes = asList(ctor.getGenericParameterTypes());
 
         int constructorParameterCount = constructorParameterTypes.size();
@@ -226,8 +215,7 @@ public final class InstantiatorProvider {
      * Returns the list of conversions that need to be performed to convert sourceTypes
      * to targetTypes, or empty if conversions can't be done.
      */
-    @NotNull
-    private Optional<List<TypeConversion>> resolveConversions(@NotNull NamedTypeList sourceTypes, @NotNull List<Type> targetTypes) {
+    private @NotNull Optional<List<TypeConversion>> resolveConversions(@NotNull NamedTypeList sourceTypes, @NotNull List<Type> targetTypes) {
         if (targetTypes.size() != sourceTypes.size())
             return Optional.empty();
 
@@ -248,8 +236,7 @@ public final class InstantiatorProvider {
      * Returns conversion for converting value of source-type to target-type, or throws exception if
      * there's no such conversion.
      */
-    @NotNull
-    public TypeConversion getConversionFromDbValue(@NotNull Type source, @NotNull Type target) {
+    public @NotNull TypeConversion getConversionFromDbValue(@NotNull Type source, @NotNull Type target) {
         TypeConversion conversion = findConversionFromDbValue(source, target).orElse(null);
         if (conversion != null)
             return conversion;
@@ -260,8 +247,7 @@ public final class InstantiatorProvider {
     /**
      * Returns conversion for converting value of source to target, or returns null if there's no such conversion.
      */
-    @NotNull
-    private Optional<TypeConversion> findConversionFromDbValue(@NotNull Type source, @NotNull Type target) {
+    private @NotNull Optional<TypeConversion> findConversionFromDbValue(@NotNull Type source, @NotNull Type target) {
         if (isAssignable(target, source))
             return Optional.of(TypeConversion.identity());
 
@@ -284,9 +270,8 @@ public final class InstantiatorProvider {
         return Optional.empty();
     }
 
-    @NotNull
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private static Optional<TypeConversion> findEnumConversion(@NotNull Type target) {
+    private static @NotNull Optional<TypeConversion> findEnumConversion(@NotNull Type target) {
         if (isEnum(target)) {
             Class cl = rawType(target).asSubclass(Enum.class);
             return Optional.of(TypeConversion.fromNonNullFunction(value -> Enum.valueOf(cl, value.toString())));
@@ -295,8 +280,7 @@ public final class InstantiatorProvider {
         return Optional.empty();
     }
 
-    @NotNull
-    private Optional<TypeConversion> findArrayConversion(@NotNull Type source, @NotNull Type target) {
+    private @NotNull Optional<TypeConversion> findArrayConversion(@NotNull Type source, @NotNull Type target) {
         Class<?> rawTarget = rawType(target);
 
         if (isAssignable(Array.class, source)) {
@@ -313,8 +297,7 @@ public final class InstantiatorProvider {
         return Optional.empty();
     }
 
-    @NotNull
-    private Optional<TypeConversion> findOptionalConversion(@NotNull Type source, @NotNull Type target) {
+    private @NotNull Optional<TypeConversion> findOptionalConversion(@NotNull Type source, @NotNull Type target) {
         Class<?> rawTarget = rawType(target);
 
         if (rawTarget == Optional.class) {
@@ -334,13 +317,11 @@ public final class InstantiatorProvider {
         }
     }
 
-    @NotNull
-    private <T> Optional<TypeConversion> optionalConversion(@NotNull Type source, @NotNull Type target, @NotNull Function<T, ?> function) {
+    private @NotNull <T> Optional<TypeConversion> optionalConversion(@NotNull Type source, @NotNull Type target, @NotNull Function<T, ?> function) {
         return findConversionFromDbValue(source, target).map(cv -> cv.compose((Function<T, Object>) function::apply));
     }
 
-    @NotNull
-    private static Optional<Constructor<?>> dalesbredConstructor(@NotNull Class<?> cl) {
+    private static @NotNull Optional<Constructor<?>> dalesbredConstructor(@NotNull Class<?> cl) {
         List<Constructor<?>> candidates = Stream.of(cl.getDeclaredConstructors())
                 .filter(ctor -> ctor.isAnnotationPresent(DalesbredInstantiator.class))
                 .collect(toList());
@@ -354,15 +335,13 @@ public final class InstantiatorProvider {
     }
 
     @SuppressWarnings("TypeParameterExtendsFinalClass")
-    @NotNull
-    private static Stream<? extends Constructor<?>> candidateConstructorsSortedByDescendingParameterCount(@NotNull Class<?> cl) {
+    private static @NotNull Stream<? extends Constructor<?>> candidateConstructorsSortedByDescendingParameterCount(@NotNull Class<?> cl) {
         return Stream.of(cl.getConstructors())
                 .filter(ctor -> !ctor.isAnnotationPresent(DalesbredIgnore.class))
                 .sorted(comparing((Constructor<?> ctor) -> ctor.getParameterTypes().length).reversed());
     }
 
-    @NotNull
-    public TypeConversionRegistry getTypeConversionRegistry() {
+    public @NotNull TypeConversionRegistry getTypeConversionRegistry() {
         return typeConversionRegistry;
     }
 }

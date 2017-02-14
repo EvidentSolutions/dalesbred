@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,16 +35,14 @@ import static java.util.Objects.requireNonNull;
  */
 public final class DataSourceConnectionProvider implements ConnectionProvider {
 
-    @NotNull
-    private final DataSource dataSource;
+    private final @NotNull DataSource dataSource;
 
     public DataSourceConnectionProvider(@NotNull DataSource dataSource) {
         this.dataSource = requireNonNull(dataSource);
     }
 
-    @NotNull
     @Override
-    public Connection getConnection() throws SQLException {
+    public @NotNull Connection getConnection() throws SQLException {
         return dataSource.getConnection();
     }
 

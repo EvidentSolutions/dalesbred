@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -58,8 +58,7 @@ public final class TestDatabaseProvider {
      *
      * @throws AssumptionViolatedException if properties were not found
      */
-    @NotNull
-    public static Database databaseForProperties(@NotNull String propertiesPath) {
+    public static @NotNull Database databaseForProperties(@NotNull String propertiesPath) {
         return new Database(createConnectionProvider(propertiesPath));
     }
 
@@ -68,13 +67,11 @@ public final class TestDatabaseProvider {
      *
      * @throws AssumptionViolatedException if properties were not found
      */
-    @NotNull
-    public static Database databaseForProperties(@NotNull String propertiesPath, @NotNull Dialect dialect) {
+    public static @NotNull Database databaseForProperties(@NotNull String propertiesPath, @NotNull Dialect dialect) {
         return new Database(createConnectionProvider(propertiesPath), dialect);
     }
 
-    @NotNull
-    private static ConnectionProvider createConnectionProvider(@NotNull String propertiesPath) {
+    private static @NotNull ConnectionProvider createConnectionProvider(@NotNull String propertiesPath) {
         Properties props = loadConnectionProperties(propertiesPath);
 
         String url = props.getProperty("jdbc.url");
@@ -87,8 +84,7 @@ public final class TestDatabaseProvider {
         return new DriverManagerConnectionProvider(url, login, password);
     }
 
-    @NotNull
-    private static Properties loadConnectionProperties(@NotNull String propertiesName) {
+    private static @NotNull Properties loadConnectionProperties(@NotNull String propertiesName) {
         InputStream in = TransactionCallback.class.getClassLoader().getResourceAsStream(propertiesName);
         assumeTrue("Could not find database configuration file '" + propertiesName + "'.", in != null);
         assert in != null;

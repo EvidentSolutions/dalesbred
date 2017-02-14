@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -81,8 +81,7 @@ final class DefaultTypeConversions {
     }
 
     @SuppressWarnings("ObjectToString")
-    @NotNull
-    private static BigInteger convertNumberToBigInteger(@NotNull Number value) {
+    private static @NotNull BigInteger convertNumberToBigInteger(@NotNull Number value) {
         return (value instanceof BigInteger) ? (BigInteger) value
              : (value instanceof BigDecimal) ? ((BigDecimal) value).toBigInteger()
              : (value instanceof Integer)    ? BigInteger.valueOf(value.longValue())
@@ -99,8 +98,7 @@ final class DefaultTypeConversions {
                 : new BigDecimal(value.toString());
     }
 
-    @NotNull
-    private static URL convertStringToUrl(@NotNull String value) {
+    private static @NotNull URL convertStringToUrl(@NotNull String value) {
         try {
             return new URL(value);
         } catch (MalformedURLException e) {
@@ -108,8 +106,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    @NotNull
-    private static URI convertStringToUri(@NotNull String value) {
+    private static @NotNull URI convertStringToUri(@NotNull String value) {
         try {
             return new URI(value);
         } catch (URISyntaxException e) {
@@ -117,8 +114,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    @NotNull
-    private static String convertClobToString(@NotNull Clob value) {
+    private static @NotNull String convertClobToString(@NotNull Clob value) {
         try (Reader reader = value.getCharacterStream()) {
             StringBuilder sb = new StringBuilder((int) value.length());
 
@@ -137,8 +133,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    @NotNull
-    private static byte[] convertBlobToByteArray(@NotNull Blob value) {
+    private static @NotNull byte[] convertBlobToByteArray(@NotNull Blob value) {
         try (InputStream in = value.getBinaryStream()) {
             ByteArrayOutputStream out = new ByteArrayOutputStream((int) value.length());
 
@@ -157,8 +152,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    @NotNull
-    private static InputStream convertBlobToInputStream(@NotNull Blob value) {
+    private static @NotNull InputStream convertBlobToInputStream(@NotNull Blob value) {
         try {
             return value.getBinaryStream();
         } catch (SQLException e) {
@@ -166,8 +160,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    @NotNull
-    private static Reader convertClobToReader(@NotNull Clob value) {
+    private static @NotNull Reader convertClobToReader(@NotNull Clob value) {
         try {
             return value.getCharacterStream();
         } catch (SQLException e) {
@@ -175,8 +168,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    @NotNull
-    private static Document convertSQLXMLToDocument(@NotNull SQLXML value) {
+    private static @NotNull Document convertSQLXMLToDocument(@NotNull SQLXML value) {
         try {
             return (Document) value.getSource(DOMSource.class).getNode();
         } catch (SQLException e) {
@@ -184,9 +176,8 @@ final class DefaultTypeConversions {
         }
     }
 
-    @NotNull
     @SuppressWarnings("deprecation")
-    private static LocalDate convertDateToLocalDate(@NotNull java.util.Date value) {
+    private static @NotNull LocalDate convertDateToLocalDate(@NotNull java.util.Date value) {
         return LocalDate.of(value.getYear() + EPOCH_YEAR, value.getMonth() + 1, value.getDate());
     }
 }

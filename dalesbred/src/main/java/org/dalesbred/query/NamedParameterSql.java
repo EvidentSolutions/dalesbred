@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,25 +32,21 @@ import static org.dalesbred.internal.utils.CollectionUtils.mapToList;
 
 final class NamedParameterSql {
 
-    @NotNull
     @SQL
-    private final String sql;
+    private final @NotNull String sql;
 
-    @NotNull
-    private final List<String> parameterNames;
+    private final @NotNull List<String> parameterNames;
 
     NamedParameterSql(@NotNull @SQL String sql, @NotNull List<String> parameterNames) {
         this.sql = sql;
         this.parameterNames = parameterNames;
     }
 
-    @NotNull
-    public SqlQuery toQuery(@NotNull VariableResolver variableResolver) {
+    public @NotNull SqlQuery toQuery(@NotNull VariableResolver variableResolver) {
         return SqlQuery.query(sql, resolveParameterValues(variableResolver));
     }
 
-    @NotNull
-    private List<?> resolveParameterValues(@NotNull VariableResolver variableResolver) {
+    private @NotNull List<?> resolveParameterValues(@NotNull VariableResolver variableResolver) {
         return mapToList(parameterNames, variableResolver::getValue);
     }
 
@@ -61,9 +57,8 @@ final class NamedParameterSql {
         return sql;
     }
 
-    @NotNull
     @TestOnly
-    public List<String> getParameterNames() {
+    public @NotNull List<String> getParameterNames() {
         return parameterNames;
     }
 }

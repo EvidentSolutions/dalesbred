@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,11 +36,9 @@ import static java.util.Objects.requireNonNull;
  */
 public final class NamedTypeList {
 
-    @NotNull
-    private final List<String> names;
+    private final @NotNull List<String> names;
 
-    @NotNull
-    private final List<Type> types;
+    private final @NotNull List<Type> types;
 
     private NamedTypeList(@NotNull List<String> names, @NotNull List<Type> types) {
         assert names.size() == types.size();
@@ -52,29 +50,24 @@ public final class NamedTypeList {
         return types.size();
     }
 
-    @NotNull
-    public String getName(int index) {
+    public @NotNull String getName(int index) {
         return names.get(index);
     }
 
-    @NotNull
-    public Type getType(int index) {
+    public @NotNull Type getType(int index) {
         return types.get(index);
     }
 
-    @NotNull
-    public List<String> getNames() {
+    public @NotNull List<String> getNames() {
         return names;
     }
 
-    @NotNull
-    public NamedTypeList subList(int fromIndex, int toIndex) {
+    public @NotNull NamedTypeList subList(int fromIndex, int toIndex) {
         return new NamedTypeList(names.subList(fromIndex, toIndex), types.subList(fromIndex, toIndex));
     }
 
     @Override
-    @NotNull
-    public String toString() {
+    public @NotNull String toString() {
         int size = types.size();
 
         @SuppressWarnings("MagicNumber")
@@ -93,8 +86,7 @@ public final class NamedTypeList {
         return sb.toString();
     }
 
-    @NotNull
-    public static Builder builder(int size) {
+    public static @NotNull Builder builder(int size) {
         return new Builder(size);
     }
 
@@ -105,11 +97,9 @@ public final class NamedTypeList {
 
         private boolean built = false;
 
-        @NotNull
-        private final List<String> names;
+        private final @NotNull List<String> names;
 
-        @NotNull
-        private final List<Type> types;
+        private final @NotNull List<Type> types;
 
         private Builder(int size) {
             this.names = new ArrayList<>(size);
@@ -124,8 +114,7 @@ public final class NamedTypeList {
             return this;
         }
 
-        @NotNull
-        public NamedTypeList build() {
+        public @NotNull NamedTypeList build() {
             built = true;
             return new NamedTypeList(names, types);
         }

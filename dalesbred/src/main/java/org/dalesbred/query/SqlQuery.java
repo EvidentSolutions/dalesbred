@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,11 +40,9 @@ import static java.util.Objects.requireNonNull;
  */
 public final class SqlQuery implements Serializable {
 
-    @NotNull
-    private final String sql;
+    private final @NotNull String sql;
 
-    @NotNull
-    private final List<?> args;
+    private final @NotNull List<?> args;
 
     private static final long serialVersionUID = 1;
 
@@ -57,16 +55,14 @@ public final class SqlQuery implements Serializable {
      * Creates a new {@link SqlQuery} consisting of given SQL statement and arguments.
      * '?' characters act as placeholders for arguments in the query.
      */
-    @NotNull
-    public static SqlQuery query(@NotNull @SQL String sql, Object... args) {
+    public static @NotNull SqlQuery query(@NotNull @SQL String sql, Object... args) {
         return new SqlQuery(sql, asList(args));
     }
 
     /**
      * @see #query(String, Object...)
      */
-    @NotNull
-    public static SqlQuery query(@NotNull @SQL String sql, @NotNull List<?> args) {
+    public static @NotNull SqlQuery query(@NotNull @SQL String sql, @NotNull List<?> args) {
         return new SqlQuery(sql, args);
     }
 
@@ -76,8 +72,7 @@ public final class SqlQuery implements Serializable {
      * @see #namedQuery(String, VariableResolver)
      * @see VariableResolver#forMap(Map)
      */
-    @NotNull
-    public static SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull Map<String, ?> valueMap) {
+    public static @NotNull SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull Map<String, ?> valueMap) {
         return namedQuery(sql, VariableResolver.forMap(valueMap));
     }
 
@@ -87,8 +82,7 @@ public final class SqlQuery implements Serializable {
      * @see #namedQuery(String, VariableResolver)
      * @see VariableResolver#forBean(Object)
      */
-    @NotNull
-    public static SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull Object bean) {
+    public static @NotNull SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull Object bean) {
         return namedQuery(sql, VariableResolver.forBean(bean));
     }
 
@@ -99,8 +93,7 @@ public final class SqlQuery implements Serializable {
      * @throws SqlSyntaxException if SQL is malformed
      * @throws VariableResolutionException if variableResolver can't provide values for named parameters
      */
-    @NotNull
-    public static SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull VariableResolver variableResolver) {
+    public static @NotNull SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull VariableResolver variableResolver) {
         return NamedParameterSqlParser.parseSqlStatement(sql).toQuery(variableResolver);
     }
 
@@ -108,22 +101,19 @@ public final class SqlQuery implements Serializable {
      * Returns the SQL that is to be execute at the database. If the original query was a named query,
      * the variable placeholders will have been replaced by positional placeholders in this query.
      */
-    @NotNull
-    public String getSql() {
+    public @NotNull String getSql() {
         return sql;
     }
 
     /**
      * Returns the list of arguments this query has.
      */
-    @NotNull
-    public List<?> getArguments() {
+    public @NotNull List<?> getArguments() {
         return args;
     }
 
-    @NotNull
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         StringBuilder sb = new StringBuilder(10 + sql.length() + 10 * args.size());
 
         sb.append(sql);

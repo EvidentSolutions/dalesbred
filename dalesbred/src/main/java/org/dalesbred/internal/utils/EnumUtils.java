@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,8 +33,7 @@ public final class EnumUtils {
 
     private EnumUtils() { }
 
-    @NotNull
-    public static <T extends Enum<T>> T enumByOrdinal(@NotNull Class<T> enumType, int ordinal) {
+    public static @NotNull <T extends Enum<T>> T enumByOrdinal(@NotNull Class<T> enumType, int ordinal) {
         Enum<?>[] constants = enumType.getEnumConstants();
         if (ordinal >= 0 && ordinal < constants.length)
             return enumType.cast(constants[ordinal]);
@@ -42,8 +41,7 @@ public final class EnumUtils {
             throw new DatabaseException("invalid ordinal " + ordinal + " for enum type " + enumType.getName());
     }
 
-    @NotNull
-    public static <T extends Enum<T>,K> T enumByKey(@NotNull Class<T> enumType, @NotNull Function<T, K> keyFunction, @NotNull K key) {
+    public static @NotNull <T extends Enum<T>,K> T enumByKey(@NotNull Class<T> enumType, @NotNull Function<T, K> keyFunction, @NotNull K key) {
         for (T enumConstant : enumType.getEnumConstants())
             if (Objects.equals(key, keyFunction.apply(enumConstant)))
                 return enumConstant;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,8 +31,7 @@ public final class Throwables {
 
     private Throwables() { }
 
-    @NotNull
-    public static RuntimeException propagate(@NotNull Throwable e) {
+    public static @NotNull RuntimeException propagate(@NotNull Throwable e) {
         if (e instanceof Error)
             throw (Error) e;
         else if (e instanceof RuntimeException)
@@ -41,8 +40,7 @@ public final class Throwables {
             return new RuntimeException(e);
     }
 
-    @NotNull
-    public static <T extends Exception> T propagate(@NotNull Throwable e, @NotNull Class<T> allowed) {
+    public static @NotNull <T extends Exception> T propagate(@NotNull Throwable e, @NotNull Class<T> allowed) {
         if (allowed.isInstance(e))
             return allowed.cast(e);
         else

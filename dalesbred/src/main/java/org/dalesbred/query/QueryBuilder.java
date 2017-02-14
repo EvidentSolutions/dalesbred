@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -73,24 +73,21 @@ public final class QueryBuilder {
     /**
      * Appends given fragment to this query.
      */
-    @NotNull
-    public QueryBuilder append(@NotNull String sql) {
+    public @NotNull QueryBuilder append(@NotNull String sql) {
         return append(sql, emptyList());
     }
 
     /**
      * Appends given fragment and arguments to this query.
      */
-    @NotNull
-    public QueryBuilder append(@NotNull String sql, Object... args) {
+    public @NotNull QueryBuilder append(@NotNull String sql, Object... args) {
         return append(sql, asList(args));
     }
 
     /**
      * Appends given fragment and arguments to this query.
      */
-    @NotNull
-    public QueryBuilder append(@NotNull String sql, @NotNull Collection<?> args) {
+    public @NotNull QueryBuilder append(@NotNull String sql, @NotNull Collection<?> args) {
         query.append(requireNonNull(sql));
         addArguments(args);
         return this;
@@ -99,8 +96,7 @@ public final class QueryBuilder {
     /**
      * Appends given query and its arguments to this query.
      */
-    @NotNull
-    public QueryBuilder append(@SuppressWarnings("ParameterHidesMemberVariable") @NotNull SqlQuery query) {
+    public @NotNull QueryBuilder append(@SuppressWarnings("ParameterHidesMemberVariable") @NotNull SqlQuery query) {
         this.query.append(query.getSql());
         arguments.addAll(query.getArguments());
         return this;
@@ -109,8 +105,7 @@ public final class QueryBuilder {
     /**
      * Adds a given amount of comma-separated place-holders. The amount must be at last 1.
      */
-    @NotNull
-    public QueryBuilder appendPlaceholders(int count) {
+    public @NotNull QueryBuilder appendPlaceholders(int count) {
         if (count <= 0) throw new IllegalArgumentException("count must be positive, but was: " + count);
 
         query.append('?');
@@ -124,8 +119,7 @@ public final class QueryBuilder {
      * Adds placeholders for all elements of collection and then adds then values
      * of collection itself.
      */
-    @NotNull
-    public QueryBuilder appendPlaceholders(@NotNull Collection<?> args) {
+    public @NotNull QueryBuilder appendPlaceholders(@NotNull Collection<?> args) {
         appendPlaceholders(args.size());
         addArguments(args);
 
@@ -149,8 +143,7 @@ public final class QueryBuilder {
     /**
      * Adds an argument to this query.
      */
-    @NotNull
-    public QueryBuilder addArgument(@Nullable Object argument) {
+    public @NotNull QueryBuilder addArgument(@Nullable Object argument) {
         arguments.add(argument);
         return this;
     }
@@ -158,16 +151,14 @@ public final class QueryBuilder {
     /**
      * Adds given arguments to this query.
      */
-    @NotNull
-    public QueryBuilder addArguments(Object... args) {
+    public @NotNull QueryBuilder addArguments(Object... args) {
         return addArguments(asList(args));
     }
 
     /**
      * Adds given arguments to this query.
      */
-    @NotNull
-    public QueryBuilder addArguments(@NotNull Collection<?> args) {
+    public @NotNull QueryBuilder addArguments(@NotNull Collection<?> args) {
         arguments.addAll(args);
         return this;
     }
@@ -177,8 +168,7 @@ public final class QueryBuilder {
      *
      * @throws IllegalStateException if the builder is empty
      */
-    @NotNull
-    public SqlQuery build() {
+    public @NotNull SqlQuery build() {
         if (query.length() == 0)
             throw new IllegalStateException("empty query");
 

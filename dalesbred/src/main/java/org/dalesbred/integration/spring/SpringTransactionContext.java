@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,20 +32,17 @@ import static java.util.Objects.requireNonNull;
 
 final class SpringTransactionContext implements TransactionContext {
 
-    @NotNull
-    private final TransactionStatus status;
+    private final @NotNull TransactionStatus status;
 
-    @NotNull
-    private final Connection connection;
+    private final @NotNull Connection connection;
 
     SpringTransactionContext(@NotNull TransactionStatus status, @NotNull Connection connection) {
         this.status = requireNonNull(status);
         this.connection = requireNonNull(connection);
     }
 
-    @NotNull
     @Override
-    public Connection getConnection() {
+    public @NotNull Connection getConnection() {
         return connection;
     }
 

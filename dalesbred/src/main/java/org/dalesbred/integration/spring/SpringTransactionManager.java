@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -48,11 +48,9 @@ import static java.util.Objects.requireNonNull;
  */
 public final class SpringTransactionManager implements TransactionManager {
 
-    @NotNull
-    private final DataSource dataSource;
+    private final @NotNull DataSource dataSource;
 
-    @NotNull
-    private final PlatformTransactionManager platformTransactionManager;
+    private final @NotNull PlatformTransactionManager platformTransactionManager;
 
     /**
      * Constructs new SpringTransactionManager to use.
@@ -115,8 +113,7 @@ public final class SpringTransactionManager implements TransactionManager {
         throw new IllegalArgumentException("unknown propagation: " + propagation);
     }
 
-    @NotNull
-    private static DefaultTransactionDefinition settingsToSpringDefinition(@NotNull TransactionSettings settings) {
+    private static @NotNull DefaultTransactionDefinition settingsToSpringDefinition(@NotNull TransactionSettings settings) {
         DefaultTransactionDefinition df = new DefaultTransactionDefinition();
         df.setIsolationLevel(springIsolationCode(settings.getIsolation()));
         df.setPropagationBehavior(springPropagationCode(settings.getPropagation()));

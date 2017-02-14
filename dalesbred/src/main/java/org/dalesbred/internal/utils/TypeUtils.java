@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,8 +31,7 @@ public final class TypeUtils {
 
     private TypeUtils() { }
 
-    @NotNull
-    public static Class<?> rawType(@NotNull Type type) {
+    public static @NotNull Class<?> rawType(@NotNull Type type) {
         if (type instanceof Class<?>) {
             return (Class<?>) type;
 
@@ -55,8 +54,7 @@ public final class TypeUtils {
         }
     }
 
-    @NotNull
-    public static Type typeParameter(@NotNull Type type) {
+    public static @NotNull Type typeParameter(@NotNull Type type) {
         if (type instanceof ParameterizedType)
             return ((ParameterizedType) type).getActualTypeArguments()[0];
 
@@ -71,18 +69,15 @@ public final class TypeUtils {
         return (type instanceof Class<?>) && ((Class<?>) type).isPrimitive();
     }
 
-    @NotNull
-    public static Class<?> arrayType(@NotNull Class<?> type) {
+    public static @NotNull Class<?> arrayType(@NotNull Class<?> type) {
         return Array.newInstance(type, 0).getClass();
     }
 
-    @Nullable
-    public static Type genericSuperClass(@NotNull Type type) {
+    public static @Nullable Type genericSuperClass(@NotNull Type type) {
         return rawType(type).getGenericSuperclass();
     }
 
-    @NotNull
-    public static Type[] genericInterfaces(@NotNull Type type) {
+    public static @NotNull Type[] genericInterfaces(@NotNull Type type) {
         return rawType(type).getGenericInterfaces();
     }
 

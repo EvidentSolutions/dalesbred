@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,14 +43,11 @@ import static java.util.Objects.requireNonNull;
  */
 public final class MapResultSetProcessor<K,V> implements ResultSetProcessor<Map<K,V>> {
 
-    @NotNull
-    private final Class<K> keyType;
+    private final @NotNull Class<K> keyType;
 
-    @NotNull
-    private final Class<V> valueType;
+    private final @NotNull Class<V> valueType;
 
-    @NotNull
-    private final InstantiatorProvider instantiatorRegistry;
+    private final @NotNull InstantiatorProvider instantiatorRegistry;
 
     public MapResultSetProcessor(@NotNull Class<K> keyType,
                                  @NotNull Class<V> valueType,
@@ -60,9 +57,8 @@ public final class MapResultSetProcessor<K,V> implements ResultSetProcessor<Map<
         this.instantiatorRegistry = requireNonNull(instantiatorRegistry);
     }
 
-    @NotNull
     @Override
-    public Map<K, V> process(@NotNull ResultSet resultSet) throws SQLException {
+    public @NotNull Map<K, V> process(@NotNull ResultSet resultSet) throws SQLException {
 
         NamedTypeList types = ResultSetUtils.getTypes(resultSet.getMetaData());
         if (types.size() < 2)

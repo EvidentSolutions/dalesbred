@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -53,35 +53,29 @@ public abstract class Dialect {
 
     private static final Logger log = LoggerFactory.getLogger(Dialect.class);
 
-    @NotNull
-    public Object valueToDatabase(@NotNull Object value) {
+    public @NotNull Object valueToDatabase(@NotNull Object value) {
         return value;
     }
 
-    @NotNull
-    public <T extends Enum<T>, K> TypeConversionPair<Object,T> createNativeEnumConversions(@NotNull Class<T> enumType, @NotNull String typeName, @NotNull Function<T,K> keyFunction) {
+    public @NotNull <T extends Enum<T>, K> TypeConversionPair<Object,T> createNativeEnumConversions(@NotNull Class<T> enumType, @NotNull String typeName, @NotNull Function<T,K> keyFunction) {
         throw new UnsupportedOperationException("native enums are not supported by " + getClass().getName());
     }
 
     @Override
-    @NotNull
-    public String toString() {
+    public @NotNull String toString() {
         return getClass().getName();
     }
 
-    @NotNull
-    public static Dialect detect(@NotNull DataSource dataSource) {
+    public static @NotNull Dialect detect(@NotNull DataSource dataSource) {
         return detect(new DataSourceConnectionProvider(dataSource));
     }
 
-    @NotNull
-    public static Dialect detect(@NotNull TransactionManager transactionManager) {
+    public static @NotNull Dialect detect(@NotNull TransactionManager transactionManager) {
         return transactionManager.withTransaction(new TransactionSettings(),
                 tx -> detect(tx.getConnection()), new DefaultDialect());
     }
 
-    @NotNull
-    public static Dialect detect(@NotNull ConnectionProvider connectionProvider) {
+    public static @NotNull Dialect detect(@NotNull ConnectionProvider connectionProvider) {
         try {
             Connection connection = connectionProvider.getConnection();
             try {
@@ -94,8 +88,7 @@ public abstract class Dialect {
         }
     }
 
-    @NotNull
-    public static Dialect detect(@NotNull Connection connection) {
+    public static @NotNull Dialect detect(@NotNull Connection connection) {
         try {
             String productName = connection.getMetaData().getDatabaseProductName();
 
@@ -133,8 +126,7 @@ public abstract class Dialect {
         }
     }
 
-    @NotNull
-    public DatabaseException convertException(@NotNull SQLException e) {
+    public @NotNull DatabaseException convertException(@NotNull SQLException e) {
         String sqlState = e.getSQLState();
         if (sqlState == null)
             return new DatabaseSQLException(e);
