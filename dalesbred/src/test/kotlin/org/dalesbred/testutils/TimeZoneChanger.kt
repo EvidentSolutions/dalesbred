@@ -20,34 +20,27 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.integration
+package org.dalesbred.testutils
 
-import org.junit.rules.TestRule
-import org.junit.runner.Description
-import org.junit.runners.model.Statement
+import org.joda.time.DateTimeZone
+import java.util.*
 
-/**
- * Executes tests with given value of given system-property.
- */
-class SystemPropertyRule(val property: String, private val value: String) : TestRule {
+inline fun withUTCTimeZone(block: () -> Unit) {
+    val old = TimeZone.getDefault()
+    try {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
+        block()
+    } finally {
+        TimeZone.setDefault(old)
+    }
+}
 
-    override fun apply(base: Statement, description: Description) = object : Statement() {
-        override fun evaluate() {
-            val old = System.getProperty(property)
-            try {
-                setProperty(property, value)
-                base.evaluate()
-
-            } finally {
-                setProperty(property, old)
-            }
-        }
-
-        private fun setProperty(name: String, value: String?) {
-            if (value != null)
-                System.setProperty(name, value)
-            else
-                System.clearProperty(name)
-        }
+inline fun withUTCDateTimeZone(block: () -> Unit) {
+    val old = DateTimeZone.getDefault()
+    try {
+        DateTimeZone.setDefault(DateTimeZone.UTC)
+        block()
+    } finally {
+        DateTimeZone.setDefault(old)
     }
 }

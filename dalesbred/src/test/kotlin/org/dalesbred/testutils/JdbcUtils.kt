@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,13 +20,27 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.internal.instantiation.test;
+package org.dalesbred.testutils
 
-import org.dalesbred.annotation.Reflective;
+import java.sql.Connection
+import java.sql.ResultSet
+import javax.sql.DataSource
 
-class InaccessibleClass {
+@Suppress("ConvertTryFinallyToUseCall")
+inline fun <R> Connection.use(block: (Connection) -> R): R =
+        try {
+            block(this)
+        } finally {
+            close()
+        }
 
-    @Reflective
-    public InaccessibleClass(int x) { }
+inline fun <R> DataSource.withConnection(block: (Connection) -> R): R =
+        connection.use(block)
+
+inline fun <T> ResultSet.mapRows(func: (ResultSet) -> T): List<T> {
+    val result = mutableListOf<T>()
+    while (next())
+        result.add(func(this))
+    return result
 }
 

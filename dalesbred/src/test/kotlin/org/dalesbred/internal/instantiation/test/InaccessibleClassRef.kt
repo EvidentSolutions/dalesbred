@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,11 +20,11 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.internal.instantiation.test;
+package org.dalesbred.internal.instantiation.test
 
-public final class InaccessibleClassRef {
+object InaccessibleClassRef {
 
-    public static final Class<?> INACCESSIBLE_CLASS = InaccessibleClass.class;
-
-    private InaccessibleClassRef() { }
+    val INACCESSIBLE_CLASS: Class<*> = InaccessibleClass::class.java
 }
+
+private class InaccessibleClass(@Suppress("UNUSED_PARAMETER") x: Int)

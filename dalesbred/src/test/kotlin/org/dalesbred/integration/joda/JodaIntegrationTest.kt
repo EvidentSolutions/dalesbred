@@ -24,14 +24,14 @@ package org.dalesbred.integration.joda
 
 import org.dalesbred.TestDatabaseProvider
 import org.dalesbred.TransactionalTestsRule
-import org.hamcrest.CoreMatchers.`is`
+import org.dalesbred.testutils.withUTCDateTimeZone
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.LocalDate
 import org.joda.time.LocalTime
-import org.junit.Assert.assertThat
 import org.junit.Rule
 import org.junit.Test
+import kotlin.test.assertEquals
 
 class JodaIntegrationTest {
 
@@ -42,42 +42,30 @@ class JodaIntegrationTest {
 
     @Test
     fun fetchJodaDateTimes() {
-        assertThat(db.findUnique(DateTime::class.java, "values (cast('2012-10-09 11:29:25' as timestamp))"), `is`(DateTime(2012, 10, 9, 11, 29, 25)))
+        assertEquals(DateTime(2012, 10, 9, 11, 29, 25), db.findUnique(DateTime::class.java, "values (cast('2012-10-09 11:29:25' as timestamp))"))
     }
 
     @Test
     fun fetchJodaDates() {
-        assertThat(db.findUnique(LocalDate::class.java, "values (cast('2012-10-09' as date))"), `is`(LocalDate(2012, 10, 9)))
+        assertEquals(LocalDate(2012, 10, 9), db.findUnique(LocalDate::class.java, "values (cast('2012-10-09' as date))"))
     }
 
     @Test
     fun fetchJodaTime() {
-        assertThat(db.findUnique(LocalTime::class.java, "values (cast('11:29:25' as time))"), `is`(LocalTime(11, 29, 25)))
+        assertEquals(LocalTime(11, 29, 25), db.findUnique(LocalTime::class.java, "values (cast('11:29:25' as time))"))
     }
 
     @Test
     fun localDatesWithTimeZoneProblems() {
-        val oldDefault = DateTimeZone.getDefault()
-        try {
-            DateTimeZone.setDefault(DateTimeZone.forID("UTC"))
-
-            assertThat(db.findUnique(LocalDate::class.java, "values (cast('2012-10-09' as date))"), `is`(LocalDate(2012, 10, 9)))
-
-        } finally {
-            DateTimeZone.setDefault(oldDefault)
+        withUTCDateTimeZone {
+            assertEquals(LocalDate(2012, 10, 9), db.findUnique(LocalDate::class.java, "values (cast('2012-10-09' as date))"))
         }
     }
 
     @Test
     fun localDatesFromTimestampWithTimeZoneProblems() {
-        val oldDefault = DateTimeZone.getDefault()
-        try {
-            DateTimeZone.setDefault(DateTimeZone.forID("UTC"))
-
-            assertThat(db.findUnique(LocalDate::class.java, "values (cast('2012-10-09 00:00:00' as timestamp))"), `is`(LocalDate(2012, 10, 9)))
-
-        } finally {
-            DateTimeZone.setDefault(oldDefault)
+        withUTCDateTimeZone {
+            assertEquals(LocalDate(2012, 10, 9), db.findUnique(LocalDate::class.java, "values (cast('2012-10-09 00:00:00' as timestamp))"))
         }
     }
 
@@ -85,9 +73,9 @@ class JodaIntegrationTest {
     fun jodaTypesAsParameters() {
         val container = db.findUnique(DateContainer::class.java, "values (cast('2012-10-09 11:29:25' as timestamp), cast('2012-10-09' as date), cast('11:29:25' as time))")
 
-        assertThat(container.dateTime, `is`(DateTime(2012, 10, 9, 11, 29, 25)))
-        assertThat(container.date, `is`(LocalDate(2012, 10, 9)))
-        assertThat(container.time, `is`(LocalTime(11, 29, 25)))
+        assertEquals(DateTime(2012, 10, 9, 11, 29, 25), container.dateTime)
+        assertEquals(LocalDate(2012, 10, 9), container.date)
+        assertEquals(LocalTime(11, 29, 25), container.time)
     }
 
     @Test
@@ -97,13 +85,13 @@ class JodaIntegrationTest {
 
         val dateTime = DateTime.now()
         val date = LocalDate.now()
-        val time = withoutMillis(LocalTime.now())
+        val time = LocalTime.now().withoutMillis()
 
         db.update("insert into date_test (timestamp, date, time) values (?, ?, ?)", dateTime, date, time)
 
-        assertThat(db.findUnique(DateTime::class.java, "select timestamp from date_test"), `is`(dateTime))
-        assertThat(db.findUnique(LocalDate::class.java, "select date from date_test"), `is`(date))
-        assertThat(db.findUnique(LocalTime::class.java, "select time from date_test"), `is`(time))
+        assertEquals(dateTime, db.findUnique(DateTime::class.java, "select timestamp from date_test"))
+        assertEquals(date, db.findUnique(LocalDate::class.java, "select date from date_test"))
+        assertEquals(time, db.findUnique(LocalTime::class.java, "select time from date_test"))
     }
 
     @Test
@@ -115,12 +103,10 @@ class JodaIntegrationTest {
 
         db.update("insert into timezones (zone_id) values (?)", helsinkiTimeZone)
 
-        assertThat(db.findUnique(DateTimeZone::class.java, "select zone_id from timezones"), `is`(helsinkiTimeZone))
+        assertEquals(helsinkiTimeZone, db.findUnique(DateTimeZone::class.java, "select zone_id from timezones"))
     }
 
-    private fun withoutMillis(time: LocalTime): LocalTime {
-        return time.minusMillis(time.millisOfSecond)
-    }
+    private fun LocalTime.withoutMillis() = this.minusMillis(this.millisOfSecond)
 
     class DateContainer(val dateTime: DateTime, val date: LocalDate, val time: LocalTime)
 }

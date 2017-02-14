@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,12 +20,25 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.annotation;
+package org.dalesbred.testutils
 
 /**
- * Annotation used for marking members that are only accessed reflectively, e.g. constructors
- * of DTOs that are called by Dalesbred when building results. Can be configured as an entry-point
- * marker for analyzation tools.
+ * Executes block of code with given value of given system-property.
  */
-public @interface Reflective {
+fun withSystemProperty(property: String, value: String, block: () -> Unit) {
+    val old = System.getProperty(property)
+    try {
+        setSystemProperty(property, value)
+        block()
+
+    } finally {
+        setSystemProperty(property, old)
+    }
+}
+
+private fun setSystemProperty(name: String, value: String?) {
+    if (value != null)
+        System.setProperty(name, value)
+    else
+        System.clearProperty(name)
 }

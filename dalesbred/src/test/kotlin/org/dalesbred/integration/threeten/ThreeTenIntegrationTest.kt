@@ -24,13 +24,12 @@ package org.dalesbred.integration.threeten
 
 import org.dalesbred.TestDatabaseProvider
 import org.dalesbred.TransactionalTestsRule
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
+import org.dalesbred.testutils.withUTCTimeZone
 import org.junit.Rule
 import org.junit.Test
 import org.threeten.bp.*
 import org.threeten.bp.temporal.ChronoUnit.SECONDS
-import java.util.*
+import kotlin.test.assertEquals
 
 class ThreeTenIntegrationTest {
 
@@ -40,18 +39,14 @@ class ThreeTenIntegrationTest {
 
     @Test
     fun fetchLocalDateTime() {
-        assertThat(db.findUnique(LocalDateTime::class.java, "VALUES (cast('2012-10-09 11:29:25' AS TIMESTAMP))"), `is`(LocalDateTime.of(2012, 10, 9, 11, 29, 25)))
+        assertEquals(LocalDateTime.of(2012, 10, 9, 11, 29, 25), db.findUnique(LocalDateTime::class.java, "VALUES (cast('2012-10-09 11:29:25' AS TIMESTAMP))"))
     }
 
     @Test
     fun fetchInstant() {
-        val oldDefault = TimeZone.getDefault()
-        try {
-            TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
+        withUTCTimeZone {
             val time = Instant.ofEpochMilli(1295000000000L)
-            assertThat(db.findUnique(Instant::class.java, "VALUES (cast('2011-01-14 10:13:20' AS TIMESTAMP))"), `is`(time))
-        } finally {
-            TimeZone.setDefault(oldDefault)
+            assertEquals(time, db.findUnique(Instant::class.java, "VALUES (cast('2011-01-14 10:13:20' AS TIMESTAMP))"))
         }
     }
 
@@ -64,42 +59,30 @@ class ThreeTenIntegrationTest {
 
         db.update("INSERT INTO instant_test (timestamp) VALUES (?)", instant)
 
-        assertThat(db.findUnique(Instant::class.java, "SELECT timestamp FROM instant_test"), `is`(instant))
+        assertEquals(instant, db.findUnique(Instant::class.java, "SELECT timestamp FROM instant_test"))
     }
 
     @Test
     fun fetchLocalDates() {
-        assertThat(db.findUnique(LocalDate::class.java, "VALUES (cast('2012-10-09' AS DATE))"), `is`(LocalDate.of(2012, 10, 9)))
+        assertEquals(LocalDate.of(2012, 10, 9), db.findUnique(LocalDate::class.java, "VALUES (cast('2012-10-09' AS DATE))"))
     }
 
     @Test
     fun fetchLocalTime() {
-        assertThat(db.findUnique(LocalTime::class.java, "VALUES (cast('11:29:25' AS TIME))"), `is`(LocalTime.of(11, 29, 25)))
+        assertEquals(LocalTime.of(11, 29, 25), db.findUnique(LocalTime::class.java, "VALUES (cast('11:29:25' AS TIME))"))
     }
 
     @Test
     fun localDatesWithTimeZoneProblems() {
-        val oldDefault = TimeZone.getDefault()
-        try {
-            TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
-
-            assertThat(db.findUnique(LocalDate::class.java, "VALUES (cast('2012-10-09' AS DATE))"), `is`(LocalDate.of(2012, 10, 9)))
-
-        } finally {
-            TimeZone.setDefault(oldDefault)
+        withUTCTimeZone {
+            assertEquals(LocalDate.of(2012, 10, 9), db.findUnique(LocalDate::class.java, "VALUES (cast('2012-10-09' AS DATE))"))
         }
     }
 
     @Test
     fun localDatesFromTimestampWithTimeZoneProblems() {
-        val oldDefault = TimeZone.getDefault()
-        try {
-            TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
-
-            assertThat(db.findUnique(LocalDate::class.java, "VALUES (cast('2012-10-09 00:00:00' AS TIMESTAMP))"), `is`(LocalDate.of(2012, 10, 9)))
-
-        } finally {
-            TimeZone.setDefault(oldDefault)
+        withUTCTimeZone {
+            assertEquals(LocalDate.of(2012, 10, 9), db.findUnique(LocalDate::class.java, "VALUES (cast('2012-10-09 00:00:00' AS TIMESTAMP))"))
         }
     }
 
@@ -107,9 +90,9 @@ class ThreeTenIntegrationTest {
     fun timesTypesAsParameters() {
         val container = db.findUnique(DateContainer::class.java, "VALUES (cast('2012-10-09 11:29:25' AS TIMESTAMP), cast('2012-10-09' AS DATE), cast('11:29:25' AS TIME))")
 
-        assertThat(container.dateTime, `is`(LocalDateTime.of(2012, 10, 9, 11, 29, 25)))
-        assertThat(container.date, `is`(LocalDate.of(2012, 10, 9)))
-        assertThat(container.time, `is`(LocalTime.of(11, 29, 25)))
+        assertEquals(LocalDateTime.of(2012, 10, 9, 11, 29, 25), container.dateTime)
+        assertEquals(LocalDate.of(2012, 10, 9), container.date)
+        assertEquals(LocalTime.of(11, 29, 25), container.time)
     }
 
     @Test
@@ -123,9 +106,9 @@ class ThreeTenIntegrationTest {
 
         db.update("INSERT INTO date_test (timestamp, date, time) VALUES (?, ?, ?)", dateTime, date, time)
 
-        assertThat(db.findUnique(LocalDateTime::class.java, "SELECT timestamp FROM date_test"), `is`(dateTime))
-        assertThat(db.findUnique(LocalDate::class.java, "SELECT date FROM date_test"), `is`(date))
-        assertThat(db.findUnique(LocalTime::class.java, "SELECT time FROM date_test"), `is`(time))
+        assertEquals(dateTime, db.findUnique(LocalDateTime::class.java, "SELECT timestamp FROM date_test"))
+        assertEquals(date, db.findUnique(LocalDate::class.java, "SELECT date FROM date_test"))
+        assertEquals(time, db.findUnique(LocalTime::class.java, "SELECT time FROM date_test"))
     }
 
     @Test
@@ -137,7 +120,7 @@ class ThreeTenIntegrationTest {
 
         db.update("INSERT INTO timezones (zone_id) VALUES (?)", helsinkiTimeZone)
 
-        assertThat(db.findUnique(ZoneId::class.java, "SELECT zone_id FROM timezones"), `is`(helsinkiTimeZone))
+        assertEquals(helsinkiTimeZone, db.findUnique(ZoneId::class.java, "SELECT zone_id FROM timezones"))
     }
 
     class DateContainer(val dateTime: LocalDateTime, val date: LocalDate, val time: LocalTime)

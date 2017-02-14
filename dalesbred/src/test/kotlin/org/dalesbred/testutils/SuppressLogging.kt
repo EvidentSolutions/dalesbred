@@ -22,4 +22,18 @@
 
 package org.dalesbred.testutils
 
-annotation class SuppressLogging
+import ch.qos.logback.classic.Level
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import ch.qos.logback.classic.Logger as LogbackLogger
+
+fun withSuppressedLogging(block: () -> Unit) {
+    val rootLogger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as LogbackLogger
+    val oldLevel = rootLogger.level
+    try {
+        rootLogger.level = Level.OFF
+        block()
+    } finally {
+        rootLogger.level = oldLevel
+    }
+}

@@ -30,17 +30,14 @@ class VariableResolversTest {
 
     @Test
     fun testProviderForMap() {
-        val parameterMap = mutableMapOf<String, Any>()
-
         val foo = Any()
         val bar = Any()
         val baz = Any()
 
-        parameterMap.put("foo", foo)
-        parameterMap.put("bar", bar)
-        parameterMap.put("baz", baz)
-
-        val variableResolver = VariableResolver.forMap(parameterMap)
+        val variableResolver = VariableResolver.forMap(mapOf(
+            "foo" to foo,
+            "bar" to bar,
+            "baz" to baz))
 
         assertEquals(foo, variableResolver.getValue("foo"))
         assertEquals(bar, variableResolver.getValue("bar"))

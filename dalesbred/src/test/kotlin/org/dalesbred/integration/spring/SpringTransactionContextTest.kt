@@ -23,6 +23,7 @@
 package org.dalesbred.integration.spring
 
 import org.dalesbred.TestDatabaseProvider
+import org.dalesbred.testutils.withConnection
 import org.junit.Test
 import org.springframework.transaction.support.SimpleTransactionStatus
 import kotlin.test.assertEquals
@@ -30,10 +31,8 @@ import kotlin.test.assertEquals
 class SpringTransactionContextTest {
 
     @Test
-    @Suppress("ConvertTryFinallyToUseCall") // 'use' does not actually work for java.sql.Connection
     fun rollingBackDelegatesToOriginalContexts() {
-        val connection = TestDatabaseProvider.createInMemoryHSQLDataSource().connection
-        try {
+        TestDatabaseProvider.createInMemoryHSQLDataSource().withConnection { connection ->
             val status = SimpleTransactionStatus()
             val context = SpringTransactionContext(status, connection)
 
@@ -46,8 +45,6 @@ class SpringTransactionContextTest {
 
             assertEquals(true, context.isRollbackOnly)
             assertEquals(true, status.isRollbackOnly)
-        } finally {
-            connection.close()
         }
     }
 }

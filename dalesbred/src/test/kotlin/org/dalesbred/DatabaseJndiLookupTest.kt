@@ -23,8 +23,7 @@
 package org.dalesbred
 
 import org.dalesbred.integration.MemoryContext
-import org.dalesbred.integration.SystemPropertyRule
-import org.junit.Rule
+import org.dalesbred.testutils.withSystemProperty
 import org.junit.Test
 import java.util.*
 import javax.naming.Context
@@ -33,14 +32,14 @@ import kotlin.test.assertEquals
 
 class DatabaseJndiLookupTest {
 
-    @get:Rule val rule = SystemPropertyRule("java.naming.factory.initial", MyInitialFactory::class.java.name)
-
     @Test
     fun createDatabaseByFetchingDataSourceFromJndi() {
-        MyInitialFactory.initialContext.bind("java:comp/env/foo", TestDatabaseProvider.createInMemoryHSQLDataSource())
+        withSystemProperty("java.naming.factory.initial", MyInitialFactory::class.java.name) {
+            MyInitialFactory.initialContext.bind("java:comp/env/foo", TestDatabaseProvider.createInMemoryHSQLDataSource())
 
-        val db = Database.forJndiDataSource("java:comp/env/foo")
-        assertEquals(42, db.findUniqueInt("values (42)"))
+            val db = Database.forJndiDataSource("java:comp/env/foo")
+            assertEquals(42, db.findUniqueInt("values (42)"))
+        }
     }
 
     class MyInitialFactory : InitialContextFactory {

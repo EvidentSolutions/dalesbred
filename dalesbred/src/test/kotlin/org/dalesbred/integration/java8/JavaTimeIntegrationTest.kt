@@ -24,11 +24,11 @@ package org.dalesbred.integration.java8
 
 import org.dalesbred.TestDatabaseProvider
 import org.dalesbred.TransactionalTestsRule
+import org.dalesbred.testutils.withUTCTimeZone
 import org.junit.Rule
 import org.junit.Test
 import java.time.*
 import java.time.temporal.ChronoUnit.SECONDS
-import java.util.*
 import kotlin.test.assertEquals
 
 class JavaTimeIntegrationTest {
@@ -44,13 +44,9 @@ class JavaTimeIntegrationTest {
 
     @Test
     fun fetchInstant() {
-        val oldDefault = TimeZone.getDefault()
-        try {
-            TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
+        withUTCTimeZone {
             val time = Instant.ofEpochMilli(1295000000000L)
             assertEquals(time, db.findUnique(Instant::class.java, "VALUES (cast('2011-01-14 10:13:20' AS TIMESTAMP))"))
-        } finally {
-            TimeZone.setDefault(oldDefault)
         }
     }
 
@@ -78,27 +74,15 @@ class JavaTimeIntegrationTest {
 
     @Test
     fun localDatesWithTimeZoneProblems() {
-        val oldDefault = TimeZone.getDefault()
-        try {
-            TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
-
+        withUTCTimeZone {
             assertEquals(LocalDate.of(2012, 10, 9), db.findUnique(LocalDate::class.java, "VALUES (cast('2012-10-09' AS DATE))"))
-
-        } finally {
-            TimeZone.setDefault(oldDefault)
         }
     }
 
     @Test
     fun localDatesFromTimestampWithTimeZoneProblems() {
-        val oldDefault = TimeZone.getDefault()
-        try {
-            TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
-
+        withUTCTimeZone {
             assertEquals(LocalDate.of(2012, 10, 9), db.findUnique(LocalDate::class.java, "VALUES (cast('2012-10-09 00:00:00' AS TIMESTAMP))"))
-
-        } finally {
-            TimeZone.setDefault(oldDefault)
         }
     }
 

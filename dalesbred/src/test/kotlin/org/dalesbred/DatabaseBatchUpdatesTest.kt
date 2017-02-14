@@ -24,6 +24,7 @@ package org.dalesbred
 
 import org.dalesbred.query.SqlQuery.query
 import org.dalesbred.result.ResultSetProcessor
+import org.dalesbred.testutils.mapRows
 import org.junit.Assert.assertArrayEquals
 import org.junit.Rule
 import org.junit.Test
@@ -76,12 +77,7 @@ class DatabaseBatchUpdatesTest {
         }
     }
 
-    object CollectKeysResultSetProcessor : ResultSetProcessor<List<Int>> {
-        override fun process(resultSet: ResultSet): List<Int> {
-            val result = mutableListOf<Int>()
-            while (resultSet.next())
-                result.add(resultSet.getInt(1))
-            return result
-        }
+    private object CollectKeysResultSetProcessor : ResultSetProcessor<List<Int>> {
+        override fun process(resultSet: ResultSet) = resultSet.mapRows { it.getInt((1)) }
     }
 }

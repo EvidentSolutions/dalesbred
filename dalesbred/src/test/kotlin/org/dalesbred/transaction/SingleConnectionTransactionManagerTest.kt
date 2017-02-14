@@ -24,21 +24,19 @@ package org.dalesbred.transaction
 
 import org.dalesbred.Database
 import org.dalesbred.TestDatabaseProvider
+import org.dalesbred.testutils.withConnection
 import org.junit.Test
-
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-@Suppress("ConvertTryFinallyToUseCall") // 'use' does not actually work for Connection
 class SingleConnectionTransactionManagerTest {
 
     private val dataSource = TestDatabaseProvider.createInMemoryHSQLDataSource()
 
     @Test
     fun rollbacksWithoutThirdPartyTransactions() {
-        val connection = dataSource.connection
-        try {
+        dataSource.withConnection { connection ->
             val tm = SingleConnectionTransactionManager(connection, false)
             val db = Database(tm)
 
@@ -52,22 +50,17 @@ class SingleConnectionTransactionManagerTest {
             }
 
             assertEquals("foo", db.findUnique(String::class.java, "select text from test_table"))
-        } finally {
-            connection.close()
         }
     }
 
     @Test
     fun verifyHasTransaction() {
-        val connection = dataSource.connection
-        try {
+        dataSource.withConnection { connection ->
             val db1 = Database(SingleConnectionTransactionManager(connection, true))
             assertTrue(db1.hasActiveTransaction())
 
             val db2 = Database(SingleConnectionTransactionManager(connection, false))
             assertFalse(db2.hasActiveTransaction())
-        } finally {
-            connection.close()
         }
     }
 }

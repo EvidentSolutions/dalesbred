@@ -20,45 +20,49 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.internal.utils
+package org.dalesbred.internal.instantiation
 
-import org.dalesbred.internal.utils.CollectionUtils.arrayOfType
-import org.dalesbred.internal.utils.CollectionUtils.mapToList
+import org.junit.Assert.assertSame
 import org.junit.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import kotlin.test.assertFailsWith
 
-class CollectionUtilsTest {
+class InstantiatorArgumentsTest {
 
     @Test
-    fun mapping() {
-        assertEquals(listOf(3, 4, 5), mapToList(listOf("foo", "quux", "xyzzy")) { it.length })
+    fun constructorArgumentsAreRetained() {
+        val types = NamedTypeList.builder(2).apply {
+            add("foo", String::class.java)
+            add("bar", Int::class.javaPrimitiveType!!)
+        }.build()
+
+        val values = listOf("bar", 4)
+
+        val arguments = InstantiatorArguments(types, values)
+        assertSame(types, arguments.types)
+        assertEquals(values, arguments.values)
     }
 
     @Test
-    fun createArrayOfObjectType() {
-        val array = arrayOfType(Int::class.javaObjectType, listOf(1, 42, 7))
+    fun sizesOfArgumentListsDiffer() {
+        val types = NamedTypeList.builder(2).apply {
+            add("foo", String::class.java)
+            add("bar", Int::class.javaPrimitiveType!!)
+        }.build()
 
-        assertTrue { Array<Int>::class.java.isInstance(array) }
-
-        @Suppress("UNCHECKED_CAST")
-        val intArray = array as Array<Int>
-        assertEquals(3, intArray.size)
-        assertEquals(1, intArray[0])
-        assertEquals(42, intArray[1])
-        assertEquals(7, intArray[2])
+        assertFailsWith<IllegalArgumentException> {
+            InstantiatorArguments(types, listOf("bar"))
+        }
     }
 
     @Test
-    fun createArrayOfPrimitiveType() {
-        val array = arrayOfType(Int::class.javaPrimitiveType!!, listOf(1, 42, 7))
+    fun argumentsSize() {
+        val types = NamedTypeList.builder(2).apply {
+            add("foo", String::class.java)
+            add("bar", Int::class.javaPrimitiveType!!)
+        }.build()
 
-        assertTrue { array is IntArray }
-
-        val intArray = array as IntArray
-        assertEquals(3, intArray.size)
-        assertEquals(1, intArray[0])
-        assertEquals(42, intArray[1])
-        assertEquals(7, intArray[2])
+        val arguments = InstantiatorArguments(types, listOf("bar", 4))
+        assertEquals(2, arguments.size())
     }
 }

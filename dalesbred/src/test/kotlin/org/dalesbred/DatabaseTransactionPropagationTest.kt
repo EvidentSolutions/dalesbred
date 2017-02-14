@@ -22,10 +22,8 @@
 
 package org.dalesbred
 
-import org.dalesbred.testutils.LoggingController
-import org.dalesbred.testutils.SuppressLogging
+import org.dalesbred.testutils.withSuppressedLogging
 import org.dalesbred.transaction.Propagation.*
-import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -33,8 +31,6 @@ import kotlin.test.assertFailsWith
 class DatabaseTransactionPropagationTest {
 
     private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
-
-    @get:Rule val rule = LoggingController()
 
     @Test
     fun mandatoryPropagationWithoutExistingTransactionThrowsException() {
@@ -55,27 +51,28 @@ class DatabaseTransactionPropagationTest {
     }
 
     @Test
-    @SuppressLogging
     fun nestedTransactions() {
         db.update("drop table if exists test_table")
         db.update("create table test_table (text varchar(64))")
 
-        db.withVoidTransaction {
-            db.update("insert into test_table (text) values ('initial')")
+        withSuppressedLogging {
+            db.withVoidTransaction {
+                db.update("INSERT INTO test_table (text) VALUES ('initial')")
 
-            assertEquals("initial", db.findUnique(String::class.java, "select text from test_table"))
+                assertEquals("initial", db.findUnique(String::class.java, "SELECT text FROM test_table"))
 
-            assertFailsWith<RuntimeException> {
-                db.withVoidTransaction(NESTED) {
-                    db.update("UPDATE test_table SET text = 'new-value'")
+                assertFailsWith<RuntimeException> {
+                    db.withVoidTransaction(NESTED) {
+                        db.update("UPDATE test_table SET text = 'new-value'")
 
-                    assertEquals("new-value", db.findUnique(String::class.java, "SELECT text FROM test_table"))
+                        assertEquals("new-value", db.findUnique(String::class.java, "SELECT text FROM test_table"))
 
-                    throw RuntimeException()
+                        throw RuntimeException()
+                    }
                 }
-            }
 
-            assertEquals("initial", db.findUnique(String::class.java, "select text from test_table"))
+                assertEquals("initial", db.findUnique(String::class.java, "SELECT text FROM test_table"))
+            }
         }
     }
 
