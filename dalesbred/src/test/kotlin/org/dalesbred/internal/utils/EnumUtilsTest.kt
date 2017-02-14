@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Evident Solutions Oy
+ * Copyright (c) 2017 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,29 +20,30 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.internal.utils;
+package org.dalesbred.internal.utils
 
-import org.dalesbred.DatabaseException;
-import org.junit.Test;
+import org.dalesbred.DatabaseException
+import org.junit.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+class EnumUtilsTest {
 
-public class EnumUtilsTest {
-
-    private enum TestEnum {
+    private enum class TestEnum {
         FOO, BAR, BAZ
     }
 
     @Test
-    public void enumByOrdinal_valid() {
-        assertThat(EnumUtils.enumByOrdinal(TestEnum.class, 0), is(TestEnum.FOO));
-        assertThat(EnumUtils.enumByOrdinal(TestEnum.class, 1), is(TestEnum.BAR));
-        assertThat(EnumUtils.enumByOrdinal(TestEnum.class, 2), is(TestEnum.BAZ));
+    fun enumByOrdinal_valid() {
+        assertEquals(TestEnum.FOO, EnumUtils.enumByOrdinal(TestEnum::class.java, 0))
+        assertEquals(TestEnum.BAR, EnumUtils.enumByOrdinal(TestEnum::class.java, 1))
+        assertEquals(TestEnum.BAZ, EnumUtils.enumByOrdinal(TestEnum::class.java, 2))
     }
 
-    @Test(expected = DatabaseException.class)
-    public void enumByOrdinal_invalid() {
-        EnumUtils.enumByOrdinal(TestEnum.class, 4);
+    @Test
+    fun enumByOrdinal_invalid() {
+        assertFailsWith<DatabaseException> {
+            EnumUtils.enumByOrdinal(TestEnum::class.java, 4)
+        }
     }
 }
