@@ -1,3 +1,9 @@
+## Unreleased
+
+### New features
+
+  - Add new `dalesbred-kotlin` module which adds Kotlin extensions to `Database`.
+  
 ## 1.2.3 (2016-12-01)
 
 ### New features
