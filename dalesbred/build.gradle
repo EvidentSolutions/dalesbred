@@ -9,11 +9,11 @@ dependencies {
     compile 'org.threeten:threetenbp:1.3.3'
     compile "org.springframework:spring-context:$springVersion"
     compile "org.springframework:spring-jdbc:$springVersion"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     compile "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
 
     compile 'org.postgresql:postgresql:9.4.1212'
 
-    testCompile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     testCompile "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
     testCompile "org.hsqldb:hsqldb:$hsqldbVersion"
     testCompile "com.h2database:h2:1.4.193"

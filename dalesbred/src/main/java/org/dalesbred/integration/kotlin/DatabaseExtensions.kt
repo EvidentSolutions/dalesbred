@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.kotlin
+package org.dalesbred.integration.kotlin
 
 import org.dalesbred.Database
 import org.dalesbred.query.SqlQuery

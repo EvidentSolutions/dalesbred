@@ -65,11 +65,10 @@ task publish {
 
     dependsOn ':website:publishGhPages',
             ':dalesbred:uploadArchives',
-            ':dalesbred-junit:uploadArchives',
-            ':dalesbred-kotlin:uploadArchives'
+            ':dalesbred-junit:uploadArchives'
 }
 
-configure([project(':dalesbred'), project(':dalesbred-junit'), project(':dalesbred-kotlin')]) {
+configure([project(':dalesbred'), project(':dalesbred-junit')]) {
     apply plugin: 'java'
     apply plugin: 'com.bmuschko.nexus'
     apply from: "${rootProject.projectDir}/gradle/publish-maven.gradle"

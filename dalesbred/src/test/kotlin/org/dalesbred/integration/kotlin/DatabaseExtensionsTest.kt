@@ -20,9 +20,9 @@
  * THE SOFTWARE.
  */
 
-package org.dalesbred.kotlin
+package org.dalesbred.integration.kotlin
 
-import org.dalesbred.Database
+import org.dalesbred.TestDatabaseProvider.createInMemoryHSQLDatabase
 import org.junit.Test
 import java.util.*
 import kotlin.test.assertEquals
@@ -123,7 +123,4 @@ class DatabaseExtensionsTest {
     }
 
     data class Department(val id: Int, val name: String)
-
-    private fun createInMemoryHSQLDatabase(): Database =
-            Database.forUrlAndCredentials("jdbc:hsqldb:mem:test;hsqldb.tx=mvcc", "sa", "")
 }

@@ -1,5 +1,4 @@
 rootProject.name = 'dalesbred-root'
 include ':dalesbred'
 include ':dalesbred-junit'
-include ':dalesbred-kotlin'
 include ':website'
