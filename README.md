@@ -53,6 +53,16 @@ Insert a new row:
 db.update("insert into user (id, name) values (?, ?)", 42, "Example User");
 ```
 
+Improve your experience with Kotlin and bundled extension methods:
+
+```kotlin
+val departments = db.findAll<Department>("""
+    select id, name 
+      from department
+      where name like ?""", 
+    "%foo")
+```
+
 Documentation
 =============
 
