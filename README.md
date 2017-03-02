@@ -10,7 +10,7 @@ while still providing access to low-level functionality.
 
 Visit the [Dalesbred website](http://dalesbred.org/) for details.
 
-[![Build Status](https://drone.io/github.com/EvidentSolutions/dalesbred/status.png)](https://drone.io/github.com/EvidentSolutions/dalesbred/latest)
+[![Build Status](https://teamcity.evident.fi/app/rest/builds/buildType:(id:Evident_Dalesbred_Build)/statusIcon)](https://teamcity.evident.fi/viewType.html?buildTypeId=Evident_Dalesbred_Build&guest=1)
 
 Quick-start
 ===========
