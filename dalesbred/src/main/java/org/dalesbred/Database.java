@@ -617,6 +617,26 @@ public final class Database {
     }
 
     /**
+     * Execute an update against the database and assert that a single row will be modified.
+     *
+     * @throws NonUniqueUpdateException if zero or more then one rows were updated
+     */
+    public void updateUnique(@NotNull SqlQuery query) {
+        int modifiedRows = update(query);
+        if (modifiedRows != 1)
+            throw new NonUniqueUpdateException(1);
+    }
+
+    /**
+     * Execute an update against the database and assert that a single row will be modified.
+     *
+     * @throws NonUniqueUpdateException if zero or more then one rows were updated
+     */
+    public void updateUnique(@NotNull @SQL String sql, Object... args) {
+        updateUnique(SqlQuery.query(sql, args));
+    }
+
+    /**
      * Executes an update against the database and return generated keys as extracted by generatedKeysProcessor.
      *
      * @param generatedKeysProcessor processor for handling the generated keys

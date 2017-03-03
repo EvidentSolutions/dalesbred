@@ -23,13 +23,9 @@
 package org.dalesbred
 
 import org.dalesbred.dialect.HsqldbDialect
-import org.dalesbred.result.EmptyResultException
-import org.dalesbred.result.NonUniqueResultException
-import org.dalesbred.result.ResultSetProcessor
-import org.dalesbred.result.RowMapper
+import org.dalesbred.result.*
 import org.junit.Rule
 import org.junit.Test
-
 import java.math.BigDecimal
 import java.util.*
 import kotlin.test.*
@@ -238,6 +234,37 @@ class DatabaseTest {
 
         db.isAllowImplicitTransactions = true
         assertTrue(db.isAllowImplicitTransactions)
+    }
+
+    @Test
+    fun updateUnique_uniqueRow() {
+        db.update("drop table if exists unique_test")
+        db.update("create table unique_test (id int primary key)")
+        db.update("insert into unique_test (id) values (1), (2), (3)")
+
+        db.updateUnique("UPDATE unique_test SET id = 4 WHERE id = 1")
+    }
+
+    @Test
+    fun updateUnique_missingRow() {
+        db.update("drop table if exists unique_test")
+        db.update("create table unique_test (id int primary key)")
+        db.update("insert into unique_test (id) values (1), (2), (3)")
+
+        assertFailsWith<NonUniqueUpdateException> {
+            db.updateUnique("UPDATE unique_test SET id = 4 WHERE id = 5")
+        }
+    }
+
+    @Test
+    fun updateUnique_multipleRows() {
+        db.update("drop table if exists unique_test")
+        db.update("create table unique_test (id int primary key)")
+        db.update("insert into unique_test (id) values (1), (2), (3)")
+
+        assertFailsWith<NonUniqueUpdateException> {
+            db.updateUnique("UPDATE unique_test SET id = id+1 WHERE id > 1")
+        }
     }
 
     class Department(val id: Int, val name: String)

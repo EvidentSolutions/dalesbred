@@ -3,6 +3,7 @@
 ### New features
 
   - Add optional Kotlin-support; `org.dalesbred.integration.kotlin` package adds Kotlin extensions to `Database`.
+  - Add `updateUnique` to `Database` ([#32](https://github.com/EvidentSolutions/dalesbred/issues/32))
   
 ## 1.2.3 (2016-12-01)
 
