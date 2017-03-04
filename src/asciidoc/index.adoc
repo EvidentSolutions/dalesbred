@@ -354,6 +354,25 @@ Dalesbred provides built-in <<_custom_type_conversions,type-conversions>> for th
 |====
 
 
+Kotlin
+~~~~~~
+
+Dalesbred has no required dependencies on https://kotlinlang.org/[Kotlin], but comes with a set of extension methods
+to make Kotlin use nicer. Just import everything from `org.dalesbred.integration.kotlin` and you're good to go:
+
+[source,kotlin]
+----
+import org.dalesbred.integration.kotlin.*
+
+...
+
+fun findEmployees() = db.findAll<Employee>("""
+      select id, name, salary
+        from employee
+      order by name, id
+    """)
+----
+
 Joda-Time
 ~~~~~~~~~
 
