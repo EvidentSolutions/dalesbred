@@ -3,7 +3,8 @@
 === Configuring the database connection
 
 Most things in Dalesbred happen through an instance of {javadocBase}org/dalesbred/Database.html[Database].
-The easiest way to get hold of one is to specify the settings manually:
+It takes care of managing JDBC connections, so in a typical application you should only configure a single instance --
+unless you need to connect multiple databases. The easiest way to get hold of one is to specify the settings manually:
 
 [source,java]
 ----
@@ -12,7 +13,7 @@ Database db = Database.forUrlAndCredentials("jdbc:example-url", "login", "passwo
 
 Note that this performs no connection pooling and is therefore probably not
 your preferred way of configuring the system in production. In a container
-you'll probably want to use a named {jdkJavadocBase}javax/sql/DataSource.html[DataSource] lookup up from JNDI:
+you'll probably want to lookup a named {jdkJavadocBase}javax/sql/DataSource.html[DataSource] from JNDI:
 
 [source,java]
 ----
@@ -32,7 +33,7 @@ If you are using http://projects.spring.io/spring-framework/[Spring Framework], 
 
 === Finding stuff
 
-Finding simple results consisting of just basic types is simple:
+Running queries resulting basic types is simple:
 
 [source,java]
 ----
@@ -40,7 +41,7 @@ List<Integer> newIds = db.findAll(Integer.class,
     "select id from department where created_date > ?", date);
 ----
 
-To fetch results with multiple columns, usually you'd use a class with matching constructor:
+There are a couple of ways to fetch results with multiple columns. First, you could just create a matching constructor:
 
 [source,java]
 ----
@@ -51,6 +52,7 @@ public final class Department {
     private final int id;
     private final String name;
 
+    @DalesbredInstantiator
     public Department(int id, String name) {
         this.id = id;
         this.name = name;
@@ -60,8 +62,13 @@ public final class Department {
 }
 ----
 
-If there are more columns in the result-set than can be given to a constructor, then the rest of the
-columns are set using properties or direct field access. So even the following would work:
+NOTE: The {javadocBase}org/dalesbred/annotation/DalesbredInstantiator.html[DalesbredInstantiator] annotation for
+constructor is optional, but helps Dalesbred to make an unambiguous decision when there are multiple constructors.
+It also serves as a useful documentation. Finally, it can be configured as an entry-point for static analyzers so
+they don't complain about unused constructor.
+
+Second option is to bind values using fields or setters. The following example uses  the default constructor for
+instantiation, field-binding for `id` and setter for `name`:
 
 [source,java]
 ----
@@ -72,11 +79,15 @@ List<Department> departments =
 
 public final class Department {
     public int id;
-    public String name;
+    private String name;
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }
 ----
 
-And if you have nested objects, you can bind to them as well as long as all objects in the path are instantiated:
+If you have nested objects, you can bind to them as well as long as all objects in the path are instantiated:
 
 [source,java]
 ----
@@ -100,11 +111,11 @@ You can also convert the results directly to a map:
 
 [source,java]
 ----
-Map<Integer,String> namesByIds = db.findMap(
+Map<Integer, String> namesByIds = db.findMap(
         Integer.class, String.class, "select id, name from department");
 
 // first column is used for key, rest for instantiating the value
-Map<Integer,Department> departmentsByIds = db.findMap(
+Map<Integer, Department> departmentsByIds = db.findMap(
         Integer.class, Department.class, "select id, id, name from department");
 
 ----
