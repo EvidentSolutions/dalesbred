@@ -3,8 +3,8 @@
 === SqlQuery vs. query parameters
 
 All methods come in two variants: there's an implementation that takes
-an {javadocBase}org/dalesbred/query/SqlQuery.html[SqlQuery] as a parameter and there's another
-implementation that takes {jdkJavadocBase}java/lang/String.html[String] and variable arguments of parameters.
+an {javadocBase}org/dalesbred/query/SqlQuery.html[SqlQuery] as a parameter and another
+implementation that takes a {jdkJavadocBase}java/lang/String.html[String] and a variable number of parameters.
 The latter is just convenience method for the further, meaning that the following code fragments are
 identical in functionality:
 
@@ -53,10 +53,9 @@ detailed control, you can pass your own implementation of
 
 === Building queries dynamically
 
-At the moment there's no high-level API for building queries, but there is a
-{javadocBase}org/dalesbred/query/QueryBuilder.html[QueryBuilder] that
-is basically just a {jdkJavadocBase}java/util/StringBuilder.html[StringBuilder] which remembers
-the query-parameters, so you can say things like:
+There's no high-level API for building queries, but {javadocBase}org/dalesbred/query/QueryBuilder.html[QueryBuilder]
+helps you constructing dynamic queries. It's basically just a {jdkJavadocBase}java/util/StringBuilder.html[StringBuilder]
+that also keeps track of parameters. Therefore you can say code like:
 
 [source,java]
 ----
@@ -67,5 +66,6 @@ if (status != null)
 db.findAll(Document.class, qb.build());
 ----
 
-For all but simplest dynamic queries, you'll probably want to have a higher level API that understands
-the structure of the SQL.
+NOTE: The benefit of using static queries is that IDEA and Dalesbred IDEA plugin know how to analyze them: they can
+be validated against the database schema and result classes. When building queries dynamically, you lose these
+benefits. Consider building a higher level abstraction on top of QueryBuilder if you need many dynamic queries.

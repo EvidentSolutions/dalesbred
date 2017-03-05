@@ -19,6 +19,9 @@ db.withVoidTransaction(tx -> {
 });
 ----
 
+Optionally, you can also pass {javadocBase}org/dalesbred/transaction/Isolation.html[Isolation] or
+{javadocBase}org/dalesbred/transaction/Propagation.html[Propagation] for these calls.
+
 === External transaction manager
 
 If you are using http://projects.spring.io/spring-framework/[Spring Framework], Dalesbred can integrate with
@@ -27,8 +30,8 @@ Spring's transaction-manager. Consult the <<_spring,Spring>>-section for details
 === Implicit transactions
 
 If you make calls to {javadocBase}org/dalesbred/Database.html[Database] without and explicit transaction, by default
-a new transaction is started for each call, but you can disallow this, in
-which case exceptions are thrown for calls without an active transaction:
+a new transaction is started for each call. You can disallow this: in this case exceptions are thrown for calls
+without an active transaction:
 
 [source,java]
 ----
