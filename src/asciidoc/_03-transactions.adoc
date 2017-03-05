@@ -1,0 +1,47 @@
+== Transactions
+
+=== Transaction callbacks
+
+To perform a bunch of operations in transaction, use {javadocBase}org/dalesbred/transaction/TransactionCallback.html[TransactionCallback]
+or {javadocBase}org/dalesbred/transaction/VoidTransactionCallback.html[VoidTransactionCallback]:
+
+[source,java]
+----
+db.withTransaction(tx -> {
+    // transactional operations
+    ...
+    return result;
+});
+
+db.withVoidTransaction(tx -> {
+    // transactional operations
+    ...
+});
+----
+
+=== External transaction manager
+
+If you are using http://projects.spring.io/spring-framework/[Spring Framework], Dalesbred can integrate with
+Spring's transaction-manager. Consult the <<_spring,Spring>>-section for details.
+
+=== Implicit transactions
+
+If you make calls to {javadocBase}org/dalesbred/Database.html[Database] without and explicit transaction, by default
+a new transaction is started for each call, but you can disallow this, in
+which case exceptions are thrown for calls without an active transaction:
+
+[source,java]
+----
+db.setAllowImplicitTransactions(false);
+----
+
+=== Nested transactions
+
+Nested transactions are supported if your database supports them:
+
+[source,java]
+----
+db.withTransaction(Propagation.NESTED, tx -> {
+    ...
+});
+----

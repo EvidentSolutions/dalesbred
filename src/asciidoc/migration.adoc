@@ -1,5 +1,4 @@
-Migrating from 0.x to 1.0
-=========================
+= Migrating from 0.x to 1.0
 Juha Komulainen <juha.komulainen@evident.fi>
 
 Dalesbred 1.0 is not source compatible with 0.x because of the following changes:
@@ -10,8 +9,7 @@ Dalesbred 1.0 is not source compatible with 0.x because of the following changes
 
 However, the migration should be relatively simple process. This guide provides the details.
 
-New package structure
----------------------
+== New package structure
 
 Base package is now `org.dalesbred` instead of `fi.evident.dalesbred`. Furthermore some classes were
 moved to new packages (e.g. `fi.evident.dalesbred.SqlQuery` is now `org.dalesbred.query.SqlQuery`).
@@ -21,27 +19,23 @@ Classes that are not part of public API, but need to be `public` for technical r
 under `org.dalesbred.internal`. Do not use classes defined there since they are not guaranteed
 to stay compatible between releases.
 
-Java 1.8
---------
+== Java 1.8
 
 Dalesbred now requires Java 1.8. This enables some nice improvements such as enabling uses of
 lambdas and `Optional<T>` in APIs.
 
-Removed instantiators
----------------------
+== Removed instantiators
 
 `Instantiator`, `InstantiatorRegistry` and related classes and methods were completely removed since they
 were seldom used and added too much complication for their weight. Instead of registering instantiator for `Foo`
 globally, you can simply use a custom `ResultSetProcessor` in queries for `Foo`.
 
-Simplified type-conversion registration
----------------------------------------
+== Simplified type-conversion registration
 
 `TypeConversion` is no longer part of public API and you don't need to implement it to register
 type-conversions. Instead, you can register normal functions as conversions using `TypeConversionRegistry`.
 
-Enum binding changes
---------------------
+== Enum binding changes
 
 `Database` no longer has `EnumMode` for setting globally how enum types are persisted. Rather you can
 customize the persistence through `TypeConversionRegistry` just like for any other types. By default
@@ -54,8 +48,7 @@ enum type named `foo_bar` in database. Now they are persisted as varchars using 
 but you can use the previous functionality by calling
 `typeConversionRegistry.registerNativeEnumConversion(FooBar.class, "foo_bar")`
 
-Transaction management changes
-------------------------------
+== Transaction management changes
 
   - Made `TransactionContext` an interface instead of abstract class.
   - Removed support for configuring default propagation. Default propagation is now always `REQUIRED`, but you
@@ -67,8 +60,7 @@ Transaction management changes
     really need the functionality, copy https://github.com/EvidentSolutions/dalesbred/blob/0.x/dalesbred/src/main/java/fi/evident/dalesbred/support/proxy/TransactionalProxyFactory.java[TransactionalProxyFactory of Dalesbred 0.8].
   - Removed support for transaction retries. They were hardly useful and not supported for Spring integration.
 
-Guice and AOP Alliance support removed
---------------------------------------
+== Guice and AOP Alliance support removed
 
 Dalesbred no longer ships with support out-of-the box support for Guice and AOP Alliance. If you need the support,
 you can port the classes from 0.x branch:
@@ -76,14 +68,12 @@ you can port the classes from 0.x branch:
   - https://github.com/EvidentSolutions/dalesbred/tree/0.x/dalesbred/src/main/java/fi/evident/dalesbred/support/aopalliance[fi.evident.dalesbred.support.aopalliance]
   - https://github.com/EvidentSolutions/dalesbred/tree/0.x/dalesbred/src/main/java/fi/evident/dalesbred/support/guice[fi.evident.dalesbred.support.guice]
 
-Renamed classes
----------------
+== Renamed classes
 
   - Renamed `InstantiationException` to `InstantiationFailureException` because the former
     was already used in `java.lang`.
 
-Moved functionality
--------------------
+== Moved functionality
 
   - Changed `ResultTable.getColumnTypes` and `ResultTable.ColumnMetadata.getType` to return `Type`-objects
     instead of `Class<?>`-objects. Previous functionality is available with `ResultTable.getRawColumnTypes`
@@ -94,8 +84,7 @@ Moved functionality
   - Removed `fi.evident.dalesbred.connection.DriverManagerDataSourceProvider`.
     New `org.dalesbred.connection.DriverManagerConnectionProvider` can be used instead.
 
-Removed functionality
----------------------
+== Removed functionality
 
   - Removed `getCount` from `NonUniqueResultException` so that its possible to throw the exception
     without reading all rows from database. If you really need to have the count, you can ask for

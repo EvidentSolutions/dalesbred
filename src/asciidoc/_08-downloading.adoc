@@ -1,0 +1,55 @@
+== Downloading
+
+=== Gradle
+
+Add the following to your project:
+
+[source,groovy]
+[subs="verbatim,attributes"]
+----
+dependencies {
+    compile 'org.dalesbred:dalesbred:{revnumber}'
+}
+
+repositories {
+    mavenCentral()
+}
+----
+
+For the JUnit test-support classes, add the following:
+
+[source,groovy]
+[subs="verbatim,attributes"]
+----
+dependencies {
+    testCompile 'org.dalesbred:dalesbred-junit:{revnumber}'
+}
+----
+
+=== Maven
+
+Dalesbred is available on the central Maven repository, so just add the following
+dependency to your `pom.xml`:
+
+[source,xml]
+[subs="verbatim,quotes,attributes"]
+----
+<dependency>
+    <groupId>org.dalesbred</groupId>
+    <artifactId>dalesbred</artifactId>
+    <version>{revnumber}</version>
+</dependency>
+----
+
+For the JUnit test-support classes, add the following:
+
+[source,xml]
+[subs="verbatim,quotes,attributes"]
+----
+<dependency>
+    <groupId>org.dalesbred</groupId>
+    <artifactId>dalesbred-junit</artifactId>
+    <version>{revnumber}</version>
+    <scope>test</scope>
+</dependency>
+----

@@ -47,16 +47,8 @@ configure(allprojects) { project ->
 
 asciidoctor {
     sourceDir = file('src/asciidoc')
-    options = [
-            eruby: 'erubis'
-    ]
     attributes = [
-            icons: 'font',
-            toc: 'right',
-            'source-highlighter': 'prettify',
-            revnumber: project.version.toString(),
-            docinfo: "",
-            javadocBase: "http://dalesbred.org/docs/api/?"
+        revnumber: project.version.toString()
     ]
 }
 

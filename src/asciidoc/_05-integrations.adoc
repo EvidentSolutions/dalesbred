@@ -1,0 +1,87 @@
+== Integrations
+
+=== Java
+
+Dalesbred provides built-in <<_custom_type_conversions,type-conversions>> for the following classes:
+
+[frame="topbot",options="header"]
+|====
+| Model type                       |       | Database type
+| java.net.URI                     | <- -> | String
+| java.net.URL                     | <- -> | String
+| java.util.TimeZone               | <- -> | String
+| Short/Integer/Long/Float/Double  | <-    | Number
+| BigInteger/BigDecimal            | <-    | Number
+| BigInteger                       |    -> | BigDecimal
+| String/java.io.Reader            | <-    | Clob
+| byte/java.io.InputStream         | <-    | Blob
+| org.w3c.dom.Document             | <-    | SQLXML
+| java.time.Instant                | <- -> | Timestamp
+| java.time.LocalDateTime          | <- -> | Timestamp
+| java.time.LocalTime              | <- -> | Time
+| java.time.ZoneId                 | <- -> | String
+| java.time.LocalDate              | <- -> | java.util.Date/java.sql.Date
+|====
+
+
+=== Kotlin
+
+Dalesbred has no required dependencies on https://kotlinlang.org/[Kotlin], but comes with a set of extension methods
+to make Kotlin use nicer. Just import everything from `org.dalesbred.integration.kotlin` and you're good to go:
+
+[source,kotlin]
+----
+import org.dalesbred.integration.kotlin.*
+
+...
+
+fun findEmployees() = db.findAll<Employee>("""
+      select id, name, salary
+        from employee
+      order by name, id
+    """)
+----
+
+=== Joda-Time
+
+If from http://www.joda.org/joda-time/[Joda-Time] is detected on classpath, Dalesbred will automatically
+register <<_custom_type_conversions,type-conversions>> between http://www.joda.org/joda-time/[Joda-Time]'s
+{jodaJavadocBase}org/joda/time/DateTime.html[DateTime], {jodaJavadocBase}org/joda/time/LocalDate.html[LocalDate]
+and {jodaJavadocBase}org/joda/time/LocalTime.html[LocalTime] to {jdkJavadocBase}java/sql/Timestamp.html[java.sql.Timestamp],
+{jdkJavadocBase}java/sql/Date.html[java.sql.Date] and {jdkJavadocBase}java/sql/Time.html[java.sql.Time].
+
+=== Spring
+
+Dalesbred has support for integration with http://projects.spring.io/spring-framework/[Spring Framework]
+and its transaction management. To integrate Dalesbred, create a configuration class inheriting from
+{javadocBase}org/dalesbred/integration/spring/DalesbredConfigurationSupport.html[DalesbredConfigurationSupport]
+and specify beans for {jdkJavadocBase}javax/sql/DataSource.html[DataSource] and
+{springJavadocBase}org/springframework/transaction/PlatformTransactionManager.html[PlatformTransactionManager].
+A minimal configuration would therefore be something like the following:
+
+[source,java]
+----
+@Configuration
+@EnableTransactionManagement
+public class MyDatabaseConfiguration extends DalesbredConfigurationSupport {
+
+    @Bean
+    public DataSource dataSource() {
+        return new JndiDataSourceLookup().getDataSource("jdbc/my-database");
+    }
+
+    @Bean
+    public PlatformTransactionManager transactionManager() {
+        return new DataSourceTransactionManager(dataSource());
+    }
+}
+----
+
+After this you can inject {javadocBase}org/dalesbred/Database.html[Database] normally in your beans.
+
+=== IntelliJ IDEA
+
+If you're using https://www.jetbrains.com/idea/[IntelliJ IDEA], check out
+https://github.com/EvidentSolutions/dalesbred-idea-plugin[Dalesbred IDEA Plugin],
+which provides inspections for common errors (e.g. mismatch between query parameters
+and query).
