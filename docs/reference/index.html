@@ -420,7 +420,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="details">
 <span id="author" class="author">Juha Komulainen</span><br>
 <span id="email" class="email"><a href="mailto:juha.komulainen@evident.fi">juha.komulainen@evident.fi</a></span><br>
-<span id="revnumber">version 1.2.3</span>
+<span id="revnumber">version 1.2.4</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -457,6 +457,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_integrations">Integrations</a>
 <ul class="sectlevel2">
 <li><a href="#_java">Java</a></li>
+<li><a href="#_kotlin">Kotlin</a></li>
 <li><a href="#_joda_time">Joda-Time</a></li>
 <li><a href="#_spring">Spring</a></li>
 <li><a href="#_intellij_idea">IntelliJ IDEA</a></li>
@@ -482,7 +483,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h3 id="_configuring_the_database_connection">Configuring the database connection</h3>
 <div class="paragraph">
 <p>Most things in Dalesbred happen through an instance of <a href="http://dalesbred.org/docs/api/?org/dalesbred/Database.html">Database</a>.
-The easiest way to get hold of one is to specify the settings manually:</p>
+It takes care of managing JDBC connections, so in a typical application you should only configure a single instance&#8201;&#8212;&#8201;unless you need to connect multiple databases. The easiest way to get hold of one is to specify the settings manually:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -492,7 +493,7 @@ The easiest way to get hold of one is to specify the settings manually:</p>
 <div class="paragraph">
 <p>Note that this performs no connection pooling and is therefore probably not
 your preferred way of configuring the system in production. In a container
-you&#8217;ll probably want to use a named <a href="http://download.java.net/jdk8/docs/api/?javax/sql/DataSource.html">DataSource</a> lookup up from JNDI:</p>
+you&#8217;ll probably want to lookup a named <a href="http://download.java.net/jdk8/docs/api/?javax/sql/DataSource.html">DataSource</a> from JNDI:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -516,7 +517,7 @@ just create a <a href="http://dalesbred.org/docs/api/?org/dalesbred/Database.htm
 <div class="sect2">
 <h3 id="_finding_stuff">Finding stuff</h3>
 <div class="paragraph">
-<p>Finding simple results consisting of just basic types is simple:</p>
+<p>Running queries resulting basic types is simple:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -525,7 +526,7 @@ just create a <a href="http://dalesbred.org/docs/api/?org/dalesbred/Database.htm
 </div>
 </div>
 <div class="paragraph">
-<p>To fetch results with multiple columns, usually you&#8217;d use a class with matching constructor:</p>
+<p>There are a couple of ways to fetch results with multiple columns. First, you could just create a matching constructor:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -536,6 +537,7 @@ public final class Department {
     private final int id;
     private final String name;
 
+    @DalesbredInstantiator
     public Department(int id, String name) {
         this.id = id;
         this.name = name;
@@ -545,9 +547,24 @@ public final class Department {
 }</code></pre>
 </div>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The <a href="http://dalesbred.org/docs/api/?org/dalesbred/annotation/DalesbredInstantiator.html">DalesbredInstantiator</a> annotation for
+constructor is optional, but helps Dalesbred to make an unambiguous decision when there are multiple constructors.
+It also serves as a useful documentation. Finally, it can be configured as an entry-point for static analyzers so
+they don&#8217;t complain about unused constructor.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>If there are more columns in the result-set than can be given to a constructor, then the rest of the
-columns are set using properties or direct field access. So even the following would work:</p>
+<p>Second option is to bind values using fields or setters. The following example uses  the default constructor for
+instantiation, field-binding for <code>id</code> and setter for <code>name</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -558,12 +575,16 @@ columns are set using properties or direct field access. So even the following w
 
 public final class Department {
     public int id;
-    public String name;
+    private String name;
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>And if you have nested objects, you can bind to them as well as long as all objects in the path are instantiated:</p>
+<p>If you have nested objects, you can bind to them as well as long as all objects in the path are instantiated:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -588,11 +609,11 @@ public final class Name {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">Map&lt;Integer,String&gt; namesByIds = db.findMap(
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">Map&lt;Integer, String&gt; namesByIds = db.findMap(
         Integer.class, String.class, "select id, name from department");
 
 // first column is used for key, rest for instantiating the value
-Map&lt;Integer,Department&gt; departmentsByIds = db.findMap(
+Map&lt;Integer, Department&gt; departmentsByIds = db.findMap(
         Integer.class, Department.class, "select id, id, name from department");</code></pre>
 </div>
 </div>
@@ -640,8 +661,8 @@ of the class and handle the result sets manually, but usually this should be unn
 <h3 id="_sqlquery_vs_query_parameters">SqlQuery vs. query parameters</h3>
 <div class="paragraph">
 <p>All methods come in two variants: there&#8217;s an implementation that takes
-an <a href="http://dalesbred.org/docs/api/?org/dalesbred/query/SqlQuery.html">SqlQuery</a> as a parameter and there&#8217;s another
-implementation that takes <a href="http://download.java.net/jdk8/docs/api/?java/lang/String.html">String</a> and variable arguments of parameters.
+an <a href="http://dalesbred.org/docs/api/?org/dalesbred/query/SqlQuery.html">SqlQuery</a> as a parameter and another
+implementation that takes a <a href="http://download.java.net/jdk8/docs/api/?java/lang/String.html">String</a> and a variable number of parameters.
 The latter is just convenience method for the further, meaning that the following code fragments are
 identical in functionality:</p>
 </div>
@@ -696,10 +717,9 @@ detailed control, you can pass your own implementation of
 <div class="sect2">
 <h3 id="_building_queries_dynamically">Building queries dynamically</h3>
 <div class="paragraph">
-<p>At the moment there&#8217;s no high-level API for building queries, but there is a
-<a href="http://dalesbred.org/docs/api/?org/dalesbred/query/QueryBuilder.html">QueryBuilder</a> that
-is basically just a <a href="http://download.java.net/jdk8/docs/api/?java/util/StringBuilder.html">StringBuilder</a> which remembers
-the query-parameters, so you can say things like:</p>
+<p>There&#8217;s no high-level API for building queries, but <a href="http://dalesbred.org/docs/api/?org/dalesbred/query/QueryBuilder.html">QueryBuilder</a>
+helps you constructing dynamic queries. It&#8217;s basically just a <a href="http://download.java.net/jdk8/docs/api/?java/util/StringBuilder.html">StringBuilder</a>
+that also keeps track of parameters. Therefore you can say code like:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -710,9 +730,19 @@ if (status != null)
 db.findAll(Document.class, qb.build());</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>For all but simplest dynamic queries, you&#8217;ll probably want to have a higher level API that understands
-the structure of the SQL.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The benefit of using static queries is that IDEA and Dalesbred IDEA plugin know how to analyze them: they can
+be validated against the database schema and result classes. When building queries dynamically, you lose these
+benefits. Consider building a higher level abstraction on top of QueryBuilder if you need many dynamic queries.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -740,6 +770,10 @@ db.withVoidTransaction(tx -&gt; {
 });</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Optionally, you can also pass <a href="http://dalesbred.org/docs/api/?org/dalesbred/transaction/Isolation.html">Isolation</a> or
+<a href="http://dalesbred.org/docs/api/?org/dalesbred/transaction/Propagation.html">Propagation</a> for these calls.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_external_transaction_manager">External transaction manager</h3>
@@ -752,8 +786,8 @@ Spring&#8217;s transaction-manager. Consult the <a href="#_spring">Spring</a>-se
 <h3 id="_implicit_transactions">Implicit transactions</h3>
 <div class="paragraph">
 <p>If you make calls to <a href="http://dalesbred.org/docs/api/?org/dalesbred/Database.html">Database</a> without and explicit transaction, by default
-a new transaction is started for each call, but you can disallow this, in
-which case exceptions are thrown for calls without an active transaction:</p>
+a new transaction is started for each call. You can disallow this: in this case exceptions are thrown for calls
+without an active transaction:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -940,6 +974,26 @@ conversions.registerConversions(
 </table>
 </div>
 <div class="sect2">
+<h3 id="_kotlin">Kotlin</h3>
+<div class="paragraph">
+<p>Dalesbred has no required dependencies on <a href="https://kotlinlang.org/">Kotlin</a>, but comes with a set of extension methods
+to make Kotlin use nicer. Just import everything from <code>org.dalesbred.integration.kotlin</code> and you&#8217;re good to go:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-kotlin" data-lang="kotlin">import org.dalesbred.integration.kotlin.*
+
+...
+
+fun findEmployees() = db.findAll&lt;Employee&gt;("""
+      select id, name, salary
+        from employee
+      order by name, id
+    """)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_joda_time">Joda-Time</h3>
 <div class="paragraph">
 <p>If from <a href="http://www.joda.org/joda-time/">Joda-Time</a> is detected on classpath, Dalesbred will automatically
@@ -1023,7 +1077,7 @@ you&#8217;ll get support for writing transactional test cases:</p>
 <h2 id="_more_examples">More examples</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Check out the test cases under <a href="https://github.com/EvidentSolutions/dalesbred/tree/master/dalesbred/src/test/java/org/dalesbred">dalesbred/src/test/java</a>
+<p>Check out the test cases under <a href="https://github.com/EvidentSolutions/dalesbred/tree/master/dalesbred/src/test/kotlin/org/dalesbred">dalesbred/src/test/kotlin</a>
 for more usage examples.</p>
 </div>
 </div>
@@ -1033,55 +1087,33 @@ for more usage examples.</p>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_gradle">Gradle</h3>
-<div class="paragraph">
-<p>Add the following to your project:</p>
-</div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-    compile 'org.dalesbred:dalesbred:1.2.3'
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">repositories {
+    mavenCentral()
 }
 
-repositories {
-    mavenCentral()
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>For the JUnit test-support classes, add the following:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-    testCompile 'org.dalesbred:dalesbred-junit:1.2.3'
+dependencies {
+    compile 'org.dalesbred:dalesbred:1.2.4'
+    testCompile 'org.dalesbred:dalesbred-junit:1.2.4'
 }</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_maven">Maven</h3>
-<div class="paragraph">
-<p>Dalesbred is available on the central Maven repository, so just add the following
-dependency to your <code>pom.xml</code>:</p>
-</div>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
     &lt;groupId&gt;org.dalesbred&lt;/groupId&gt;
     &lt;artifactId&gt;dalesbred&lt;/artifactId&gt;
-    &lt;version&gt;1.2.3&lt;/version&gt;
-&lt;/dependency&gt;</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>For the JUnit test-support classes, add the following:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+    &lt;version&gt;1.2.4&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
     &lt;groupId&gt;org.dalesbred&lt;/groupId&gt;
     &lt;artifactId&gt;dalesbred-junit&lt;/artifactId&gt;
-    &lt;version&gt;1.2.3&lt;/version&gt;
+    &lt;version&gt;1.2.4&lt;/version&gt;
     &lt;scope&gt;test&lt;/scope&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
@@ -1100,8 +1132,8 @@ dependency to your <code>pom.xml</code>:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.2.3<br>
-Last updated 2016-08-15 12:12:43 EEST
+Version 1.2.4<br>
+Last updated 2017-03-05 08:11:46 EET
 </div>
 </div>
 </body>
