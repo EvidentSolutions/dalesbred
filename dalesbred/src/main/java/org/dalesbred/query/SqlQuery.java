@@ -55,8 +55,6 @@ public final class SqlQuery implements Serializable {
     private SqlQuery(@NotNull @SQL String sql, @NotNull List<?> args) {
         this.sql = requireNonNull(sql);
         this.args = unmodifiableList(args);
-        this.fetchSize = null;
-        this.fetchDirection = null;
     }
 
     /**
