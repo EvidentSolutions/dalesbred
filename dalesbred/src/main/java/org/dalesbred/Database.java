@@ -33,6 +33,7 @@ import org.dalesbred.internal.result.InstantiatorRowMapper;
 import org.dalesbred.internal.result.MapResultSetProcessor;
 import org.dalesbred.internal.result.ResultTableResultSetProcessor;
 import org.dalesbred.internal.utils.JndiUtils;
+import org.dalesbred.query.FetchDirection;
 import org.dalesbred.query.SqlQuery;
 import org.dalesbred.result.*;
 import org.dalesbred.transaction.*;
@@ -753,10 +754,13 @@ public final class Database {
     }
 
     private static void bindQueryParameters(@NotNull PreparedStatement ps, @NotNull SqlQuery query) throws SQLException {
-        if (query.getFetchDirection() != null)
-            ps.setFetchDirection(query.getFetchDirection());
-        if (query.getFetchSize() != null)
-            ps.setFetchSize(query.getFetchSize());
+        FetchDirection direction = query.getFetchDirection();
+        if (direction != null)
+            ps.setFetchDirection(direction.getJdcbCode());
+
+        Integer fetchSize = query.getFetchSize();
+        if (fetchSize != null)
+            ps.setFetchSize(fetchSize);
     }
 
     private void bindArguments(@NotNull PreparedStatement ps, @NotNull Iterable<?> args) throws SQLException {

@@ -48,7 +48,7 @@ public final class SqlQuery implements Serializable {
 
     private @Nullable Integer fetchSize;
 
-    private @Nullable Integer fetchDirection;
+    private @Nullable FetchDirection fetchDirection;
 
     private static final long serialVersionUID = 1;
 
@@ -122,7 +122,7 @@ public final class SqlQuery implements Serializable {
 
 
     /**
-     * Returns the fetch size of this query
+     * Returns the fetch size of this query.
      */
     public @Nullable Integer getFetchSize() {
         return fetchSize;
@@ -130,34 +130,30 @@ public final class SqlQuery implements Serializable {
 
     /**
      * A non-null fetch size will be set as the fetch size for the statements executed from this query.
+     * If the fetch size specified is zero, the JDBC driver ignores the value and makes its own best guess of the fetch size.
      *
      * @param size fetch size in rows or null
      * @throws IllegalArgumentException if size is < 0
      */
     public void setFetchSize(@Nullable Integer size) {
         if (size != null && size < 0)
-            throw new IllegalArgumentException("Illegal fetch size " + size + ". Fetch size must be null or > 0");
+            throw new IllegalArgumentException("Illegal fetch size " + size + ". Fetch size must be null or >= 0");
         this.fetchSize = size;
     }
 
     /**
-     * Returns the fetch direction of ths query
+     * Returns the fetch direction of this query.
      */
-    public @Nullable Integer getFetchDirection() {
+    public @Nullable FetchDirection getFetchDirection() {
         return fetchDirection;
     }
 
     /**
      * A non-null fetch direction will be set as the fetch direction for the statements executed from this query.
-     * The direction must be null or one of {@link ResultSet#FETCH_FORWARD}, {@link ResultSet#FETCH_REVERSE} or {@link ResultSet#FETCH_UNKNOWN}.
      *
      * @param direction fetch direction or null
-     * @throws IllegalArgumentException if direction is not null or one of {@link ResultSet#FETCH_FORWARD}, {@link ResultSet#FETCH_REVERSE} or {@link ResultSet#FETCH_UNKNOWN}.
      */
-    public void setFetchDirection(@Nullable Integer direction) {
-        if (direction != null &&
-                !(ResultSet.FETCH_FORWARD == direction || ResultSet.FETCH_REVERSE == direction || ResultSet.FETCH_UNKNOWN == direction))
-            throw new IllegalArgumentException("Illegal fetch direction " + direction + ". Fetch direction must be null or one of ResultSet.FETCH_FORWARD, ResultSet.FETCH_REVERSE, or ResultSet.FETCH_UNKNOWN");
+    public void setFetchDirection(@Nullable FetchDirection direction) {
         this.fetchDirection = direction;
     }
 
