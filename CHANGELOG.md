@@ -1,3 +1,9 @@
+## Unreleased
+
+### New features
+
+  - Add optional fetch size and direction to SqlQuery ([#37](https://github.com/EvidentSolutions/dalesbred/pull/37))
+
 ## 1.2.4 (2017-06-05)
 
 ### New features
