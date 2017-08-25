@@ -24,7 +24,9 @@ package org.dalesbred
 
 import org.dalesbred.query.SqlQuery
 import org.junit.Test
+import java.lang.IllegalArgumentException
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNotEquals
 
 class SqlQueryTest {
@@ -72,6 +74,14 @@ class SqlQueryTest {
 
         assertEquals("select * from foo where name = ?", query.sql)
         assertEquals(listOf("bar"), query.arguments)
+    }
+
+    @Test
+    fun `illegal fetch size`() {
+        val query = SqlQuery.query("select * from foo")
+        assertFailsWith<IllegalArgumentException> {
+            query.fetchSize = -1
+        }
     }
 
     class ExampleNamed(val name: String)

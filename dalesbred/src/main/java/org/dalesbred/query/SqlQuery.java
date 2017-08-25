@@ -24,8 +24,10 @@ package org.dalesbred.query;
 
 import org.dalesbred.annotation.SQL;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
+import java.sql.ResultSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +45,10 @@ public final class SqlQuery implements Serializable {
     private final @NotNull String sql;
 
     private final @NotNull List<?> args;
+
+    private @Nullable Integer fetchSize;
+
+    private @Nullable FetchDirection fetchDirection;
 
     private static final long serialVersionUID = 1;
 
@@ -110,6 +116,43 @@ public final class SqlQuery implements Serializable {
      */
     public @NotNull List<?> getArguments() {
         return args;
+    }
+
+
+    /**
+     * Returns the fetch size of this query.
+     */
+    public @Nullable Integer getFetchSize() {
+        return fetchSize;
+    }
+
+    /**
+     * A non-null fetch size will be set as the fetch size for the statements executed from this query.
+     * If the fetch size specified is zero, the JDBC driver ignores the value and makes its own best guess of the fetch size.
+     *
+     * @param size fetch size in rows or null
+     * @throws IllegalArgumentException if size is < 0
+     */
+    public void setFetchSize(@Nullable Integer size) {
+        if (size != null && size < 0)
+            throw new IllegalArgumentException("Illegal fetch size " + size + ". Fetch size must be null or >= 0");
+        this.fetchSize = size;
+    }
+
+    /**
+     * Returns the fetch direction of this query.
+     */
+    public @Nullable FetchDirection getFetchDirection() {
+        return fetchDirection;
+    }
+
+    /**
+     * A non-null fetch direction will be set as the fetch direction for the statements executed from this query.
+     *
+     * @param direction fetch direction or null
+     */
+    public void setFetchDirection(@Nullable FetchDirection direction) {
+        this.fetchDirection = direction;
     }
 
     @Override

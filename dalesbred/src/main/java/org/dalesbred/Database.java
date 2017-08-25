@@ -33,6 +33,7 @@ import org.dalesbred.internal.result.InstantiatorRowMapper;
 import org.dalesbred.internal.result.MapResultSetProcessor;
 import org.dalesbred.internal.result.ResultTableResultSetProcessor;
 import org.dalesbred.internal.utils.JndiUtils;
+import org.dalesbred.query.FetchDirection;
 import org.dalesbred.query.SqlQuery;
 import org.dalesbred.result.*;
 import org.dalesbred.transaction.*;
@@ -272,7 +273,7 @@ public final class Database {
             logQuery(query);
 
             try (PreparedStatement ps = tx.getConnection().prepareStatement(query.getSql())) {
-                bindArguments(ps, query.getArguments());
+                prepareStatementFromQuery(ps, query);
 
                 long startTime = currentTimeMillis();
                 try (ResultSet resultSet = ps.executeQuery()) {
@@ -600,7 +601,8 @@ public final class Database {
             logQuery(query);
 
             try (PreparedStatement ps = tx.getConnection().prepareStatement(query.getSql())) {
-                bindArguments(ps, query.getArguments());
+                prepareStatementFromQuery(ps, query);
+
                 long startTime = currentTimeMillis();
                 int count = ps.executeUpdate();
                 logQueryExecution(query, currentTimeMillis() - startTime);
@@ -650,7 +652,8 @@ public final class Database {
             logQuery(query);
 
             try (PreparedStatement ps = prepareStatement(tx.getConnection(), query.getSql(), columnNames)) {
-                bindArguments(ps, query.getArguments());
+                prepareStatementFromQuery(ps, query);
+
                 long startTime = currentTimeMillis();
                 ps.executeUpdate();
                 logQueryExecution(query, currentTimeMillis() - startTime);
@@ -687,6 +690,7 @@ public final class Database {
             logQuery(query);
 
             try (PreparedStatement ps = tx.getConnection().prepareStatement(sql)) {
+                bindQueryParameters(ps, query);
                 for (List<?> arguments : argumentLists) {
                     bindArguments(ps, arguments);
                     ps.addBatch();
@@ -719,6 +723,7 @@ public final class Database {
             logQuery(query);
 
             try (PreparedStatement ps = prepareStatement(tx.getConnection(), sql, columnNames)) {
+                bindQueryParameters(ps, query);
                 for (List<?> arguments : argumentLists) {
                     bindArguments(ps, arguments);
                     ps.addBatch();
@@ -741,6 +746,21 @@ public final class Database {
 
     private void logQueryExecution(@NotNull SqlQuery query, long millis) {
         log.debug("executed query in {} ms: {}", millis, query);
+    }
+
+    private void prepareStatementFromQuery(@NotNull PreparedStatement ps, @NotNull SqlQuery query) throws SQLException {
+        bindQueryParameters(ps, query);
+        bindArguments(ps, query.getArguments());
+    }
+
+    private static void bindQueryParameters(@NotNull PreparedStatement ps, @NotNull SqlQuery query) throws SQLException {
+        FetchDirection direction = query.getFetchDirection();
+        if (direction != null)
+            ps.setFetchDirection(direction.getJdcbCode());
+
+        Integer fetchSize = query.getFetchSize();
+        if (fetchSize != null)
+            ps.setFetchSize(fetchSize);
     }
 
     private void bindArguments(@NotNull PreparedStatement ps, @NotNull Iterable<?> args) throws SQLException {
