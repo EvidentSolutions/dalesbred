@@ -21,7 +21,7 @@ Add dependency to your `pom.xml`:
 <dependency>
     <groupId>org.dalesbred</groupId>
     <artifactId>dalesbred</artifactId>
-    <version>1.2.4</version>
+    <version>1.2.5</version>
 </dependency>
 ```
 

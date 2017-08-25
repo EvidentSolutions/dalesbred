@@ -1,4 +1,4 @@
-## Unreleased
+## 1.2.5 (2017-08-25)
 
 ### New features
 
