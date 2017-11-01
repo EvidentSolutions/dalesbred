@@ -626,7 +626,7 @@ public final class Database {
     public void updateUnique(@NotNull SqlQuery query) {
         int modifiedRows = update(query);
         if (modifiedRows != 1)
-            throw new NonUniqueUpdateException(1);
+            throw new NonUniqueUpdateException(modifiedRows);
     }
 
     /**
