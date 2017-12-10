@@ -14,6 +14,8 @@ dependencies {
 
     compile 'org.postgresql:postgresql:42.1.4'
 
+    testCompile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlinVersion"
+    testCompile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
     testCompile "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
     testCompile "org.hsqldb:hsqldb:$hsqldbVersion"
     testCompile "com.h2database:h2:1.4.196"
