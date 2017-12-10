@@ -11,3 +11,10 @@ dependencies {
     testCompile("ch.qos.logback:logback-core")
     testCompile("ch.qos.logback:logback-classic")
 }
+
+val jar: Jar by tasks
+jar.apply {
+    manifest {
+        attributes["Automatic-Module-Name"] = "org.dalesbred.junit"
+    }
+}

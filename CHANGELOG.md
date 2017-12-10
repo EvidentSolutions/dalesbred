@@ -1,3 +1,13 @@
+## 1.3.0 (unreleased)
+
+### New features
+
+  - Add Java 9 module automatic module names for jars. ([#41](https://github.com/EvidentSolutions/dalesbred/issues/41)) 
+
+### Changes
+
+  - Updated the versions of optional dependencies.
+  
 ## 1.2.5 (2017-08-25)
 
 ### New features
