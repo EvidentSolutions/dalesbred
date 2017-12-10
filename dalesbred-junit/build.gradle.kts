@@ -1,18 +1,13 @@
 description = "Dalesbred JUnit-support"
 
-val jetbrainsAnnotationsVersion: String by rootProject.extra
-val hsqldbVersion: String by rootProject.extra
-val junitVersion: String by rootProject.extra
-val logbackVersion: String by rootProject.extra
-
 dependencies {
     compile(project(":dalesbred"))
-    compile("junit:junit:$junitVersion")
-    compile("javax.inject:javax.inject:1")
+    compile("junit:junit")
+    compile("javax.inject:javax.inject")
 
-    compile("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")
+    compile("org.jetbrains:annotations")
 
-    testCompile("org.hsqldb:hsqldb:$hsqldbVersion")
-    testCompile("ch.qos.logback:logback-core:$logbackVersion")
-    testCompile("ch.qos.logback:logback-classic:$logbackVersion")
+    testCompile("org.hsqldb:hsqldb")
+    testCompile("ch.qos.logback:logback-core")
+    testCompile("ch.qos.logback:logback-classic")
 }

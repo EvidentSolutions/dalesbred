@@ -1,37 +1,18 @@
+import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension
 import org.asciidoctor.gradle.AsciidoctorTask
-import org.gradle.kotlin.dsl.extra
-import org.gradle.kotlin.dsl.invoke
-import org.gradle.kotlin.dsl.repositories
-import org.gradle.kotlin.dsl.version
+import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.utils.sure
 import pl.allegro.tech.build.axion.release.domain.TagNameSerializationConfig
 
-buildscript {
-    val kotlinVersion by extra("1.2.0")
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath("com.bmuschko:gradle-nexus-plugin:2.3.1")
-        classpath("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.11.0")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-    }
-}
-
 plugins {
+    kotlin("jvm") version "1.2.0" apply false
+    id("io.spring.dependency-management") version "1.0.3.RELEASE"
     id("org.asciidoctor.convert") version "1.5.7"
     id("pl.allegro.tech.build.axion-release") version "1.8.1"
+    id("com.bmuschko.nexus") version "2.3.1" apply false
+    id("io.codearte.nexus-staging") version "0.11.0"
 }
-
-apply {
-    plugin("io.codearte.nexus-staging")
-}
-
-val springVersion by extra("5.0.2.RELEASE")
-val junitVersion by extra("4.12")
-val jetbrainsAnnotationsVersion by extra("15.0")
-val hsqldbVersion by extra("2.4.0")
-val logbackVersion by extra("1.2.3")
 
 scmVersion {
     localOnly = true
@@ -41,16 +22,49 @@ scmVersion {
     })
 }
 
-configure(allprojects) {
+version = scmVersion.version
+
+allprojects {
     apply {
         plugin("base")
+        plugin("io.spring.dependency-management")
     }
-    group = "org.dalesbred"
 
-    project.version = closureOf<String> { scmVersion.version }
+    group = "org.dalesbred"
+    version = rootProject.version
 
     repositories {
         jcenter()
+    }
+
+    configure<DependencyManagementExtension> {
+        val kotlinVersion = "1.2.0"
+        val springVersion = "5.0.2.RELEASE"
+        val logbackVersion = "1.2.3"
+
+        dependencies {
+            dependency("org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlinVersion")
+            dependency("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+            dependency("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
+
+            dependency("org.slf4j:slf4j-api:1.7.25")
+            dependency("joda-time:joda-time:2.9.9")
+            dependency("org.threeten:threetenbp:1.3.6")
+            dependency("org.springframework:spring-context:$springVersion")
+            dependency("org.springframework:spring-jdbc:$springVersion")
+            dependency("org.jetbrains:annotations:15.0")
+
+            dependency("org.postgresql:postgresql:42.1.4")
+
+            dependency("org.hsqldb:hsqldb:2.4.0")
+            dependency("com.h2database:h2:1.4.196")
+            dependency("mysql:mysql-connector-java:5.1.45")
+            dependency("junit:junit:4.12")
+            dependency("org.mockito:mockito-core:2.13.0")
+            dependency("ch.qos.logback:logback-core:$logbackVersion")
+            dependency("ch.qos.logback:logback-classic:$logbackVersion")
+            dependency("javax.inject:javax.inject:1")
+        }
     }
 
     tasks.withType<KotlinCompile> {
