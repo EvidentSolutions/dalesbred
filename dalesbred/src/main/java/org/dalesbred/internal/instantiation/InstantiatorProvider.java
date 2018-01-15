@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Evident Solutions Oy
+ * Copyright (c) 2018 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -110,7 +110,7 @@ public final class InstantiatorProvider {
             return instantiator;
 
         if (!isPublic(cl.getModifiers()))
-            throw new InstantiationFailureException(type + " can't be instantiated reflectively because it is not public or missing a @DalesbredConstructor-annotation");
+            throw new InstantiationFailureException(type + " can't be instantiated reflectively because it is not public or missing a @DalesbredInstantiator-annotation");
 
         return candidateConstructorsSortedByDescendingParameterCount(cl)
                 .map(ctor -> implicitInstantiatorFrom(ctor, types).orElse(null))
@@ -329,7 +329,7 @@ public final class InstantiatorProvider {
         if (candidates.size() == 1)
             return Optional.of(candidates.get(0));
         else if (candidates.size() > 1)
-            throw new InstantiationFailureException("only one constructor of " + cl.getName() + " can be marked with @DalesbredConstructor. Found " + candidates.size());
+            throw new InstantiationFailureException("only one constructor of " + cl.getName() + " can be marked with @DalesbredInstantiator. Found " + candidates.size());
         else
             return Optional.empty();
     }

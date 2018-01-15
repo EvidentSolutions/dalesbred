@@ -7,7 +7,11 @@
 ### Changes
 
   - Updated the versions of optional dependencies.
-  
+
+### Bug fixes
+
+  - Fix reference to `@DalesbredInstantiator` in exception message 
+
 ## 1.2.5 (2017-08-25)
 
 ### New features
