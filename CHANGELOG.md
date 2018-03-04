@@ -2,7 +2,8 @@
 
 ### New features
 
-  - Add Java 9 module automatic module names for jars. ([#41](https://github.com/EvidentSolutions/dalesbred/issues/41)) 
+  - Add Java 9 module automatic module names for jars. ([#41](https://github.com/EvidentSolutions/dalesbred/issues/41))
+  - Support pretty printing of `ResultTable`s 
 
 ### Changes
 

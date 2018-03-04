@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Evident Solutions Oy
+ * Copyright (c) 2018 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,17 +26,19 @@ import org.junit.Rule
 import org.junit.Test
 import java.lang.reflect.Type
 import java.sql.Types
+import java.time.LocalDate
 import kotlin.test.assertEquals
 
 class DatabaseResultTableTest {
 
     private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
 
-    @get:Rule val rule = TransactionalTestsRule(db)
+    @get:Rule
+    val rule = TransactionalTestsRule(db)
 
     @Test
     fun fetchSimpleResultTable() {
-        val table = db.findTable("select 42 as num, 'foo' as str, true as bool from (values (0)) v")
+        val table = db.findTable("SELECT 42 AS num, 'foo' AS str, TRUE AS bool FROM (VALUES (0)) v")
 
         assertEquals(3, table.columnCount)
         assertEquals(listOf("NUM", "STR", "BOOL"), table.columnNames)
@@ -54,6 +56,30 @@ class DatabaseResultTableTest {
         assertEquals("foo", table.get(0, "str"))
 
         assertEquals("ResultTable [columns=[NUM: java.lang.Integer, STR: java.lang.String, BOOL: java.lang.Boolean], rows=1]", table.toString())
+    }
+
+    @Test
+    fun testFormatTable() {
+        db.update("DROP TABLE IF EXISTS result_table_formatter")
+        db.update("CREATE TEMPORARY TABLE result_table_formatter (id INTEGER PRIMARY KEY, created DATE, text VARCHAR(512))")
+
+        db.update("INSERT INTO result_table_formatter (id, created, text) VALUES (?, ?, ?)", 1, LocalDate.of(100, 1, 1), "abc")
+        db.update("INSERT INTO result_table_formatter (id, created, text) VALUES (?, ?, ?)", 2, LocalDate.of(2000, 5, 1), "lorem ipsum dolor sit amet")
+        db.update("INSERT INTO result_table_formatter (id, created, text) VALUES (?, ?, ?)", 3, LocalDate.of(2018, 3, 3), "Foxes are small-to-medium-sized, omnivorous mammals belonging to several genera of the family Canidae. Foxes have a flattened skull, upright triangular ears, a pointed, slightly upturned snout, and a long bushy tail.")
+
+        val rt = db.findTable("SELECT id, created, text FROM result_table_formatter")
+
+        val expected = """
+               | ID | CREATED    | TEXT                                               |
+               | -- | ---------- | -------------------------------------------------- |
+               | 1  | 0100-01-01 | abc                                                |
+               | 2  | 2000-05-01 | lorem ipsum dolor sit amet                         |
+               | 3  | 2018-03-03 | Foxes are small-to-medium-sized, omnivorous mam... |
+
+        """.trimIndent()
+
+        assertEquals(expected, rt.toStringFormatted())
+        assertEquals(expected, buildString { rt.formatTo(this) })
     }
 
     private fun values(vararg values: Any): List<Any> = listOf(*values)

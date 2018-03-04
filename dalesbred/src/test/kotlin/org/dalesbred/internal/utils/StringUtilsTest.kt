@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Evident Solutions Oy
+ * Copyright (c) 2018 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,8 +22,7 @@
 
 package org.dalesbred.internal.utils
 
-import org.dalesbred.internal.utils.StringUtils.capitalize
-import org.dalesbred.internal.utils.StringUtils.isEqualIgnoringCaseAndUnderscores
+import org.dalesbred.internal.utils.StringUtils.*
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -53,5 +52,37 @@ class StringUtilsTest {
 
         assertTrue(isEqualIgnoringCaseAndUnderscores("_foo_", "foo"))
         assertTrue(isEqualIgnoringCaseAndUnderscores("foo", "__foo__"))
+    }
+
+    @Test
+    fun `rightPad - no need to pad`() {
+        assertEquals("", rightPad("", 0, ' '))
+        assertEquals("foo", rightPad("foo", 0, ' '))
+        assertEquals("foo", rightPad("foo", 2, ' '))
+        assertEquals("foo", rightPad("foo", 3, ' '))
+    }
+
+    @Test
+    fun `rightPad - padding`() {
+        assertEquals("    ", rightPad("", 4, ' '))
+        assertEquals("foo ", rightPad("foo", 4, ' '))
+        assertEquals("foo-", rightPad("foo", 4, '-'))
+    }
+
+    @Test
+    fun `truncate - no need to truncate`() {
+        assertEquals("", truncate("", 4))
+        assertEquals("foo", truncate("foo", 4))
+        assertEquals("quux", truncate("quux", 4))
+    }
+
+    @Test
+    fun `truncate - truncation needed`() {
+        assertEquals("foo...", truncate("foobar-baz", 6))
+    }
+
+    @Test
+    fun `truncate - suffix longer than truncation length`() {
+        assertEquals("..", truncate("foobar", 2))
     }
 }

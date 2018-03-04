@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Evident Solutions Oy
+ * Copyright (c) 2018 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@ package org.dalesbred.result;
 import org.dalesbred.internal.utils.TypeUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -99,6 +100,31 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
     @Override
     public @NotNull String toString() {
         return "ResultTable [columns=" + columns + ", rows=" + rows.size() + ']';
+    }
+
+    /**
+     * Returns a formatted representation of this table. See {@link #formatTo(Appendable)} for details of the format.
+     *
+     * @see #formatTo(Appendable)
+     */
+    public @NotNull String toStringFormatted() {
+        return TableFormatter.toString(this);
+    }
+
+    /**
+     * Pretty prints this table to {@code out} in a format suitable for console.
+     * Overly long columns are truncated and some effort is taken to make the result readable,
+     * but you should not depend on the exact details of the layout, since it might change.
+     *
+     * <p>Hint: the output format is rouhgly that of Markdown tables, so you can use the result in your
+     * Markdown-documents. However, data is not escaped, since it's primarily meant to be written
+     * to console where escaping would hinder readability. Therefore, you might need to make manual
+     * adjustments to output if interpreting it as Markdown.
+     *
+     * @see #toStringFormatted()
+     */
+    public void formatTo(@NotNull Appendable out) throws IOException {
+        TableFormatter.write(this, out);
     }
 
     /**

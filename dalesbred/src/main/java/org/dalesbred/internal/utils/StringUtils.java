@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Evident Solutions Oy
+ * Copyright (c) 2018 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,6 +39,32 @@ public final class StringUtils {
      */
     public static @NotNull String capitalize(@NotNull String s) {
         return s.isEmpty() ? s : (toUpperCase(s.charAt(0)) + s.substring(1));
+    }
+
+    public static @NotNull String rightPad(@NotNull String s, int length, char padding) {
+        if (s.length() >= length) return s;
+
+        StringBuilder sb = new StringBuilder(length);
+        sb.append(s);
+
+        for (int i = length - s.length(); i > 0; i--)
+            sb.append(padding);
+
+        return sb.toString();
+    }
+
+    public static @NotNull String truncate(@NotNull String s, int length) {
+        return truncate(s, length, "...");
+    }
+
+    public static @NotNull String truncate(@NotNull String s, int length, @NotNull String suffix) {
+        if (s.length() <= length)
+            return s;
+
+        if (suffix.length() > length)
+            return suffix.substring(0, length);
+
+        return s.substring(0, length - suffix.length()) + suffix;
     }
 
     /**
