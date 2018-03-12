@@ -65,6 +65,22 @@ class PostgreSQLDialectTest {
     }
 
     @Test
+    fun `bind enums as other`() {
+
+        db.update("drop type if exists mood cascade")
+        db.update("create type mood as enum ('SAD', 'HAPPY')")
+
+        db.update("drop table if exists movie")
+        db.update("create temporary table movie (name varchar(64) primary key, mood mood not null)")
+
+        db.update("insert into movie (name, mood) values (?, ?)", "Amélie", Mood.HAPPY)
+
+        val movie = db.findUnique(Movie::class.java, "select name, mood from movie")
+        assertEquals("Amélie", movie.name)
+        assertEquals(Mood.HAPPY, movie.mood)
+    }
+
+    @Test
     fun dates() {
         val date = Date()
 

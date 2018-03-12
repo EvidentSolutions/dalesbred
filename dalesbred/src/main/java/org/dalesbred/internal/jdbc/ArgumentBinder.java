@@ -32,10 +32,7 @@ import org.w3c.dom.Document;
 import javax.xml.transform.dom.DOMResult;
 import java.io.InputStream;
 import java.io.Reader;
-import java.sql.Array;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.SQLXML;
+import java.sql.*;
 
 public final class ArgumentBinder {
 
@@ -54,6 +51,9 @@ public final class ArgumentBinder {
 
         } else if (value instanceof SqlArray) {
             bindArray(ps, index, (SqlArray) value);
+
+        } else if (value instanceof Enum<?>) {
+            ps.setObject(index, ((Enum<?>) value).name(), Types.OTHER);
 
         } else {
             ps.setObject(index, value);

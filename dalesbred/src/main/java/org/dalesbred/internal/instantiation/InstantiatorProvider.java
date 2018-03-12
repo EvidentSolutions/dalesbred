@@ -84,8 +84,8 @@ public final class InstantiatorProvider {
         TypeConversion conversion = typeConversionRegistry.findConversionToDb(value.getClass()).orElse(null);
         if (conversion != null)
             return conversion.convert(value);
-        else if (value instanceof Enum<?>)
-            return dialect.valueToDatabase(((Enum<?>) value).name());
+//        else if (value instanceof Enum<?>)
+//            return dialect.valueToDatabase(((Enum<?>) value).name());
         else
             return dialect.valueToDatabase(value);
     }
