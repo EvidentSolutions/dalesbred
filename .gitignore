@@ -12,6 +12,7 @@ out
 .idea/dataSources.local.xml
 .idea/libraries
 .idea/modules.xml
+.idea/usage.statistics.xml
 *.iml
 /build
 /*/build
