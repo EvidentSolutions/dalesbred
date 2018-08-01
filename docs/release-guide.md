@@ -14,7 +14,7 @@ Now publish your changes:
     
 Finally close and promote the stating repository of [Sonatype Nexus](https://oss.sonatype.org/):
 
-    ./gradlew closeAndPromoteRepository
+    ./gradlew closeAndReleaseRepository
 
 After a while, the artifacts will be synced to Maven Central.
 
