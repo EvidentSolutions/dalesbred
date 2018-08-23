@@ -21,6 +21,6 @@
  */
 
 /**
- * Support for <a href="http://www.threeten.org/">ThreeTen</a>.
+ * Support for <a href="https://www.threeten.org/">ThreeTen</a>.
  */
 package org.dalesbred.integration.threeten;

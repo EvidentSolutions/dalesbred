@@ -48,7 +48,7 @@
 
 ### Changes
 
-  - Use [SLF4J](http://www.slf4j.org/) instead of `java.util.logging` for logging ([#25](https://github.com/EvidentSolutions/dalesbred/issues/25))
+  - Use [SLF4J](https://www.slf4j.org/) instead of `java.util.logging` for logging ([#25](https://github.com/EvidentSolutions/dalesbred/issues/25))
 
 ## 1.1.0 (2015-11-27)
 

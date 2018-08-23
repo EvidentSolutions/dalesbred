@@ -8,7 +8,7 @@ Dalesbred assumes that SQL is a great way to access database, but that JDBC
 as an API causes pain. Therefore it wraps JDBC with a set of helpers
 while still providing access to low-level functionality.
 
-Visit the [Dalesbred website](http://dalesbred.org/) for details.
+Visit the [Dalesbred website](https://dalesbred.org/) for details.
 
 [![Build Status](https://teamcity.evident.fi/app/rest/builds/buildType:(id:Evident_Dalesbred_Build)/statusIcon)](https://teamcity.evident.fi/viewType.html?buildTypeId=Evident_Dalesbred_Build&guest=1)
 
@@ -66,8 +66,8 @@ val departments = db.findAll<Department>("""
 Documentation
 =============
 
-  - [Reference Documentation](http://dalesbred.org/docs/reference/)
-  - [Javadoc](http://dalesbred.org/docs/api/)
+  - [Reference Documentation](https://dalesbred.org/docs/reference/)
+  - [Javadoc](https://dalesbred.org/docs/api/)
 
 IDEA-integration
 ================

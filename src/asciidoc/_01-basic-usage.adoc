@@ -28,7 +28,7 @@ just create a {javadocBase}org/dalesbred/Database.html[Database] out of that:
 Database db = Database.forDataSource(myDataSource);
 ----
 
-If you are using http://projects.spring.io/spring-framework/[Spring Framework], see the
+If you are using https://spring.io/projects/spring-framework[Spring Framework], see the
 <<_spring,Spring>>-section on how to integrate Dalesbred with it.
 
 === Finding stuff

@@ -3,10 +3,10 @@ Juha Komulainen <juha.komulainen@evident.fi>
 :icons: font
 :toc: right
 :source-highlighter: prettify
-:javadocBase: http://dalesbred.org/docs/api/?
-:jdkJavadocBase: http://download.java.net/jdk8/docs/api/?
-:springJavadocBase: http://docs.spring.io/spring/docs/current/javadoc-api/?
-:jodaJavadocBase: http://www.joda.org/joda-time/apidocs/?
+:javadocBase: https://dalesbred.org/docs/api/?
+:jdkJavadocBase: https://download.java.net/jdk8/docs/api/?
+:springJavadocBase: https://docs.spring.io/spring/docs/current/javadoc-api/?
+:jodaJavadocBase: https://www.joda.org/joda-time/apidocs/?
 
 include::_01-basic-usage.adoc[]
 

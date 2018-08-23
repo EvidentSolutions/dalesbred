@@ -3,18 +3,18 @@ modifyPom {
         name project.name
         packaging 'jar'
         description project.description
-        url 'http://dalesbred.org/'
+        url 'https://dalesbred.org/'
         inceptionYear '2012'
 
         organization {
             name 'Evident Solutions'
-            url 'http://www.evident.fi'
+            url 'https://www.evident.fi'
         }
 
         licenses {
             license {
                 name 'MIT License'
-                url 'http://opensource.org/licenses/mit-license.php'
+                url 'https://opensource.org/licenses/mit-license.php'
                 distribution 'repo'
             }
         }

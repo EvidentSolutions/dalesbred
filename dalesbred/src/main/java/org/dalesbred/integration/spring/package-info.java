@@ -21,6 +21,6 @@
  */
 
 /**
- * Support for <a href="http://projects.spring.io/spring-framework/">Spring Framework</a>.
+ * Support for <a href="https://spring.io/projects/spring-framework">Spring Framework</a>.
  */
 package org.dalesbred.integration.spring;

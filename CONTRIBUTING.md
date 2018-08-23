@@ -39,4 +39,4 @@ For major features it's encouraged to include description and examples in refere
 Prefer series of small isolated commits to large commits that do changes all over the codebase. Try to separate
 refactoring that prepares for landing a feature from the feature commits themselves.
 
-Please follow [the seven rules of a great git commit message](http://chris.beams.io/posts/git-commit/#seven-rules).
+Please follow [the seven rules of a great git commit message](https://chris.beams.io/posts/git-commit/#seven-rules).

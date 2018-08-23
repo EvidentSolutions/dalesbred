@@ -52,7 +52,7 @@ and {jodaJavadocBase}org/joda/time/LocalTime.html[LocalTime] to {jdkJavadocBase}
 
 === Spring
 
-Dalesbred has support for integration with http://projects.spring.io/spring-framework/[Spring Framework]
+Dalesbred has support for integration with https://spring.io/projects/spring-framework[Spring Framework]
 and its transaction management. To integrate Dalesbred, create a configuration class inheriting from
 {javadocBase}org/dalesbred/integration/spring/DalesbredConfigurationSupport.html[DalesbredConfigurationSupport]
 and specify beans for {jdkJavadocBase}javax/sql/DataSource.html[DataSource] and

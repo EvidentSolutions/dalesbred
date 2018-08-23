@@ -1,4 +1,6 @@
+import com.sun.javafx.scene.CameraHelper.project
 import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension
+import jdk.nashorn.internal.runtime.Debug.id
 import org.asciidoctor.gradle.AsciidoctorTask
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -105,9 +107,9 @@ configure(listOf(project(":dalesbred"), project(":dalesbred-junit"))) {
         opts.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
         opts.header = project.name
 
-        opts.links("http://docs.oracle.com/javase/8/docs/api/",
-                "http://docs.spring.io/spring/docs/current/javadoc-api/",
-                "http://www.joda.org/joda-time/apidocs/")
+        opts.links("https://docs.oracle.com/javase/8/docs/api/",
+                "https://docs.spring.io/spring/docs/current/javadoc-api/",
+                "https://www.joda.org/joda-time/apidocs/")
         opts.addStringOption("Xdoclint:none", "-quiet")
     }
 }

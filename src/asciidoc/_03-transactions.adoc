@@ -24,7 +24,7 @@ Optionally, you can also pass {javadocBase}org/dalesbred/transaction/Isolation.h
 
 === External transaction manager
 
-If you are using http://projects.spring.io/spring-framework/[Spring Framework], Dalesbred can integrate with
+If you are using https://spring.io/projects/spring-framework[Spring Framework], Dalesbred can integrate with
 Spring's transaction-manager. Consult the <<_spring,Spring>>-section for details.
 
 === Implicit transactions

@@ -21,6 +21,6 @@
  */
 
 /**
- * Support for <a href="http://joda-time.sourceforge.net/">Joda Time</a>.
+ * Support for <a href="http://www.joda.org/joda-time/">Joda Time</a>.
  */
 package org.dalesbred.integration.joda;
