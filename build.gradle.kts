@@ -1,6 +1,4 @@
-import com.sun.javafx.scene.CameraHelper.project
 import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension
-import jdk.nashorn.internal.runtime.Debug.id
 import org.asciidoctor.gradle.AsciidoctorTask
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
