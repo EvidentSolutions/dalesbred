@@ -1,3 +1,9 @@
+## Unreleased
+
+### Changes
+  
+  - Upgraded the version of optional Kotlin dependency to 1.3.21.
+
 ## 1.3.0 (2018-08-01)
 
 ### New features

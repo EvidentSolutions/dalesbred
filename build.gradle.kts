@@ -1,12 +1,9 @@
-import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension
 import org.asciidoctor.gradle.AsciidoctorTask
-import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.utils.sure
 import pl.allegro.tech.build.axion.release.domain.TagNameSerializationConfig
 
 plugins {
-    kotlin("jvm") version "1.2.0" apply false
+    kotlin("jvm") version "1.3.21" apply false
     id("io.spring.dependency-management") version "1.0.3.RELEASE"
     id("org.asciidoctor.convert") version "1.5.7"
     id("pl.allegro.tech.build.axion-release") version "1.8.1"
@@ -37,16 +34,11 @@ allprojects {
         jcenter()
     }
 
-    configure<DependencyManagementExtension> {
-        val kotlinVersion = "1.2.0"
+    dependencyManagement {
         val springVersion = "5.0.2.RELEASE"
         val logbackVersion = "1.2.3"
 
         dependencies {
-            dependency("org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlinVersion")
-            dependency("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-            dependency("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
-
             dependency("org.slf4j:slf4j-api:1.7.25")
             dependency("joda-time:joda-time:2.9.9")
             dependency("org.threeten:threetenbp:1.3.6")
@@ -55,10 +47,10 @@ allprojects {
             dependency("org.jetbrains:annotations:15.0")
 
             dependency("org.postgresql:postgresql:42.1.4")
-
             dependency("org.hsqldb:hsqldb:2.4.0")
             dependency("com.h2database:h2:1.4.196")
             dependency("mysql:mysql-connector-java:5.1.45")
+
             dependency("junit:junit:4.12")
             dependency("org.mockito:mockito-core:2.13.0")
             dependency("ch.qos.logback:logback-core:$logbackVersion")
@@ -71,6 +63,18 @@ allprojects {
         kotlinOptions {
             jvmTarget = "1.8"
         }
+    }
+
+    tasks.withType<Javadoc> {
+        val opts = options as StandardJavadocDocletOptions
+
+        opts.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
+        opts.header = project.name
+
+        opts.links("https://docs.oracle.com/javase/8/docs/api/",
+                "https://docs.spring.io/spring/docs/current/javadoc-api/",
+                "https://www.joda.org/joda-time/apidocs/")
+        opts.addStringOption("Xdoclint:none", "-quiet")
     }
 }
 
@@ -97,18 +101,6 @@ configure(listOf(project(":dalesbred"), project(":dalesbred-junit"))) {
     configure<JavaPluginConvention> {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    tasks.withType<Javadoc> {
-        val opts = options as StandardJavadocDocletOptions
-
-        opts.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
-        opts.header = project.name
-
-        opts.links("https://docs.oracle.com/javase/8/docs/api/",
-                "https://docs.spring.io/spring/docs/current/javadoc-api/",
-                "https://www.joda.org/joda-time/apidocs/")
-        opts.addStringOption("Xdoclint:none", "-quiet")
     }
 }
 

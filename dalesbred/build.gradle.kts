@@ -1,8 +1,9 @@
 description = "Dalesbred - a database access library"
 
 plugins {
-    id("kotlin")
-    id("osgi")
+    kotlin("jvm")
+    `java-library`
+    osgi
 }
 
 dependencies {
@@ -11,24 +12,23 @@ dependencies {
     compile("org.threeten:threetenbp")
     compile("org.springframework:spring-context")
     compile("org.springframework:spring-jdbc")
-    compile("org.jetbrains.kotlin:kotlin-stdlib-jre8")
+    compile(kotlin("stdlib-jdk8"))
     compile("org.jetbrains:annotations")
 
     compile("org.postgresql:postgresql")
 
-    testCompile("org.jetbrains.kotlin:kotlin-reflect")
-    testCompile("org.jetbrains.kotlin:kotlin-test")
-    testCompile("org.hsqldb:hsqldb")
-    testCompile("com.h2database:h2")
-    testCompile("mysql:mysql-connector-java")
-    testCompile("junit:junit")
-    testCompile("org.mockito:mockito-core")
-    testCompile("ch.qos.logback:logback-core")
-    testCompile("ch.qos.logback:logback-classic")
+    testImplementation(kotlin("reflect"))
+    testImplementation(kotlin("test"))
+    testImplementation("org.hsqldb:hsqldb")
+    testImplementation("com.h2database:h2")
+    testImplementation("mysql:mysql-connector-java")
+    testImplementation("junit:junit")
+    testImplementation("org.mockito:mockito-core")
+    testImplementation("ch.qos.logback:logback-core")
+    testImplementation("ch.qos.logback:logback-classic")
 }
 
-val jar: Jar by tasks
-jar.apply {
+tasks.jar {
     manifest {
         attributes["Automatic-Module-Name"] = "org.dalesbred"
     }

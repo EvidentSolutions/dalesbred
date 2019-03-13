@@ -1,19 +1,22 @@
+plugins {
+    java
+    `java-library`
+}
+
 description = "Dalesbred JUnit-support"
 
 dependencies {
-    compile(project(":dalesbred"))
-    compile("junit:junit")
-    compile("javax.inject:javax.inject")
+    api(project(":dalesbred"))
+    api("junit:junit")
+    api("javax.inject:javax.inject")
+    api("org.jetbrains:annotations")
 
-    compile("org.jetbrains:annotations")
-
-    testCompile("org.hsqldb:hsqldb")
-    testCompile("ch.qos.logback:logback-core")
-    testCompile("ch.qos.logback:logback-classic")
+    testImplementation("org.hsqldb:hsqldb")
+    testImplementation("ch.qos.logback:logback-core")
+    testImplementation("ch.qos.logback:logback-classic")
 }
 
-val jar: Jar by tasks
-jar.apply {
+tasks.jar {
     manifest {
         attributes["Automatic-Module-Name"] = "org.dalesbred.junit"
     }
