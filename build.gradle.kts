@@ -50,6 +50,14 @@ allprojects {
             dependency("org.hsqldb:hsqldb:2.4.0")
             dependency("com.h2database:h2:1.4.196")
             dependency("mysql:mysql-connector-java:5.1.45")
+            dependency("com.oracle.ojdbc:ojdbc8:19.3.0.0") {
+                exclude("com.oracle.ojdbc:ucp")
+                exclude("com.oracle.ojdbc:oraclepki")
+                exclude("com.oracle.ojdbc:osdt_cert")
+                exclude("com.oracle.ojdbc:osdt_core")
+                exclude("com.oracle.ojdbc:simplefan")
+                exclude("com.oracle.ojdbc:ons")
+            }
 
             dependency("junit:junit:4.12")
             dependency("org.mockito:mockito-core:2.13.0")

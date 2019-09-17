@@ -16,6 +16,7 @@ dependencies {
     compile("org.jetbrains:annotations")
 
     compile("org.postgresql:postgresql")
+    compile("com.oracle.ojdbc:ojdbc8")
 
     testImplementation(kotlin("reflect"))
     testImplementation(kotlin("test"))
