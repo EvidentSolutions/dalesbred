@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.time.Duration;
 import java.util.*;
 
 import static java.lang.System.currentTimeMillis;
@@ -74,7 +75,7 @@ public final class Database {
     private boolean allowImplicitTransactions = true;
 
     /** default timeout set on all statements **/
-    private Integer defaultTimeout;
+    private @Nullable Duration defaultTimeout;
 
     /** The dialect that the database uses */
     private final @NotNull Dialect dialect;
@@ -765,11 +766,11 @@ public final class Database {
         if (fetchSize != null)
             ps.setFetchSize(fetchSize);
 
-        Integer timeout = query.getTimeout();
+        Duration timeout = query.getTimeout();
+        if (timeout == null)
+            timeout = defaultTimeout;
         if (timeout != null)
-            ps.setQueryTimeout(timeout);
-        else if (defaultTimeout != null)
-            ps.setQueryTimeout(defaultTimeout);
+            ps.setQueryTimeout(Math.toIntExact(timeout.toMillis()));
     }
 
     private void bindArguments(@NotNull PreparedStatement ps, @NotNull Iterable<?> args) throws SQLException {
@@ -814,20 +815,21 @@ public final class Database {
      * If default timeout is set to non null (by default it's null) all queries will have this timeout value as default,
      * unless is specified directly on {@link SqlQuery} or is set directly on JDBC Connection parameters
      */
-    public Integer getDefaultTimeout() {
+    public @Nullable Duration getDefaultTimeout() {
         return defaultTimeout;
     }
 
     /**
      * If default timeout is set to non null (by default it's null) all queries will have this timeout value as default,
      * unless is specified directly on {@link SqlQuery} or is set directly on JDBC Connection parameters
+     * @see java.sql.Statement#setQueryTimeout(int)
      *
-     * @param timeout timeout in milliseconds
-     * @throws IllegalArgumentException if timeout is < 0
+     * @param timeout {@link Duration} of timeout
+     * @throws IllegalArgumentException if timeout is negative
      */
-    public void setTimeout(int timeout) {
-        if (timeout < 0)
-            throw new IllegalArgumentException("Illegal timeout " + timeout + ". Timeout must be >= 0");
+    public void setDefaultTimeout(@NotNull Duration timeout) {
+        if (timeout.isNegative())
+            throw new IllegalArgumentException("Illegal timeout " + timeout + ". Timeout must be non-negative");
         this.defaultTimeout = timeout;
     }
 
