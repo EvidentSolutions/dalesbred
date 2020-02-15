@@ -50,6 +50,8 @@ public final class SqlQuery implements Serializable {
 
     private @Nullable FetchDirection fetchDirection;
 
+    private @Nullable Integer timeout;
+
     private static final long serialVersionUID = 1;
 
     private SqlQuery(@NotNull @SQL String sql, @NotNull List<?> args) {
@@ -154,6 +156,29 @@ public final class SqlQuery implements Serializable {
     public void setFetchDirection(@Nullable FetchDirection direction) {
         this.fetchDirection = direction;
     }
+
+    /**
+     * Returns the timeout of this query.
+     */
+    public @Nullable Integer getTimeout() {
+        return timeout;
+    }
+
+    /**
+     * A non-null timeout will be set as the timeout for the statements executed from this query.
+     * If the timeout specified is zero, there is no limit for execution time
+     * @see java.sql.Statement#setQueryTimeout(int)
+     *
+     * @param timeout timeout in milliseconds
+     * @throws IllegalArgumentException if timeout is < 0
+     */
+    public void setTimeout(int timeout) {
+        if (timeout < 0)
+            throw new IllegalArgumentException("Illegal timeout " + timeout + ". Timeout must be null or >= 0");
+        this.timeout = timeout;
+    }
+
+
 
     @Override
     public @NotNull String toString() {

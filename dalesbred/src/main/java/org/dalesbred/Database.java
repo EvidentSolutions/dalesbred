@@ -73,6 +73,9 @@ public final class Database {
     /** Should we create transactions implicitly when individual operations are invoked outside transaction */
     private boolean allowImplicitTransactions = true;
 
+    /** default timeout set on all statements **/
+    private Integer defaultTimeout;
+
     /** The dialect that the database uses */
     private final @NotNull Dialect dialect;
 
@@ -753,7 +756,7 @@ public final class Database {
         bindArguments(ps, query.getArguments());
     }
 
-    private static void bindQueryParameters(@NotNull PreparedStatement ps, @NotNull SqlQuery query) throws SQLException {
+    private void bindQueryParameters(@NotNull PreparedStatement ps, @NotNull SqlQuery query) throws SQLException {
         FetchDirection direction = query.getFetchDirection();
         if (direction != null)
             ps.setFetchDirection(direction.getJdcbCode());
@@ -761,6 +764,12 @@ public final class Database {
         Integer fetchSize = query.getFetchSize();
         if (fetchSize != null)
             ps.setFetchSize(fetchSize);
+
+        Integer timeout = query.getTimeout();
+        if (timeout != null)
+            ps.setQueryTimeout(timeout);
+        else if (defaultTimeout != null)
+            ps.setQueryTimeout(defaultTimeout);
     }
 
     private void bindArguments(@NotNull PreparedStatement ps, @NotNull Iterable<?> args) throws SQLException {
@@ -799,6 +808,27 @@ public final class Database {
      */
     public void setAllowImplicitTransactions(boolean allowImplicitTransactions) {
         this.allowImplicitTransactions = allowImplicitTransactions;
+    }
+
+    /**
+     * If default timeout is set to non null (by default it's null) all queries will have this timeout value as default,
+     * unless is specified directly on {@link SqlQuery} or is set directly on JDBC Connection parameters
+     */
+    public Integer getDefaultTimeout() {
+        return defaultTimeout;
+    }
+
+    /**
+     * If default timeout is set to non null (by default it's null) all queries will have this timeout value as default,
+     * unless is specified directly on {@link SqlQuery} or is set directly on JDBC Connection parameters
+     *
+     * @param timeout timeout in milliseconds
+     * @throws IllegalArgumentException if timeout is < 0
+     */
+    public void setTimeout(int timeout) {
+        if (timeout < 0)
+            throw new IllegalArgumentException("Illegal timeout " + timeout + ". Timeout must be >= 0");
+        this.defaultTimeout = timeout;
     }
 
     /**
