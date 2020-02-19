@@ -167,18 +167,16 @@ public final class SqlQuery implements Serializable {
     /**
      * A non-null timeout will be set as the timeout for the statements executed from this query.
      * If the timeout specified is zero, there is no limit for execution time
-     * @see java.sql.Statement#setQueryTimeout(int)
      *
-     * @param timeout {@link Duration} of timeout
      * @throws IllegalArgumentException if timeout is negative
+     * @see java.sql.Statement#setQueryTimeout(int)
      */
     public void setTimeout(@NotNull Duration timeout) {
         if (timeout.isNegative())
-            throw new IllegalArgumentException("Illegal timeout " + timeout + ". Timeout must be non-negative");
+            throw new IllegalArgumentException("Negative timeout: " + timeout);
+
         this.timeout = timeout;
     }
-
-
 
     @Override
     public @NotNull String toString() {

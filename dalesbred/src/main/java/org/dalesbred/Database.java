@@ -813,7 +813,7 @@ public final class Database {
 
     /**
      * If default timeout is set to non null (by default it's null) all queries will have this timeout value as default,
-     * unless is specified directly on {@link SqlQuery} or is set directly on JDBC Connection parameters
+     * unless is specified directly on {@link SqlQuery} or is set directly on JDBC Connection parameters.
      */
     public @Nullable Duration getDefaultTimeout() {
         return defaultTimeout;
@@ -821,15 +821,15 @@ public final class Database {
 
     /**
      * If default timeout is set to non null (by default it's null) all queries will have this timeout value as default,
-     * unless is specified directly on {@link SqlQuery} or is set directly on JDBC Connection parameters
-     * @see java.sql.Statement#setQueryTimeout(int)
+     * unless is specified directly on {@link SqlQuery} or is set directly on JDBC Connection parameters.
      *
-     * @param timeout {@link Duration} of timeout
      * @throws IllegalArgumentException if timeout is negative
+     * @see Statement#setQueryTimeout(int)
      */
     public void setDefaultTimeout(@NotNull Duration timeout) {
         if (timeout.isNegative())
-            throw new IllegalArgumentException("Illegal timeout " + timeout + ". Timeout must be non-negative");
+            throw new IllegalArgumentException("Negative timeout: " + timeout);
+
         this.defaultTimeout = timeout;
     }
 
