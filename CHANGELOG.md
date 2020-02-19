@@ -1,7 +1,8 @@
-## Unreleased
+## 1.3.1 (2020-02-19)
 
 ### Changes
   
+  - Add support for statement timeouts ([#45](https://github.com/EvidentSolutions/dalesbred/pull/45))
   - Upgraded the version of optional Kotlin dependency to 1.3.61.
 
 ## 1.3.0 (2018-08-01)
