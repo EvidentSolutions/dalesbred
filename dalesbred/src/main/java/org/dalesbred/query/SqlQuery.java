@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
-import java.sql.ResultSet;
+import java.time.Duration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +49,8 @@ public final class SqlQuery implements Serializable {
     private @Nullable Integer fetchSize;
 
     private @Nullable FetchDirection fetchDirection;
+
+    private @Nullable Duration timeout;
 
     private static final long serialVersionUID = 1;
 
@@ -154,6 +156,29 @@ public final class SqlQuery implements Serializable {
     public void setFetchDirection(@Nullable FetchDirection direction) {
         this.fetchDirection = direction;
     }
+
+    /**
+     * Returns the timeout of this query.
+     */
+    public @Nullable Duration getTimeout() {
+        return timeout;
+    }
+
+    /**
+     * A non-null timeout will be set as the timeout for the statements executed from this query.
+     * If the timeout specified is zero, there is no limit for execution time
+     * @see java.sql.Statement#setQueryTimeout(int)
+     *
+     * @param timeout {@link Duration} of timeout
+     * @throws IllegalArgumentException if timeout is negative
+     */
+    public void setTimeout(@NotNull Duration timeout) {
+        if (timeout.isNegative())
+            throw new IllegalArgumentException("Illegal timeout " + timeout + ". Timeout must be non-negative");
+        this.timeout = timeout;
+    }
+
+
 
     @Override
     public @NotNull String toString() {
