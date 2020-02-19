@@ -2,7 +2,7 @@
 
 ### Changes
   
-  - Upgraded the version of optional Kotlin dependency to 1.3.21.
+  - Upgraded the version of optional Kotlin dependency to 1.3.61.
 
 ## 1.3.0 (2018-08-01)
 

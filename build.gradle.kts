@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import pl.allegro.tech.build.axion.release.domain.TagNameSerializationConfig
 
 plugins {
-    kotlin("jvm") version "1.3.21" apply false
+    kotlin("jvm") version "1.3.61" apply false
     id("io.spring.dependency-management") version "1.0.3.RELEASE"
     id("org.asciidoctor.convert") version "1.5.7"
     id("pl.allegro.tech.build.axion-release") version "1.8.1"
