@@ -433,7 +433,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="details">
 <span id="author" class="author">Juha Komulainen</span><br>
 <span id="email" class="email"><a href="mailto:juha.komulainen@evident.fi">juha.komulainen@evident.fi</a></span><br>
-<span id="revnumber">version 1.3.0</span>
+<span id="revnumber">version 1.3.1</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -495,7 +495,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_configuring_the_database_connection">Configuring the database connection</h3>
 <div class="paragraph">
-<p>Most things in Dalesbred happen through an instance of <a href="http://dalesbred.org/docs/api/?org/dalesbred/Database.html">Database</a>.
+<p>Most things in Dalesbred happen through an instance of <a href="https://dalesbred.org/docs/api/?org/dalesbred/Database.html">Database</a>.
 It takes care of managing JDBC connections, so in a typical application you should only configure a single instance&#8201;&#8212;&#8201;unless you need to connect multiple databases. The easiest way to get hold of one is to specify the settings manually:</p>
 </div>
 <div class="listingblock">
@@ -506,7 +506,7 @@ It takes care of managing JDBC connections, so in a typical application you shou
 <div class="paragraph">
 <p>Note that this performs no connection pooling and is therefore probably not
 your preferred way of configuring the system in production. In a container
-you&#8217;ll probably want to lookup a named <a href="http://download.java.net/jdk8/docs/api/?javax/sql/DataSource.html">DataSource</a> from JNDI:</p>
+you&#8217;ll probably want to lookup a named <a href="https://download.java.net/jdk8/docs/api/?javax/sql/DataSource.html">DataSource</a> from JNDI:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -514,8 +514,8 @@ you&#8217;ll probably want to lookup a named <a href="http://download.java.net/j
 </div>
 </div>
 <div class="paragraph">
-<p>Alternatively, you might setup a <a href="http://download.java.net/jdk8/docs/api/?javax/sql/DataSource.html">DataSource</a> yourself, in which case you can
-just create a <a href="http://dalesbred.org/docs/api/?org/dalesbred/Database.html">Database</a> out of that:</p>
+<p>Alternatively, you might setup a <a href="https://download.java.net/jdk8/docs/api/?javax/sql/DataSource.html">DataSource</a> yourself, in which case you can
+just create a <a href="https://dalesbred.org/docs/api/?org/dalesbred/Database.html">Database</a> out of that:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -523,7 +523,7 @@ just create a <a href="http://dalesbred.org/docs/api/?org/dalesbred/Database.htm
 </div>
 </div>
 <div class="paragraph">
-<p>If you are using <a href="http://projects.spring.io/spring-framework/">Spring Framework</a>, see the
+<p>If you are using <a href="https://spring.io/projects/spring-framework">Spring Framework</a>, see the
 <a href="#_spring">Spring</a>-section on how to integrate Dalesbred with it.</p>
 </div>
 </div>
@@ -567,7 +567,7 @@ public final class Department {
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The <a href="http://dalesbred.org/docs/api/?org/dalesbred/annotation/DalesbredInstantiator.html">DalesbredInstantiator</a> annotation for
+The <a href="https://dalesbred.org/docs/api/?org/dalesbred/annotation/DalesbredInstantiator.html">DalesbredInstantiator</a> annotation for
 constructor is optional, but helps Dalesbred to make an unambiguous decision when there are multiple constructors.
 It also serves as a useful documentation. Finally, it can be configured as an entry-point for static analyzers so
 they don&#8217;t complain about unused constructor.
@@ -632,8 +632,8 @@ Map&lt;Integer, Department&gt; departmentsByIds = db.findMap(
 </div>
 <div class="paragraph">
 <p>If for some reason you don&#8217;t want to map the results into your own class, you can ask for
-a <a href="http://dalesbred.org/docs/api/?org/dalesbred/result/ResultTable.html">ResultTable</a>, which is basically a detached
-representation of a <a href="http://download.java.net/jdk8/docs/api/?java/sql/ResultSet.html">ResultSet</a>:</p>
+a <a href="https://dalesbred.org/docs/api/?org/dalesbred/result/ResultTable.html">ResultTable</a>, which is basically a detached
+representation of a <a href="https://download.java.net/jdk8/docs/api/?java/sql/ResultSet.html">ResultSet</a>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -641,8 +641,8 @@ representation of a <a href="http://download.java.net/jdk8/docs/api/?java/sql/Re
 </div>
 </div>
 <div class="paragraph">
-<p>Alternatively, you can supply your own <a href="http://dalesbred.org/docs/api/?org/dalesbred/result/RowMapper.html">RowMapper</a> or
-<a href="http://dalesbred.org/docs/api/?org/dalesbred/result/ResultSetProcessor.html">ResultSetProcessor</a>-implementation in place
+<p>Alternatively, you can supply your own <a href="https://dalesbred.org/docs/api/?org/dalesbred/result/RowMapper.html">RowMapper</a> or
+<a href="https://dalesbred.org/docs/api/?org/dalesbred/result/ResultSetProcessor.html">ResultSetProcessor</a>-implementation in place
 of the class and handle the result sets manually, but usually this should be unnecessary.</p>
 </div>
 </div>
@@ -674,8 +674,8 @@ of the class and handle the result sets manually, but usually this should be unn
 <h3 id="_sqlquery_vs_query_parameters">SqlQuery vs. query parameters</h3>
 <div class="paragraph">
 <p>All methods come in two variants: there&#8217;s an implementation that takes
-an <a href="http://dalesbred.org/docs/api/?org/dalesbred/query/SqlQuery.html">SqlQuery</a> as a parameter and another
-implementation that takes a <a href="http://download.java.net/jdk8/docs/api/?java/lang/String.html">String</a> and a variable number of parameters.
+an <a href="https://dalesbred.org/docs/api/?org/dalesbred/query/SqlQuery.html">SqlQuery</a> as a parameter and another
+implementation that takes a <a href="https://download.java.net/jdk8/docs/api/?java/lang/String.html">String</a> and a variable number of parameters.
 The latter is just convenience method for the further, meaning that the following code fragments are
 identical in functionality:</p>
 </div>
@@ -721,17 +721,17 @@ db.findAll(Department.class, namedQuery("select id from employee " +
 </div>
 </div>
 <div class="paragraph">
-<p>Instead of <a href="http://download.java.net/jdk8/docs/api/?java/util/Map.html">Map</a>s, you can also pass just regular objects to <code>namedQuery</code> as
+<p>Instead of <a href="https://download.java.net/jdk8/docs/api/?java/util/Map.html">Map</a>s, you can also pass just regular objects to <code>namedQuery</code> as
 the source of values. The parameter names are mapped to properties or fields of the objects. Finally, if you want
 detailed control, you can pass your own implementation of
-<a href="http://dalesbred.org/docs/api/?org/dalesbred/query/VariableResolver.html">VariableResolver</a> to resolve the variables.</p>
+<a href="https://dalesbred.org/docs/api/?org/dalesbred/query/VariableResolver.html">VariableResolver</a> to resolve the variables.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_building_queries_dynamically">Building queries dynamically</h3>
 <div class="paragraph">
-<p>There&#8217;s no high-level API for building queries, but <a href="http://dalesbred.org/docs/api/?org/dalesbred/query/QueryBuilder.html">QueryBuilder</a>
-helps you constructing dynamic queries. It&#8217;s basically just a <a href="http://download.java.net/jdk8/docs/api/?java/util/StringBuilder.html">StringBuilder</a>
+<p>There&#8217;s no high-level API for building queries, but <a href="https://dalesbred.org/docs/api/?org/dalesbred/query/QueryBuilder.html">QueryBuilder</a>
+helps you constructing dynamic queries. It&#8217;s basically just a <a href="https://download.java.net/jdk8/docs/api/?java/util/StringBuilder.html">StringBuilder</a>
 that also keeps track of parameters. Therefore you can say code like:</p>
 </div>
 <div class="listingblock">
@@ -766,8 +766,8 @@ benefits. Consider building a higher level abstraction on top of QueryBuilder if
 <div class="sect2">
 <h3 id="_transaction_callbacks">Transaction callbacks</h3>
 <div class="paragraph">
-<p>To perform a bunch of operations in transaction, use <a href="http://dalesbred.org/docs/api/?org/dalesbred/transaction/TransactionCallback.html">TransactionCallback</a>
-or <a href="http://dalesbred.org/docs/api/?org/dalesbred/transaction/VoidTransactionCallback.html">VoidTransactionCallback</a>:</p>
+<p>To perform a bunch of operations in transaction, use <a href="https://dalesbred.org/docs/api/?org/dalesbred/transaction/TransactionCallback.html">TransactionCallback</a>
+or <a href="https://dalesbred.org/docs/api/?org/dalesbred/transaction/VoidTransactionCallback.html">VoidTransactionCallback</a>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -784,21 +784,21 @@ db.withVoidTransaction(tx -&gt; {
 </div>
 </div>
 <div class="paragraph">
-<p>Optionally, you can also pass <a href="http://dalesbred.org/docs/api/?org/dalesbred/transaction/Isolation.html">Isolation</a> or
-<a href="http://dalesbred.org/docs/api/?org/dalesbred/transaction/Propagation.html">Propagation</a> for these calls.</p>
+<p>Optionally, you can also pass <a href="https://dalesbred.org/docs/api/?org/dalesbred/transaction/Isolation.html">Isolation</a> or
+<a href="https://dalesbred.org/docs/api/?org/dalesbred/transaction/Propagation.html">Propagation</a> for these calls.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_external_transaction_manager">External transaction manager</h3>
 <div class="paragraph">
-<p>If you are using <a href="http://projects.spring.io/spring-framework/">Spring Framework</a>, Dalesbred can integrate with
+<p>If you are using <a href="https://spring.io/projects/spring-framework">Spring Framework</a>, Dalesbred can integrate with
 Spring&#8217;s transaction-manager. Consult the <a href="#_spring">Spring</a>-section for details.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_implicit_transactions">Implicit transactions</h3>
 <div class="paragraph">
-<p>If you make calls to <a href="http://dalesbred.org/docs/api/?org/dalesbred/Database.html">Database</a> without and explicit transaction, by default
+<p>If you make calls to <a href="https://dalesbred.org/docs/api/?org/dalesbred/Database.html">Database</a> without and explicit transaction, by default
 a new transaction is started for each call. You can disallow this: in this case exceptions are thrown for calls
 without an active transaction:</p>
 </div>
@@ -831,15 +831,15 @@ without an active transaction:</p>
 <div class="paragraph">
 <p>Normally Dalesbred will automatically detect the best way to instantiate your classes based on database results.
 This can sometimes lead to surprising results. If you wish to be more explicit, you can annotate your preferred
-constructor with <a href="http://dalesbred.org/docs/api/?org/dalesbred/annotation/DalesbredInstantiator.html">DalesbredInstantiator</a>. This
+constructor with <a href="https://dalesbred.org/docs/api/?org/dalesbred/annotation/DalesbredInstantiator.html">DalesbredInstantiator</a>. This
 will cause Dalesbred to ignore all other constructors.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_large_objects">Large objects</h3>
 <div class="paragraph">
-<p>You can stream large objects (blobs and clobs) to database by just passing <a href="http://download.java.net/jdk8/docs/api/?java/io/InputStream.html">InputStream</a>
-or <a href="http://download.java.net/jdk8/docs/api/?java/io/Reader.html">Reader</a> to query. Similarly you can read them by asking back for InputStream
+<p>You can stream large objects (blobs and clobs) to database by just passing <a href="https://download.java.net/jdk8/docs/api/?java/io/InputStream.html">InputStream</a>
+or <a href="https://download.java.net/jdk8/docs/api/?java/io/Reader.html">Reader</a> to query. Similarly you can read them by asking back for InputStream
 or Reader.</p>
 </div>
 <div class="listingblock">
@@ -871,7 +871,7 @@ Note that the returned InputStream or Reader is only valid for the duration of t
 <h3 id="_custom_type_conversions">Custom type-conversions</h3>
 <div class="paragraph">
 <p>Sometimes you need to convert database values to your own custom types and vice versa. To do that,
-you can register your functions to <a href="http://dalesbred.org/docs/api/?org/dalesbred/conversion/TypeConversionRegistry.html">TypeConversionRegistry</a>:</p>
+you can register your functions to <a href="https://dalesbred.org/docs/api/?org/dalesbred/conversion/TypeConversionRegistry.html">TypeConversionRegistry</a>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1011,19 +1011,19 @@ fun findEmployees() = db.findAll&lt;Employee&gt;("""
 <div class="paragraph">
 <p>If from <a href="http://www.joda.org/joda-time/">Joda-Time</a> is detected on classpath, Dalesbred will automatically
 register <a href="#_custom_type_conversions">type-conversions</a> between <a href="http://www.joda.org/joda-time/">Joda-Time</a>'s
-<a href="http://www.joda.org/joda-time/apidocs/?org/joda/time/DateTime.html">DateTime</a>, <a href="http://www.joda.org/joda-time/apidocs/?org/joda/time/LocalDate.html">LocalDate</a>
-and <a href="http://www.joda.org/joda-time/apidocs/?org/joda/time/LocalTime.html">LocalTime</a> to <a href="http://download.java.net/jdk8/docs/api/?java/sql/Timestamp.html">java.sql.Timestamp</a>,
-<a href="http://download.java.net/jdk8/docs/api/?java/sql/Date.html">java.sql.Date</a> and <a href="http://download.java.net/jdk8/docs/api/?java/sql/Time.html">java.sql.Time</a>.</p>
+<a href="https://www.joda.org/joda-time/apidocs/?org/joda/time/DateTime.html">DateTime</a>, <a href="https://www.joda.org/joda-time/apidocs/?org/joda/time/LocalDate.html">LocalDate</a>
+and <a href="https://www.joda.org/joda-time/apidocs/?org/joda/time/LocalTime.html">LocalTime</a> to <a href="https://download.java.net/jdk8/docs/api/?java/sql/Timestamp.html">java.sql.Timestamp</a>,
+<a href="https://download.java.net/jdk8/docs/api/?java/sql/Date.html">java.sql.Date</a> and <a href="https://download.java.net/jdk8/docs/api/?java/sql/Time.html">java.sql.Time</a>.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_spring">Spring</h3>
 <div class="paragraph">
-<p>Dalesbred has support for integration with <a href="http://projects.spring.io/spring-framework/">Spring Framework</a>
+<p>Dalesbred has support for integration with <a href="https://spring.io/projects/spring-framework">Spring Framework</a>
 and its transaction management. To integrate Dalesbred, create a configuration class inheriting from
-<a href="http://dalesbred.org/docs/api/?org/dalesbred/integration/spring/DalesbredConfigurationSupport.html">DalesbredConfigurationSupport</a>
-and specify beans for <a href="http://download.java.net/jdk8/docs/api/?javax/sql/DataSource.html">DataSource</a> and
-<a href="http://docs.spring.io/spring/docs/current/javadoc-api/?org/springframework/transaction/PlatformTransactionManager.html">PlatformTransactionManager</a>.
+<a href="https://dalesbred.org/docs/api/?org/dalesbred/integration/spring/DalesbredConfigurationSupport.html">DalesbredConfigurationSupport</a>
+and specify beans for <a href="https://download.java.net/jdk8/docs/api/?javax/sql/DataSource.html">DataSource</a> and
+<a href="https://docs.spring.io/spring/docs/current/javadoc-api/?org/springframework/transaction/PlatformTransactionManager.html">PlatformTransactionManager</a>.
 A minimal configuration would therefore be something like the following:</p>
 </div>
 <div class="listingblock">
@@ -1045,7 +1045,7 @@ public class MyDatabaseConfiguration extends DalesbredConfigurationSupport {
 </div>
 </div>
 <div class="paragraph">
-<p>After this you can inject <a href="http://dalesbred.org/docs/api/?org/dalesbred/Database.html">Database</a> normally in your beans.</p>
+<p>After this you can inject <a href="https://dalesbred.org/docs/api/?org/dalesbred/Database.html">Database</a> normally in your beans.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1107,8 +1107,8 @@ for more usage examples.</p>
 }
 
 dependencies {
-    compile 'org.dalesbred:dalesbred:1.3.0'
-    testCompile 'org.dalesbred:dalesbred-junit:1.3.0'
+    compile 'org.dalesbred:dalesbred:1.3.1'
+    testCompile 'org.dalesbred:dalesbred-junit:1.3.1'
 }</code></pre>
 </div>
 </div>
@@ -1120,13 +1120,13 @@ dependencies {
 <pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
     &lt;groupId&gt;org.dalesbred&lt;/groupId&gt;
     &lt;artifactId&gt;dalesbred&lt;/artifactId&gt;
-    &lt;version&gt;1.3.0&lt;/version&gt;
+    &lt;version&gt;1.3.1&lt;/version&gt;
 &lt;/dependency&gt;
 
 &lt;dependency&gt;
     &lt;groupId&gt;org.dalesbred&lt;/groupId&gt;
     &lt;artifactId&gt;dalesbred-junit&lt;/artifactId&gt;
-    &lt;version&gt;1.3.0&lt;/version&gt;
+    &lt;version&gt;1.3.1&lt;/version&gt;
     &lt;scope&gt;test&lt;/scope&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
@@ -1145,8 +1145,8 @@ dependencies {
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 1.3.0<br>
-Last updated 2017-03-29 11:02:23 EEST
+Version 1.3.1<br>
+Last updated 2018-08-23 23:56:08 EEST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
