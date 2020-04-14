@@ -1,3 +1,9 @@
+## Unreleased
+
+### Changes
+
+Support passing primitive key and values types for `findMap`.
+
 ## 1.3.1 (2020-02-19)
 
 ### Changes

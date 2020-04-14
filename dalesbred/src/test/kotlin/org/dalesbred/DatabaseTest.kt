@@ -108,6 +108,18 @@ class DatabaseTest {
     }
 
     @Test
+    fun mapWithPrimitiveTypes() {
+        val map = db.findMap(Int::class.java, Department::class.java,
+                "select * from (values (1, 10, 'foo'), (2, 20, 'bar')) d")
+
+        assertEquals(2, map.size)
+        assertEquals(10, map[1]?.id)
+        assertEquals("foo", map[1]?.name)
+        assertEquals(20, map[2]?.id)
+        assertEquals("bar", map[2]?.name)
+    }
+
+    @Test
     fun findUnique_singleResult() {
         assertEquals(42, db.findUnique(Int::class.java, "values (42)"))
     }
