@@ -1,3 +1,9 @@
+## Unreleased
+
+### Bug fixes
+
+  - Fix query timeouts
+
 ## 1.3.2 (2020-04-14)
 
 ### Changes

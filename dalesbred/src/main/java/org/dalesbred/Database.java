@@ -769,8 +769,9 @@ public final class Database {
         Duration timeout = query.getTimeout();
         if (timeout == null)
             timeout = defaultTimeout;
+
         if (timeout != null)
-            ps.setQueryTimeout(Math.toIntExact(timeout.toMillis()));
+            ps.setQueryTimeout(Math.toIntExact(timeout.getSeconds()));
     }
 
     private void bindArguments(@NotNull PreparedStatement ps, @NotNull Iterable<?> args) throws SQLException {
