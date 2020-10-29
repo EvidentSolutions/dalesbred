@@ -1,4 +1,4 @@
-## Unreleased
+## 1.3.3 (2020-10-29)
 
 ### Bug fixes
 
