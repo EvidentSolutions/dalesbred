@@ -11,7 +11,7 @@
       <entry name="!?*.kt" />
       <entry name="!?*.clj" />
     </wildcardResourcePatterns>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="1.8">
       <module name="dalesbred-junit_main" target="1.8" />
       <module name="dalesbred-junit_test" target="1.8" />
       <module name="dalesbred-kotlin_main" target="1.8" />
