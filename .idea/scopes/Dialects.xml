@@ -1,3 +1,3 @@
 <component name="DependencyValidationManager">
-  <scope name="Dialects" pattern="src[dalesbred]:org.dalesbred.dialect..*" />
+  <scope name="Dialects" pattern="src[dalesbred-root.dalesbred]:org.dalesbred.dialect..*" />
 </component>
