@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Evident Solutions Oy
+ * Copyright (c) 2020 Evident Solutions Oy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,25 +25,11 @@ package org.dalesbred.internal.utils;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Utilities for handling exceptions and other throwables.
+ * Exception thrown when when checked exception is thrown by some of the callbacks.
  */
-public final class Throwables {
+public final class WrappedCheckedException extends RuntimeException {
 
-    private Throwables() { }
-
-    public static @NotNull RuntimeException propagate(@NotNull Throwable e) {
-        if (e instanceof Error)
-            throw (Error) e;
-        else if (e instanceof RuntimeException)
-            return (RuntimeException) e;
-        else
-            return new WrappedCheckedException(e);
-    }
-
-    public static @NotNull <T extends Exception> T propagate(@NotNull Throwable e, @NotNull Class<T> allowed) {
-        if (allowed.isInstance(e))
-            return allowed.cast(e);
-        else
-            throw propagate(e);
+    public WrappedCheckedException(@NotNull Throwable cause) {
+        super(cause);
     }
 }
