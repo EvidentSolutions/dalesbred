@@ -22,7 +22,7 @@
 
 package org.dalesbred.query;
 
-import org.dalesbred.annotation.SQL;
+import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,12 +44,12 @@ final class NamedParameterSqlParser {
     private final StringBuilder sqlBuilder;
     private final List<String> parameterNames = new ArrayList<>();
 
-    private NamedParameterSqlParser(@SQL @NotNull String sql) {
+    private NamedParameterSqlParser(@Language("SQL") @NotNull String sql) {
         this.lexer = new Lexer(sql);
         this.sqlBuilder = new StringBuilder(sql.length());
     }
 
-    public static @NotNull NamedParameterSql parseSqlStatement(@NotNull @SQL String sql) {
+    public static @NotNull NamedParameterSql parseSqlStatement(@NotNull @Language("SQL") String sql) {
         NamedParameterSqlParser parser = new NamedParameterSqlParser(requireNonNull(sql));
 
         while (parser.lexer.hasMore())

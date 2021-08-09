@@ -22,7 +22,7 @@
 
 package org.dalesbred.query;
 
-import org.dalesbred.annotation.SQL;
+import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
@@ -32,12 +32,12 @@ import static org.dalesbred.internal.utils.CollectionUtils.mapToList;
 
 final class NamedParameterSql {
 
-    @SQL
+    @Language("SQL")
     private final @NotNull String sql;
 
     private final @NotNull List<String> parameterNames;
 
-    NamedParameterSql(@NotNull @SQL String sql, @NotNull List<String> parameterNames) {
+    NamedParameterSql(@NotNull @Language("SQL") String sql, @NotNull List<String> parameterNames) {
         this.sql = sql;
         this.parameterNames = parameterNames;
     }
@@ -51,7 +51,7 @@ final class NamedParameterSql {
     }
 
     @NotNull
-    @SQL
+    @Language("SQL")
     @TestOnly
     String getSql() {
         return sql;

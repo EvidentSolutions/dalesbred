@@ -22,7 +22,6 @@
 
 package org.dalesbred;
 
-import org.dalesbred.annotation.SQL;
 import org.dalesbred.connection.ConnectionProvider;
 import org.dalesbred.connection.DataSourceConnectionProvider;
 import org.dalesbred.connection.DriverManagerConnectionProvider;
@@ -37,6 +36,7 @@ import org.dalesbred.query.FetchDirection;
 import org.dalesbred.query.SqlQuery;
 import org.dalesbred.result.*;
 import org.dalesbred.transaction.*;
+import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -293,7 +293,7 @@ public final class Database {
      *
      * @see #executeQuery(ResultSetProcessor, SqlQuery)
      */
-    public <T> T executeQuery(@NotNull ResultSetProcessor<T> processor, @NotNull @SQL String sql, Object... args) {
+    public <T> T executeQuery(@NotNull ResultSetProcessor<T> processor, @NotNull @Language("SQL") String sql, Object... args) {
         return executeQuery(processor, SqlQuery.query(sql, args));
     }
 
@@ -309,7 +309,7 @@ public final class Database {
      * Executes a query and processes each row of the result with given {@link RowMapper}
      * to produce a list of results.
      */
-    public @NotNull <T> List<T> findAll(@NotNull RowMapper<T> rowMapper, @NotNull @SQL String sql, Object... args) {
+    public @NotNull <T> List<T> findAll(@NotNull RowMapper<T> rowMapper, @NotNull @Language("SQL") String sql, Object... args) {
         return findAll(rowMapper, SqlQuery.query(sql, args));
     }
 
@@ -323,7 +323,7 @@ public final class Database {
     /**
      * Executes a query and converts the results to instances of given class using default mechanisms.
      */
-    public @NotNull <T> List<T> findAll(@NotNull Class<T> cl, @NotNull @SQL String sql, Object... args) {
+    public @NotNull <T> List<T> findAll(@NotNull Class<T> cl, @NotNull @Language("SQL") String sql, Object... args) {
         return findAll(cl, SqlQuery.query(sql, args));
     }
 
@@ -343,7 +343,7 @@ public final class Database {
      * @throws NonUniqueResultException if there is more then one row
      * @throws EmptyResultException if there are no rows
      */
-    public <T> T findUnique(@NotNull RowMapper<T> mapper, @NotNull @SQL String sql, Object... args) {
+    public <T> T findUnique(@NotNull RowMapper<T> mapper, @NotNull @Language("SQL") String sql, Object... args) {
         return findUnique(mapper, SqlQuery.query(sql, args));
     }
 
@@ -363,7 +363,7 @@ public final class Database {
      * @throws NonUniqueResultException if there is more then one row
      * @throws EmptyResultException if there are no rows
      */
-    public <T> T findUnique(@NotNull Class<T> cl, @NotNull @SQL String sql, Object... args) {
+    public <T> T findUnique(@NotNull Class<T> cl, @NotNull @Language("SQL") String sql, Object... args) {
         return findUnique(cl, SqlQuery.query(sql, args));
     }
 
@@ -383,7 +383,7 @@ public final class Database {
      *
      * @throws NonUniqueResultException if there are multiple result rows
      */
-    public @NotNull <T> Optional<T> findOptional(@NotNull RowMapper<T> rowMapper, @NotNull @SQL String sql, Object... args) {
+    public @NotNull <T> Optional<T> findOptional(@NotNull RowMapper<T> rowMapper, @NotNull @Language("SQL") String sql, Object... args) {
         return findOptional(rowMapper, SqlQuery.query(sql, args));
     }
 
@@ -403,7 +403,7 @@ public final class Database {
      *
      * @throws NonUniqueResultException if there are multiple result rows
      */
-    public @NotNull <T> Optional<T> findOptional(@NotNull Class<T> cl, @NotNull @SQL String sql, Object... args) {
+    public @NotNull <T> Optional<T> findOptional(@NotNull Class<T> cl, @NotNull @Language("SQL") String sql, Object... args) {
         return findOptional(cl, SqlQuery.query(sql, args));
     }
 
@@ -413,7 +413,7 @@ public final class Database {
      *
      * @throws NonUniqueResultException if there are multiple result rows
      */
-    public @NotNull OptionalInt findOptionalInt(@NotNull @SQL String sql, Object... args) {
+    public @NotNull OptionalInt findOptionalInt(@NotNull @Language("SQL") String sql, Object... args) {
         return findOptionalInt(SqlQuery.query(sql, args));
     }
 
@@ -434,7 +434,7 @@ public final class Database {
      *
      * @throws NonUniqueResultException if there are multiple result rows
      */
-    public @NotNull OptionalLong findOptionalLong(@NotNull @SQL String sql, Object... args) {
+    public @NotNull OptionalLong findOptionalLong(@NotNull @Language("SQL") String sql, Object... args) {
         return findOptionalLong(SqlQuery.query(sql, args));
     }
 
@@ -455,7 +455,7 @@ public final class Database {
      *
      * @throws NonUniqueResultException if there are multiple result rows
      */
-    public @NotNull OptionalDouble findOptionalDouble(@NotNull @SQL String sql, Object... args) {
+    public @NotNull OptionalDouble findOptionalDouble(@NotNull @Language("SQL") String sql, Object... args) {
         return findOptionalDouble(SqlQuery.query(sql, args));
     }
 
@@ -480,7 +480,7 @@ public final class Database {
     /**
      * Alias for {findUniqueOrNull(rowMapper, SqlQuery.query(sql, args))}.
      */
-    public @Nullable <T> T findUniqueOrNull(@NotNull RowMapper<T> rowMapper, @NotNull @SQL String sql, Object... args) {
+    public @Nullable <T> T findUniqueOrNull(@NotNull RowMapper<T> rowMapper, @NotNull @Language("SQL") String sql, Object... args) {
         return findUniqueOrNull(rowMapper, SqlQuery.query(sql, args));
     }
 
@@ -494,7 +494,7 @@ public final class Database {
     /**
      * Alias for {@code findOptional(cl, sql, args).orElse(null)}.
      */
-    public @Nullable <T> T findUniqueOrNull(@NotNull Class<T> cl, @NotNull @SQL String sql, Object... args) {
+    public @Nullable <T> T findUniqueOrNull(@NotNull Class<T> cl, @NotNull @Language("SQL") String sql, Object... args) {
         return findOptional(cl, sql, args).orElse(null);
     }
 
@@ -514,7 +514,7 @@ public final class Database {
      * @throws NonUniqueResultException if there is more then one row
      * @throws EmptyResultException if there are no rows
      */
-    public boolean findUniqueBoolean(@NotNull @SQL String sql, Object... args) {
+    public boolean findUniqueBoolean(@NotNull @Language("SQL") String sql, Object... args) {
         return findUniqueBoolean(SqlQuery.query(sql, args));
     }
 
@@ -534,7 +534,7 @@ public final class Database {
      * @throws NonUniqueResultException if there is more then one row
      * @throws EmptyResultException if there are no rows
      */
-    public int findUniqueInt(@NotNull @SQL String sql, Object... args) {
+    public int findUniqueInt(@NotNull @Language("SQL") String sql, Object... args) {
         return findUniqueInt(SqlQuery.query(sql, args));
     }
 
@@ -554,7 +554,7 @@ public final class Database {
      * @throws NonUniqueResultException if there is more then one row
      * @throws EmptyResultException if there are no rows
      */
-    public long findUniqueLong(@NotNull @SQL String sql, Object... args) {
+    public long findUniqueLong(@NotNull @Language("SQL") String sql, Object... args) {
         return findUniqueLong(SqlQuery.query(sql, args));
     }
 
@@ -578,7 +578,7 @@ public final class Database {
      */
     public @NotNull <K,V> Map<K, V> findMap(@NotNull Class<K> keyType,
                                    @NotNull Class<V> valueType,
-                                   @NotNull @SQL String sql,
+                                   @NotNull @Language("SQL") String sql,
                                    Object... args) {
         return findMap(keyType, valueType, SqlQuery.query(sql, args));
     }
@@ -593,7 +593,7 @@ public final class Database {
     /**
      * Executes a query and creates a {@link ResultTable} from the results.
      */
-    public @NotNull ResultTable findTable(@NotNull @SQL String sql, Object... args) {
+    public @NotNull ResultTable findTable(@NotNull @Language("SQL") String sql, Object... args) {
         return findTable(SqlQuery.query(sql, args));
     }
 
@@ -618,7 +618,7 @@ public final class Database {
     /**
      * Executes an update against the database and returns the amount of affected rows.
      */
-    public int update(@NotNull @SQL String sql, Object... args) {
+    public int update(@NotNull @Language("SQL") String sql, Object... args) {
         return update(SqlQuery.query(sql, args));
     }
 
@@ -638,7 +638,7 @@ public final class Database {
      *
      * @throws NonUniqueUpdateException if zero or more then one rows were updated
      */
-    public void updateUnique(@NotNull @SQL String sql, Object... args) {
+    public void updateUnique(@NotNull @Language("SQL") String sql, Object... args) {
         updateUnique(SqlQuery.query(sql, args));
     }
 
@@ -679,7 +679,7 @@ public final class Database {
     /**
      * @see #updateAndProcessGeneratedKeys(ResultSetProcessor, List, SqlQuery)
      */
-    public <T> T updateAndProcessGeneratedKeys(@NotNull ResultSetProcessor<T> generatedKeysProcessor, @NotNull List<String> columnNames, @NotNull @SQL String sql, Object... args) {
+    public <T> T updateAndProcessGeneratedKeys(@NotNull ResultSetProcessor<T> generatedKeysProcessor, @NotNull List<String> columnNames, @NotNull @Language("SQL") String sql, Object... args) {
         return updateAndProcessGeneratedKeys(generatedKeysProcessor, columnNames, SqlQuery.query(sql, args));
     }
 
@@ -687,7 +687,7 @@ public final class Database {
      * Executes a batch update against the database, returning an array of modification
      * counts for each argument list.
      */
-    public int[] updateBatch(@SQL @NotNull String sql, @NotNull List<? extends  List<?>> argumentLists) {
+    public int[] updateBatch(@Language("SQL") @NotNull String sql, @NotNull List<? extends  List<?>> argumentLists) {
         SqlQuery query = SqlQuery.query(sql, "<batch-update>");
 
         return withCurrentTransaction(query, tx -> {
@@ -719,7 +719,7 @@ public final class Database {
      */
     public <T> T updateBatchAndProcessGeneratedKeys(@NotNull ResultSetProcessor<T> generatedKeysProcessor,
                                                     @NotNull List<String> columnNames,
-                                                    @NotNull @SQL String sql,
+                                                    @NotNull @Language("SQL") String sql,
                                                     @NotNull List<? extends List<?>> argumentLists) {
         SqlQuery query = SqlQuery.query(sql, "<batch-update>");
 

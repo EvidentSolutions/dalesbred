@@ -22,7 +22,7 @@
 
 package org.dalesbred.query;
 
-import org.dalesbred.annotation.SQL;
+import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,7 +54,7 @@ public final class SqlQuery implements Serializable {
 
     private static final long serialVersionUID = 1;
 
-    private SqlQuery(@NotNull @SQL String sql, @NotNull List<?> args) {
+    private SqlQuery(@NotNull @Language("SQL") String sql, @NotNull List<?> args) {
         this.sql = requireNonNull(sql);
         this.args = unmodifiableList(args);
     }
@@ -63,14 +63,14 @@ public final class SqlQuery implements Serializable {
      * Creates a new {@link SqlQuery} consisting of given SQL statement and arguments.
      * '?' characters act as placeholders for arguments in the query.
      */
-    public static @NotNull SqlQuery query(@NotNull @SQL String sql, Object... args) {
+    public static @NotNull SqlQuery query(@NotNull @Language("SQL") String sql, Object... args) {
         return new SqlQuery(sql, asList(args));
     }
 
     /**
      * @see #query(String, Object...)
      */
-    public static @NotNull SqlQuery query(@NotNull @SQL String sql, @NotNull List<?> args) {
+    public static @NotNull SqlQuery query(@NotNull @Language("SQL") String sql, @NotNull List<?> args) {
         return new SqlQuery(sql, args);
     }
 
@@ -80,7 +80,7 @@ public final class SqlQuery implements Serializable {
      * @see #namedQuery(String, VariableResolver)
      * @see VariableResolver#forMap(Map)
      */
-    public static @NotNull SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull Map<String, ?> valueMap) {
+    public static @NotNull SqlQuery namedQuery(@NotNull @Language("SQL") String sql, @NotNull Map<String, ?> valueMap) {
         return namedQuery(sql, VariableResolver.forMap(valueMap));
     }
 
@@ -90,7 +90,7 @@ public final class SqlQuery implements Serializable {
      * @see #namedQuery(String, VariableResolver)
      * @see VariableResolver#forBean(Object)
      */
-    public static @NotNull SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull Object bean) {
+    public static @NotNull SqlQuery namedQuery(@NotNull @Language("SQL") String sql, @NotNull Object bean) {
         return namedQuery(sql, VariableResolver.forBean(bean));
     }
 
@@ -101,7 +101,7 @@ public final class SqlQuery implements Serializable {
      * @throws SqlSyntaxException if SQL is malformed
      * @throws VariableResolutionException if variableResolver can't provide values for named parameters
      */
-    public static @NotNull SqlQuery namedQuery(@NotNull @SQL String sql, @NotNull VariableResolver variableResolver) {
+    public static @NotNull SqlQuery namedQuery(@NotNull @Language("SQL") String sql, @NotNull VariableResolver variableResolver) {
         return NamedParameterSqlParser.parseSqlStatement(sql).toQuery(variableResolver);
     }
 

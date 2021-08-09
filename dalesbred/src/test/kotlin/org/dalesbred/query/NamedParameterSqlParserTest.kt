@@ -22,7 +22,7 @@
 
 package org.dalesbred.query
 
-import org.dalesbred.annotation.SQL
+import org.intellij.lang.annotations.Language
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -86,7 +86,9 @@ class NamedParameterSqlParserTest {
         assertNamedParameters("select \" :bar  \"", "select \" :bar  \"", emptyList<String>())
     }
 
-    private fun assertNamedParameters(@SQL sql: String, @SQL expected: String, parameters: List<String>) {
+    private fun assertNamedParameters(@Language("SQL") sql: String,
+                                      @Language("SQL") expected: String,
+                                      parameters: List<String>) {
         val result = NamedParameterSqlParser.parseSqlStatement(sql)
 
         assertEquals(expected, result.sql)
