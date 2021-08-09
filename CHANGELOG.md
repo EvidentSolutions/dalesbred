@@ -1,3 +1,10 @@
+## 1.3.4 (2021-08-09)
+
+### Changes
+
+  - Replace `@SQL`-annotation in all methods with `@Language("SQL")` since IDEA does
+    not detect `@Language` from a meta-annotation anymore.
+
 ## 1.3.3 (2020-10-29)
 
 ### Bug fixes
