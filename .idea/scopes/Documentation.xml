@@ -1,3 +1,3 @@
 <component name="DependencyValidationManager">
-  <scope name="Documentation" pattern="file[website]:src/index.html||file[dalesbred-root]:CHANGELOG.md||file[dalesbred-root]:CONTRIBUTING.md||file[dalesbred-root]:README.md||file[dalesbred-root]:LICENSE||file[dalesbred-root]:docs//*||file[dalesbred-root]:src/asciidoc//*" />
+  <scope name="Documentation" pattern="file[website]:src/index.html||file[dalesbred-root]:CHANGELOG.md||file[dalesbred-root]:CONTRIBUTING.md||file[dalesbred-root]:README.md||file[dalesbred-root]:LICENSE||file[dalesbred-root]:docs//*||file[dalesbred-root]:src/docs/asciidoc//*" />
 </component>

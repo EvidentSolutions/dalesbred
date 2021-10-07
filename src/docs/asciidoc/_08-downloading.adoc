@@ -2,7 +2,7 @@
 
 === Gradle
 
-[source,groovy]
+[source,kotlin]
 [subs="verbatim,attributes"]
 ----
 repositories {
@@ -10,8 +10,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.dalesbred:dalesbred:{revnumber}'
-    testCompile 'org.dalesbred:dalesbred-junit:{revnumber}'
+    implementation("org.dalesbred:dalesbred:{revnumber}")
 }
 ----
 
@@ -24,12 +23,5 @@ dependencies {
     <groupId>org.dalesbred</groupId>
     <artifactId>dalesbred</artifactId>
     <version>{revnumber}</version>
-</dependency>
-
-<dependency>
-    <groupId>org.dalesbred</groupId>
-    <artifactId>dalesbred-junit</artifactId>
-    <version>{revnumber}</version>
-    <scope>test</scope>
 </dependency>
 ----

@@ -1,3 +1,11 @@
+## Unreleased
+
+### Changes
+
+  - Migrate build to Gradle 7.2
+  - Specify optional dependencies as Gradle's features
+  - Bump dependencies to latest versions
+
 ## 1.3.4 (2021-08-09)
 
 ### Changes

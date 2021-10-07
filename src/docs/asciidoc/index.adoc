@@ -7,6 +7,7 @@ Juha Komulainen <juha.komulainen@evident.fi>
 :jdkJavadocBase: https://download.java.net/jdk8/docs/api/?
 :springJavadocBase: https://docs.spring.io/spring/docs/current/javadoc-api/?
 :jodaJavadocBase: https://www.joda.org/joda-time/apidocs/?
+:includedir: .
 
 include::_01-basic-usage.adoc[]
 

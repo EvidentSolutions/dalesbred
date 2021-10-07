@@ -1,22 +1,45 @@
 description = "Dalesbred - a database access library"
 
 plugins {
+    id("dalesbred.java-library-conventions")
     kotlin("jvm")
-    `java-library`
-    osgi
+}
+
+java {
+    registerFeature("joda") {
+        usingSourceSet(sourceSets["main"])
+    }
+    registerFeature("threeten") {
+        usingSourceSet(sourceSets["main"])
+    }
+    registerFeature("spring") {
+        usingSourceSet(sourceSets["main"])
+    }
+    registerFeature("kotlin") {
+        usingSourceSet(sourceSets["main"])
+    }
+    registerFeature("annotations") {
+        usingSourceSet(sourceSets["main"])
+    }
+    registerFeature("postgresql") {
+        usingSourceSet(sourceSets["main"])
+    }
+    registerFeature("oracle") {
+        usingSourceSet(sourceSets["main"])
+    }
 }
 
 dependencies {
-    compile("org.slf4j:slf4j-api")
-    compile("joda-time:joda-time")
-    compile("org.threeten:threetenbp")
-    compile("org.springframework:spring-context")
-    compile("org.springframework:spring-jdbc")
-    compile(kotlin("stdlib-jdk8"))
-    compile("org.jetbrains:annotations")
+    implementation("org.slf4j:slf4j-api")
+    "jodaImplementation"("joda-time:joda-time")
+    "threetenImplementation"("org.threeten:threetenbp")
+    "springImplementation"("org.springframework:spring-context")
+    "springImplementation"("org.springframework:spring-jdbc")
+    "kotlinImplementation"(kotlin("stdlib-jdk8"))
+    "annotationsImplementation"("org.jetbrains:annotations")
 
-    compile("org.postgresql:postgresql")
-    compile("com.oracle.ojdbc:ojdbc8")
+    "postgresqlImplementation"("org.postgresql:postgresql")
+    "oracleImplementation"("com.oracle.database.jdbc:ojdbc8")
 
     testImplementation(kotlin("reflect"))
     testImplementation(kotlin("test"))

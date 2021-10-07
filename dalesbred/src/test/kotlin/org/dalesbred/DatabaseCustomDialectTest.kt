@@ -44,6 +44,6 @@ class DatabaseCustomDialectTest {
     }
 
     private object UppercaseDialect : DefaultDialect() {
-        override fun valueToDatabase(value: Any) = value.toString().toUpperCase()
+        override fun valueToDatabase(value: Any) = value.toString().uppercase()
     }
 }

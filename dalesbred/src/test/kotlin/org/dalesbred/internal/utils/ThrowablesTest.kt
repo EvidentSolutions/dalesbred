@@ -42,6 +42,7 @@ class ThrowablesTest {
         val exception = Exception()
 
         val propagated = Throwables.propagate(exception)
+        @Suppress("USELESS_IS_CHECK")
         assertTrue { propagated is RuntimeException }
         assertEquals(exception, propagated.cause)
     }

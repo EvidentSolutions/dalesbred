@@ -1,6 +1,5 @@
 plugins {
-    java
-    `java-library`
+    id("dalesbred.java-library-conventions")
 }
 
 description = "Dalesbred JUnit-support"

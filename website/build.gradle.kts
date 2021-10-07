@@ -1,4 +1,5 @@
 plugins {
+    id("dalesbred.common-conventions")
     id("org.ajoberstar.github-pages") version "1.6.0"
 }
 

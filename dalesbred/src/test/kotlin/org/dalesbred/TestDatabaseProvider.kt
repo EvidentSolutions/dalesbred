@@ -63,7 +63,7 @@ object TestDatabaseProvider {
     private fun loadProperties(name: String): Properties {
         val stream: InputStream? = TransactionCallback::class.java.classLoader.getResourceAsStream(name)
         assumeFalse("ignored test because '$name' was not found", stream == null)
-        stream!!.use { stream ->
+        stream!!.use {
             return Properties().apply {
                 load(stream)
             }
