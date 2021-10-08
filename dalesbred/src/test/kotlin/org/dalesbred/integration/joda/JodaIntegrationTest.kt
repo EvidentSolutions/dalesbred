@@ -24,7 +24,7 @@ package org.dalesbred.integration.joda
 
 import org.dalesbred.TestDatabaseProvider
 import org.dalesbred.TransactionalTestsRule
-import org.dalesbred.testutils.withUTCDateTimeZone
+import org.dalesbred.testutils.withUTCTimeZone
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.LocalDate
@@ -57,14 +57,14 @@ class JodaIntegrationTest {
 
     @Test
     fun localDatesWithTimeZoneProblems() {
-        withUTCDateTimeZone {
+        withUTCTimeZone {
             assertEquals(LocalDate(2012, 10, 9), db.findUnique(LocalDate::class.java, "values (cast('2012-10-09' as date))"))
         }
     }
 
     @Test
     fun localDatesFromTimestampWithTimeZoneProblems() {
-        withUTCDateTimeZone {
+        withUTCTimeZone {
             assertEquals(LocalDate(2012, 10, 9), db.findUnique(LocalDate::class.java, "values (cast('2012-10-09 00:00:00' as timestamp))"))
         }
     }

@@ -22,7 +22,6 @@
 
 package org.dalesbred.testutils
 
-import org.joda.time.DateTimeZone
 import java.util.*
 
 inline fun withUTCTimeZone(block: () -> Unit) {
@@ -36,15 +35,5 @@ inline fun withTimeZone(name: String, block: () -> Unit) {
         block()
     } finally {
         TimeZone.setDefault(old)
-    }
-}
-
-inline fun withUTCDateTimeZone(block: () -> Unit) {
-    val old = DateTimeZone.getDefault()
-    try {
-        DateTimeZone.setDefault(DateTimeZone.UTC)
-        block()
-    } finally {
-        DateTimeZone.setDefault(old)
     }
 }
