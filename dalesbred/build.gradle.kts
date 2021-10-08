@@ -47,7 +47,6 @@ dependencies {
     testImplementation("com.h2database:h2")
     testImplementation("mysql:mysql-connector-java")
     testImplementation("junit:junit")
-    testImplementation("org.mockito:mockito-core")
     testImplementation("ch.qos.logback:logback-core")
     testImplementation("ch.qos.logback:logback-classic")
 }

@@ -24,28 +24,25 @@ package org.dalesbred.internal.result
 
 import org.dalesbred.dialect.DefaultDialect
 import org.dalesbred.internal.instantiation.InstantiatorProvider
+import org.dalesbred.testutils.unimplemented
 import org.junit.Test
-import org.mockito.ArgumentMatchers
-import org.mockito.Mockito.mock
 import java.sql.ResultSet
 import java.sql.ResultSetMetaData
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import org.mockito.Mockito.`when` as whenCalled
 
 class InstantiatorRowMapperTest {
 
     private val instantiatorRegistry = InstantiatorProvider(DefaultDialect())
 
     @Test
-    fun instantiatingWithSimpleConstructor() {
+    fun `instantiating with simple constructor`() {
         val mapper = InstantiatorRowMapper(SingleConstructor::class.java, instantiatorRegistry).list()
 
-        val resultSet = resultSet(arrayOf(arrayOf(1, "foo"), arrayOf(3, "bar")))
+        val resultSet = resultSet(listOf(listOf(1, "foo"), listOf(3, "bar")))
 
         val list = mapper.process(resultSet)
         assertEquals(2, list.size)
-        
+
         assertEquals(1, list[0].num)
         assertEquals("foo", list[0].str)
         assertEquals(3, list[1].num)
@@ -53,17 +50,19 @@ class InstantiatorRowMapperTest {
     }
 
     @Test
-    fun emptyResultSetProducesNoResults() {
+    fun `empty result set produces no results`() {
         val mapper = InstantiatorRowMapper(SingleConstructor::class.java, instantiatorRegistry).list()
 
-        assertTrue(mapper.process(emptyResultSet(Int::class.java, String::class.java)).isEmpty())
+        val metadata = metadataFromTypes(arrayOf<Class<*>>(Int::class.java, String::class.java).asList())
+
+        assertEquals(emptyList(), mapper.process(resultSet(emptyList(), metadata)))
     }
 
     @Test
-    fun correctConstructorIsPickedBasedOnTypes() {
+    fun `correct constructor is picked based on types`() {
         val mapper = InstantiatorRowMapper(TwoConstructors::class.java, instantiatorRegistry).list()
 
-        val list = mapper.process(singletonResultSet(1, "foo"))
+        val list = mapper.process(resultSet(listOf(listOf(1, "foo"))))
         assertEquals(1, list.size)
 
         assertEquals(1, list[0].num)
@@ -75,68 +74,30 @@ class InstantiatorRowMapperTest {
     class TwoConstructors(val num: Int, val str: String) {
 
         @Suppress("UNREACHABLE_CODE", "unused", "UNUSED_PARAMETER")
-        constructor(num: Int, flag: Boolean):
-            this(throw RuntimeException("unexpected call two wrong constructor"), "")
+        constructor(num: Int, flag: Boolean) : this(
+            throw RuntimeException("unexpected call two wrong constructor"), ""
+        )
     }
 
-    private fun emptyResultSet(vararg types: Class<*>): ResultSet {
-        val metaData = mock(ResultSetMetaData::class.java)
-        whenCalled(metaData.columnCount).thenReturn(types.size)
+    private fun resultSet(rows: List<List<Any>>, metadata: ResultSetMetaData = metadataFromTypes(rows.first().map { it.javaClass })) = object : ResultSet by unimplemented() {
+        var index = -1
 
-        for (i in types.indices) {
-            whenCalled(metaData.getColumnLabel(i + 1)).thenReturn("column" + i)
-            whenCalled(metaData.getColumnClassName(i + 1)).thenReturn(types[i].name)
+        override fun getMetaData() = metadata
+        override fun next(): Boolean {
+            if (index + 1 == rows.size)
+                return false
+
+            index++
+            return true
         }
 
-        val resultSet = mock(ResultSet::class.java)
-        whenCalled(resultSet.metaData).thenReturn(metaData)
-
-        whenCalled(resultSet.next()).thenReturn(false)
-
-        return resultSet
+        override fun getObject(columnIndex: Int): Any = rows[index][columnIndex - 1]
     }
 
-    private fun singletonResultSet(vararg values: Any): ResultSet {
-        val resultSet = mock(ResultSet::class.java)
-        val metadata = metadataFromRow(values)
-        whenCalled(resultSet.metaData).thenReturn(metadata)
-
-        whenCalled(resultSet.next()).thenReturn(true).thenReturn(false)
-
-        var getObjectStubbing = whenCalled(resultSet.getObject(ArgumentMatchers.anyInt()))
-        for (value in values)
-            getObjectStubbing = getObjectStubbing.thenReturn(value)
-
-        return resultSet
-    }
-
-    private fun resultSet(rows: Array<Array<Any>>): ResultSet {
-        val resultSet = mock(ResultSet::class.java)
-        val metadata = metadataFromRow(rows[0])
-        whenCalled(resultSet.metaData).thenReturn(metadata)
-
-        var nextStubbing = whenCalled(resultSet.next())
-        for (row in rows)
-            nextStubbing = nextStubbing.thenReturn(true)
-        nextStubbing.thenReturn(false)
-
-        var getObjectStubbing = whenCalled<Any>(resultSet.getObject(ArgumentMatchers.anyInt()))
-        for (row in rows)
-            for (col in row)
-                getObjectStubbing = getObjectStubbing.thenReturn(col)
-
-        return resultSet
-    }
-
-    private fun metadataFromRow(row: Array<*>): ResultSetMetaData {
-        val metaData = mock(ResultSetMetaData::class.java)
-        whenCalled(metaData.columnCount).thenReturn(row.size)
-
-        for (i in row.indices) {
-            whenCalled(metaData.getColumnLabel(i + 1)).thenReturn("column" + i)
-            whenCalled(metaData.getColumnClassName(i + 1)).thenReturn(row[i]!!.javaClass.name)
+    private fun metadataFromTypes(types: List<Class<*>>): ResultSetMetaData =
+        object : ResultSetMetaData by unimplemented() {
+            override fun getColumnCount() = types.size
+            override fun getColumnLabel(column: Int) = "column ${column - 1}"
+            override fun getColumnClassName(column: Int) = types[column - 1].name
         }
-
-        return metaData
-    }
 }

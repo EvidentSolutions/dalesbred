@@ -50,7 +50,6 @@ dependencyManagement {
         dependency("mysql:mysql-connector-java:8.0.26")
         dependency("com.oracle.database.jdbc:ojdbc8:21.3.0.0")
         dependency("junit:junit:4.13.2")
-        dependency("org.mockito:mockito-core:2.13.0")
         dependency("ch.qos.logback:logback-core:$logbackVersion")
         dependency("ch.qos.logback:logback-classic:$logbackVersion")
         dependency("javax.inject:javax.inject:1")
