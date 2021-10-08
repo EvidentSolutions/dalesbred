@@ -35,8 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.sql.Array;
 import java.util.*;
 import java.util.function.Function;
@@ -105,7 +104,7 @@ public final class InstantiatorProvider {
 
         Class<?> cl = rawType(type);
 
-        Instantiator<?> instantiator = findExplicitInstantiatorFor(cl, types).orElse(null);
+        Instantiator<?> instantiator = findExplicitInstantiatorFor(cl, types);
         if (instantiator != null)
             return instantiator;
 
@@ -119,30 +118,30 @@ public final class InstantiatorProvider {
                 .orElseThrow(() -> new InstantiationFailureException("could not find a way to instantiate " + type + " with parameters " + types));
     }
 
-    private @NotNull Optional<Instantiator<?>> findExplicitInstantiatorFor(Class<?> cl, @NotNull NamedTypeList types) throws InstantiationFailureException {
-        Constructor<?> constructor = dalesbredConstructor(cl).orElse(null);
+    private @Nullable Instantiator<?> findExplicitInstantiatorFor(Class<?> cl, @NotNull NamedTypeList types) throws InstantiationFailureException {
+        Executable ctorOrMethod = findExplicitInstantiatorReference(cl);
 
-        if(constructor == null)
-            return Optional.empty();
+        if (ctorOrMethod == null)
+            return null;
 
         try {
-            ReflectionUtils.makeAccessible(constructor);
+            ReflectionUtils.makeAccessible(ctorOrMethod);
         } catch (SecurityException e) {
-            throw new InstantiationFailureException("Cannot instantiate " + constructor.getDeclaringClass().getName() +" using non-public constructor due to Security exception", e);
+            throw new InstantiationFailureException("Cannot instantiate " + cl.getName() +" using non-public constructor due to Security exception", e);
         }
 
         List<String> columnNames = types.getNames();
-        List<Type> constructorParameterTypes = asList(constructor.getGenericParameterTypes());
+        List<Type> parameterTypes = asList(ctorOrMethod.getGenericParameterTypes());
 
-        if (constructorParameterTypes.size() != columnNames.size())
+        if (parameterTypes.size() != columnNames.size())
             throw new InstantiationFailureException(String.format("Cannot instantiate %s, constructor takes %d arguments, but result set has %d",
-                    constructor.getDeclaringClass().getName(), constructorParameterTypes.size(), columnNames.size()));
+                    cl.getName(), parameterTypes.size(), columnNames.size()));
 
-        ReflectionInstantiator<?> instantiator = resolveConversions(types, constructorParameterTypes)
-                .map(conversions -> new ReflectionInstantiator<>(constructor, conversions, Collections.emptyList()))
-                .orElseThrow(() -> new InstantiationFailureException("could not find a way to instantiate " + constructor.getDeclaringClass().getName() + " with parameters " + types));
+        ReflectionInstantiator<?> instantiator = resolveConversions(types, parameterTypes)
+                .map(conversions -> new ReflectionInstantiator<>(ctorOrMethod, conversions, Collections.emptyList()))
+                .orElseThrow(() -> new InstantiationFailureException("could not find a way to instantiate " + cl.getName() + " with parameters " + types));
 
-        return Optional.of(instantiator);
+        return instantiator;
     }
 
     /**
@@ -321,17 +320,28 @@ public final class InstantiatorProvider {
         return findConversionFromDbValue(source, target).map(cv -> cv.compose((Function<T, Object>) function::apply));
     }
 
-    private static @NotNull Optional<Constructor<?>> dalesbredConstructor(@NotNull Class<?> cl) {
-        List<Constructor<?>> candidates = Stream.of(cl.getDeclaredConstructors())
-                .filter(ctor -> ctor.isAnnotationPresent(DalesbredInstantiator.class))
+    private static @Nullable Executable findExplicitInstantiatorReference(@NotNull Class<?> cl) {
+        List<Constructor<?>> constructors = Stream.of(cl.getDeclaredConstructors())
+                .filter(it -> it.isAnnotationPresent(DalesbredInstantiator.class))
+                .collect(toList());
+        List<Method> methods = Stream.of(cl.getDeclaredMethods())
+                .filter(it -> it.isAnnotationPresent(DalesbredInstantiator.class) && Modifier.isStatic(it.getModifiers()))
                 .collect(toList());
 
-        if (candidates.size() == 1)
-            return Optional.of(candidates.get(0));
-        else if (candidates.size() > 1)
-            throw new InstantiationFailureException("only one constructor of " + cl.getName() + " can be marked with @DalesbredInstantiator. Found " + candidates.size());
+        int count = constructors.size() + methods.size();
+        if (count > 1)
+            throw new InstantiationFailureException("only one constructor/method of " + cl.getName() + " can be marked with @DalesbredInstantiator. Found " + count);
+        else if (constructors.size() == 1)
+            return constructors.get(0);
+        else if (methods.size() == 1) {
+            Method method = methods.get(0);
+            if (method.getReturnType() != cl)
+                throw new InstantiationFailureException("Instantiator method " + method.getName() + " does not return " + cl.getName() + " but " + method.getReturnType());
+
+            return method;
+        }
         else
-            return Optional.empty();
+            return null;
     }
 
     @SuppressWarnings("TypeParameterExtendsFinalClass")

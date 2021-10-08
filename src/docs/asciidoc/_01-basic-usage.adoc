@@ -67,6 +67,9 @@ constructor is optional, but helps Dalesbred to make an unambiguous decision whe
 It also serves as a useful documentation. Finally, it can be configured as an entry-point for static analyzers so
 they don't complain about unused constructor.
 
+Instead of constructor, you can use `@DalesbredInstantiator` on a static method that returns an instance of the
+class.
+
 Second option is to bind values using fields or setters. The following example uses  the default constructor for
 instantiation, field-binding for `id` and setter for `name`:
 

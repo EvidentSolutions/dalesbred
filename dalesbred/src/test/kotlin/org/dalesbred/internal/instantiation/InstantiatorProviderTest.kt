@@ -163,6 +163,15 @@ class InstantiatorProviderTest {
         assertEquals("foo", result.publicField)
     }
 
+    @Test
+    fun `static method as instantiator`() {
+        val types = NamedTypeList.builder(1)
+            .add("foo", String::class.java).build()
+        val result = assertNotNull(instantiate(TestClassWithStaticInstantiator::class.java, types, "foo"))
+
+        assertEquals("instantiator called: foo", result.value)
+    }
+
     @Suppress("unused", "UNUSED_PARAMETER")
     class TestClass {
         val calledConstructor: Int
@@ -220,6 +229,16 @@ class InstantiatorProviderTest {
         private constructor(publicField: String) {
             calledConstructor = 2
             this.publicField = publicField
+        }
+    }
+
+    class TestClassWithStaticInstantiator(val value: String) {
+
+        companion object {
+            @JvmStatic
+            @DalesbredInstantiator
+            fun instantiator(value: String) =
+                TestClassWithStaticInstantiator("instantiator called: $value")
         }
     }
 

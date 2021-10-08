@@ -24,7 +24,7 @@ package org.dalesbred.internal.utils;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Optional;
@@ -58,8 +58,8 @@ public final class ReflectionUtils {
         }
     }
 
-    public static void makeAccessible(@NotNull Constructor<?> constructor) throws SecurityException {
-        if(!isPublic(constructor.getModifiers()))
-            constructor.setAccessible(true);
+    public static void makeAccessible(@NotNull Executable obj) throws SecurityException {
+        if (!isPublic(obj.getModifiers()))
+            obj.setAccessible(true);
     }
 }
