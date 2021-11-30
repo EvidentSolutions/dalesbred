@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         jdk: [8, 11, 14]
-        experimental: false
+        experimental: [false]
         include:
           - jdk: 17
             experimental: true
