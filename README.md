@@ -10,7 +10,7 @@ while still providing access to low-level functionality.
 
 Visit the [Dalesbred website](https://dalesbred.org/) for details.
 
-[![Build Status](https://teamcity.evident.fi/app/rest/builds/buildType:(id:Evident_Dalesbred_Build)/statusIcon)](https://teamcity.evident.fi/viewType.html?buildTypeId=Evident_Dalesbred_Build&guest=1) [![Build](https://github.com/EvidentSolutions/dalesbred/actions/workflows/gradle-build.yml/badge.svg)](https://github.com/EvidentSolutions/dalesbred/actions/workflows/gradle-build.yml)
+[![Build Status](https://teamcity.evident.fi/app/rest/builds/buildType:(id:Evident_Dalesbred_Build)/statusIcon)](https://teamcity.evident.fi/viewType.html?buildTypeId=Evident_Dalesbred_Build&guest=1) [![Build](https://github.com/EvidentSolutions/dalesbred/actions/workflows/gradle-build.yaml/badge.svg)](https://github.com/EvidentSolutions/dalesbred/actions/workflows/gradle-build.yaml)
 
 Quick-start
 ===========
