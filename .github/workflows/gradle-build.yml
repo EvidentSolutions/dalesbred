@@ -6,14 +6,12 @@ on:
     branches: [ develop, master ]
 
 jobs:
-  gradle:
+  build:
     strategy:
       matrix:
-        jdk: [8]
+        jdk: [8, 11]
         experimental: [false]
         include:
-          - jdk: 11
-            experimental: true
           - jdk: 17
             experimental: true
     runs-on: ubuntu-latest
