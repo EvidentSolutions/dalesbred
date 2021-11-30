@@ -39,11 +39,23 @@ object TestDatabaseProvider {
     fun createInMemoryHSQLDatabase() =
         Database.forUrlAndCredentials("jdbc:hsqldb:mem:test;hsqldb.tx=mvcc", "sa", "")
 
-    fun createPostgreSQLDatabase() =
-        Database(createConnectionProvider("postgresql-connection.properties"))
+    fun createPostgreSQLDatabase(): Database {
+        val host = System.getenv("POSTGRES_HOST")
+        if (host != null) {
+            val port = System.getenv("POSTGRES_PORT")?.toInt() ?: 5432
+            val user = System.getenv("POSTGRES_USER") ?: "postgres"
+            val password = System.getenv("POSTGRES_PASSWORD") ?: "password"
+            val database = System.getenv("POSTGRES_DATABASE") ?: user
+            val url = "jdbc:postgresql://$host:$port/$database"
+
+            return Database(DriverManagerConnectionProvider(url, user, password))
+        }
+
+        return Database(createConnectionProviderFromProperties("postgresql-connection.properties"))
+    }
 
     fun createMySQLConnectionProvider() =
-        createConnectionProvider("mysql-connection.properties")
+        createConnectionProviderFromProperties("mysql-connection.properties")
 
     fun createInMemoryHSQLConnectionProvider(): ConnectionProvider =
         DriverManagerConnectionProvider("jdbc:hsqldb:.", "sa", "")
@@ -51,8 +63,8 @@ object TestDatabaseProvider {
     fun createInMemoryHSQLDataSource(): DataSource =
         DriverManagerDataSource("jdbc:hsqldb:.", "sa", "")
 
-    private fun createConnectionProvider(name: String): ConnectionProvider {
-        val props = loadProperties(name)
+    private fun createConnectionProviderFromProperties(propertiesFile: String): ConnectionProvider {
+        val props = loadProperties(propertiesFile)
         val url = props.getProperty("jdbc.url")
         val login = props.getProperty("jdbc.login")
         val password = props.getProperty("jdbc.password")
