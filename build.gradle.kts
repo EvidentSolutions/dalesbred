@@ -1,16 +1,9 @@
 plugins {
     id("org.asciidoctor.jvm.convert")
-    id("pl.allegro.tech.build.axion-release")
     id("dalesbred.common-conventions")
 }
 
-scmVersion {
-    localOnly = true
-    tag.prefix = "v"
-    tag.versionSeparator = ""
-}
-
-version = scmVersion.version
+version = " 1.3.5-SNAPSHOT"
 
 tasks.asciidoctor {
     baseDirFollowsSourceDir()
