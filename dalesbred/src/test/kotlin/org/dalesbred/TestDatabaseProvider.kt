@@ -37,19 +37,19 @@ import javax.sql.DataSource
 object TestDatabaseProvider {
 
     fun createInMemoryHSQLDatabase() =
-            Database.forUrlAndCredentials("jdbc:hsqldb:mem:test;hsqldb.tx=mvcc", "sa", "")
+        Database.forUrlAndCredentials("jdbc:hsqldb:mem:test;hsqldb.tx=mvcc", "sa", "")
 
     fun createPostgreSQLDatabase() =
-            Database(createConnectionProvider("postgresql-connection.properties"))
+        Database(createConnectionProvider("postgresql-connection.properties"))
 
     fun createMySQLConnectionProvider() =
-            createConnectionProvider("mysql-connection.properties")
+        createConnectionProvider("mysql-connection.properties")
 
     fun createInMemoryHSQLConnectionProvider(): ConnectionProvider =
-            DriverManagerConnectionProvider("jdbc:hsqldb:.", "sa", "")
+        DriverManagerConnectionProvider("jdbc:hsqldb:.", "sa", "")
 
     fun createInMemoryHSQLDataSource(): DataSource =
-            DriverManagerDataSource("jdbc:hsqldb:.", "sa", "")
+        DriverManagerDataSource("jdbc:hsqldb:.", "sa", "")
 
     private fun createConnectionProvider(name: String): ConnectionProvider {
         val props = loadProperties(name)
@@ -70,10 +70,11 @@ object TestDatabaseProvider {
         }
     }
 
-    private class DriverManagerDataSource(private val url: String,
-                                          private val defaultUser: String?,
-                                          private val defaultPassword: String?)
-        : DataSource {
+    private class DriverManagerDataSource(
+        private val url: String,
+        private val defaultUser: String?,
+        private val defaultPassword: String?
+    ) : DataSource {
 
         override fun getConnection(): Connection {
             return getConnection(defaultUser, defaultPassword)
