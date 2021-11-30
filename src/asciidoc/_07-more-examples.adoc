@@ -1,4 +1,4 @@
 == More examples
 
-Check out the test cases under https://github.com/EvidentSolutions/dalesbred/tree/master/dalesbred/src/test/kotlin/org/dalesbred[dalesbred/src/test/kotlin]
+Check out the test cases under https://github.com/EvidentSolutions/dalesbred/tree/main/dalesbred/src/test/kotlin/org/dalesbred[dalesbred/src/test/kotlin]
 for more usage examples.
