@@ -28,6 +28,7 @@ import org.dalesbred.testutils.withUTCTimeZone
 import org.junit.Rule
 import org.junit.Test
 import java.time.*
+import java.time.temporal.ChronoUnit
 import java.time.temporal.ChronoUnit.SECONDS
 import kotlin.test.assertEquals
 
@@ -55,7 +56,7 @@ class JavaTimeIntegrationTest {
         db.update("DROP TABLE IF EXISTS instant_test")
         db.update("CREATE TABLE instant_test (timestamp TIMESTAMP)")
 
-        val instant = Instant.now()
+        val instant = Instant.now().truncatedTo(ChronoUnit.MILLIS)
 
         db.update("INSERT INTO instant_test (timestamp) VALUES (?)", instant)
 
@@ -100,7 +101,7 @@ class JavaTimeIntegrationTest {
         db.update("DROP TABLE IF EXISTS date_test")
         db.update("CREATE TABLE date_test (timestamp TIMESTAMP, date DATE, time TIME)")
 
-        val dateTime = LocalDateTime.now()
+        val dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)
         val date = LocalDate.now()
         val time = LocalTime.now().truncatedTo(SECONDS)
 
