@@ -23,4 +23,4 @@ jobs:
       - uses: gradle/gradle-build-action@v2
         with:
           arguments: build
-  continue-on-error: ${{ matrix.experimental }}
+    continue-on-error: ${{ matrix.experimental }}
