@@ -10,6 +10,7 @@ jobs:
     strategy:
       matrix:
         jdk: [8, 11, 17]
+      fail-fast: false
     runs-on: ubuntu-latest
     services:
       postgres:
