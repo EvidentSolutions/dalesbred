@@ -32,7 +32,7 @@ class CollectionUtilsTest {
 
     @Test
     fun mapping() {
-        assertEquals(listOf(3, 4, 5), mapToList(listOf("foo", "quux", "xyzzy")) { it.length })
+        assertEquals(listOf(3, 4, 5, 6), mapToList(listOf("foo", "quux", "xyzzy")) { it.length })
     }
 
     @Test
