@@ -34,6 +34,7 @@ jobs:
         with:
           java-version: ${{ matrix.jdk }}
       - uses: gradle/gradle-build-action@v2
+        id: gradle
         with:
           arguments: build --scan
         env:
