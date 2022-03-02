@@ -32,6 +32,11 @@ tasks.withType<Javadoc> {
     opts.addStringOption("Xdoclint:none", "-quiet")
 }
 
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
 dependencyManagement {
     val springVersion = "5.3.10"
     val logbackVersion = "1.2.6"
@@ -62,8 +67,8 @@ publishing {
             from(components["java"])
 
             pom {
-                name.set(project.name)
-                description.set(project.description)
+                name.set(provider { project.name })
+                description.set(provider { project.description })
                 url.set("https://dalesbred.org/")
                 inceptionYear.set("2012")
                 packaging = "jar"
@@ -106,11 +111,16 @@ publishing {
         repositories {
             maven {
                 name = "sonatype"
+                url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
 
-                url = if (version.toString().endsWith("-SNAPSHOT"))
-                    uri("https://oss.sonatype.org/content/repositories/snapshots/")
-                else
-                    uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+                credentials {
+                    username = System.getenv("MAVEN_USERNAME") ?: (property("sonatypeUsername") as String)
+                    password = System.getenv("MAVEN_PASSWORD") ?: (property("sonatypePassword") as String)
+                }
+            }
+            maven {
+                name = "sonatypeSnapshots"
+                url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
 
                 credentials {
                     username = System.getenv("MAVEN_USERNAME") ?: (property("sonatypeUsername") as String)

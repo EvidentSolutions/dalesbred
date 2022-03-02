@@ -15,15 +15,15 @@ val copyApi = task("copyApi", type = Copy::class) {
 
 val copyReference = task("copyReference", type = Copy::class) {
     dependsOn(tasks.findByPath(":asciidoctor"))
-    from("../build/asciidoc/html5/")
+    from("../build/docs/asciidoc/")
     into("build/dalesbred/docs/reference/")
 }
 
 val assemble by tasks
 assemble.dependsOn(copySources, copyApi, copyReference)
 
-val publishGhPages by tasks
-publishGhPages.dependsOn(assemble)
+val prepareGhPages by tasks
+prepareGhPages.dependsOn(assemble)
 
 githubPages {
     setRepoUri("git@github.com:EvidentSolutions/dalesbred.git")

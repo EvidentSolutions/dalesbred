@@ -19,3 +19,12 @@ task("publish") {
         ":dalesbred-junit:publishAllPublicationsToSonatypeRepository"
     )
 }
+
+task("publishSnapshots") {
+    description = "Publishes artifacts to snapshot repository"
+
+    dependsOn(
+        ":dalesbred:publishAllPublicationsToSonatypeSnapshotsRepository",
+        ":dalesbred-junit:publishAllPublicationsToSonatypeSnapshotsRepository"
+    )
+}
