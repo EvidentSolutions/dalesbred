@@ -11,17 +11,16 @@ tasks.asciidoctor {
 }
 
 task("publish") {
-    description = "Publishes both the artifacts and the website"
+    description = "Publishes the artifacts to Maven Central"
 
     dependsOn(
-        ":website:publishGhPages",
         ":dalesbred:publishAllPublicationsToSonatypeRepository",
         ":dalesbred-junit:publishAllPublicationsToSonatypeRepository"
     )
 }
 
 task("publishSnapshots") {
-    description = "Publishes artifacts to snapshot repository"
+    description = "Publishes the artifacts to snapshot repository"
 
     dependsOn(
         ":dalesbred:publishAllPublicationsToSonatypeSnapshotsRepository",
