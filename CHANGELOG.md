@@ -1,8 +1,8 @@
-## Unreleased
+## 1.3.5 (2022-03-02)
 
 ### Changes
 
-  - Support @DalesbredInstantiator on static methods
+  - Support `@DalesbredInstantiator` on static methods
   - Migrate build to Gradle 7.2
   - Specify optional dependencies as Gradle's features
   - Bump dependencies to latest versions
