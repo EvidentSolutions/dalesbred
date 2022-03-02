@@ -102,7 +102,7 @@ publishing {
         }
     }
 
-    if (hasProperty("sonatypeUsername")) {
+    if (hasProperty("sonatypeUsername") || System.getenv("MAVEN_USERNAME") != null) {
         repositories {
             maven {
                 name = "sonatype"
@@ -113,8 +113,8 @@ publishing {
                     uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
 
                 credentials {
-                    username = property("sonatypeUsername") as String
-                    password = property("sonatypePassword") as String
+                    username = System.getenv("MAVEN_USERNAME") ?: (property("sonatypeUsername") as String)
+                    password = System.getenv("MAVEN_PASSWORD") ?: (property("sonatypePassword") as String)
                 }
             }
         }
@@ -123,4 +123,10 @@ publishing {
 
 signing {
     sign(publishing.publications["mavenJava"])
+
+    val signingKey = System.getenv("SIGNING_KEY")
+    if (signingKey != null) {
+        val signingPassword = System.getenv("SIGNING_PASSWORD") ?: error("Environment variable SIGNING_PASSWORD is missing")
+        useInMemoryPgpKeys(signingKey, signingPassword)
+    }
 }
