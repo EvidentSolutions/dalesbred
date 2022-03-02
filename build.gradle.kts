@@ -3,7 +3,7 @@ plugins {
     id("dalesbred.common-conventions")
 }
 
-version = " 1.3.5-SNAPSHOT"
+version = "1.3.5"
 
 tasks.asciidoctor {
     baseDirFollowsSourceDir()
@@ -13,7 +13,9 @@ tasks.asciidoctor {
 task("publish") {
     description = "Publishes both the artifacts and the website"
 
-    dependsOn(":website:publishGhPages",
-            ":dalesbred:uploadArchives",
-            ":dalesbred-junit:uploadArchives")
+    dependsOn(
+        ":website:publishGhPages",
+        ":dalesbred:publishAllPublicationsToSonatypeRepository",
+        ":dalesbred-junit:publishAllPublicationsToSonatypeRepository"
+    )
 }
