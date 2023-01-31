@@ -3,16 +3,7 @@
 bin
 classes
 out
-.idea/workspace.xml
-.idea/ant.xml
-.idea/uiDesigner.xml
-.idea/dataSources/*
-.idea/dataSources.xml
-.idea/dataSources.ids
-.idea/dataSources.local.xml
-.idea/libraries
-.idea/modules.xml
-.idea/usage.statistics.xml
+/.idea/
 *.iml
 /build
 /*/build

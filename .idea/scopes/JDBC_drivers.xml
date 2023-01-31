@@ -1,3 +1,0 @@
-<component name="DependencyValidationManager">
-  <scope name="JDBC drivers" pattern="lib:org.postgresql..*" />
-</component>

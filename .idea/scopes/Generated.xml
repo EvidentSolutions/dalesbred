@@ -1,3 +1,0 @@
-<component name="DependencyValidationManager">
-  <scope name="Generated" pattern="file[dalesbred-root]:gradle/wrapper/gradle-wrapper.properties||file[dalesbred-root]:gradlew||file[dalesbred-root]:gradlew.bat" />
-</component>
