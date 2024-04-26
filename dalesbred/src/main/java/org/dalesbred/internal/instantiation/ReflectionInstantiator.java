@@ -24,6 +24,7 @@ package org.dalesbred.internal.instantiation;
 
 import org.dalesbred.internal.utils.Throwables;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
@@ -55,11 +56,11 @@ final class ReflectionInstantiator<T> implements Instantiator<T> {
 
 
     @Override
-    public @NotNull T instantiate(@NotNull InstantiatorArguments arguments) {
+    public @Nullable T instantiate(@NotNull InstantiatorArguments arguments) {
         try {
             Object[] argumentArray = toArgumentArray(arguments.getValues());
 
-            Object v;
+            @Nullable Object v;
             if (instantiator instanceof Constructor<?>) {
                 v = ((Constructor<?>) instantiator).newInstance(argumentArray);
             } else if (instantiator instanceof  Method) {
@@ -70,7 +71,8 @@ final class ReflectionInstantiator<T> implements Instantiator<T> {
 
             @SuppressWarnings("unchecked")
             T value = (T) v;
-            bindRemainingProperties(value, arguments);
+            if (value != null)
+                bindRemainingProperties(value, arguments);
             return value;
         } catch (Exception e) {
             throw Throwables.propagate(e);
