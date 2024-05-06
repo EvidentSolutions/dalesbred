@@ -21,7 +21,7 @@ Add dependency to your `pom.xml`:
 <dependency>
     <groupId>org.dalesbred</groupId>
     <artifactId>dalesbred</artifactId>
-    <version>1.3.4</version>
+    <version>1.3.6</version>
 </dependency>
 ```
 
@@ -57,9 +57,9 @@ Improve your experience with Kotlin and bundled extension methods:
 
 ```kotlin
 val departments = db.findAll<Department>("""
-    select id, name 
+    select id, name
       from department
-      where name like ?""", 
+      where name like ?""",
     "%foo")
 ```
 
