@@ -50,6 +50,11 @@ public final class ResultSetUtils {
 
     public static @NotNull Type getColumnType(@NotNull ResultSetMetaData metaData, int column) throws SQLException {
         String className = metaData.getColumnClassName(column);
+
+        // MariaDB Connector/J 3.x encodes byte array types in a way that is incompatible with Class.forName
+        if (className.equals("byte[]"))
+            return byte[].class;
+
         try {
             return Class.forName(className);
         } catch (ClassNotFoundException e) {

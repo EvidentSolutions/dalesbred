@@ -1,3 +1,9 @@
+## Unreleased
+
+### Changes
+
+- Fix byte[] instantiation on MariaDB Connector/J 3.x ([#54](https://github.com/EvidentSolutions/dalesbred/pull/54))
+
 ## 1.3.5 (2022-03-02)
 
 ### Changes
