@@ -118,15 +118,6 @@ publishing {
                     password = System.getenv("MAVEN_PASSWORD") ?: (property("sonatypePassword") as String)
                 }
             }
-            maven {
-                name = "sonatypeSnapshots"
-                url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-
-                credentials {
-                    username = System.getenv("MAVEN_USERNAME") ?: (property("sonatypeUsername") as String)
-                    password = System.getenv("MAVEN_PASSWORD") ?: (property("sonatypePassword") as String)
-                }
-            }
         }
     }
 }

@@ -11,7 +11,7 @@ If everything went ok, tag your release:
 Now publish your changes:
 
     ./gradlew publish
-    
+
 Finally close and promote the stating repository of [Sonatype Nexus](https://oss.sonatype.org/):
 
     ./gradlew closeAndReleaseRepository
@@ -20,15 +20,3 @@ After a while, the artifacts will be synced to Maven Central.
 
 Finally, create [release notes in GitHub](https://github.com/EvidentSolutions/dalesbred/releases) using data from
 the [CHANGELOG.md](../CHANGELOG.md).
-
-## Publishing a snapshot release
-
-Verify that your current version is indeed snapshot: 
-
-    ./gradlew currentVersion
-
-Then upload snapshot archives:
-
-    ./gradlew clean uploadArchives
-
-The archives should now be available at [Sonatype's snapshot repository](https://oss.sonatype.org/content/repositories/snapshots/).
