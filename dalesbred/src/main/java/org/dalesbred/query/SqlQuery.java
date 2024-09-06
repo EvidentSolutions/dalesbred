@@ -133,7 +133,7 @@ public final class SqlQuery implements Serializable {
      * If the fetch size specified is zero, the JDBC driver ignores the value and makes its own best guess of the fetch size.
      *
      * @param size fetch size in rows or null
-     * @throws IllegalArgumentException if size is < 0
+     * @throws IllegalArgumentException if size is &lt; 0
      */
     public void setFetchSize(@Nullable Integer size) {
         if (size != null && size < 0)

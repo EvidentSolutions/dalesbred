@@ -41,10 +41,13 @@ import java.sql.SQLException;
 import static java.util.Objects.requireNonNull;
 
 /**
+ * <p>
  * {@link ConnectionProvider} which integrates with Spring's transaction management.
- * <p></p>
+ * </p>
+ * <p>
  * Usually application code should not need this class, but use {@link DalesbredConfigurationSupport} to
  * integrate with Spring.
+ * </p>
  */
 public final class SpringTransactionManager implements TransactionManager {
 

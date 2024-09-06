@@ -43,10 +43,10 @@ import static org.junit.Assume.assumeTrue;
  * <p>
  *   The properties should have the following keys:
  * </p>
- * <table
+ * <table>
  *  <tr><td>jdbc.url</td><td>required</td><td>JDBC url of the database to connect</td></tr>
- *  <tr><td>jdbc.login</td><td>optional</td><td>login for the database</td></th></tr>
- *  <tr><td>jdbc.password</td><td>optional</td><td>password for the database</td></th></tr>
+ *  <tr><td>jdbc.login</td><td>optional</td><td>login for the database</td></tr>
+ *  <tr><td>jdbc.password</td><td>optional</td><td>password for the database</td></tr>
  * </table>
  */
 public final class TestDatabaseProvider {

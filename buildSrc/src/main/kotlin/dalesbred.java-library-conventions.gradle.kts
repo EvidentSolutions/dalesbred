@@ -27,9 +27,9 @@ tasks.withType<Javadoc> {
     opts.header = project.name
 
     opts.links("https://docs.oracle.com/javase/8/docs/api/",
-        "https://docs.spring.io/spring/docs/current/javadoc-api/",
+        "https://docs.spring.io/spring-framework/docs/current/javadoc-api/",
         "https://www.joda.org/joda-time/apidocs/")
-    opts.addStringOption("Xdoclint:none", "-quiet")
+    opts.addStringOption("Xdoclint:html,syntax,reference", "-quiet")
 }
 
 java {
