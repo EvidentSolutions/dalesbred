@@ -9,3 +9,4 @@ out
 /*/build
 .gradle
 dalesbred/src/test/resources/postgresql-connection.properties
+dalesbred/src/test/resources/mysql-connection.properties
