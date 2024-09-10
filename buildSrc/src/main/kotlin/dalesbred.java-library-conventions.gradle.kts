@@ -53,6 +53,7 @@ dependencyManagement {
         dependency("org.hsqldb:hsqldb:2.4.0")
         dependency("com.h2database:h2:1.4.200")
         dependency("mysql:mysql-connector-java:8.0.26")
+        dependency("org.mariadb.jdbc:mariadb-java-client:3.4.1")
         dependency("com.oracle.database.jdbc:ojdbc8:21.3.0.0")
         dependency("junit:junit:4.13.2")
         dependency("ch.qos.logback:logback-core:$logbackVersion")

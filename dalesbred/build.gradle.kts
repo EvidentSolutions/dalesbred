@@ -46,6 +46,7 @@ dependencies {
     testImplementation("org.hsqldb:hsqldb")
     testImplementation("com.h2database:h2")
     testImplementation("mysql:mysql-connector-java")
+    testImplementation("org.mariadb.jdbc:mariadb-java-client")
     testImplementation("junit:junit")
     testImplementation("ch.qos.logback:logback-core")
     testImplementation("ch.qos.logback:logback-classic")
