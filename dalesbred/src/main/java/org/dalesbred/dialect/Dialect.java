@@ -109,6 +109,10 @@ public abstract class Dialect {
                     log.debug("Automatically detected dialect MySQL.");
                     return new MySQLDialect();
 
+                case "MariaDB":
+                    log.debug("Automatically detected dialect MariaDB.");
+                    return new MariaDBDialect();
+
                 case "Oracle":
                     log.debug("Automatically detected dialect Oracle.");
                     return new OracleDialect();

@@ -57,6 +57,9 @@ object TestDatabaseProvider {
     fun createMySQLConnectionProvider() =
         createConnectionProviderFromProperties("mysql-connection.properties")
 
+    fun createMariaDBConnectionProvider() =
+        createConnectionProviderFromProperties("mariadb-connection.properties")
+
     fun createInMemoryHSQLConnectionProvider(): ConnectionProvider =
         DriverManagerConnectionProvider("jdbc:hsqldb:.", "sa", "")
 
