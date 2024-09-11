@@ -1,3 +1,9 @@
+## Unreleased
+
+### Changes
+
+- Add dialect for MariaDB ([#56](https://github.com/EvidentSolutions/dalesbred/pull/56))
+
 ## 1.3.6 (2024-05-06)
 
 ### Changes
