@@ -42,6 +42,8 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 /**
@@ -52,6 +54,8 @@ public abstract class Dialect {
     private static final String SERIALIZATION_FAILURE = "40001";
 
     private static final Logger log = LoggerFactory.getLogger(Dialect.class);
+
+    protected final Map<String, Class<?>> resultSetMetaDataTypeOverrides = new ConcurrentHashMap<>();
 
     public @NotNull Object valueToDatabase(@NotNull Object value) {
         return value;
@@ -111,7 +115,7 @@ public abstract class Dialect {
 
                 case "MariaDB":
                     log.debug("Automatically detected dialect MariaDB.");
-                    return new MariaDBDialect();
+                    return new MariaDBDialect(connection.getMetaData().getDriverVersion());
 
                 case "Oracle":
                     log.debug("Automatically detected dialect Oracle.");
@@ -158,5 +162,42 @@ public abstract class Dialect {
      */
     public void bindArgument(@NotNull PreparedStatement ps, int index, @Nullable Object value) throws SQLException {
         ArgumentBinder.bindArgument(ps, index, value);
+    }
+
+    public Map<String, Class<?>> getResultSetMetaDataTypeOverrides() {
+        return resultSetMetaDataTypeOverrides;
+    }
+
+    // Some drivers (e.g. MySQL and H2) return version strings that do not look like typical SemVer strings and hence will not work with this
+    protected static class Version implements Comparable<Version> {
+
+        private final int[] numbers;
+
+        private Version(@NotNull String version) {
+            final String split[] = version.split("\\-")[0].split("\\.");
+            numbers = new int[split.length];
+            for (int i = 0; i < split.length; i++)
+                numbers[i] = Integer.parseInt(split[i]);
+        }
+
+        protected static Version withNumber(@NotNull String version) {
+            return new Version(version);
+        }
+
+        @Override
+        public int compareTo(@NotNull Version another) {
+            final int maxLength = Math.max(numbers.length, another.numbers.length);
+            for (int i = 0; i < maxLength; i++) {
+                final int left = i < numbers.length ? numbers[i] : 0;
+                final int right = i < another.numbers.length ? another.numbers[i] : 0;
+                if (left != right)
+                    return left < right ? -1 : 1;
+            }
+            return 0;
+        }
+
+        protected boolean isGreaterThanOrEqualTo(Version another) {
+            return this.compareTo(another) >= 0;
+        }
     }
 }

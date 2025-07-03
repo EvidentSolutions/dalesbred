@@ -61,7 +61,7 @@ public final class MapResultSetProcessor<K,V> implements ResultSetProcessor<Map<
     @Override
     public @NotNull Map<K, V> process(@NotNull ResultSet resultSet) throws SQLException {
 
-        NamedTypeList types = ResultSetUtils.getTypes(resultSet.getMetaData());
+        NamedTypeList types = ResultSetUtils.getTypes(resultSet.getMetaData(), instantiatorRegistry.getDialect());
         if (types.size() < 2)
             throw new UnexpectedResultException("Expected ResultSet with at least 2 columns, but got " + types.size() + " columns.");
 

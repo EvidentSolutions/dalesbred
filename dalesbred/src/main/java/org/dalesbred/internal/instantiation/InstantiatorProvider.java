@@ -354,4 +354,8 @@ public final class InstantiatorProvider {
     public @NotNull TypeConversionRegistry getTypeConversionRegistry() {
         return typeConversionRegistry;
     }
+
+    public @NotNull Dialect getDialect() {
+        return dialect;
+    }
 }

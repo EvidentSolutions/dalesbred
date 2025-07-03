@@ -37,17 +37,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import static java.util.Objects.requireNonNull;
+
 final class SqlArrayConversion {
 
     private final @NotNull Type elementType;
 
     private final @NotNull InstantiatorProvider instantiatorRegistry;
 
-    private SqlArrayConversion(@NotNull Type elementType,
-                               @NotNull InstantiatorProvider instantiatorRegistry) {
-
+    private SqlArrayConversion(@NotNull Type elementType, @NotNull InstantiatorProvider instantiatorRegistry) {
         this.elementType = elementType;
-        this.instantiatorRegistry = instantiatorRegistry;
+        this.instantiatorRegistry = requireNonNull(instantiatorRegistry);
     }
 
     public static @NotNull TypeConversion sqlArray(@NotNull Type elementType, @NotNull InstantiatorProvider instantiatorProvider,
@@ -62,7 +62,9 @@ final class SqlArrayConversion {
             boolean allowNulls = !TypeUtils.isPrimitive(elementType);
             ResultSet resultSet = array.getResultSet();
             try {
-                NamedTypeList types = NamedTypeList.builder(1).add("value", ResultSetUtils.getColumnType(resultSet.getMetaData(), 2)).build();
+                NamedTypeList types = NamedTypeList.builder(1).add(
+                    "value", ResultSetUtils.getColumnType(resultSet.getMetaData(), instantiatorRegistry.getDialect(), 2)
+                ).build();
                 Instantiator<?> ctor = instantiatorRegistry.findInstantiator(elementType, types);
                 ArrayList<Object> result = new ArrayList<>();
 
