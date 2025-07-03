@@ -22,6 +22,7 @@
 
 package org.dalesbred.internal.result;
 
+import org.dalesbred.dialect.Dialect;
 import org.dalesbred.result.ResultSetProcessor;
 import org.dalesbred.result.ResultTable;
 import org.dalesbred.result.ResultTable.ColumnMetadata;
@@ -32,6 +33,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import static java.util.Arrays.asList;
+import static java.util.Objects.requireNonNull;
 import static org.dalesbred.internal.jdbc.ResultSetUtils.getColumnType;
 
 /**
@@ -39,12 +41,18 @@ import static org.dalesbred.internal.jdbc.ResultSetUtils.getColumnType;
  */
 public final class ResultTableResultSetProcessor implements ResultSetProcessor<ResultTable> {
 
+    private final @NotNull Dialect dialect;
+
+    public ResultTableResultSetProcessor(@NotNull Dialect dialect) {
+        this.dialect = requireNonNull(dialect);
+    }
+
     @Override
     public @NotNull ResultTable process(@NotNull ResultSet resultSet) throws SQLException {
         ResultSetMetaData metaData = resultSet.getMetaData();
         int columnCount = metaData.getColumnCount();
 
-        ResultTable.Builder builder = createBuilder(metaData);
+        ResultTable.Builder builder = createBuilder(metaData, dialect);
         while (resultSet.next()) {
             Object[] row = new Object[columnCount];
 
@@ -57,12 +65,14 @@ public final class ResultTableResultSetProcessor implements ResultSetProcessor<R
         return builder.build();
     }
 
-    private static @NotNull ResultTable.Builder createBuilder(@NotNull ResultSetMetaData metaData) throws SQLException {
+    private static @NotNull ResultTable.Builder createBuilder(@NotNull ResultSetMetaData metaData, @NotNull Dialect dialect) throws SQLException {
         int columnCount = metaData.getColumnCount();
         ColumnMetadata[] result = new ColumnMetadata[columnCount];
 
-        for (int i = 0; i < columnCount; i++)
-            result[i] = new ColumnMetadata(i, metaData.getColumnLabel(i + 1), getColumnType(metaData, i+1), metaData.getColumnType(i+1), metaData.getColumnTypeName(i+1));
+        for (int i = 0; i < columnCount; i++) {
+            result[i] = new ColumnMetadata(i, metaData.getColumnLabel(i + 1), getColumnType(metaData, dialect, i + 1),
+                metaData.getColumnType(i + 1), metaData.getColumnTypeName(i + 1));
+        }
 
         return ResultTable.builder(asList(result));
     }

@@ -61,7 +61,7 @@ public final class InstantiatorRowMapper<T> implements RowMapper<T> {
     @Override
     public T mapRow(@NotNull ResultSet resultSet) throws SQLException {
         if (types == null) {
-            types = ResultSetUtils.getTypes(resultSet.getMetaData());
+            types = ResultSetUtils.getTypes(resultSet.getMetaData(), instantiatorProvider.getDialect());
             ctor = instantiatorProvider.findInstantiator(cl, types);
             arguments = new Object[types.size()];
             instantiatorArguments = new InstantiatorArguments(types, arguments);

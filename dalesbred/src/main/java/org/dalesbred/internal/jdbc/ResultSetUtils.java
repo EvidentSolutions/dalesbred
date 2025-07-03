@@ -23,6 +23,7 @@
 package org.dalesbred.internal.jdbc;
 
 import org.dalesbred.DatabaseException;
+import org.dalesbred.dialect.Dialect;
 import org.dalesbred.internal.instantiation.NamedTypeList;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,19 +38,22 @@ public final class ResultSetUtils {
 
     private ResultSetUtils() { }
 
-    public static @NotNull NamedTypeList getTypes(@NotNull ResultSetMetaData metaData) throws SQLException {
+    public static @NotNull NamedTypeList getTypes(@NotNull ResultSetMetaData metaData, @NotNull Dialect dialect) throws SQLException {
         int columns = metaData.getColumnCount();
 
         NamedTypeList.Builder result = NamedTypeList.builder(columns);
 
         for (int i = 0; i < columns; i++)
-            result.add(metaData.getColumnLabel(i+1), getColumnType(metaData, i + 1));
+            result.add(metaData.getColumnLabel(i+1), getColumnType(metaData, dialect, i + 1));
 
         return result.build();
     }
 
-    public static @NotNull Type getColumnType(@NotNull ResultSetMetaData metaData, int column) throws SQLException {
+    public static @NotNull Type getColumnType(@NotNull ResultSetMetaData metaData, @NotNull Dialect dialect, int column) throws SQLException {
         String className = metaData.getColumnClassName(column);
+
+        if (dialect.getResultSetMetaDataTypeOverrides().containsKey(className))
+            return dialect.getResultSetMetaDataTypeOverrides().get(className);
 
         // MariaDB Connector/J 3.x encodes byte array types in a way that is incompatible with Class.forName
         if (className.equals("byte[]"))

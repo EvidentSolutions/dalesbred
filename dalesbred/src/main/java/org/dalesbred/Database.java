@@ -587,7 +587,7 @@ public final class Database {
      * Executes a query and creates a {@link ResultTable} from the results.
      */
     public @NotNull ResultTable findTable(@NotNull SqlQuery query) {
-        return executeQuery(new ResultTableResultSetProcessor(), query);
+        return executeQuery(new ResultTableResultSetProcessor(dialect), query);
     }
 
     /**
