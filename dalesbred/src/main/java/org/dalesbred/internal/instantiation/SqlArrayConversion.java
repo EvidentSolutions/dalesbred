@@ -37,8 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import static java.util.Objects.requireNonNull;
-
 final class SqlArrayConversion {
 
     private final @NotNull Type elementType;
@@ -47,7 +45,7 @@ final class SqlArrayConversion {
 
     private SqlArrayConversion(@NotNull Type elementType, @NotNull InstantiatorProvider instantiatorRegistry) {
         this.elementType = elementType;
-        this.instantiatorRegistry = requireNonNull(instantiatorRegistry);
+        this.instantiatorRegistry = instantiatorRegistry;
     }
 
     public static @NotNull TypeConversion sqlArray(@NotNull Type elementType, @NotNull InstantiatorProvider instantiatorProvider,

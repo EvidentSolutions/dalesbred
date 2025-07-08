@@ -25,6 +25,7 @@ package org.dalesbred.dialect
 import org.dalesbred.TestDatabaseProvider
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class MariaDBDialectTest {
@@ -38,15 +39,13 @@ class MariaDBDialectTest {
     @Test
     fun `ResultSetMetaDataTypeOverrides should be empty for MariaDB ConnectorJ 3_5_1 or earlier`() {
         val dialect = MariaDBDialect("3.5.1")
-        assertTrue { dialect.resultSetMetaDataTypeOverrides.isEmpty() }
+        assertNull(dialect.overrideResultSetMetaDataType("java.sql.Blob"))
     }
 
     @Test
     fun `ResultSetMetaDataTypeOverrides should not be empty for MariaDB ConnectorJ 3_5_2 or later`() {
         val dialect = MariaDBDialect("3.5.2")
-        assertTrue { dialect.resultSetMetaDataTypeOverrides.isNotEmpty() }
-        assertTrue { dialect.resultSetMetaDataTypeOverrides.containsKey("java.sql.Blob") }
-        assertEquals(ByteArray::class.java, dialect.resultSetMetaDataTypeOverrides["java.sql.Blob"])
+        assertEquals(ByteArray::class.java, dialect.overrideResultSetMetaDataType("java.sql.Blob"))
     }
 
 }
