@@ -12,8 +12,8 @@ class ResultSetUtilsTest {
 
     companion object {
         private val DEFAULT_DIALECT = DefaultDialect()
-        private val MARIADB_DIALECT_OLD = MariaDBDialect("3.5.1")
-        private val MARIADB_DIALECT_CURRENT = MariaDBDialect("3.5.2")
+        private val MARIADB_DIALECT_OLD = MariaDBDialect().apply { setBlobsAsByteArrays(false) }
+        private val MARIADB_DIALECT_CURRENT = MariaDBDialect().apply { setBlobsAsByteArrays(true) }
     }
 
     @Test

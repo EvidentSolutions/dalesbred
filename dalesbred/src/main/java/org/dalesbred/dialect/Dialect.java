@@ -112,7 +112,9 @@ public abstract class Dialect {
 
                 case "MariaDB":
                     log.debug("Automatically detected dialect MariaDB.");
-                    return new MariaDBDialect(connection.getMetaData().getDriverVersion());
+                    MariaDBDialect mariaDBDialect = new MariaDBDialect();
+                    mariaDBDialect.autodetectSettings(connection.getMetaData());
+                    return mariaDBDialect;
 
                 case "Oracle":
                     log.debug("Automatically detected dialect Oracle.");
