@@ -22,20 +22,44 @@
 
 package org.dalesbred.dialect;
 
+import org.dalesbred.internal.utils.Version;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.Type;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Support for MariaDB.
  */
 public class MariaDBDialect extends Dialect {
 
+    private static final Logger log = LoggerFactory.getLogger(MariaDBDialect.class);
+
+    private final @NotNull Map<String, Type> resultSetMetaDataTypeOverrides = new ConcurrentHashMap<>();
+
     public MariaDBDialect(@NotNull String driverVersion) {
+
+        // MariaDB Connector/J 3.x encodes byte array types in a way that is incompatible with Class.forName
+        resultSetMetaDataTypeOverrides.put("byte[]", byte[].class);
+
         // MariaDB Connector/J 3.5.2+ reports java.sql.Blob as the class name for binary blobs but returns them directly as byte arrays when fetched,
         // which fools the type conversion system and then causes issues in instantiator lookup.
         // https://jira.mariadb.org/browse/CONJ-1228
         // https://github.com/mariadb-corporation/mariadb-connector-j/commit/39ee017e2cdf37f4a54112cc7765e575d36c6fe6
-        if (Version.withNumber(driverVersion).isGreaterThanOrEqualTo(Version.withNumber("3.5.2")))
-            resultSetMetaDataTypeOverrides.put("java.sql.Blob", byte[].class);
+        try {
+            if (Version.parse(driverVersion).compareTo(Version.parse("3.5.2")) >= 0)
+                resultSetMetaDataTypeOverrides.put("java.sql.Blob", byte[].class);
+        } catch (IllegalArgumentException e) {
+            log.error("Could not parse driver version: {}", driverVersion, e);
+        }
     }
 
+    @Override
+    public @Nullable Type overrideResultSetMetaDataType(@NotNull String className) {
+        return resultSetMetaDataTypeOverrides.get(className);
+    }
 }
