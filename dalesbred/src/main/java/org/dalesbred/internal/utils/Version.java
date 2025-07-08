@@ -9,15 +9,19 @@ public final class Version implements Comparable<Version> {
     private final int[] numbers;
 
     // Some drivers (e.g. MySQL and H2) return version strings that do not look like typical SemVer strings and hence will not work with this
-    private Version(@NotNull String version) throws IllegalArgumentException {
+    private Version(@NotNull String version) {
         String[] split = version.split("\\-")[0].split("\\.");
         numbers = new int[split.length];
         for (int i = 0; i < split.length; i++)
             numbers[i] = Integer.parseInt(split[i]);
     }
 
-    public static Version parse(@NotNull String version) {
-        return new Version(version);
+    public static Version parse(@NotNull String version) throws InstantiationException {
+        try {
+            return new Version(version);
+        } catch (IllegalArgumentException e) {
+            throw new InstantiationException(e.getMessage());
+        }
     }
 
     @Override
