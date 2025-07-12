@@ -9,7 +9,7 @@ jobs:
   build:
     strategy:
       matrix:
-        jdk: [11, 17, 21]
+        jdk: [21]
       fail-fast: false
     runs-on: ubuntu-latest
     services:
