@@ -1,11 +1,11 @@
+import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("dalesbred.common-conventions")
     id("io.spring.dependency-management")
+    id("com.vanniktech.maven.publish")
     `java-library`
-    `signing`
-    `maven-publish`
 }
 
 tasks.withType<JavaCompile> {
@@ -23,7 +23,7 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Javadoc> {
     val opts = options as StandardJavadocDocletOptions
 
-    opts.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
+    opts.memberLevel = JavadocMemberLevel.PROTECTED
     opts.header = project.name
 
     opts.links("https://docs.oracle.com/javase/8/docs/api/",
@@ -32,9 +32,14 @@ tasks.withType<Javadoc> {
     opts.addStringOption("Xdoclint:html,syntax,reference", "-quiet")
 }
 
-java {
-    withSourcesJar()
-    withJavadocJar()
+val sourcesJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("sources")
+    from(sourceSets["main"].allSource)
+}
+
+val javadocJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
+    from(tasks.javadoc)
 }
 
 dependencyManagement {
@@ -62,73 +67,52 @@ dependencyManagement {
     }
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("mavenJava") {
-            from(components["java"])
+mavenPublishing {
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    signAllPublications()
 
-            pom {
-                name.set(provider { project.name })
-                description.set(provider { project.description })
-                url.set("https://dalesbred.org/")
-                inceptionYear.set("2012")
-                packaging = "jar"
+    coordinates(
+        groupId = "org.dalesbred",
+        artifactId = project.name,
+        version = project.findProperty("projectVersion") as String? ?: project.version.toString()
+    )
 
-                organization {
-                    name.set("Evident Solutions")
-                    url.set("https://www.evident.fi")
-                }
+    pom {
+        name = provider { project.name }
+        description = provider { project.description }
+        url = "https://dalesbred.org/"
+        inceptionYear = "2012"
 
-                licenses {
-                    license {
-                        name.set("MIT License")
-                        url.set("https://opensource.org/licenses/mit-license.php")
-                        distribution.set("repo")
-                    }
-                }
+        organization {
+            name = "Evident Solutions"
+            url = "https://www.evident.fi"
+        }
 
-                scm {
-                    connection.set("scm:git:https://github.com/EvidentSolutions/dalesbred.git")
-                    developerConnection.set("scm:git:git@github.com:EvidentSolutions/dalesbred.git")
-                    url.set("https://github.com/EvidentSolutions/dalesbred")
-                }
-
-                developers {
-                    developer {
-                        id.set("komu")
-                        name.set("Juha Komulainen")
-                    }
-                }
-
-                issueManagement {
-                    system.set("GitHub")
-                    url.set("https://github.com/EvidentSolutions/dalesbred/issues")
-                }
+        licenses {
+            license {
+                name = "MIT License"
+                url = "https://opensource.org/licenses/mit-license.php"
+                distribution = "repo"
             }
         }
-    }
 
-    if (hasProperty("sonatypeUsername") || System.getenv("MAVEN_USERNAME") != null) {
-        repositories {
-            maven {
-                name = "sonatype"
-                url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+        scm {
+            connection = "scm:git:https://github.com/EvidentSolutions/dalesbred.git"
+            developerConnection = "scm:git:git@github.com:EvidentSolutions/dalesbred.git"
+            url = "https://github.com/EvidentSolutions/dalesbred"
+        }
 
-                credentials {
-                    username = System.getenv("MAVEN_USERNAME") ?: (property("sonatypeUsername") as String)
-                    password = System.getenv("MAVEN_PASSWORD") ?: (property("sonatypePassword") as String)
-                }
+        developers {
+            developer {
+                id = "komu"
+                name = "Juha Komulainen"
+                url = "https://github.com/komu"
             }
         }
-    }
-}
 
-signing {
-    sign(publishing.publications["mavenJava"])
-
-    val signingKey = System.getenv("SIGNING_KEY")
-    if (signingKey != null) {
-        val signingPassword = System.getenv("SIGNING_PASSWORD") ?: error("Environment variable SIGNING_PASSWORD is missing")
-        useInMemoryPgpKeys(signingKey, signingPassword)
+        issueManagement {
+            system = "GitHub"
+            url = "https://github.com/EvidentSolutions/dalesbred/issues"
+        }
     }
 }

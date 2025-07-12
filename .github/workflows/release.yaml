@@ -1,25 +1,43 @@
-name: Publish package to the Maven Central Repository
+name: Release
+
 on:
-  release:
-    types: [ published ]
+    release:
+        types: [ published ]
+
 jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Java
-        uses: actions/setup-java@v2
-        with:
-          java-version: '8'
-          distribution: 'temurin'
-      - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@v1
-      - name: Publish package
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: publish
-        env:
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
-          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Extract version
+              id: version
+              run: echo "value=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+
+            - name: Set up JDK
+              uses: actions/setup-java@v4
+              with:
+                  java-version: '8'
+                  distribution: 'temurin'
+                  cache: gradle
+
+            - name: Setup gradle
+              uses: gradle/actions/setup-gradle@v4
+
+            - name: Build and test with Gradle
+              run: ./gradlew publishAllPublicationsToMavenCentralRepository --no-configuration-cache -PprojectVersion=${{ steps.version.outputs.value }}
+              env:
+                  ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.OSSRH_USERNAME }}
+                  ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.OSSRH_PASSWORD }}
+                  ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
+                  ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
+
+            - name: Upload test reports
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: test-reports
+                  path: |
+                      **/build/reports/tests/
+                      **/build/test-results/
