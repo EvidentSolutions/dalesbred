@@ -27,6 +27,7 @@ import org.dalesbred.testutils.withSystemProperty
 import java.util.*
 import javax.naming.Context
 import javax.naming.spi.InitialContextFactory
+import kotlin.reflect.jvm.jvmName
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -34,7 +35,7 @@ class DatabaseJndiLookupTest {
 
     @Test
     fun createDatabaseByFetchingDataSourceFromJndi() {
-        withSystemProperty("java.naming.factory.initial", MyInitialFactory::class.java.name) {
+        withSystemProperty("java.naming.factory.initial", MyInitialFactory::class.jvmName) {
             MyInitialFactory.initialContext.bind("java:comp/env/foo", TestDatabaseProvider.createInMemoryHSQLDataSource())
 
             val db = Database.forJndiDataSource("java:comp/env/foo")

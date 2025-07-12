@@ -24,66 +24,57 @@ package org.dalesbred
 
 import org.dalesbred.connection.ConnectionProvider
 import org.dalesbred.connection.DriverManagerConnectionProvider
-import org.dalesbred.transaction.TransactionCallback
-import org.junit.jupiter.api.Assumptions.assumeFalse
-import java.io.InputStream
+import org.testcontainers.containers.JdbcDatabaseContainer
+import org.testcontainers.containers.MariaDBContainer
+import org.testcontainers.containers.MySQLContainer
+import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.utility.DockerImageName
 import java.io.PrintWriter
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLFeatureNotSupportedException
-import java.util.*
 import javax.sql.DataSource
 
 object TestDatabaseProvider {
 
+    private val postgresqlContainer: PostgreSQLContainer<*> by lazy {
+        val container = PostgreSQLContainer(DockerImageName.parse("postgres:17"))
+        container.start()
+        container
+    }
+
+    private val mariadbContainer: MariaDBContainer<*> by lazy {
+        val container = MariaDBContainer(DockerImageName.parse("mariadb:10.5.5"))
+        container.start()
+        container
+    }
+
+    private val myqlContainer: MySQLContainer<*> by lazy {
+        val container = MySQLContainer(DockerImageName.parse("mysql:5.7.34"))
+        container.start()
+        container
+    }
+
     fun createInMemoryHSQLDatabase() =
         Database.forUrlAndCredentials("jdbc:hsqldb:mem:test;hsqldb.tx=mvcc", "sa", "")
 
-    fun createPostgreSQLDatabase(): Database {
-        val host = System.getenv("POSTGRES_HOST")
-        if (host != null) {
-            val port = System.getenv("POSTGRES_PORT")?.toInt() ?: 5432
-            val user = System.getenv("POSTGRES_USER") ?: "postgres"
-            val password = System.getenv("POSTGRES_PASSWORD") ?: "password"
-            val database = System.getenv("POSTGRES_DATABASE") ?: user
-            val url = "jdbc:postgresql://$host:$port/$database"
+    fun createPostgreSQLDatabase(): Database =
+        Database(connectionProviderFor(postgresqlContainer))
 
-            return Database(DriverManagerConnectionProvider(url, user, password))
-        }
-
-        return Database(createConnectionProviderFromProperties("postgresql-connection.properties"))
-    }
+    private fun connectionProviderFor(container: JdbcDatabaseContainer<*>) =
+        DriverManagerConnectionProvider(container.jdbcUrl, container.username, container.password)
 
     fun createMySQLConnectionProvider() =
-        createConnectionProviderFromProperties("mysql-connection.properties")
+        connectionProviderFor(myqlContainer)
 
     fun createMariaDBConnectionProvider() =
-        createConnectionProviderFromProperties("mariadb-connection.properties")
+        connectionProviderFor(mariadbContainer)
 
     fun createInMemoryHSQLConnectionProvider(): ConnectionProvider =
         DriverManagerConnectionProvider("jdbc:hsqldb:.", "sa", "")
 
     fun createInMemoryHSQLDataSource(): DataSource =
         DriverManagerDataSource("jdbc:hsqldb:.", "sa", "")
-
-    private fun createConnectionProviderFromProperties(propertiesFile: String): ConnectionProvider {
-        val props = loadProperties(propertiesFile)
-        val url = props.getProperty("jdbc.url")
-        val login = props.getProperty("jdbc.login")
-        val password = props.getProperty("jdbc.password")
-
-        return DriverManagerConnectionProvider(url, login, password)
-    }
-
-    private fun loadProperties(name: String): Properties {
-        val stream: InputStream? = TransactionCallback::class.java.classLoader.getResourceAsStream(name)
-        assumeFalse(stream == null, "ignored test because '$name' was not found")
-        stream!!.use {
-            return Properties().apply {
-                load(stream)
-            }
-        }
-    }
 
     private class DriverManagerDataSource(
         private val url: String,

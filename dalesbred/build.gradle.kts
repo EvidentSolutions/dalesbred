@@ -43,6 +43,9 @@ dependencies {
 
     testImplementation(kotlin("reflect"))
     testImplementation(kotlin("test"))
+    testImplementation(libs.testcontainers.postgresql)
+    testImplementation(libs.testcontainers.mariadb)
+    testImplementation(libs.testcontainers.mysql)
     testImplementation(libs.jdbc.hsqldb)
     testImplementation(libs.jdbc.h2)
     testImplementation(libs.jdbc.mysql)

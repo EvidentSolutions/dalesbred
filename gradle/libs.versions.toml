@@ -6,6 +6,7 @@ spring = "5.3.10"
 logback = "1.2.6"
 vanniktechMavenPublish = "0.32.0"
 asciidoctor = "3.3.2"
+testcontainers = "1.21.1"
 
 [libraries]
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -18,6 +19,9 @@ threeten = "org.threeten:threetenbp:1.5.1"
 jodaTime = "joda-time:joda-time:2.10.12"
 slf4j-api = { module = "org.slf4j:slf4j-api", version = "1.7.32" }
 jetbrains-annotations = { module = "org.jetbrains:annotations", version = "22.0.0" }
+testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
+testcontainers-mariadb = { module = "org.testcontainers:mariadb", version.ref = "testcontainers" }
+testcontainers-mysql = { module = "org.testcontainers:mysql", version.ref = "testcontainers" }
 jdbc-hsqldb = { module = "org.hsqldb:hsqldb", version = "2.4.0" }
 jdbc-h2 = { module = "com.h2database:h2", version = "1.4.200" }
 jdbc-mysql = { module = "mysql:mysql-connector-java", version = "8.0.26" }
