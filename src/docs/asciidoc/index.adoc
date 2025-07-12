@@ -19,12 +19,10 @@ include::_04-misc.adoc[]
 
 include::_05-integrations.adoc[]
 
-include::_06-test-support.adoc[]
+include::_06-more-examples.adoc[]
 
-include::_07-more-examples.adoc[]
+include::_07-downloading.adoc[]
 
-include::_08-downloading.adoc[]
-
-include::_09-migrating-from-0.x.adoc[]
+include::_08-migrating-from-0.x.adoc[]
 
 
