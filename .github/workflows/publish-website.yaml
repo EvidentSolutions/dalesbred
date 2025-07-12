@@ -8,18 +8,16 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set up Java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           java-version: '8'
           distribution: 'temurin'
-      - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@v1
+      - name: Setup gradle
+        uses: gradle/actions/setup-gradle@v4
       - name: Build website
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: website:assemble
+        run: ./gradlew website:assemble
       - name: Publish website
         uses: peaceiris/actions-gh-pages@v3
         with:
