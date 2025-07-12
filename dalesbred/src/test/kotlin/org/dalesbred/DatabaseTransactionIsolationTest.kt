@@ -22,7 +22,6 @@
 
 package org.dalesbred
 
-import org.dalesbred.testutils.withSuppressedLogging
 import org.dalesbred.transaction.Isolation.SERIALIZABLE
 import org.dalesbred.transaction.TransactionSerializationException
 import org.junit.Test
@@ -35,22 +34,20 @@ class DatabaseTransactionIsolationTest {
 
     @Test
     fun concurrentUpdatesInSerializableTransactionThrowTransactionSerializationException() {
-        withSuppressedLogging {
-            db1.update("DROP TABLE IF EXISTS isolation_test")
-            db1.update("CREATE TABLE isolation_test (value INT)")
-            db1.update("INSERT INTO isolation_test (value) VALUES (1)")
+        db1.update("DROP TABLE IF EXISTS isolation_test")
+        db1.update("CREATE TABLE isolation_test (value INT)")
+        db1.update("INSERT INTO isolation_test (value) VALUES (1)")
 
-            assertFailsWith<TransactionSerializationException> {
-                db1.withTransaction(SERIALIZABLE) {
-                    db1.findUniqueInt("SELECT value FROM isolation_test")
+        assertFailsWith<TransactionSerializationException> {
+            db1.withTransaction(SERIALIZABLE) {
+                db1.findUniqueInt("SELECT value FROM isolation_test")
 
-                    db2.withTransaction(SERIALIZABLE) {
-                        db2.findUniqueInt("SELECT value FROM isolation_test")
-                        db2.update("UPDATE isolation_test SET value=2")
-                    }
-
-                    db1.update("UPDATE isolation_test SET value=3")
+                db2.withTransaction(SERIALIZABLE) {
+                    db2.findUniqueInt("SELECT value FROM isolation_test")
+                    db2.update("UPDATE isolation_test SET value=2")
                 }
+
+                db1.update("UPDATE isolation_test SET value=3")
             }
         }
     }

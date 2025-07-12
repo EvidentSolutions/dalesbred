@@ -30,26 +30,26 @@ java {
 }
 
 dependencies {
-    implementation("org.slf4j:slf4j-api")
-    "jodaImplementation"("joda-time:joda-time")
-    "threetenImplementation"("org.threeten:threetenbp")
-    "springImplementation"("org.springframework:spring-context")
-    "springImplementation"("org.springframework:spring-jdbc")
+    implementation(libs.slf4j.api)
+    "jodaImplementation"(libs.jodaTime)
+    "threetenImplementation"(libs.threeten)
+    "springImplementation"(libs.spring.context)
+    "springImplementation"(libs.spring.jdbc)
     "kotlinImplementation"(kotlin("stdlib-jdk8"))
-    "annotationsImplementation"("org.jetbrains:annotations")
+    "annotationsImplementation"(libs.jetbrains.annotations)
 
-    "postgresqlImplementation"("org.postgresql:postgresql")
-    "oracleImplementation"("com.oracle.database.jdbc:ojdbc8")
+    "postgresqlImplementation"(libs.jdbc.postgresql)
+    "oracleImplementation"(libs.jdbc.oracle)
 
     testImplementation(kotlin("reflect"))
     testImplementation(kotlin("test"))
-    testImplementation("org.hsqldb:hsqldb")
-    testImplementation("com.h2database:h2")
-    testImplementation("mysql:mysql-connector-java")
-    testImplementation("org.mariadb.jdbc:mariadb-java-client")
-    testImplementation("junit:junit")
-    testImplementation("ch.qos.logback:logback-core")
-    testImplementation("ch.qos.logback:logback-classic")
+    testImplementation(libs.jdbc.hsqldb)
+    testImplementation(libs.jdbc.h2)
+    testImplementation(libs.jdbc.mysql)
+    testImplementation(libs.jdbc.mariadb)
+    testImplementation(libs.junit)
+    testImplementation(libs.logback.core)
+    testImplementation(libs.logback.classic)
 }
 
 tasks.jar {

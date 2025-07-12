@@ -6,13 +6,13 @@ description = "Dalesbred JUnit-support"
 
 dependencies {
     api(project(":dalesbred"))
-    api("junit:junit")
-    api("javax.inject:javax.inject")
-    api("org.jetbrains:annotations")
+    api(libs.junit)
+    api(libs.javax.inject)
+    api(libs.jetbrains.annotations)
 
-    testImplementation("org.hsqldb:hsqldb")
-    testImplementation("ch.qos.logback:logback-core")
-    testImplementation("ch.qos.logback:logback-classic")
+    testImplementation(libs.jdbc.hsqldb)
+    testImplementation(libs.logback.core)
+    testImplementation(libs.logback.classic)
 }
 
 tasks.jar {

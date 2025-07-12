@@ -1,0 +1,30 @@
+[versions]
+kotlin = "1.9.23"
+postgresqlJdbc = "42.2.24"
+junit = "4.13.2" # TODO 5.x
+spring = "5.3.10"
+logback = "1.2.6"
+vanniktechMavenPublish = "0.32.0"
+asciidoctor = "3.3.2"
+
+[libraries]
+kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+logback-core = { module = "ch.qos.logback:logback-core", version.ref = "logback" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+spring-context = { module = "org.springframework:spring-context", version.ref = "spring" }
+spring-jdbc = { module = "org.springframework:spring-jdbc", version.ref = "spring" }
+jdbc-postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresqlJdbc" }
+threeten = "org.threeten:threetenbp:1.5.1"
+jodaTime = "joda-time:joda-time:2.10.12"
+slf4j-api = { module = "org.slf4j:slf4j-api", version = "1.7.32" }
+jetbrains-annotations = { module = "org.jetbrains:annotations", version = "22.0.0" }
+jdbc-hsqldb = { module = "org.hsqldb:hsqldb", version = "2.4.0" }
+jdbc-h2 = { module = "com.h2database:h2", version = "1.4.200" }
+jdbc-mysql = { module = "mysql:mysql-connector-java", version = "8.0.26" }
+jdbc-mariadb = { module = "org.mariadb.jdbc:mariadb-java-client", version = "3.4.1" }
+jdbc-oracle = { module = "com.oracle.database.jdbc:ojdbc8", version = "21.3.0.0" }
+javax-inject = { module = "javax.inject:javax.inject", version = "1" }
+junit = { module = "junit:junit", version.ref = "junit" }
+
+vanniktechMavenPublish-gradlePlugin = { module = "com.vanniktech.maven.publish:com.vanniktech.maven.publish.gradle.plugin", version.ref = "vanniktechMavenPublish" }
+asciidoctor-gradlePlugin = { module = "org.asciidoctor:asciidoctor-gradle-jvm", version.ref = "asciidoctor" }

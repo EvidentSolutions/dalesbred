@@ -22,7 +22,6 @@
 
 package org.dalesbred
 
-import org.dalesbred.testutils.withSuppressedLogging
 import org.dalesbred.transaction.Propagation.*
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -55,24 +54,22 @@ class DatabaseTransactionPropagationTest {
         db.update("drop table if exists test_table")
         db.update("create table test_table (text varchar(64))")
 
-        withSuppressedLogging {
-            db.withVoidTransaction {
-                db.update("INSERT INTO test_table (text) VALUES ('initial')")
+        db.withVoidTransaction {
+            db.update("INSERT INTO test_table (text) VALUES ('initial')")
 
-                assertEquals("initial", db.findUnique(String::class.java, "SELECT text FROM test_table"))
+            assertEquals("initial", db.findUnique(String::class.java, "SELECT text FROM test_table"))
 
-                assertFailsWith<RuntimeException> {
-                    db.withVoidTransaction(NESTED) {
-                        db.update("UPDATE test_table SET text = 'new-value'")
+            assertFailsWith<RuntimeException> {
+                db.withVoidTransaction(NESTED) {
+                    db.update("UPDATE test_table SET text = 'new-value'")
 
-                        assertEquals("new-value", db.findUnique(String::class.java, "SELECT text FROM test_table"))
+                    assertEquals("new-value", db.findUnique(String::class.java, "SELECT text FROM test_table"))
 
-                        throw RuntimeException()
-                    }
+                    throw RuntimeException()
                 }
-
-                assertEquals("initial", db.findUnique(String::class.java, "SELECT text FROM test_table"))
             }
+
+            assertEquals("initial", db.findUnique(String::class.java, "SELECT text FROM test_table"))
         }
     }
 
