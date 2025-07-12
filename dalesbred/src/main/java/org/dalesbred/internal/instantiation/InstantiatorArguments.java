@@ -66,6 +66,6 @@ public final class InstantiatorArguments {
         if (values.size() != 1)
             throw new IllegalStateException("expected single argument, but got " + values.size());
 
-        return values.get(0);
+        return values.getFirst();
     }
 }

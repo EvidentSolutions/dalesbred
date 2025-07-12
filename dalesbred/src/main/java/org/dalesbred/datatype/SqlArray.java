@@ -24,12 +24,10 @@ package org.dalesbred.datatype;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -46,7 +44,7 @@ public final class SqlArray {
 
     private SqlArray(@NotNull String type, @NotNull Collection<?> values) {
         this.type = requireNonNull(type);
-        this.values = unmodifiableList(new ArrayList<>(values));
+        this.values = List.copyOf(values);
     }
 
     /**

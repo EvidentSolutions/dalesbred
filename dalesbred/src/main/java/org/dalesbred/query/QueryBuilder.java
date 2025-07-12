@@ -130,7 +130,7 @@ public final class QueryBuilder {
      * Is the query string empty?
      */
     public boolean isEmpty() {
-       return query.length() == 0;
+       return query.isEmpty();
     }
 
     /**
@@ -169,7 +169,7 @@ public final class QueryBuilder {
      * @throws IllegalStateException if the builder is empty
      */
     public @NotNull SqlQuery build() {
-        if (query.length() == 0)
+        if (query.isEmpty())
             throw new IllegalStateException("empty query");
 
         return SqlQuery.query(query.toString(), new ArrayList<>(arguments));

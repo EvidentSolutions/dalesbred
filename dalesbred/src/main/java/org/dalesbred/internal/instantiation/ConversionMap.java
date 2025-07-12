@@ -68,15 +68,6 @@ final class ConversionMap {
         return Optional.empty();
     }
 
-    private static final class ConversionRegistration {
-
-        private final @NotNull Type target;
-
-        private final @NotNull TypeConversion conversion;
-
-        private ConversionRegistration(@NotNull Type target, @NotNull TypeConversion conversion) {
-            this.target = target;
-            this.conversion = conversion;
-        }
+    private record ConversionRegistration(@NotNull Type target, @NotNull TypeConversion conversion) {
     }
 }

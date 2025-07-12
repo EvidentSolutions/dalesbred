@@ -46,6 +46,7 @@ public final class ThreeTenTypeConversions {
     /**
      * Returns true if java.time is found on classpath.
      */
+    @SuppressWarnings("Java9ReflectionClassVisibility")
     public static boolean hasThreeTen() {
         try {
             Class.forName("org.threeten.bp.LocalDate");

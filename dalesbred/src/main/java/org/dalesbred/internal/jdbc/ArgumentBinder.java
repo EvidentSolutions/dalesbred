@@ -43,20 +43,12 @@ public final class ArgumentBinder {
     }
 
     public static void bindArgument(@NotNull PreparedStatement ps, int index, @Nullable Object value) throws SQLException {
-        if (value instanceof InputStream) {
-            bindInputStream(ps, index, (InputStream) value);
-
-        } else if (value instanceof Reader) {
-            bindReader(ps, index, (Reader) value);
-
-        } else if (value instanceof Document) {
-            bindXmlDocument(ps, index, (Document) value);
-
-        } else if (value instanceof SqlArray) {
-            bindArray(ps, index, (SqlArray) value);
-
-        } else {
-            ps.setObject(index, value);
+        switch (value) {
+            case InputStream inputStream -> bindInputStream(ps, index, inputStream);
+            case Reader reader -> bindReader(ps, index, reader);
+            case Document document -> bindXmlDocument(ps, index, document);
+            case SqlArray sqlArray -> bindArray(ps, index, sqlArray);
+            case null, default -> ps.setObject(index, value);
         }
     }
 
@@ -64,8 +56,7 @@ public final class ArgumentBinder {
         // We check whether the InputStream is actually InputStreamWithSize, for two reasons:
         //   1) the database/driver can optimize the call better if it knows the size in advance
         //   2) calls without size were introduced in JDBC4 and not all drivers support them
-        if (stream instanceof InputStreamWithSize) {
-            InputStreamWithSize streamWithSize = (InputStreamWithSize) stream;
+        if (stream instanceof InputStreamWithSize streamWithSize) {
             long size = streamWithSize.getSize();
 
             // The overload which takes 'long' as parameter was introduced in JDBC4 and is not
@@ -82,8 +73,7 @@ public final class ArgumentBinder {
 
     private static void bindReader(@NotNull PreparedStatement ps, int index, @NotNull Reader reader) throws SQLException {
         // The structure followed bindInputStream, see the comments there.
-        if (reader instanceof ReaderWithSize) {
-            ReaderWithSize readerWithSize = (ReaderWithSize) reader;
+        if (reader instanceof ReaderWithSize readerWithSize) {
             long size = readerWithSize.getSize();
             if (size <= Integer.MAX_VALUE)
                 ps.setCharacterStream(index, readerWithSize, (int) size);

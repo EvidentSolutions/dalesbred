@@ -57,17 +57,15 @@ public class MariaDBDialect extends Dialect {
 
     @Override
     public @Nullable Type overrideResultSetMetaDataType(@NotNull String className) {
-        switch (className) {
-            case "byte[]":
+        return switch (className) {
+            case "byte[]" ->
                 // MariaDB Connector/J 3.x encodes byte array types in a way that is incompatible with Class.forName
-                return byte[].class;
-
-            case "java.sql.Blob":
+                byte[].class;
+            case "java.sql.Blob" ->
                 // MariaDB Connector/J 3.5.2+ reports java.sql.Blob as the class name for
                 // binary blobs but returns them directly as byte arrays when fetched
-                return blobsAsByteArrays ? byte[].class : null;
-            default:
-                return null;
-        }
+                blobsAsByteArrays ? byte[].class : null;
+            default -> null;
+        };
     }
 }

@@ -37,8 +37,8 @@ public class OracleDialect extends Dialect {
 
     @Override
     public void bindArgument(@NotNull PreparedStatement ps, int index, @Nullable Object value) throws SQLException {
-        if (value instanceof SqlArray) {
-            SqlArray array = (SqlArray) value;
+        if (value instanceof SqlArray array) {
+            @SuppressWarnings("resource")
             OracleConnection connection = ps.getConnection().unwrap(OracleConnection.class);
             ps.setArray(index, connection.createARRAY(array.getType(), array.getValues().toArray()));
 

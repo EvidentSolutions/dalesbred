@@ -272,6 +272,7 @@ public final class Database {
      * Executes a query and processes the results with given {@link ResultSetProcessor}.
      * All other findXXX-methods are just convenience methods for this one.
      */
+    @SuppressWarnings("SqlSourceToSinkFlow")
     public <T> T executeQuery(@NotNull ResultSetProcessor<T> processor, @NotNull SqlQuery query) {
         return withCurrentTransaction(query, tx -> {
             logQuery(query);
@@ -425,7 +426,7 @@ public final class Database {
      */
     public @NotNull OptionalInt findOptionalInt(@NotNull SqlQuery query) {
         Optional<Integer> value = findOptional(Integer.class, query);
-        return value.isPresent() ? OptionalInt.of(value.get()) : OptionalInt.empty();
+        return value.map(OptionalInt::of).orElseGet(OptionalInt::empty);
     }
 
     /**
@@ -446,7 +447,7 @@ public final class Database {
      */
     public @NotNull OptionalLong findOptionalLong(@NotNull SqlQuery query) {
         Optional<Long> value = findOptional(Long.class, query);
-        return value.isPresent() ? OptionalLong.of(value.get()) : OptionalLong.empty();
+        return value.map(OptionalLong::of).orElseGet(OptionalLong::empty);
     }
 
     /**
@@ -467,7 +468,7 @@ public final class Database {
      */
     public @NotNull OptionalDouble findOptionalDouble(@NotNull SqlQuery query) {
         Optional<Double> value = findOptional(Double.class, query);
-        return value.isPresent() ? OptionalDouble.of(value.get()) : OptionalDouble.empty();
+        return value.map(OptionalDouble::of).orElseGet(OptionalDouble::empty);
     }
 
     /**
@@ -600,6 +601,7 @@ public final class Database {
     /**
      * Executes an update against the database and returns the amount of affected rows.
      */
+    @SuppressWarnings("SqlSourceToSinkFlow")
     public int update(@NotNull SqlQuery query) {
         return withCurrentTransaction(query, tx -> {
             logQuery(query);
@@ -687,6 +689,7 @@ public final class Database {
      * Executes a batch update against the database, returning an array of modification
      * counts for each argument list.
      */
+    @SuppressWarnings("SqlSourceToSinkFlow")
     public int[] updateBatch(@Language("SQL") @NotNull String sql, @NotNull List<? extends  List<?>> argumentLists) {
         SqlQuery query = SqlQuery.query(sql, "<batch-update>");
 
@@ -757,6 +760,7 @@ public final class Database {
         bindArguments(ps, query.getArguments());
     }
 
+    @SuppressWarnings("MagicConstant")
     private void bindQueryParameters(@NotNull PreparedStatement ps, @NotNull SqlQuery query) throws SQLException {
         FetchDirection direction = query.getFetchDirection();
         if (direction != null)

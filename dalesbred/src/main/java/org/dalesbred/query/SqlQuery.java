@@ -26,6 +26,7 @@ import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Duration;
 import java.util.Iterator;
@@ -52,6 +53,7 @@ public final class SqlQuery implements Serializable {
 
     private @Nullable Duration timeout;
 
+    @Serial
     private static final long serialVersionUID = 1;
 
     private SqlQuery(@NotNull @Language("SQL") String sql, @NotNull List<?> args) {

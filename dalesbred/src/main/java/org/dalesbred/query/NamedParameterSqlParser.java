@@ -144,12 +144,12 @@ final class NamedParameterSqlParser {
         }
 
         @Override
-        public CharSequence subSequence(int start, int end) {
+        public @NotNull CharSequence subSequence(int start, int end) {
             return sql.substring(offset + start, offset + end);
         }
 
         @Override
-        public String toString() {
+        public @NotNull String toString() {
             return sql.substring(offset);
         }
 

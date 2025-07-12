@@ -51,7 +51,7 @@ final class DefaultTypeConversionRegistry implements TypeConversionRegistry {
     @Override
     public <T extends Enum<T>,K> void registerEnumConversion(@NotNull Class<T> enumType, @NotNull Function<T, K> keyFunction) {
         registerConversionFromDatabase(Object.class, enumType, value -> EnumUtils.enumByKey(enumType, keyFunction, (K) value));
-        registerConversionToDatabase(enumType, keyFunction::apply);
+        registerConversionToDatabase(enumType, keyFunction);
     }
 
     @Override

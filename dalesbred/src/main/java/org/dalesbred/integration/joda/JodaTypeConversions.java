@@ -44,6 +44,7 @@ public final class JodaTypeConversions {
     /**
      * Returns true if Joda is found on classpath.
      */
+    @SuppressWarnings("Java9ReflectionClassVisibility")
     public static boolean hasJoda() {
         try {
             Class.forName("org.joda.time.LocalDate");

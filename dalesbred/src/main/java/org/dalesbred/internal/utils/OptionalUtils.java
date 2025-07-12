@@ -30,6 +30,7 @@ import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public final class OptionalUtils {
 
     private OptionalUtils() {

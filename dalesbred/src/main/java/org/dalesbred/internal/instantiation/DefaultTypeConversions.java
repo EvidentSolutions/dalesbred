@@ -100,8 +100,8 @@ final class DefaultTypeConversions {
 
     private static @NotNull URL convertStringToUrl(@NotNull String value) {
         try {
-            return new URL(value);
-        } catch (MalformedURLException e) {
+            return new URI(value).toURL();
+        } catch (URISyntaxException | MalformedURLException e) {
             throw new IllegalArgumentException(e);
         }
     }
@@ -133,7 +133,7 @@ final class DefaultTypeConversions {
         }
     }
 
-    private static @NotNull byte[] convertBlobToByteArray(@NotNull Blob value) {
+    private static byte @NotNull [] convertBlobToByteArray(@NotNull Blob value) {
         try (InputStream in = value.getBinaryStream()) {
             ByteArrayOutputStream out = new ByteArrayOutputStream((int) value.length());
 

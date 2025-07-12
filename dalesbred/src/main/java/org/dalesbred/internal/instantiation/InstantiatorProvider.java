@@ -45,7 +45,6 @@ import static java.lang.reflect.Modifier.isPublic;
 import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toList;
 import static org.dalesbred.internal.utils.CollectionUtils.arrayOfType;
 import static org.dalesbred.internal.utils.TypeUtils.*;
 
@@ -118,6 +117,7 @@ public final class InstantiatorProvider {
                 .orElseThrow(() -> new InstantiationFailureException("could not find a way to instantiate " + type + " with parameters " + types));
     }
 
+    @SuppressWarnings("UnnecessaryLocalVariable")
     private @Nullable Instantiator<?> findExplicitInstantiatorFor(Class<?> cl, @NotNull NamedTypeList types) throws InstantiationFailureException {
         Executable ctorOrMethod = findExplicitInstantiatorReference(cl);
 
@@ -246,6 +246,7 @@ public final class InstantiatorProvider {
     /**
      * Returns conversion for converting value of source to target, or returns null if there's no such conversion.
      */
+    @SuppressWarnings("OptionalIsPresent")
     private @NotNull Optional<TypeConversion> findConversionFromDbValue(@NotNull Type source, @NotNull Type target) {
         if (isAssignable(target, source))
             return Optional.of(TypeConversion.identity());
@@ -323,18 +324,18 @@ public final class InstantiatorProvider {
     private static @Nullable Executable findExplicitInstantiatorReference(@NotNull Class<?> cl) {
         List<Constructor<?>> constructors = Stream.of(cl.getDeclaredConstructors())
                 .filter(it -> it.isAnnotationPresent(DalesbredInstantiator.class))
-                .collect(toList());
+                .toList();
         List<Method> methods = Stream.of(cl.getDeclaredMethods())
                 .filter(it -> it.isAnnotationPresent(DalesbredInstantiator.class) && Modifier.isStatic(it.getModifiers()))
-                .collect(toList());
+                .toList();
 
         int count = constructors.size() + methods.size();
         if (count > 1)
             throw new InstantiationFailureException("only one constructor/method of " + cl.getName() + " can be marked with @DalesbredInstantiator. Found " + count);
         else if (constructors.size() == 1)
-            return constructors.get(0);
+            return constructors.getFirst();
         else if (methods.size() == 1) {
-            Method method = methods.get(0);
+            Method method = methods.getFirst();
             if (method.getReturnType() != cl)
                 throw new InstantiationFailureException("Instantiator method " + method.getName() + " does not return " + cl.getName() + " but " + method.getReturnType());
 

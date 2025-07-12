@@ -32,26 +32,17 @@ public final class TypeUtils {
     private TypeUtils() { }
 
     public static @NotNull Class<?> rawType(@NotNull Type type) {
-        if (type instanceof Class<?>) {
-            return (Class<?>) type;
-
-        } else if (type instanceof ParameterizedType) {
-            return rawType(((ParameterizedType) type).getRawType());
-
-        } else if (type instanceof TypeVariable<?>) {
-            // We could return one of the bounds, but it won't work if there are multiple bounds.
-            // Therefore just return object.
-            return Object.class;
-
-        } else if (type instanceof WildcardType) {
-            return rawType(((WildcardType) type).getUpperBounds()[0]);
-
-        } else if (type instanceof GenericArrayType) {
-            return arrayType(rawType(((GenericArrayType) type).getGenericComponentType()));
-
-        } else {
-            throw new IllegalArgumentException("unexpected type: " + type);
-        }
+        return switch (type) {
+            case Class<?> aClass -> aClass;
+            case ParameterizedType parameterizedType -> rawType(parameterizedType.getRawType());
+            case TypeVariable<?> typeVariable ->
+                // We could return one of the bounds, but it won't work if there are multiple bounds.
+                // Therefore just return object.
+                Object.class;
+            case WildcardType wildcardType -> rawType(wildcardType.getUpperBounds()[0]);
+            case GenericArrayType genericArrayType -> arrayType(rawType(genericArrayType.getGenericComponentType()));
+            default -> throw new IllegalArgumentException("unexpected type: " + type);
+        };
     }
 
     public static @NotNull Type typeParameter(@NotNull Type type) {

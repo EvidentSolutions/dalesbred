@@ -40,7 +40,7 @@ public class PostgreSQLDialect extends Dialect {
 
     @Override
     public @NotNull <T extends Enum<T>, K> TypeConversionPair<Object,T> createNativeEnumConversions(@NotNull Class<T> enumType, @NotNull String typeName, @NotNull Function<T,K> keyFunction) {
-        return new TypeConversionPair<Object, T>() {
+        return new TypeConversionPair<>() {
             @Override
             public Object convertToDatabase(T obj) {
                 return createPgObject(String.valueOf(keyFunction.apply(obj)), typeName);
