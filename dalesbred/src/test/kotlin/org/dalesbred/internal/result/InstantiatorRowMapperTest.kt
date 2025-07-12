@@ -25,9 +25,9 @@ package org.dalesbred.internal.result
 import org.dalesbred.dialect.DefaultDialect
 import org.dalesbred.internal.instantiation.InstantiatorProvider
 import org.dalesbred.testutils.unimplemented
-import org.junit.Test
 import java.sql.ResultSet
 import java.sql.ResultSetMetaData
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class InstantiatorRowMapperTest {

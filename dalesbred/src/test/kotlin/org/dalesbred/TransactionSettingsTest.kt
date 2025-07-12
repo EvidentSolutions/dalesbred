@@ -25,7 +25,7 @@ package org.dalesbred
 import org.dalesbred.transaction.Isolation
 import org.dalesbred.transaction.Propagation
 import org.dalesbred.transaction.TransactionSettings
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class TransactionSettingsTest {

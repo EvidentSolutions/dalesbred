@@ -24,10 +24,10 @@ package org.dalesbred
 
 import org.dalesbred.integration.MemoryContext
 import org.dalesbred.testutils.withSystemProperty
-import org.junit.Test
 import java.util.*
 import javax.naming.Context
 import javax.naming.spi.InitialContextFactory
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DatabaseJndiLookupTest {

@@ -23,18 +23,16 @@
 package org.dalesbred
 
 import org.dalesbred.dialect.DefaultDialect
-import org.junit.Rule
-import org.junit.Test
+import org.dalesbred.testutils.transactionalTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DatabaseCustomDialectTest {
 
     private val db = Database(TestDatabaseProvider.createInMemoryHSQLConnectionProvider(), UppercaseDialect)
 
-    @get:Rule val rule = TransactionalTestsRule(db)
-
     @Test
-    fun customDialect() {
+    fun customDialect() = transactionalTest(db) {
         db.update("drop table if exists my_table")
         db.update("create temporary table my_table (text varchar(64))")
 

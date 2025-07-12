@@ -23,19 +23,16 @@
 package org.dalesbred.dialect
 
 import org.dalesbred.Database
-import org.dalesbred.TransactionalTestsRule
-import org.junit.Rule
-import org.junit.Test
+import org.dalesbred.testutils.transactionalTest
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class H2DialectTest {
 
     private val db = Database.forUrlAndCredentials("jdbc:h2:.", "sa", "")
 
-    @get:Rule val rule = TransactionalTestsRule(db)
-
     @Test
-    fun detectDialect() {
+    fun detectDialect() = transactionalTest(db) {
         db.withVoidTransaction { tx ->
             val dialect = Dialect.detect(tx.connection)
 

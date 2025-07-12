@@ -1,4 +1,5 @@
 import com.vanniktech.maven.publish.SonatypeHost
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     id("dalesbred.common-conventions")
@@ -9,6 +10,18 @@ plugins {
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+
+    testLogging {
+        events(
+            TestLogEvent.FAILED,
+            TestLogEvent.PASSED,
+            TestLogEvent.SKIPPED
+        )
     }
 }
 

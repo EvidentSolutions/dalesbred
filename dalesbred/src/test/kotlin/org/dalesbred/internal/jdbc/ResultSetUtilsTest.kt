@@ -3,9 +3,9 @@ package org.dalesbred.internal.jdbc
 import org.dalesbred.dialect.DefaultDialect
 import org.dalesbred.dialect.MariaDBDialect
 import org.dalesbred.testutils.unimplemented
-import org.junit.Test
 import java.sql.Blob
 import java.sql.ResultSetMetaData
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ResultSetUtilsTest {

@@ -23,7 +23,7 @@
 package org.dalesbred.dialect
 
 import org.dalesbred.TestDatabaseProvider
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class MySQLDialectTest {

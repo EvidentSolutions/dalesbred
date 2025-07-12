@@ -23,23 +23,19 @@
 package org.dalesbred.dialect
 
 import org.dalesbred.TestDatabaseProvider
-import org.dalesbred.TransactionalTestsRule
 import org.dalesbred.datatype.InputStreamWithSize
 import org.dalesbred.datatype.ReaderWithSize
-import org.junit.Assert.assertArrayEquals
-import org.junit.Rule
-import org.junit.Test
+import org.dalesbred.testutils.transactionalTest
+import org.junit.jupiter.api.Assertions.assertArrayEquals
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class PostgreSQLLargeObjectTest {
 
     private val db = TestDatabaseProvider.createPostgreSQLDatabase()
 
-    @get:Rule
-    val rule = TransactionalTestsRule(db)
-
     @Test
-    fun streamBlobToDatabaseByteArray() {
+    fun streamBlobToDatabaseByteArray() = transactionalTest(db) {
         db.update("drop table if exists blob_test")
         db.update("create temporary table blob_test (id int, blob_data bytea)")
 
@@ -51,7 +47,7 @@ class PostgreSQLLargeObjectTest {
     }
 
     @Test
-    fun streamReaderToDatabaseText() {
+    fun streamReaderToDatabaseText() = transactionalTest(db) {
         db.update("drop table if exists text_test")
         db.update("create temporary table text_test (id int, text_data text)")
 

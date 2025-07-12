@@ -23,11 +23,7 @@
 package org.dalesbred.query
 
 import org.dalesbred.query.SqlQuery.query
-import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class QueryBuilderTest {
 

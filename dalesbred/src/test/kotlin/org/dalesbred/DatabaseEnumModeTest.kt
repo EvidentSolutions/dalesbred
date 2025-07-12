@@ -22,18 +22,16 @@
 
 package org.dalesbred
 
-import org.junit.Rule
-import org.junit.Test
+import org.dalesbred.testutils.transactionalTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DatabaseEnumModeTest {
 
     private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
 
-    @get:Rule val rule = TransactionalTestsRule(db)
-
     @Test
-    fun nameEnumMode() {
+    fun nameEnumMode() = transactionalTest(db) {
         db.typeConversionRegistry.registerEnumConversion(MyEnum::class.java) { it.name }
 
         db.update("drop table if exists enum_mode_test")
@@ -45,7 +43,7 @@ class DatabaseEnumModeTest {
     }
 
     @Test
-    fun ordinalEnumMode() {
+    fun ordinalEnumMode() = transactionalTest(db) {
         db.typeConversionRegistry.registerEnumConversion(MyEnum::class.java) { it.ordinal }
 
         db.update("drop table if exists enum_mode_test")

@@ -22,22 +22,19 @@
 
 package org.dalesbred
 
-import org.junit.Rule
-import org.junit.Test
+import org.dalesbred.testutils.transactionalTest
 import java.lang.reflect.Type
 import java.sql.Types
 import java.time.LocalDate
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DatabaseResultTableTest {
 
     private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
 
-    @get:Rule
-    val rule = TransactionalTestsRule(db)
-
     @Test
-    fun fetchSimpleResultTable() {
+    fun fetchSimpleResultTable() = transactionalTest(db) {
         val table = db.findTable("SELECT 42 AS num, 'foo' AS str, TRUE AS bool FROM (VALUES (0)) v")
 
         assertEquals(3, table.columnCount)
@@ -59,7 +56,7 @@ class DatabaseResultTableTest {
     }
 
     @Test
-    fun testFormatTable() {
+    fun testFormatTable() = transactionalTest(db) {
         db.update("DROP TABLE IF EXISTS result_table_formatter")
         db.update("CREATE TEMPORARY TABLE result_table_formatter (id INTEGER PRIMARY KEY, created DATE, text VARCHAR(512))")
 

@@ -22,10 +22,10 @@
 
 package org.dalesbred.internal.instantiation
 
-import org.junit.Assert.assertSame
-import org.junit.Test
 import java.util.*
+import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertSame
 
 class ConversionMapTest {
 

@@ -22,23 +22,21 @@
 
 package org.dalesbred
 
-import org.junit.Rule
-import org.junit.Test
+import org.dalesbred.testutils.transactionalTest
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.net.URI
 import java.net.URL
 import java.util.*
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class BuiltinConversionsTest {
 
     private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
 
-    @get:Rule val rule = TransactionalTestsRule(db)
-
     @Test
-    fun urlsAndUris() {
+    fun urlsAndUris() = transactionalTest(db) {
         db.update("drop table if exists url_and_uri")
         db.update("create temporary table url_and_uri (url varchar(64), uri varchar(64))")
 
@@ -54,14 +52,14 @@ class BuiltinConversionsTest {
     }
 
     @Test
-    fun shortConversions() {
+    fun shortConversions() = transactionalTest(db) {
         assertEquals(42.toShort(), db.findUnique(Short::class.javaPrimitiveType!!, "values (42)"))
         assertEquals(42.toShort(), db.findUnique(Short::class.java, "values (42)"))
         assertEquals(42.toShort(), db.findUnique(Short::class.java, "values (cast(42 as bigint))"))
     }
 
     @Test
-    fun intConversions() {
+    fun intConversions() = transactionalTest(db) {
         assertEquals(42, db.findUnique(Int::class.javaPrimitiveType!!, "values (42)"))
         assertEquals(42, db.findUniqueInt("values (42)"))
         assertEquals(42, db.findUnique(Int::class.java, "values (42)"))
@@ -69,14 +67,14 @@ class BuiltinConversionsTest {
     }
 
     @Test
-    fun longConversions() {
+    fun longConversions() = transactionalTest(db) {
         assertEquals(42L, db.findUnique(Long::class.javaPrimitiveType!!, "values (42)"))
         assertEquals(42L, db.findUnique(Long::class.java, "values (42)"))
         assertEquals(42L, db.findUniqueLong("values (42)"))
     }
 
     @Test
-    fun booleanConversions() {
+    fun booleanConversions() = transactionalTest(db) {
         assertEquals(true, db.findUnique(Boolean::class.javaPrimitiveType!!, "values true"))
         assertEquals(false, db.findUnique(Boolean::class.java, "values false"))
         assertEquals(true, db.findUniqueBoolean("values true"))
@@ -84,30 +82,30 @@ class BuiltinConversionsTest {
     }
 
     @Test
-    fun floatConversions() {
+    fun floatConversions() = transactionalTest(db) {
         assertEquals(42.0f, db.findUnique(Float::class.javaPrimitiveType!!, "values (42)"))
         assertEquals(42.0f, db.findUnique(Float::class.java, "values (42)"))
     }
 
     @Test
-    fun doubleConversions() {
+    fun doubleConversions() = transactionalTest(db) {
         assertEquals(42.0, db.findUnique(Double::class.javaPrimitiveType!!, "values (42)"))
         assertEquals(42.0, db.findUnique(Double::class.java, "values (42)"))
     }
 
     @Test
-    fun bigIntegerConversions() {
+    fun bigIntegerConversions() = transactionalTest(db) {
         assertEquals(BigInteger.valueOf(42), db.findUnique(BigInteger::class.java, "values (42)"))
     }
 
     @Test
-    fun bigDecimalConversions() {
+    fun bigDecimalConversions() = transactionalTest(db) {
         assertEquals(BigDecimal.valueOf(42), db.findUnique(BigDecimal::class.java, "values (42)"))
         assertEquals(BigDecimal.valueOf(42), db.findUnique(BigDecimal::class.java, "values (42)"))
     }
 
     @Test
-    fun numberConversions() {
+    fun numberConversions() = transactionalTest(db) {
         db.update("drop table if exists numbers")
         db.update("create temporary table numbers (short smallint, int int, long bigint, float float, double float, bigint numeric, bigdecimal numeric(100,38))")
 
@@ -119,8 +117,10 @@ class BuiltinConversionsTest {
         val bigIntegerValue = BigInteger("2334593458934593485734985734958734958375984357349857943857")
         val bigDecimalValue = BigDecimal("234239472938472394823.23948723948723948723498237429387423948")
 
-        db.update("insert into numbers (short, int, long, float, double, bigint, bigdecimal) values (?, ?, ?, ?, ?, ?, ?)",
-                shortValue, intValue, longValue, floatValue, doubleValue, bigIntegerValue, bigDecimalValue)
+        db.update(
+            "insert into numbers (short, int, long, float, double, bigint, bigdecimal) values (?, ?, ?, ?, ?, ?, ?)",
+            shortValue, intValue, longValue, floatValue, doubleValue, bigIntegerValue, bigDecimalValue
+        )
 
         val numbers = db.findUnique(Numbers::class.java, "select * from numbers")
 
@@ -134,7 +134,7 @@ class BuiltinConversionsTest {
     }
 
     @Test
-    fun updateCounts() {
+    fun updateCounts() = transactionalTest(db) {
         db.update("drop table if exists update_count_test_table")
         db.update("create temporary table update_count_test_table (id int primary key)")
 
@@ -144,12 +144,12 @@ class BuiltinConversionsTest {
     }
 
     @Test
-    fun count() {
+    fun count() = transactionalTest(db) {
         assertEquals(3, db.findUniqueInt("select count(*) from (values (1), (2), (3)) n"))
     }
 
     @Test
-    fun timeZoneConversions() {
+    fun timeZoneConversions() = transactionalTest(db) {
         db.update("drop table if exists timezones")
         db.update("create temporary table timezones (zone_id varchar(64))")
 
@@ -157,16 +157,18 @@ class BuiltinConversionsTest {
 
         db.update("insert into timezones (zone_id) values (?)", helsinkiTimeZone)
 
-        assertEquals(helsinkiTimeZone, (db.findUnique(TimeZone::class.java, "select zone_id from timezones"))  )
+        assertEquals(helsinkiTimeZone, (db.findUnique(TimeZone::class.java, "select zone_id from timezones")))
     }
 
     class UrlAndUri(val url: URL, val uri: URI)
 
-    class Numbers(val shortValue: Short,
-                  val intValue: Int,
-                  val longValue: Long,
-                  val floatValue: Float,
-                  val doubleValue: Double,
-                  val bigIntegerValue: BigInteger,
-                  val bigDecimalValue: BigDecimal)
+    class Numbers(
+        val shortValue: Short,
+        val intValue: Int,
+        val longValue: Long,
+        val floatValue: Float,
+        val doubleValue: Double,
+        val bigIntegerValue: BigInteger,
+        val bigDecimalValue: BigDecimal
+    )
 }

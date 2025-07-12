@@ -23,10 +23,9 @@
 package org.dalesbred.dialect
 
 import org.dalesbred.TestDatabaseProvider
-import org.dalesbred.TransactionalTestsRule
-import org.junit.Rule
-import org.junit.Test
+import org.dalesbred.testutils.transactionalTest
 import java.util.*
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
@@ -34,11 +33,8 @@ class PostgreSQLDialectTest {
 
     private val db = TestDatabaseProvider.createPostgreSQLDatabase()
 
-    @get:Rule
-    val rule = TransactionalTestsRule(db)
-
     @Test
-    fun enumsAsPrimitives() {
+    fun enumsAsPrimitives() = transactionalTest(db) {
         db.update("drop type if exists mood cascade")
         db.update("create type mood as enum ('SAD', 'HAPPY')")
 
@@ -48,7 +44,7 @@ class PostgreSQLDialectTest {
     }
 
     @Test
-    fun enumsAsConstructorParameters() {
+    fun enumsAsConstructorParameters() = transactionalTest(db) {
         db.typeConversionRegistry.registerNativeEnumConversion(Mood::class.java, "mood")
 
         db.update("drop type if exists mood cascade")
@@ -65,7 +61,7 @@ class PostgreSQLDialectTest {
     }
 
     @Test
-    fun dates() {
+    fun dates() = transactionalTest(db) {
         val date = Date()
 
         assertEquals(date.time, db.findUnique(Date::class.java, "select ?::timestamp", date).time)

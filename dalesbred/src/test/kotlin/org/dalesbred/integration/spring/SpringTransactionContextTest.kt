@@ -24,8 +24,8 @@ package org.dalesbred.integration.spring
 
 import org.dalesbred.TestDatabaseProvider
 import org.dalesbred.testutils.withConnection
-import org.junit.Test
 import org.springframework.transaction.support.SimpleTransactionStatus
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class SpringTransactionContextTest {

@@ -22,9 +22,9 @@
 
 package org.dalesbred
 
+import org.dalesbred.testutils.transactionalTest
 import org.joda.time.DateTime
-import org.junit.Rule
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
@@ -32,10 +32,8 @@ class DatabaseReflectiveInstantiationTest {
 
     private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
 
-    @get:Rule val rule = TransactionalTestsRule(db)
-
     @Test
-    fun fetchSimpleFieldsAndProperties() {
+    fun fetchSimpleFieldsAndProperties() = transactionalTest(db) {
         val result = db.findUnique(MyResult::class.java, "select 42, 43 as field, 44 as property from (values (1))")
 
         assertEquals(42, result.constructor)
@@ -44,7 +42,7 @@ class DatabaseReflectiveInstantiationTest {
     }
 
     @Test
-    fun fieldsAndPropertiesWithoutMatchingCase() {
+    fun fieldsAndPropertiesWithoutMatchingCase() = transactionalTest(db) {
         val result = db.findUnique(MyResult::class.java, "select 42, 43 as fiELD, 44 as proPERty from (values (1))")
 
         assertEquals(42, result.constructor)
@@ -53,31 +51,31 @@ class DatabaseReflectiveInstantiationTest {
     }
 
     @Test
-    fun constructorBindingWithNullValuesAndConversions() {
+    fun constructorBindingWithNullValuesAndConversions() = transactionalTest(db) {
         val result = db.findUnique(ConstructorNeedingConversion::class.java, "values (cast(null as datetime))")
         assertNull(result.dateTime)
     }
 
     @Test
-    fun fieldBindingNullValuesAndConversions() {
+    fun fieldBindingNullValuesAndConversions() = transactionalTest(db) {
         val result = db.findUnique(FieldNeedingConversion::class.java, "select (cast(null as datetime)) as date_time from (values (1))")
         assertNull(result.dateTime)
     }
 
     @Test
-    fun setterBindingNullValuesAndConversions() {
+    fun setterBindingNullValuesAndConversions() = transactionalTest(db) {
         val result = db.findUnique(SetterNeedingConversion::class.java, "select (cast(null as datetime)) as date_time from (values (1))")
         assertNull(result.dateTime)
     }
 
     @Test
-    fun fieldsWithUnderscores() {
+    fun fieldsWithUnderscores() = transactionalTest(db) {
         val result = db.findUnique(ClassWithUnderscoreFields::class.java, "select 'Fred' as first_name from (values (1))")
         assertEquals("Fred", result.first_name)
     }
 
     @Test
-    fun settersWithUnderscores() {
+    fun settersWithUnderscores() = transactionalTest(db) {
         val result = db.findUnique(ClassWithUnderscoreSetters::class.java, "select 'Fred' as first_name from (values (1))")
         assertEquals("Fred", result.first_name)
     }

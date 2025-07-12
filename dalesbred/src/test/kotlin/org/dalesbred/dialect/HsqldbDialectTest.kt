@@ -23,10 +23,8 @@
 package org.dalesbred.dialect
 
 import org.dalesbred.Database
-import org.dalesbred.TransactionalTestsRule
-import org.junit.Rule
-import org.junit.Test
-
+import org.dalesbred.testutils.transactionalTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -35,15 +33,13 @@ class HsqldbDialectTest {
 
     private val db = Database.forUrlAndCredentials("jdbc:hsqldb:.", "sa", "")
 
-    @get:Rule val rule = TransactionalTestsRule(db)
-
     @Test
-    fun simpleQuery() {
+    fun simpleQuery() = transactionalTest(db) {
         assertEquals(42, db.findUniqueInt("VALUES (42)"))
     }
 
     @Test
-    fun detectDialect() {
+    fun detectDialect() = transactionalTest(db) {
         db.withVoidTransaction { tx ->
             val dialect = Dialect.detect(tx.connection)
 
@@ -52,13 +48,13 @@ class HsqldbDialectTest {
     }
 
     @Test
-    fun enumsAsPrimitives() {
+    fun enumsAsPrimitives() = transactionalTest(db) {
         assertEquals(Mood.SAD, db.findUnique(Mood::class.java, "values ('SAD')"))
         assertNull(db.findUnique(Mood::class.java, "values (cast(null as varchar(20)))"))
     }
 
     @Test
-    fun enumsAsConstructorParameters() {
+    fun enumsAsConstructorParameters() = transactionalTest(db) {
         db.update("drop table if exists movie")
         db.update("create temporary table movie (name varchar(64) primary key, mood varchar(20) not null)")
 

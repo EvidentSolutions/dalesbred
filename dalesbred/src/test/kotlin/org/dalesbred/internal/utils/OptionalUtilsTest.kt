@@ -23,10 +23,10 @@
 package org.dalesbred.internal.utils
 
 import org.dalesbred.internal.utils.OptionalUtils.unwrapOptionalAsNull
-import org.junit.Assert.assertNull
-import org.junit.Test
 import java.util.*
+import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class OptionalUtilsTest {
 

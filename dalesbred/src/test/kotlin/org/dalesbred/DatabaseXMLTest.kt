@@ -22,11 +22,11 @@
 
 package org.dalesbred
 
+import org.dalesbred.testutils.transactionalTest
 import org.intellij.lang.annotations.Language
-import org.junit.Rule
-import org.junit.Test
 import org.w3c.dom.Document
 import javax.xml.parsers.DocumentBuilderFactory
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -34,10 +34,8 @@ class DatabaseXMLTest {
 
     private val db = TestDatabaseProvider.createPostgreSQLDatabase()
 
-    @get:Rule val rule = TransactionalTestsRule(db)
-
     @Test
-    fun convertingBetweenDomNodesAndSQLXML() {
+    fun convertingBetweenDomNodesAndSQLXML() = transactionalTest(db) {
         db.update("drop table if exists xml_test")
         db.update("create temporary table xml_test (xml_document xml)")
 

@@ -22,25 +22,23 @@
 
 package org.dalesbred
 
-import org.junit.Rule
-import org.junit.Test
+import org.dalesbred.testutils.transactionalTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DatabaseCustomConversionTest {
 
     private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
 
-    @get:Rule val rule = TransactionalTestsRule(db)
-
     @Test
-    fun customLoadConversions() {
+    fun customLoadConversions() = transactionalTest(db) {
         db.typeConversionRegistry.registerConversionFromDatabase(String::class.java, EmailAddress::class.java) { EmailAddress.parse(it) }
 
         assertEquals(EmailAddress("user", "example.org"), db.findUnique(EmailAddress::class.java, "values ('user@example.org')"))
     }
 
     @Test
-    fun customSaveConversions() {
+    fun customSaveConversions() = transactionalTest(db) {
         db.typeConversionRegistry.registerConversionToDatabase(EmailAddress::class.java) { it.toString() }
 
         db.update("drop table if exists custom_save_conversions_test")

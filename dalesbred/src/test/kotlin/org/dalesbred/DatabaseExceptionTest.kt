@@ -23,13 +23,13 @@
 package org.dalesbred
 
 import org.dalesbred.query.SqlQuery
-import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DatabaseExceptionTest {
 
-    @After
+    @AfterEach
     fun clearDebugContext() {
         DebugContext.setCurrentQuery(null)
     }

@@ -27,11 +27,7 @@ import org.dalesbred.annotation.DalesbredInstantiator
 import org.dalesbred.dialect.DefaultDialect
 import org.dalesbred.internal.instantiation.test.InaccessibleClassRef
 import org.dalesbred.internal.utils.TypeUtils
-import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class InstantiatorProviderTest {
 

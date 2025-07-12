@@ -23,8 +23,9 @@
 package org.dalesbred.integration.kotlin
 
 import org.dalesbred.TestDatabaseProvider.createInMemoryHSQLDatabase
-import org.junit.Test
+import org.dalesbred.testutils.transactionalTest
 import java.util.*
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
@@ -33,13 +34,13 @@ class DatabaseExtensionsTest {
     private val db = createInMemoryHSQLDatabase()
 
     @Test
-    fun findAll() {
+    fun findAll() = transactionalTest(db) {
         assertEquals(listOf(Department(1, "foo"), Department(2, "bar")),
                 db.findAll<Department>("select * from (values (1, 'foo'), (2, 'bar')) d"))
     }
 
     @Test
-    fun findAll_customMapper() {
+    fun findAll_customMapper() = transactionalTest(db) {
         val result = db.findAll("select * from (values (1, 'foo'), (2, 'bar')) d") { rs ->
             rs.getInt(1) to rs.getString(2).reversed()
         }
@@ -48,12 +49,12 @@ class DatabaseExtensionsTest {
     }
 
     @Test
-    fun findUnique() {
+    fun findUnique() = transactionalTest(db) {
         assertEquals(Department(1, "foo"), db.findUnique<Department>("select * from (values (1, 'foo')) d"))
     }
 
     @Test
-    fun findUnique_customMapper() {
+    fun findUnique_customMapper() = transactionalTest(db) {
         val result = db.findUnique("select * from (values (1, 'foo')) d") { rs ->
             rs.getInt(1) to rs.getString(2).reversed()
         }
@@ -62,17 +63,17 @@ class DatabaseExtensionsTest {
     }
 
     @Test
-    fun findUniqueOrNull_existing() {
+    fun findUniqueOrNull_existing() = transactionalTest(db) {
         assertEquals(Department(1, "foo"), db.findUniqueOrNull<Department>("select * from (values (1, 'foo')) d"))
     }
 
     @Test
-    fun findUniqueOrNull_nonexistent() {
+    fun findUniqueOrNull_nonexistent() = transactionalTest(db) {
         assertNull(db.findUniqueOrNull<Department>("select * from (values (1, 'foo')) d where 1 = 2"))
     }
 
     @Test
-    fun findUniqueOrNull_customMapper() {
+    fun findUniqueOrNull_customMapper() = transactionalTest(db) {
         val result = db.findUniqueOrNull("select * from (values (1, 'foo')) d") { rs ->
             rs.getInt(1) to rs.getString(2).reversed()
         }
@@ -81,17 +82,17 @@ class DatabaseExtensionsTest {
     }
 
     @Test
-    fun findOptional_existing() {
+    fun findOptional_existing() = transactionalTest(db) {
         assertEquals(Optional.of(Department(1, "foo")), db.findOptional<Department>("select * from (values (1, 'foo')) d"))
     }
 
     @Test
-    fun findOptional_nonexistent() {
+    fun findOptional_nonexistent() = transactionalTest(db) {
         assertEquals(Optional.empty(), db.findOptional<Department>("select * from (values (1, 'foo')) d where 1 = 2"))
     }
 
     @Test
-    fun findOptional_customMapper() {
+    fun findOptional_customMapper() = transactionalTest(db) {
         val result = db.findOptional("select * from (values (1, 'foo')) d") { rs ->
             rs.getInt(1) to rs.getString(2).reversed()
         }
@@ -100,14 +101,14 @@ class DatabaseExtensionsTest {
     }
 
     @Test
-    fun findMap() {
+    fun findMap() = transactionalTest(db) {
         val map = db.findMap<Int,String>("select * from (values (1, 'foo'), (2, 'bar')) d")
 
         assertEquals(mapOf(1 to "foo", 2 to "bar"), map)
     }
 
     @Test
-    fun executeQuery() {
+    fun executeQuery() = transactionalTest(db) {
         val result = db.executeQuery("select * from (values (1, 'foo'), (2, 'bar')) d") { rs ->
             val ints = mutableListOf<Int>()
             val strs = mutableListOf<String>()

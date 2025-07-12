@@ -47,9 +47,10 @@ dependencies {
     testImplementation(libs.jdbc.h2)
     testImplementation(libs.jdbc.mysql)
     testImplementation(libs.jdbc.mariadb)
-    testImplementation(libs.junit)
+    testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.logback.core)
     testImplementation(libs.logback.classic)
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 tasks.jar {

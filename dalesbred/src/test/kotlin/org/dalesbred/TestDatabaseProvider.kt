@@ -25,7 +25,7 @@ package org.dalesbred
 import org.dalesbred.connection.ConnectionProvider
 import org.dalesbred.connection.DriverManagerConnectionProvider
 import org.dalesbred.transaction.TransactionCallback
-import org.junit.Assume.assumeFalse
+import org.junit.jupiter.api.Assumptions.assumeFalse
 import java.io.InputStream
 import java.io.PrintWriter
 import java.sql.Connection
@@ -77,7 +77,7 @@ object TestDatabaseProvider {
 
     private fun loadProperties(name: String): Properties {
         val stream: InputStream? = TransactionCallback::class.java.classLoader.getResourceAsStream(name)
-        assumeFalse("ignored test because '$name' was not found", stream == null)
+        assumeFalse(stream == null, "ignored test because '$name' was not found")
         stream!!.use {
             return Properties().apply {
                 load(stream)

@@ -23,7 +23,7 @@
 package org.dalesbred.internal.utils
 
 import org.dalesbred.DatabaseException
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 

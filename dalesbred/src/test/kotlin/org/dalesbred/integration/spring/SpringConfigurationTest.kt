@@ -25,15 +25,14 @@ package org.dalesbred.integration.spring
 import org.dalesbred.Database
 import org.dalesbred.TestDatabaseProvider
 import org.dalesbred.transaction.Propagation
-import org.junit.Test
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.datasource.DataSourceTransactionManager
 import org.springframework.jdbc.datasource.DataSourceUtils
 import org.springframework.transaction.support.TransactionTemplate
-
 import javax.sql.DataSource
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class SpringConfigurationTest {

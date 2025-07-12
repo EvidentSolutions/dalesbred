@@ -24,7 +24,7 @@ package org.dalesbred.internal.utils
 
 import org.dalesbred.internal.utils.CollectionUtils.arrayOfType
 import org.dalesbred.internal.utils.CollectionUtils.mapToList
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

@@ -23,8 +23,8 @@
 package org.dalesbred
 
 import org.dalesbred.transaction.Isolation.*
-import org.junit.Test
 import java.sql.Connection
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 

@@ -22,18 +22,16 @@
 
 package org.dalesbred
 
-import org.junit.Rule
-import org.junit.Test
+import org.dalesbred.testutils.transactionalTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DatabasePropertyPathBindingTest {
 
     private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
 
-    @get:Rule val rule = TransactionalTestsRule(db)
-
     @Test
-    fun bindingToNestedPaths() {
+    fun bindingToNestedPaths() = transactionalTest(db) {
         val result = db.findUnique(ResultClass::class.java, """
                 select 'AAA' as "nestedField.foo",
                        'BBB' as "nestedGetter.foo"

@@ -25,7 +25,7 @@ package org.dalesbred.transaction
 import org.dalesbred.Database
 import org.dalesbred.TestDatabaseProvider
 import org.dalesbred.testutils.withConnection
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

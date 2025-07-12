@@ -25,10 +25,10 @@ package org.dalesbred
 import org.dalesbred.query.SqlQuery.query
 import org.dalesbred.result.ResultSetProcessor
 import org.dalesbred.testutils.mapRows
-import org.junit.Assert.assertArrayEquals
-import org.junit.Rule
-import org.junit.Test
+import org.dalesbred.testutils.transactionalTest
+import org.junit.jupiter.api.Assertions.assertArrayEquals
 import java.sql.ResultSet
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
@@ -36,10 +36,8 @@ class DatabaseBatchUpdatesTest {
 
     private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
 
-    @get:Rule val rule = TransactionalTestsRule(db)
-
     @Test
-    fun batchUpdate() {
+    fun batchUpdate() = transactionalTest(db) {
         db.update("drop table if exists dictionary")
         db.update("create temporary table dictionary (word varchar(64) primary key)")
 
@@ -51,7 +49,7 @@ class DatabaseBatchUpdatesTest {
     }
 
     @Test
-    fun batchUpdateWithGeneratedKeys() {
+    fun batchUpdateWithGeneratedKeys() = transactionalTest(db) {
         db.update("drop table if exists my_table")
         db.update("create temporary table my_table (id identity primary key, str varchar(64), num int)")
 
@@ -66,7 +64,7 @@ class DatabaseBatchUpdatesTest {
     }
 
     @Test
-    fun exceptionsContainReferenceToOriginalQuery() {
+    fun exceptionsContainReferenceToOriginalQuery() = transactionalTest(db) {
         val data = listOf(listOf("foo"))
 
         try {

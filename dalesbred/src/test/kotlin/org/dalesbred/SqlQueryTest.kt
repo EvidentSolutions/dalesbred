@@ -23,8 +23,7 @@
 package org.dalesbred
 
 import org.dalesbred.query.SqlQuery
-import org.junit.Test
-import java.lang.IllegalArgumentException
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotEquals

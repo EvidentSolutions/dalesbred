@@ -22,9 +22,9 @@
 
 package org.dalesbred
 
-import org.junit.Rule
-import org.junit.Test
+import org.dalesbred.testutils.transactionalTest
 import java.util.*
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
@@ -32,10 +32,8 @@ class DatabaseOptionalTest {
 
     private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
 
-    @get:Rule val rule = TransactionalTestsRule(db)
-
     @Test
-    fun emptyOptionalIsBoundAsNull() {
+    fun emptyOptionalIsBoundAsNull() = transactionalTest(db) {
         assertNull(db.findUnique(Int::class.javaObjectType, "values (cast (? as int))", Optional.empty<Any>()))
         assertNull(db.findUnique(Int::class.javaObjectType, "values (cast (? as int))", OptionalInt.empty()))
         assertNull(db.findUnique(Long::class.javaObjectType, "values (cast (? as int))", OptionalLong.empty()))
@@ -43,7 +41,7 @@ class DatabaseOptionalTest {
     }
 
     @Test
-    fun nonEmptyOptionalIsBoundAsValue() {
+    fun nonEmptyOptionalIsBoundAsValue() = transactionalTest(db) {
         db.update("drop table if exists optional_test")
         db.update("create table optional_test (val VARCHAR(20))")
 
@@ -53,7 +51,7 @@ class DatabaseOptionalTest {
     }
 
     @Test
-    fun nullAreHandledAsEmpty() {
+    fun nullAreHandledAsEmpty() = transactionalTest(db) {
         val obj = db.findUnique(OptionalContainer::class.java, "select (cast (null as int)) as optionalInt, (cast (null as int)) as optionalInteger, null as optionalString from (values (0))")
         assertEquals(OptionalInt.empty(), obj.optionalInt)
         assertEquals(Optional.empty(), obj.optionalInteger)
@@ -61,7 +59,7 @@ class DatabaseOptionalTest {
     }
 
     @Test
-    fun nonNullsAreHandledAsValues() {
+    fun nonNullsAreHandledAsValues() = transactionalTest(db) {
         val obj = db.findUnique(OptionalContainer::class.java,
                 "SELECT 35 AS optionalInt, 53 AS optionalInteger, 'foo' AS optionalString, 4242424 as optionalLong, 424.2 as optionalDouble FROM (VALUES (0))")
 

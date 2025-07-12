@@ -23,12 +23,8 @@
 package org.dalesbred.internal.instantiation
 
 import org.dalesbred.annotation.DalesbredIgnore
-import org.junit.Test
 import java.util.*
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNotEquals
-import kotlin.test.assertNotNull
+import kotlin.test.*
 
 class PropertyAccessorTest {
 

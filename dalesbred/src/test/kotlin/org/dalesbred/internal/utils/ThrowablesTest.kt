@@ -22,12 +22,12 @@
 
 package org.dalesbred.internal.utils
 
-import org.junit.Assert.fail
-import org.junit.Test
 import java.io.IOException
 import java.sql.SQLException
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.test.fail
 
 class ThrowablesTest {
 

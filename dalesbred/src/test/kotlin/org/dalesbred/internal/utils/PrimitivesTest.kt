@@ -22,8 +22,8 @@
 
 package org.dalesbred.internal.utils
 
-import org.junit.Assert.assertArrayEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertArrayEquals
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class PrimitivesTest {

@@ -23,54 +23,50 @@
 package org.dalesbred.integration.joda
 
 import org.dalesbred.TestDatabaseProvider
-import org.dalesbred.TransactionalTestsRule
+import org.dalesbred.testutils.transactionalTest
 import org.dalesbred.testutils.withUTCTimeZone
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.LocalDate
 import org.joda.time.LocalTime
-import org.junit.Rule
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class JodaIntegrationTest {
 
     private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
 
-    @get:Rule
-    val rule = TransactionalTestsRule(db)
-
     @Test
-    fun fetchJodaDateTimes() {
+    fun fetchJodaDateTimes() = transactionalTest(db) {
         assertEquals(DateTime(2012, 10, 9, 11, 29, 25), db.findUnique(DateTime::class.java, "values (cast('2012-10-09 11:29:25' as timestamp))"))
     }
 
     @Test
-    fun fetchJodaDates() {
+    fun fetchJodaDates() = transactionalTest(db) {
         assertEquals(LocalDate(2012, 10, 9), db.findUnique(LocalDate::class.java, "values (cast('2012-10-09' as date))"))
     }
 
     @Test
-    fun fetchJodaTime() {
+    fun fetchJodaTime() = transactionalTest(db) {
         assertEquals(LocalTime(11, 29, 25), db.findUnique(LocalTime::class.java, "values (cast('11:29:25' as time))"))
     }
 
     @Test
-    fun localDatesWithTimeZoneProblems() {
+    fun localDatesWithTimeZoneProblems() = transactionalTest(db) {
         withUTCTimeZone {
             assertEquals(LocalDate(2012, 10, 9), db.findUnique(LocalDate::class.java, "values (cast('2012-10-09' as date))"))
         }
     }
 
     @Test
-    fun localDatesFromTimestampWithTimeZoneProblems() {
+    fun localDatesFromTimestampWithTimeZoneProblems() = transactionalTest(db) {
         withUTCTimeZone {
             assertEquals(LocalDate(2012, 10, 9), db.findUnique(LocalDate::class.java, "values (cast('2012-10-09 00:00:00' as timestamp))"))
         }
     }
 
     @Test
-    fun jodaTypesAsParameters() {
+    fun jodaTypesAsParameters() = transactionalTest(db) {
         val container = db.findUnique(DateContainer::class.java, "values (cast('2012-10-09 11:29:25' as timestamp), cast('2012-10-09' as date), cast('11:29:25' as time))")
 
         assertEquals(DateTime(2012, 10, 9, 11, 29, 25), container.dateTime)
@@ -79,7 +75,7 @@ class JodaIntegrationTest {
     }
 
     @Test
-    fun saveJodaTypes() {
+    fun saveJodaTypes() = transactionalTest(db) {
         db.update("drop table if exists date_test")
         db.update("create table date_test (timestamp timestamp, date date, time time)")
 
@@ -95,7 +91,7 @@ class JodaIntegrationTest {
     }
 
     @Test
-    fun timeZoneConversions() {
+    fun timeZoneConversions() = transactionalTest(db) {
         db.update("drop table if exists timezones")
         db.update("create temporary table timezones (zone_id varchar(64))")
 

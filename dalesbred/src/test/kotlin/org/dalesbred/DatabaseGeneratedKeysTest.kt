@@ -24,20 +24,17 @@ package org.dalesbred
 
 import org.dalesbred.result.ResultSetProcessor
 import org.dalesbred.testutils.mapRows
-import org.junit.Rule
-import org.junit.Test
-
+import org.dalesbred.testutils.transactionalTest
 import java.sql.ResultSet
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DatabaseGeneratedKeysTest {
 
     private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
 
-    @get:Rule val rule = TransactionalTestsRule(db)
-
     @Test
-    fun updateWithGeneratedKeys() {
+    fun updateWithGeneratedKeys() = transactionalTest(db) {
         db.update("drop table if exists my_table")
         db.update("create temporary table my_table (id identity primary key, my_text varchar(100))")
 
@@ -46,7 +43,7 @@ class DatabaseGeneratedKeysTest {
     }
 
     @Test
-    fun updateWithGeneratedKeysWithDefaultColumnNames() {
+    fun updateWithGeneratedKeysWithDefaultColumnNames() = transactionalTest(db) {
         db.update("drop table if exists my_table")
         db.update("create temporary table my_table (id identity primary key, my_text varchar(100))")
 

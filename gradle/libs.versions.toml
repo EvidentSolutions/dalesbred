@@ -1,7 +1,7 @@
 [versions]
 kotlin = "1.9.23"
 postgresqlJdbc = "42.2.24"
-junit = "4.13.2" # TODO 5.x
+junit = "5.12.2"
 spring = "5.3.10"
 logback = "1.2.6"
 vanniktechMavenPublish = "0.32.0"
@@ -23,7 +23,7 @@ jdbc-h2 = { module = "com.h2database:h2", version = "1.4.200" }
 jdbc-mysql = { module = "mysql:mysql-connector-java", version = "8.0.26" }
 jdbc-mariadb = { module = "org.mariadb.jdbc:mariadb-java-client", version = "3.4.1" }
 jdbc-oracle = { module = "com.oracle.database.jdbc:ojdbc8", version = "21.3.0.0" }
-junit = { module = "junit:junit", version.ref = "junit" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 
 vanniktechMavenPublish-gradlePlugin = { module = "com.vanniktech.maven.publish:com.vanniktech.maven.publish.gradle.plugin", version.ref = "vanniktechMavenPublish" }
 asciidoctor-gradlePlugin = { module = "org.asciidoctor:asciidoctor-gradle-jvm", version.ref = "asciidoctor" }
