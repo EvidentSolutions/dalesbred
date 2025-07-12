@@ -1,5 +1,4 @@
 import com.vanniktech.maven.publish.SonatypeHost
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("dalesbred.common-conventions")
@@ -8,15 +7,9 @@ plugins {
     `java-library`
 }
 
-tasks.withType<JavaCompile> {
-    options.encoding = "UTF-8"
-    sourceCompatibility = "8"
-    targetCompatibility = "8"
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = "1.8"
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
