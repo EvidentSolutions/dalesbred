@@ -1,8 +1,9 @@
-## Unreleased
+## 1.3.7 (2025-07-12)
 
 ### Changes
 
 - Add dialect for MariaDB ([#56](https://github.com/EvidentSolutions/dalesbred/pull/56))
+- Fix binary blob handling with MariaDB Connector/J 3.5.2+ ([#58](https://github.com/EvidentSolutions/dalesbred/issues/58))
 
 ## 1.3.6 (2024-05-06)
 
