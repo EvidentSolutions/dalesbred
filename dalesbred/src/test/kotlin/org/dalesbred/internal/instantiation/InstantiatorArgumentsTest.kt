@@ -30,7 +30,7 @@ import kotlin.test.assertSame
 class InstantiatorArgumentsTest {
 
     @Test
-    fun constructorArgumentsAreRetained() {
+    fun `constructor arguments are retained`() {
         val types = NamedTypeList.builder(2).apply {
             add("foo", String::class.java)
             add("bar", Int::class.javaPrimitiveType!!)
@@ -44,7 +44,7 @@ class InstantiatorArgumentsTest {
     }
 
     @Test
-    fun sizesOfArgumentListsDiffer() {
+    fun `sizes of argument lists differ`() {
         val types = NamedTypeList.builder(2).apply {
             add("foo", String::class.java)
             add("bar", Int::class.javaPrimitiveType!!)
@@ -56,7 +56,7 @@ class InstantiatorArgumentsTest {
     }
 
     @Test
-    fun argumentsSize() {
+    fun `arguments size`() {
         val types = NamedTypeList.builder(2).apply {
             add("foo", String::class.java)
             add("bar", Int::class.javaPrimitiveType!!)

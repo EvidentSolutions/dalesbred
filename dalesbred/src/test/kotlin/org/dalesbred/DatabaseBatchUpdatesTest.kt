@@ -24,6 +24,8 @@ package org.dalesbred
 
 import org.dalesbred.query.SqlQuery.query
 import org.dalesbred.result.ResultSetProcessor
+import org.dalesbred.testutils.DatabaseProvider.POSTGRESQL
+import org.dalesbred.testutils.DatabaseTest
 import org.dalesbred.testutils.mapRows
 import org.dalesbred.testutils.transactionalTest
 import org.junit.jupiter.api.Assertions.assertArrayEquals
@@ -32,12 +34,11 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
-class DatabaseBatchUpdatesTest {
-
-    private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
+@DatabaseTest(POSTGRESQL)
+class DatabaseBatchUpdatesTest(private val db: Database) {
 
     @Test
-    fun batchUpdate() = transactionalTest(db) {
+    fun `batch update`() = transactionalTest(db) {
         db.update("drop table if exists dictionary")
         db.update("create temporary table dictionary (word varchar(64) primary key)")
 
@@ -49,22 +50,22 @@ class DatabaseBatchUpdatesTest {
     }
 
     @Test
-    fun batchUpdateWithGeneratedKeys() = transactionalTest(db) {
+    fun `batch update with generated keys`() = transactionalTest(db) {
         db.update("drop table if exists my_table")
-        db.update("create temporary table my_table (id identity primary key, str varchar(64), num int)")
+        db.update("create temporary table my_table (id serial primary key, str varchar(64), num int)")
 
         val argLists = listOf(
                 listOf("foo", 1),
                 listOf("bar", 2),
                 listOf("baz", 3))
 
-        val result = db.updateBatchAndProcessGeneratedKeys(CollectKeysResultSetProcessor, listOf("ID"), "INSERT INTO my_table (str, num) VALUES (?,?)", argLists)
+        val result = db.updateBatchAndProcessGeneratedKeys(CollectKeysResultSetProcessor, listOf("ID"), "INSERT INTO my_table (str, num) VALUES (?,?) returning id", argLists)
 
-        assertEquals(listOf(0, 1, 2), result)
+        assertEquals(listOf(1, 2, 3), result)
     }
 
     @Test
-    fun exceptionsContainReferenceToOriginalQuery() = transactionalTest(db) {
+    fun `exceptions contain reference to original query`() = transactionalTest(db) {
         val data = listOf(listOf("foo"))
 
         try {

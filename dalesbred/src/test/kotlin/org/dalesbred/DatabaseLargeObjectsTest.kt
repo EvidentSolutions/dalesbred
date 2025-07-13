@@ -22,6 +22,8 @@
 
 package org.dalesbred
 
+import org.dalesbred.testutils.DatabaseProvider.HSQL
+import org.dalesbred.testutils.DatabaseTest
 import org.dalesbred.testutils.transactionalTest
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import java.io.InputStream
@@ -29,23 +31,22 @@ import java.io.Reader
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class DatabaseLargeObjectsTest {
-
-    private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
+@DatabaseTest(HSQL)
+class DatabaseLargeObjectsTest(private val db: Database) {
 
     @Test
-    fun clobColumnsCanBeCoercedToStrings() = transactionalTest(db) {
+    fun `clob columns can be coerced to strings`() = transactionalTest(db) {
         assertEquals("foo", db.findUnique(String::class.java, "values (cast ('foo' as clob))"))
     }
 
     @Test
-    fun blobColumnsCanBeCoercedToStrings() = transactionalTest(db) {
+    fun `blob columns can be coerced to strings`() = transactionalTest(db) {
         val data = byteArrayOf(1, 2, 3)
         assertArrayEquals(data, db.findUnique(ByteArray::class.java, "values (cast (? as blob))", data))
     }
 
     @Test
-    fun streamClobToDatabase() = transactionalTest(db) {
+    fun `stream clob to database`() = transactionalTest(db) {
         db.update("drop table if exists clob_test")
         db.update("create temporary table clob_test (id int, clob_data clob)")
 
@@ -56,7 +57,7 @@ class DatabaseLargeObjectsTest {
     }
 
     @Test
-    fun streamClobFromDatabase() = transactionalTest(db) {
+    fun `stream clob from database`() = transactionalTest(db) {
         db.update("drop table if exists clob_test")
         db.update("create temporary table clob_test (id int, clob_data clob)")
 
@@ -69,7 +70,7 @@ class DatabaseLargeObjectsTest {
     }
 
     @Test
-    fun streamBlobToDatabase() = transactionalTest(db) {
+    fun `stream blob to database`() = transactionalTest(db) {
         db.update("drop table if exists blob_test")
         db.update("create temporary table blob_test (id int, blob_data blob)")
 
@@ -80,7 +81,7 @@ class DatabaseLargeObjectsTest {
     }
 
     @Test
-    fun streamBlobFromDatabase() = transactionalTest(db) {
+    fun `stream blob from database`() = transactionalTest(db) {
         db.update("drop table if exists blob_test")
         db.update("create temporary table blob_test (id int, blob_data blob)")
 

@@ -22,16 +22,17 @@
 
 package org.dalesbred
 
+import org.dalesbred.testutils.DatabaseProvider.POSTGRESQL
+import org.dalesbred.testutils.DatabaseTest
 import org.dalesbred.testutils.transactionalTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class DatabaseEnumModeTest {
-
-    private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
+@DatabaseTest(POSTGRESQL)
+class DatabaseEnumModeTest(private val db: Database) {
 
     @Test
-    fun nameEnumMode() = transactionalTest(db) {
+    fun `name enum mode`() = transactionalTest(db) {
         db.typeConversionRegistry.registerEnumConversion(MyEnum::class.java) { it.name }
 
         db.update("drop table if exists enum_mode_test")
@@ -43,7 +44,7 @@ class DatabaseEnumModeTest {
     }
 
     @Test
-    fun ordinalEnumMode() = transactionalTest(db) {
+    fun `ordinal enum mode`() = transactionalTest(db) {
         db.typeConversionRegistry.registerEnumConversion(MyEnum::class.java) { it.ordinal }
 
         db.update("drop table if exists enum_mode_test")

@@ -32,12 +32,12 @@ class ConversionMapTest {
     private val registry = ConversionMap()
 
     @Test
-    fun searchingForNotExistingItemReturnsNull() {
+    fun `searching for not existing item returns null`() {
         assertEquals(Optional.empty(), registry.findConversion(Int::class.java, String::class.java))
     }
 
     @Test
-    fun searchBasedOnExactMatch() {
+    fun `search based on exact match`() {
         val conversion = dummyConversion()
         registry.register(Int::class.java, String::class.java, conversion)
 
@@ -45,7 +45,7 @@ class ConversionMapTest {
     }
 
     @Test
-    fun searchBasedOnResultCovariance() {
+    fun `search based on result covariance`() {
         val conversion = dummyConversion()
         registry.register(Int::class.java, String::class.java, conversion)
 
@@ -53,7 +53,7 @@ class ConversionMapTest {
     }
 
     @Test
-    fun searchBasedOnParamContravariance() {
+    fun `search based on param contravariance`() {
         val conversion = dummyConversion()
         registry.register(Number::class.java, String::class.java, conversion)
 
@@ -61,7 +61,7 @@ class ConversionMapTest {
     }
 
     @Test
-    fun primitivesAndWrappersAreConsideredSame() {
+    fun `primitives and wrappers are considered same`() {
         val conversion = dummyConversion()
         registry.register(Int::class.java, Long::class.java, conversion)
 
@@ -69,7 +69,7 @@ class ConversionMapTest {
     }
 
     @Test
-    fun sourceContravarianceOnInterfaces() {
+    fun `source contravariance on interfaces`() {
         val conversion = dummyConversion()
         registry.register(CharSequence::class.java, Long::class.java, conversion)
 
@@ -77,7 +77,7 @@ class ConversionMapTest {
     }
 
     @Test
-    fun laterAdditionsOverrideEarlierOnes() {
+    fun `later additions override earlier ones`() {
         val conversion1 = dummyConversion()
         val conversion2 = dummyConversion()
         registry.register(String::class.java, Long::class.java, conversion1)

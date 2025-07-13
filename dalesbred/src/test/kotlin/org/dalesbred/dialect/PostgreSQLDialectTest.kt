@@ -20,21 +20,24 @@
  * THE SOFTWARE.
  */
 
+@file:Suppress("SqlResolve")
+
 package org.dalesbred.dialect
 
-import org.dalesbred.TestDatabaseProvider
+import org.dalesbred.Database
+import org.dalesbred.testutils.DatabaseProvider.POSTGRESQL
+import org.dalesbred.testutils.DatabaseTest
 import org.dalesbred.testutils.transactionalTest
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-class PostgreSQLDialectTest {
-
-    private val db = TestDatabaseProvider.createPostgreSQLDatabase()
+@DatabaseTest(POSTGRESQL)
+class PostgreSQLDialectTest(private val db: Database) {
 
     @Test
-    fun enumsAsPrimitives() = transactionalTest(db) {
+    fun `enums as primitives`() = transactionalTest(db) {
         db.update("drop type if exists mood cascade")
         db.update("create type mood as enum ('SAD', 'HAPPY')")
 
@@ -44,7 +47,7 @@ class PostgreSQLDialectTest {
     }
 
     @Test
-    fun enumsAsConstructorParameters() = transactionalTest(db) {
+    fun `enums as constructor parameters`() = transactionalTest(db) {
         db.typeConversionRegistry.registerNativeEnumConversion(Mood::class.java, "mood")
 
         db.update("drop type if exists mood cascade")
@@ -61,7 +64,7 @@ class PostgreSQLDialectTest {
     }
 
     @Test
-    fun dates() = transactionalTest(db) {
+    fun `timestamps as dates`() = transactionalTest(db) {
         val date = Date()
 
         assertEquals(date.time, db.findUnique(Date::class.java, "select ?::timestamp", date).time)

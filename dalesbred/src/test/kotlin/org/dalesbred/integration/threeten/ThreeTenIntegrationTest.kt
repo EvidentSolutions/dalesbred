@@ -24,7 +24,9 @@
 
 package org.dalesbred.integration.threeten
 
-import org.dalesbred.TestDatabaseProvider
+import org.dalesbred.Database
+import org.dalesbred.testutils.DatabaseProvider.POSTGRESQL
+import org.dalesbred.testutils.DatabaseTest
 import org.dalesbred.testutils.transactionalTest
 import org.dalesbred.testutils.withUTCTimeZone
 import org.threeten.bp.*
@@ -32,17 +34,16 @@ import org.threeten.bp.temporal.ChronoUnit.SECONDS
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ThreeTenIntegrationTest {
-
-    private val db = TestDatabaseProvider.createPostgreSQLDatabase()
+@DatabaseTest(POSTGRESQL)
+class ThreeTenIntegrationTest(private val db: Database) {
 
     @Test
-    fun fetchLocalDateTime() = transactionalTest(db) {
+    fun `fetch LocalDateTime`() = transactionalTest(db) {
         assertEquals(LocalDateTime.of(2012, 10, 9, 11, 29, 25), db.findUnique(LocalDateTime::class.java, "VALUES (cast('2012-10-09 11:29:25' AS TIMESTAMP))"))
     }
 
     @Test
-    fun fetchInstant() = transactionalTest(db) {
+    fun `fetch Instant`() = transactionalTest(db) {
         withUTCTimeZone {
             val time = Instant.ofEpochMilli(1295000000000L)
             assertEquals(time, db.findUnique(Instant::class.java, "VALUES (cast('2011-01-14 10:13:20' AS TIMESTAMP))"))
@@ -50,7 +51,7 @@ class ThreeTenIntegrationTest {
     }
 
     @Test
-    fun storeInstant() = transactionalTest(db) {
+    fun `store Instant`() = transactionalTest(db) {
         db.update("DROP TABLE IF EXISTS instant_test")
         db.update("CREATE TABLE instant_test (timestamp TIMESTAMP)")
 
@@ -62,31 +63,31 @@ class ThreeTenIntegrationTest {
     }
 
     @Test
-    fun fetchLocalDates() = transactionalTest(db) {
+    fun `fetch LocalDates`() = transactionalTest(db) {
         assertEquals(LocalDate.of(2012, 10, 9), db.findUnique(LocalDate::class.java, "VALUES (cast('2012-10-09' AS DATE))"))
     }
 
     @Test
-    fun fetchLocalTime() = transactionalTest(db) {
+    fun `fetch LocalTime`() = transactionalTest(db) {
         assertEquals(LocalTime.of(11, 29, 25), db.findUnique(LocalTime::class.java, "VALUES (cast('11:29:25' AS TIME))"))
     }
 
     @Test
-    fun localDatesWithTimeZoneProblems() = transactionalTest(db) {
+    fun `LocalDates with time-zone problems`() = transactionalTest(db) {
         withUTCTimeZone {
             assertEquals(LocalDate.of(2012, 10, 9), db.findUnique(LocalDate::class.java, "VALUES (cast('2012-10-09' AS DATE))"))
         }
     }
 
     @Test
-    fun localDatesFromTimestampWithTimeZoneProblems() = transactionalTest(db) {
+    fun `LocalDates from timestamp with time-zone problems`() = transactionalTest(db) {
         withUTCTimeZone {
             assertEquals(LocalDate.of(2012, 10, 9), db.findUnique(LocalDate::class.java, "VALUES (cast('2012-10-09 00:00:00' AS TIMESTAMP))"))
         }
     }
 
     @Test
-    fun timesTypesAsParameters() = transactionalTest(db) {
+    fun `time types as parameters`() = transactionalTest(db) {
         val container = db.findUnique(DateContainer::class.java, "VALUES (cast('2012-10-09 11:29:25' AS TIMESTAMP), cast('2012-10-09' AS DATE), cast('11:29:25' AS TIME))")
 
         assertEquals(LocalDateTime.of(2012, 10, 9, 11, 29, 25), container.dateTime)
@@ -95,7 +96,7 @@ class ThreeTenIntegrationTest {
     }
 
     @Test
-    fun saveJavaTimeTypes() = transactionalTest(db) {
+    fun `save time types`() = transactionalTest(db) {
         db.update("DROP TABLE IF EXISTS date_test")
         db.update("CREATE TABLE date_test (timestamp TIMESTAMP, date DATE, time TIME)")
 
@@ -111,7 +112,7 @@ class ThreeTenIntegrationTest {
     }
 
     @Test
-    fun timeZoneConversions() = transactionalTest(db) {
+    fun `time-zone conversions`() = transactionalTest(db) {
         db.update("DROP TABLE IF EXISTS timezones")
         db.update("CREATE TEMPORARY TABLE timezones (zone_id VARCHAR(64))")
 

@@ -45,7 +45,7 @@ class PrimitivesTest {
     }
 
     @Test
-    fun convertingArraysToObjectArray() {
+    fun `converting arrays to object array`() {
         assertArrayEquals(arrayOf("foo", "bar"), Primitives.arrayAsObjectArray(arrayOf("foo", "bar")))
         assertArrayEquals(arrayOf(1, 4), Primitives.arrayAsObjectArray(intArrayOf(1, 4)))
     }

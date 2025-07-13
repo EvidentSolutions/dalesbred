@@ -23,24 +23,26 @@
 package org.dalesbred
 
 import org.dalesbred.dialect.HsqldbDialect
+import org.dalesbred.dialect.PostgreSQLDialect
 import org.dalesbred.result.*
+import org.dalesbred.testutils.DatabaseProvider.POSTGRESQL
+import org.dalesbred.testutils.DatabaseTest
 import org.dalesbred.testutils.transactionalTest
 import java.math.BigDecimal
 import java.util.*
 import kotlin.test.*
 
-class DatabaseTest {
-
-    private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
+@DatabaseTest(POSTGRESQL)
+class DatabaseTest(private val db: Database) {
 
     @Test
-    fun meaningfulToString() = transactionalTest(db) {
+    fun `meaningful toString`() = transactionalTest(db) {
         db.isAllowImplicitTransactions = true
-        assertEquals("Database [dialect=${HsqldbDialect()}, allowImplicitTransactions=true]", db.toString())
+        assertEquals("Database [dialect=${PostgreSQLDialect()}, allowImplicitTransactions=true]", db.toString())
     }
 
     @Test
-    fun primitivesQueries() = transactionalTest(db) {
+    fun `primitive queries`() = transactionalTest(db) {
         assertEquals(42, db.findUniqueInt("values (42)"))
         assertEquals(42, db.findUnique(Int::class.java, "values (42)"))
         assertEquals(42L, db.findUnique(Long::class.java, "values (cast(42 as bigint))"))
@@ -52,19 +54,19 @@ class DatabaseTest {
     }
 
     @Test
-    fun bigNumbers() = transactionalTest(db) {
+    fun `big numbers`() = transactionalTest(db) {
         assertEquals(BigDecimal("4242242848428484848484848"), db.findUnique(BigDecimal::class.java, "values (4242242848428484848484848)"))
     }
 
     @Test
-    fun autoDetectingTypes() = transactionalTest(db) {
+    fun `auto-detecting types`() = transactionalTest(db) {
         assertEquals(42, db.findUnique(Any::class.java, "values (42)"))
         assertEquals("foo", db.findUnique(Any::class.java, "values ('foo')"))
         assertEquals(true, db.findUnique(Any::class.java, "values (true)"))
     }
 
     @Test
-    fun constructorRowMapping() = transactionalTest(db) {
+    fun `constructor row mapping`() = transactionalTest(db) {
         val departments = db.findAll(Department::class.java, "select * from (values (1, 'foo'), (2, 'bar')) d")
 
         assertEquals(2, departments.size)
@@ -84,8 +86,8 @@ class DatabaseTest {
     }
 
     @Test
-    fun mapWithNullConversion() = transactionalTest(db) {
-        val map = db.findMap(String::class.java, String::class.java, "values ('foo', cast (null as clob)), (cast (null as clob), 'bar')")
+    fun `map with null conversion`() = transactionalTest(db) {
+        val map = db.findMap(String::class.java, String::class.java, "values ('foo', cast (null as text)), (cast (null as text), 'bar')")
 
         assertEquals(2, map.size)
         assertNull(map["foo"])
@@ -93,7 +95,7 @@ class DatabaseTest {
     }
 
     @Test
-    fun mapWithMultipleArguments() = transactionalTest(db) {
+    fun `map with multiple arguments`() = transactionalTest(db) {
         val map = db.findMap(Int::class.javaObjectType, Department::class.java,
                 "select * from (values (1, 10, 'foo'), (2, 20, 'bar')) d")
 
@@ -105,7 +107,7 @@ class DatabaseTest {
     }
 
     @Test
-    fun mapWithPrimitiveTypes() = transactionalTest(db) {
+    fun `map with primitive types`() = transactionalTest(db) {
         val map = db.findMap(Int::class.java, Department::class.java,
                 "select * from (values (1, 10, 'foo'), (2, 20, 'bar')) d")
 
@@ -117,90 +119,90 @@ class DatabaseTest {
     }
 
     @Test
-    fun findUnique_singleResult() = transactionalTest(db) {
+    fun `findUnique single result`() = transactionalTest(db) {
         assertEquals(42, db.findUnique(Int::class.java, "values (42)"))
     }
 
     @Test
-    fun findUnique_nonUniqueResult() = transactionalTest(db) {
+    fun `findUnique non-unique result`() = transactionalTest(db) {
         assertFailsWith<NonUniqueResultException> {
             db.findUnique(Int::class.java, "VALUES (1), (2)")
         }
     }
 
     @Test
-    fun findUnique_emptyResult() = transactionalTest(db) {
+    fun `findUnique empty result`() = transactionalTest(db) {
         assertFailsWith<EmptyResultException> {
             db.findUnique(Int::class.java, "SELECT * FROM (VALUES (1)) n WHERE FALSE")
         }
     }
 
     @Test
-    fun findUniqueOrNull_singleResult() = transactionalTest(db) {
+    fun `findUniqueOrNull single result`() = transactionalTest(db) {
         assertEquals(42, db.findUniqueOrNull(Int::class.java, "values (42)"))
     }
 
     @Test
-    fun findUniqueOrNull_nonUniqueResult() = transactionalTest(db) {
+    fun `findUniqueOrNull non-unique result`() = transactionalTest(db) {
         assertFailsWith<NonUniqueResultException> {
             db.findUniqueOrNull(Int::class.java, "values (1), (2)")
         }
     }
 
     @Test
-    fun findUniqueOrNull_emptyResult() = transactionalTest(db) {
+    fun `findUniqueOrNull empty result`() = transactionalTest(db) {
         assertNull(db.findUniqueOrNull(Int::class.java, "select * from (values (1)) n where false"))
     }
 
     @Test
-    fun findUniqueOrNull_nullResult() = transactionalTest(db) {
+    fun `findUniqueOrNull null result`() = transactionalTest(db) {
         assertNull(db.findUniqueOrNull(Int::class.javaObjectType, "values (cast (null as int))"))
     }
 
     @Test
-    fun findOptional_emptyResult() = transactionalTest(db) {
+    fun `findOptional empty result`() = transactionalTest(db) {
         assertEquals(Optional.empty(), db.findOptional(Int::class.java, "select * from (values (1)) n where false"))
     }
 
     @Test
-    fun findOptionalInt_singleResult() = transactionalTest(db) {
+    fun `findOptionalInt single result`() = transactionalTest(db) {
         assertEquals(OptionalInt.of(42), db.findOptionalInt("values (42)"))
     }
 
     @Test
-    fun findOptionalInt_emptyResult() = transactionalTest(db) {
+    fun `findOptionalInt empty result`() = transactionalTest(db) {
         assertEquals(OptionalInt.empty(), db.findOptionalInt("values (cast (null as int))"))
     }
 
     @Test
-    fun findOptionalLong_singleResult() = transactionalTest(db) {
+    fun `findOptionalLong single result`() = transactionalTest(db) {
         assertEquals(OptionalLong.of(42), db.findOptionalLong("values (42)"))
     }
 
     @Test
-    fun findOptionalLong_emptyResult() = transactionalTest(db) {
+    fun `findOptionalLong empty result`() = transactionalTest(db) {
         assertEquals(OptionalLong.empty(), db.findOptionalLong("values (cast (null as int))"))
     }
 
     @Test
-    fun findOptionalDouble_singleResult() = transactionalTest(db) {
+    fun `findOptionalDouble single result`() = transactionalTest(db) {
         assertEquals(OptionalDouble.of(42.3), db.findOptionalDouble("values (42.3)"))
     }
 
     @Test
-    fun findOptionalDouble_emptyResult() = transactionalTest(db) {
+    fun `findOptionalDouble empty result`() = transactionalTest(db) {
         assertEquals(OptionalDouble.empty(), db.findOptionalDouble("values (cast (null as float))"))
     }
 
     @Test
-    fun findOptional_nonUniqueResult() = transactionalTest(db) {
+    fun `findOptional non-unique result`() = transactionalTest(db) {
         assertFailsWith<NonUniqueResultException> {
             db.findOptional(Int::class.java, "values (1), (2)")
         }
     }
 
     @Test
-    fun findOptional_nullResult() = transactionalTest(db) {
+    fun `findOptional null result`() = transactionalTest(db) {
         assertEquals(Optional.empty(), db.findOptional(Int::class.javaObjectType, "values (cast (null as int))"))
     }
 
@@ -219,7 +221,7 @@ class DatabaseTest {
     }
 
     @Test
-    fun customResultProcessor() = transactionalTest(db) {
+    fun `custom result processor`() = transactionalTest(db) {
         val rowCounter = ResultSetProcessor { resultSet ->
             var rows = 0
             while (resultSet.next()) rows++
@@ -230,14 +232,14 @@ class DatabaseTest {
     }
 
     @Test
-    fun creatingDatabaseWithJndiDataSourceThrowsExceptionWhenContextIsNotConfigured() = transactionalTest(db) {
+    fun `creating database with JNDI data source throws exception when context is not configured`() = transactionalTest(db) {
         assertFailsWith<DatabaseException> {
             Database.forJndiDataSource("foo")
         }
     }
 
     @Test
-    fun implicitTransactions() = transactionalTest(db) {
+    fun `implicit transactions`() = transactionalTest(db) {
         db.isAllowImplicitTransactions = false
         assertFalse(db.isAllowImplicitTransactions)
 
@@ -246,7 +248,7 @@ class DatabaseTest {
     }
 
     @Test
-    fun updateUnique_uniqueRow() = transactionalTest(db) {
+    fun `updateUnique unique row`() = transactionalTest(db) {
         db.update("drop table if exists unique_test")
         db.update("create table unique_test (id int primary key)")
         db.update("insert into unique_test (id) values (1), (2), (3)")
@@ -255,7 +257,7 @@ class DatabaseTest {
     }
 
     @Test
-    fun updateUnique_missingRow() = transactionalTest(db) {
+    fun `updateUnique missing row`() = transactionalTest(db) {
         db.update("drop table if exists unique_test")
         db.update("create table unique_test (id int primary key)")
         db.update("insert into unique_test (id) values (1), (2), (3)")
@@ -266,13 +268,13 @@ class DatabaseTest {
     }
 
     @Test
-    fun updateUnique_multipleRows() = transactionalTest(db) {
+    fun `updateUnique multiple rows`() = transactionalTest(db) {
         db.update("drop table if exists unique_test")
-        db.update("create table unique_test (id int primary key)")
-        db.update("insert into unique_test (id) values (1), (2), (3)")
+        db.update("create table unique_test (foo int)")
+        db.update("insert into unique_test (foo) values (1), (2), (3)")
 
         assertFailsWith<NonUniqueUpdateException> {
-            db.updateUnique("UPDATE unique_test SET id = id+1 WHERE id > 1")
+            db.updateUnique("UPDATE unique_test SET foo = foo+1 WHERE foo > 1")
         }
     }
 

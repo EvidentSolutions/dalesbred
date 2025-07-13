@@ -34,12 +34,12 @@ class HsqldbDialectTest {
     private val db = Database.forUrlAndCredentials("jdbc:hsqldb:.", "sa", "")
 
     @Test
-    fun simpleQuery() = transactionalTest(db) {
+    fun `simple query`() = transactionalTest(db) {
         assertEquals(42, db.findUniqueInt("VALUES (42)"))
     }
 
     @Test
-    fun detectDialect() = transactionalTest(db) {
+    fun `detect dialect`() = transactionalTest(db) {
         db.withVoidTransaction { tx ->
             val dialect = Dialect.detect(tx.connection)
 
@@ -48,13 +48,13 @@ class HsqldbDialectTest {
     }
 
     @Test
-    fun enumsAsPrimitives() = transactionalTest(db) {
+    fun `enums as primitives`() = transactionalTest(db) {
         assertEquals(Mood.SAD, db.findUnique(Mood::class.java, "values ('SAD')"))
         assertNull(db.findUnique(Mood::class.java, "values (cast(null as varchar(20)))"))
     }
 
     @Test
-    fun enumsAsConstructorParameters() = transactionalTest(db) {
+    fun `enums as constructor parameters`() = transactionalTest(db) {
         db.update("drop table if exists movie")
         db.update("create temporary table movie (name varchar(64) primary key, mood varchar(20) not null)")
 

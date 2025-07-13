@@ -23,19 +23,20 @@
 package org.dalesbred.transaction
 
 import org.dalesbred.Database
-import org.dalesbred.TestDatabaseProvider
+import org.dalesbred.testutils.DatabaseProvider.POSTGRESQL
+import org.dalesbred.testutils.DatabaseTest
 import org.dalesbred.testutils.withConnection
+import javax.sql.DataSource
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class SingleConnectionTransactionManagerTest {
-
-    private val dataSource = TestDatabaseProvider.createInMemoryHSQLDataSource()
+@DatabaseTest(POSTGRESQL)
+class SingleConnectionTransactionManagerTest(private val dataSource: DataSource) {
 
     @Test
-    fun rollbacksWithoutThirdPartyTransactions() {
+    fun `rollbacks without third-party transactions`() {
         dataSource.withConnection { connection ->
             val tm = SingleConnectionTransactionManager(connection, false)
             val db = Database(tm)
@@ -54,7 +55,7 @@ class SingleConnectionTransactionManagerTest {
     }
 
     @Test
-    fun verifyHasTransaction() {
+    fun `verify hasActiveTransaction`() {
         dataSource.withConnection { connection ->
             val db1 = Database(SingleConnectionTransactionManager(connection, true))
             assertTrue(db1.hasActiveTransaction())

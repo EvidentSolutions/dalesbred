@@ -34,14 +34,14 @@ class EnumUtilsTest {
     }
 
     @Test
-    fun enumByOrdinal_valid() {
+    fun `enumByOrdinal valid`() {
         assertEquals(TestEnum.FOO, EnumUtils.enumByOrdinal(TestEnum::class.java, 0))
         assertEquals(TestEnum.BAR, EnumUtils.enumByOrdinal(TestEnum::class.java, 1))
         assertEquals(TestEnum.BAZ, EnumUtils.enumByOrdinal(TestEnum::class.java, 2))
     }
 
     @Test
-    fun enumByOrdinal_invalid() {
+    fun `enumByOrdinal invalid`() {
         assertFailsWith<DatabaseException> {
             EnumUtils.enumByOrdinal(TestEnum::class.java, 4)
         }

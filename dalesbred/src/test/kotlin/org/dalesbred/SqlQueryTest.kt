@@ -31,13 +31,13 @@ import kotlin.test.assertNotEquals
 class SqlQueryTest {
 
     @Test
-    fun toStringProvidesMeaningfulInformation() {
+    fun `toString provides meaningful information`() {
         assertEquals("select bar from foo where id=? [42, null]",
                 SqlQuery.query("select bar from foo where id=?", 42, null).toString())
     }
 
     @Test
-    fun queriesHaveStructuralEquality() {
+    fun `queries have structural equality`() {
         assertEquals(SqlQuery.query("select * from foo"), SqlQuery.query("select * from foo"))
         assertEquals(SqlQuery.query("select * from foo", 1, 2), SqlQuery.query("select * from foo", 1, 2))
 
@@ -46,7 +46,7 @@ class SqlQueryTest {
     }
 
     @Test
-    fun hashCodeObeysEquality() {
+    fun `hashCode obeys equality`() {
         assertEquals(SqlQuery.query("select * from foo").hashCode(), SqlQuery.query("select * from foo").hashCode())
         assertEquals(SqlQuery.query("select * from foo", 1, 2).hashCode(), SqlQuery.query("select * from foo", 1, 2).hashCode())
     }
@@ -60,7 +60,7 @@ class SqlQueryTest {
     }
 
     @Test
-    fun namedQueryFromMap() {
+    fun `named query from map`() {
         val query = SqlQuery.namedQuery("select * from foo where name = :name", mapOf("name" to "bar"))
 
         assertEquals("select * from foo where name = ?", query.sql)
@@ -68,7 +68,7 @@ class SqlQueryTest {
     }
 
     @Test
-    fun namedQueryFromBean() {
+    fun `named query from bean`() {
         val query = SqlQuery.namedQuery("select * from foo where name = :name", ExampleNamed("bar"))
 
         assertEquals("select * from foo where name = ?", query.sql)

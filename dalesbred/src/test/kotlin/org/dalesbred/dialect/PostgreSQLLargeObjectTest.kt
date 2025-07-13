@@ -20,22 +20,25 @@
  * THE SOFTWARE.
  */
 
+@file:Suppress("SqlResolve")
+
 package org.dalesbred.dialect
 
-import org.dalesbred.TestDatabaseProvider
+import org.dalesbred.Database
 import org.dalesbred.datatype.InputStreamWithSize
 import org.dalesbred.datatype.ReaderWithSize
+import org.dalesbred.testutils.DatabaseProvider.POSTGRESQL
+import org.dalesbred.testutils.DatabaseTest
 import org.dalesbred.testutils.transactionalTest
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class PostgreSQLLargeObjectTest {
-
-    private val db = TestDatabaseProvider.createPostgreSQLDatabase()
+@DatabaseTest(POSTGRESQL)
+class PostgreSQLLargeObjectTest(private val db: Database) {
 
     @Test
-    fun streamBlobToDatabaseByteArray() = transactionalTest(db) {
+    fun `stream blob to database byte array`() = transactionalTest(db) {
         db.update("drop table if exists blob_test")
         db.update("create temporary table blob_test (id int, blob_data bytea)")
 
@@ -47,7 +50,7 @@ class PostgreSQLLargeObjectTest {
     }
 
     @Test
-    fun streamReaderToDatabaseText() = transactionalTest(db) {
+    fun `stream reader to database text`() = transactionalTest(db) {
         db.update("drop table if exists text_test")
         db.update("create temporary table text_test (id int, text_data text)")
 

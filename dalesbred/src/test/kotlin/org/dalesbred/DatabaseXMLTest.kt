@@ -22,6 +22,8 @@
 
 package org.dalesbred
 
+import org.dalesbred.testutils.DatabaseProvider.POSTGRESQL
+import org.dalesbred.testutils.DatabaseTest
 import org.dalesbred.testutils.transactionalTest
 import org.intellij.lang.annotations.Language
 import org.w3c.dom.Document
@@ -30,12 +32,11 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-class DatabaseXMLTest {
-
-    private val db = TestDatabaseProvider.createPostgreSQLDatabase()
+@DatabaseTest(POSTGRESQL)
+class DatabaseXMLTest(private val db: Database) {
 
     @Test
-    fun convertingBetweenDomNodesAndSQLXML() = transactionalTest(db) {
+    fun `converting between DOM nodes and SQLXML`() = transactionalTest(db) {
         db.update("drop table if exists xml_test")
         db.update("create temporary table xml_test (xml_document xml)")
 

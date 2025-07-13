@@ -31,18 +31,18 @@ import kotlin.test.assertNull
 class OptionalUtilsTest {
 
     @Test
-    fun unwrappingNullReturnsNull() {
+    fun `unwrapping null returns null`() {
         assertNull(unwrapOptionalAsNull(null))
     }
 
     @Test
-    fun unwrappingNonOptionalsReturnsValueAsItIs() {
+    fun `unwrapping non optionals returns value as it is`() {
         assertEquals("foo", unwrapOptionalAsNull("foo"))
         assertEquals(42, unwrapOptionalAsNull(42))
     }
 
     @Test
-    fun unwrappingEmptyOptionalTypesReturnsNull() {
+    fun `unwrapping empty optional types returns null`() {
         assertNull(unwrapOptionalAsNull(Optional.empty<Any>()))
         assertNull(unwrapOptionalAsNull(OptionalInt.empty()))
         assertNull(unwrapOptionalAsNull(OptionalDouble.empty()))
@@ -50,7 +50,7 @@ class OptionalUtilsTest {
     }
 
     @Test
-    fun unwrappingNonEmptyOptionalTypesReturnsContainedValue() {
+    fun `unwrapping non empty optional types returns contained value`() {
         assertEquals("foo", unwrapOptionalAsNull(Optional.of("foo")))
         assertEquals(42, unwrapOptionalAsNull(Optional.of(42)))
         assertEquals(42, unwrapOptionalAsNull(OptionalInt.of(42)))

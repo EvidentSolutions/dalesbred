@@ -22,6 +22,10 @@
 
 package org.dalesbred
 
+import org.dalesbred.testutils.DatabaseProvider
+import org.dalesbred.testutils.DatabaseProvider.POSTGRESQL
+import org.dalesbred.testutils.DatabaseProvider.POSTGRESQL
+import org.dalesbred.testutils.DatabaseTest
 import org.dalesbred.testutils.transactionalTest
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -31,12 +35,11 @@ import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class BuiltinConversionsTest {
-
-    private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
+@DatabaseTest(POSTGRESQL)
+class BuiltinConversionsTest(private val db: Database) {
 
     @Test
-    fun urlsAndUris() = transactionalTest(db) {
+    fun `urls and uris`() = transactionalTest(db) {
         db.update("drop table if exists url_and_uri")
         db.update("create temporary table url_and_uri (url varchar(64), uri varchar(64))")
 
@@ -52,14 +55,14 @@ class BuiltinConversionsTest {
     }
 
     @Test
-    fun shortConversions() = transactionalTest(db) {
+    fun `short conversions`() = transactionalTest(db) {
         assertEquals(42.toShort(), db.findUnique(Short::class.javaPrimitiveType!!, "values (42)"))
         assertEquals(42.toShort(), db.findUnique(Short::class.java, "values (42)"))
         assertEquals(42.toShort(), db.findUnique(Short::class.java, "values (cast(42 as bigint))"))
     }
 
     @Test
-    fun intConversions() = transactionalTest(db) {
+    fun `int conversions`() = transactionalTest(db) {
         assertEquals(42, db.findUnique(Int::class.javaPrimitiveType!!, "values (42)"))
         assertEquals(42, db.findUniqueInt("values (42)"))
         assertEquals(42, db.findUnique(Int::class.java, "values (42)"))
@@ -67,45 +70,45 @@ class BuiltinConversionsTest {
     }
 
     @Test
-    fun longConversions() = transactionalTest(db) {
+    fun `long conversions`() = transactionalTest(db) {
         assertEquals(42L, db.findUnique(Long::class.javaPrimitiveType!!, "values (42)"))
         assertEquals(42L, db.findUnique(Long::class.java, "values (42)"))
         assertEquals(42L, db.findUniqueLong("values (42)"))
     }
 
     @Test
-    fun booleanConversions() = transactionalTest(db) {
-        assertEquals(true, db.findUnique(Boolean::class.javaPrimitiveType!!, "values true"))
-        assertEquals(false, db.findUnique(Boolean::class.java, "values false"))
-        assertEquals(true, db.findUniqueBoolean("values true"))
-        assertEquals(false, db.findUniqueBoolean("values false"))
+    fun `boolean conversions`() = transactionalTest(db) {
+        assertEquals(true, db.findUnique(Boolean::class.javaPrimitiveType!!, "select true"))
+        assertEquals(false, db.findUnique(Boolean::class.java, "select false"))
+        assertEquals(true, db.findUniqueBoolean("select true"))
+        assertEquals(false, db.findUniqueBoolean("select false"))
     }
 
     @Test
-    fun floatConversions() = transactionalTest(db) {
+    fun `float conversions`() = transactionalTest(db) {
         assertEquals(42.0f, db.findUnique(Float::class.javaPrimitiveType!!, "values (42)"))
         assertEquals(42.0f, db.findUnique(Float::class.java, "values (42)"))
     }
 
     @Test
-    fun doubleConversions() = transactionalTest(db) {
+    fun `double conversions`() = transactionalTest(db) {
         assertEquals(42.0, db.findUnique(Double::class.javaPrimitiveType!!, "values (42)"))
         assertEquals(42.0, db.findUnique(Double::class.java, "values (42)"))
     }
 
     @Test
-    fun bigIntegerConversions() = transactionalTest(db) {
+    fun `BigInteger conversions`() = transactionalTest(db) {
         assertEquals(BigInteger.valueOf(42), db.findUnique(BigInteger::class.java, "values (42)"))
     }
 
     @Test
-    fun bigDecimalConversions() = transactionalTest(db) {
+    fun `BigDecimal conversions`() = transactionalTest(db) {
         assertEquals(BigDecimal.valueOf(42), db.findUnique(BigDecimal::class.java, "values (42)"))
         assertEquals(BigDecimal.valueOf(42), db.findUnique(BigDecimal::class.java, "values (42)"))
     }
 
     @Test
-    fun numberConversions() = transactionalTest(db) {
+    fun `number conversions`() = transactionalTest(db) {
         db.update("drop table if exists numbers")
         db.update("create temporary table numbers (short smallint, int int, long bigint, float float, double float, bigint numeric, bigdecimal numeric(100,38))")
 
@@ -134,7 +137,7 @@ class BuiltinConversionsTest {
     }
 
     @Test
-    fun updateCounts() = transactionalTest(db) {
+    fun `update counts`() = transactionalTest(db) {
         db.update("drop table if exists update_count_test_table")
         db.update("create temporary table update_count_test_table (id int primary key)")
 
@@ -149,7 +152,7 @@ class BuiltinConversionsTest {
     }
 
     @Test
-    fun timeZoneConversions() = transactionalTest(db) {
+    fun `time-zone conversions`() = transactionalTest(db) {
         db.update("drop table if exists timezones")
         db.update("create temporary table timezones (zone_id varchar(64))")
 

@@ -30,28 +30,28 @@ import kotlin.test.assertEquals
 class TypeUtilsTest {
 
     @Test
-    fun rawTypeOfGenericType() {
+    fun `raw type of generic type`() {
         val genericField = ExampleClass::class.java.getField("stringList")
         assertEquals(List::class.java, rawType(genericField.genericType))
         assertEquals(List::class.java, rawType(genericField.type))
     }
 
     @Test
-    fun rawTypeOfArrayType() {
+    fun `raw type of array type`() {
         val genericField = ExampleClass::class.java.getField("stringArray")
         assertType<Array<String>>(rawType(genericField.genericType))
         assertType<Array<String>>(rawType(genericField.type))
     }
 
     @Test
-    fun rawTypeOfSimpleType() {
+    fun `raw type of simple type`() {
         val genericField = ExampleClass::class.java.getField("string")
         assertType<String>(rawType(genericField.genericType))
         assertType<String>(rawType(genericField.type))
     }
 
     @Test
-    fun arrayTypes() {
+    fun `array types`() {
         assertType<Array<String>>(arrayType(String::class.java))
         assertType<Array<Int>>(arrayType(Int::class.javaObjectType))
         assertType<IntArray>(arrayType(Int::class.javaPrimitiveType!!))

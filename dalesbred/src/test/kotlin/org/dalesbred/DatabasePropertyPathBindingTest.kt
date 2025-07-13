@@ -22,16 +22,17 @@
 
 package org.dalesbred
 
+import org.dalesbred.testutils.DatabaseProvider.POSTGRESQL
+import org.dalesbred.testutils.DatabaseTest
 import org.dalesbred.testutils.transactionalTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class DatabasePropertyPathBindingTest {
-
-    private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
+@DatabaseTest(POSTGRESQL)
+class DatabasePropertyPathBindingTest(private val db: Database) {
 
     @Test
-    fun bindingToNestedPaths() = transactionalTest(db) {
+    fun `binding to nested paths`() = transactionalTest(db) {
         val result = db.findUnique(ResultClass::class.java, """
                 select 'AAA' as "nestedField.foo",
                        'BBB' as "nestedGetter.foo"

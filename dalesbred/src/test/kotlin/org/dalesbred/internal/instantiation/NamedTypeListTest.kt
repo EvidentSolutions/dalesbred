@@ -28,7 +28,7 @@ import kotlin.test.assertEquals
 class NamedTypeListTest {
 
     @Test
-    fun readableToString() {
+    fun `readable toString`() {
         val types = NamedTypeList.builder(3).apply {
             add("foo", String::class.java)
             add("bar", Int::class.javaObjectType)

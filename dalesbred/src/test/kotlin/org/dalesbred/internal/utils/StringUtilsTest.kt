@@ -39,7 +39,7 @@ class StringUtilsTest {
     }
 
     @Test
-    fun caseAndUnderscoreIgnoringEquality() {
+    fun `case and underscore ignoring equality`() {
         assertTrue(isEqualIgnoringCaseAndUnderscores("", ""))
         assertTrue(isEqualIgnoringCaseAndUnderscores("foo", "foo"))
         assertFalse(isEqualIgnoringCaseAndUnderscores("foo", "bar"))

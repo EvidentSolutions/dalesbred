@@ -22,18 +22,22 @@
 
 package org.dalesbred
 
+import org.dalesbred.testutils.DatabaseProvider.POSTGRESQL
+import org.dalesbred.testutils.DatabaseTest
 import org.dalesbred.transaction.Isolation.SERIALIZABLE
 import org.dalesbred.transaction.TransactionSerializationException
+import javax.sql.DataSource
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
-class DatabaseTransactionIsolationTest {
+@DatabaseTest(POSTGRESQL)
+class DatabaseTransactionIsolationTest(ds: DataSource) {
 
-    private val db1 = TestDatabaseProvider.createInMemoryHSQLDatabase()
-    private val db2 = TestDatabaseProvider.createInMemoryHSQLDatabase()
+    private val db1 = Database(ds)
+    private val db2 = Database(ds)
 
     @Test
-    fun concurrentUpdatesInSerializableTransactionThrowTransactionSerializationException() {
+    fun `concurrent updates in serializable transaction throw TransactionSerializationException`() {
         db1.update("DROP TABLE IF EXISTS isolation_test")
         db1.update("CREATE TABLE isolation_test (value INT)")
         db1.update("INSERT INTO isolation_test (value) VALUES (1)")

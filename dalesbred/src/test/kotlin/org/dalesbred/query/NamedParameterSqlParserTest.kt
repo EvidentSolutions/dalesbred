@@ -29,60 +29,60 @@ import kotlin.test.assertEquals
 class NamedParameterSqlParserTest {
 
     @Test
-    fun simpleQuery() {
+    fun `simple query`() {
         assertNamedParameters("SELECT * FROM foo WHERE col = :col", "SELECT * FROM foo WHERE col = ?",
                 listOf("col"))
     }
 
     @Test
-    fun queryLiteralLikeNamedParameter() {
+    fun `query literal like named parameter`() {
         assertNamedParameters("SELECT * FROM foobaz f WHERE f.id = :id AND f.col = ':notanamedparameter'",
                 "SELECT * FROM foobaz f WHERE f.id = ? AND f.col = ':notanamedparameter'",
                 listOf("id"))
     }
 
     @Test
-    fun queryWithLineCommentWithoutLineEnd() {
+    fun `query with line comment without line end`() {
         assertNamedParameters("SELECT *, f.col::TEXT FROM foobar f WHERE f.id = :id -- comment :notnamedparameter",
                 "SELECT *, f.col::TEXT FROM foobar f WHERE f.id = ? -- comment :notnamedparameter",
                 listOf("id"))
     }
 
     @Test
-    fun queryWithLineComment() {
+    fun `query with line comment`() {
         assertNamedParameters("SELECT *, f.col::TEXT FROM foobar f -- comment :notnamedparameter \n WHERE f.id = :id",
                 "SELECT *, f.col::TEXT FROM foobar f -- comment :notnamedparameter \n WHERE f.id = ?",
                 listOf("id"))
     }
 
     @Test
-    fun queryWithBlockComment() {
+    fun `query with block comment`() {
         assertNamedParameters("SELECT *, f.col::TEXT /* comment :notanamedparameter */ FROM foobar f WHERE f.id = :id",
                 "SELECT *, f.col::TEXT /* comment :notanamedparameter */ FROM foobar f WHERE f.id = ?",
                 listOf("id"))
     }
 
     @Test
-    fun queryWithPostgresqlCast() {
+    fun `query with postgresql cast`() {
         assertNamedParameters("SELECT *, f.col::TEXT FROM foobar f WHERE f.id = :id",
                 "SELECT *, f.col::TEXT FROM foobar f WHERE f.id = ?",
                 listOf("id"))
     }
 
     @Test
-    fun complexQuery() {
+    fun `complex query`() {
         assertNamedParameters("SELECT *, 1::TEXT FROM foobar f WHERE f.id = :id AND /* comment :notparameter */ f.qwerty = :bar*/snafu*/ AND f.literal = 'laalaa :pai puppa' AND f.test =:test /*what*/   /*  */ -- ef  ",
                 "SELECT *, 1::TEXT FROM foobar f WHERE f.id = ? AND /* comment :notparameter */ f.qwerty = ?*/snafu*/ AND f.literal = 'laalaa :pai puppa' AND f.test =? /*what*/   /*  */ -- ef  ",
                 listOf("id", "bar", "test"))
     }
 
     @Test
-    fun quotedStrings() {
+    fun `quoted strings`() {
         assertNamedParameters("select 'foo '' :bar'", "select 'foo '' :bar'", emptyList())
     }
 
     @Test
-    fun doubleQuotes() {
+    fun `double quotes`() {
         assertNamedParameters("select \" :bar  \"", "select \" :bar  \"", emptyList())
     }
 

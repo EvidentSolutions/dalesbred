@@ -31,7 +31,7 @@ import kotlin.test.assertEquals
 class TransactionSettingsTest {
 
     @Test
-    fun sensibleToString() {
+    fun `sensible toString`() {
         val settings = TransactionSettings().apply {
             propagation = Propagation.REQUIRED
             isolation = Isolation.REPEATABLE_READ

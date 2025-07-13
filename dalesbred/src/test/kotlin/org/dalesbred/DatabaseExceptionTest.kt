@@ -35,13 +35,13 @@ class DatabaseExceptionTest {
     }
 
     @Test
-    fun queryIsIncludedInToString() {
+    fun `query is included in to string`() {
         DebugContext.setCurrentQuery(SqlQuery.query("select * from foo where id=?", 42))
         assertEquals("org.dalesbred.DatabaseException: exception message (query: select * from foo where id=? [42])", DatabaseException("exception message").toString())
     }
 
     @Test
-    fun ifQueryIsNotPresentItIsNotIncluded() {
+    fun `if query is not present it is not included`() {
         assertEquals("org.dalesbred.DatabaseException: exception message", DatabaseException("exception message").toString())
     }
 }

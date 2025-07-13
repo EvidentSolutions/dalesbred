@@ -28,21 +28,21 @@ import kotlin.test.*
 class QueryBuilderTest {
 
     @Test
-    fun buildingSimpleQuery() {
+    fun `building simple query`() {
         val qb = QueryBuilder("select 42")
 
         assertEquals(query("select 42"), qb.build())
     }
 
     @Test
-    fun buildingSimpleQueryWithArguments() {
+    fun `building simple query with arguments`() {
         val qb = QueryBuilder("select ?, ?", 42, "foo")
 
         assertEquals(query("select ?, ?", 42, "foo"), qb.build())
     }
 
     @Test
-    fun buildingQueryDynamically() {
+    fun `building query dynamically`() {
         val qb = QueryBuilder("select * from document")
         qb.append(" where id=?", 4).append(" or status=?", "rejected")
 
@@ -72,7 +72,7 @@ class QueryBuilderTest {
     }
 
     @Test
-    fun placeholdersForCollection() {
+    fun `placeholders for collection`() {
         val qb = QueryBuilder("select * from document")
         val query = qb.append(" where id in (").appendPlaceholders(listOf(1, 2, 3)).append(")").build()
 
@@ -80,21 +80,21 @@ class QueryBuilderTest {
     }
 
     @Test
-    fun zeroPlaceholders() {
+    fun `zero placeholders`() {
         assertFailsWith<IllegalArgumentException> {
             QueryBuilder("select * from foo where id in (").appendPlaceholders(0).append(")")
         }
     }
 
     @Test
-    fun buildingEmptyQueryThrowsException() {
+    fun `building empty query throws exception`() {
         assertFailsWith<IllegalStateException> {
             QueryBuilder().build()
         }
     }
 
     @Test
-    fun buildingEmptyQueryThrowsException2() {
+    fun `building empty query throws exception2`() {
         assertFailsWith<IllegalStateException> {
             QueryBuilder("").build()
         }
@@ -106,7 +106,7 @@ class QueryBuilderTest {
     }
 
     @Test
-    fun appendQuery() {
+    fun `append query`() {
         val query = query("select * from foo where bar = ? and baz = ?", 42, "foobar")
 
         val qb = QueryBuilder()

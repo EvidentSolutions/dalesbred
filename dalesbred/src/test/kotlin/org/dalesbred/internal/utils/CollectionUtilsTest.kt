@@ -36,7 +36,7 @@ class CollectionUtilsTest {
     }
 
     @Test
-    fun createArrayOfObjectType() {
+    fun `create array of object type`() {
         val array = arrayOfType(Int::class.javaObjectType, listOf(1, 42, 7))
 
         assertTrue { Array<Int>::class.java.isInstance(array) }
@@ -50,7 +50,7 @@ class CollectionUtilsTest {
     }
 
     @Test
-    fun createArrayOfPrimitiveType() {
+    fun `create array of primitive type`() {
         val array = arrayOfType(Int::class.javaPrimitiveType!!, listOf(1, 42, 7))
 
         assertTrue { array is IntArray }

@@ -22,23 +22,24 @@
 
 package org.dalesbred
 
+import org.dalesbred.testutils.DatabaseProvider.POSTGRESQL
+import org.dalesbred.testutils.DatabaseTest
 import org.dalesbred.testutils.transactionalTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class DatabaseCustomConversionTest {
-
-    private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
+@DatabaseTest(POSTGRESQL)
+class DatabaseCustomConversionTest(private val db: Database) {
 
     @Test
-    fun customLoadConversions() = transactionalTest(db) {
+    fun `custom load conversions`() = transactionalTest(db) {
         db.typeConversionRegistry.registerConversionFromDatabase(String::class.java, EmailAddress::class.java) { EmailAddress.parse(it) }
 
         assertEquals(EmailAddress("user", "example.org"), db.findUnique(EmailAddress::class.java, "values ('user@example.org')"))
     }
 
     @Test
-    fun customSaveConversions() = transactionalTest(db) {
+    fun `custom save conversions`() = transactionalTest(db) {
         db.typeConversionRegistry.registerConversionToDatabase(EmailAddress::class.java) { it.toString() }
 
         db.update("drop table if exists custom_save_conversions_test")

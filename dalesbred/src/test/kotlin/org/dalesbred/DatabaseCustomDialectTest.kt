@@ -22,17 +22,21 @@
 
 package org.dalesbred
 
+import org.dalesbred.connection.ConnectionProvider
 import org.dalesbred.dialect.DefaultDialect
+import org.dalesbred.testutils.DatabaseProvider.POSTGRESQL
+import org.dalesbred.testutils.DatabaseTest
 import org.dalesbred.testutils.transactionalTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class DatabaseCustomDialectTest {
+@DatabaseTest(POSTGRESQL)
+class DatabaseCustomDialectTest(connectionProvider: ConnectionProvider) {
 
-    private val db = Database(TestDatabaseProvider.createInMemoryHSQLConnectionProvider(), UppercaseDialect)
+    private val db = Database(connectionProvider, UppercaseDialect)
 
     @Test
-    fun customDialect() = transactionalTest(db) {
+    fun `custom Dialect`() = transactionalTest(db) {
         db.update("drop table if exists my_table")
         db.update("create temporary table my_table (text varchar(64))")
 

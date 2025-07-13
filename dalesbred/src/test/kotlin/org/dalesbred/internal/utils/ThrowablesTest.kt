@@ -32,13 +32,13 @@ import kotlin.test.fail
 class ThrowablesTest {
 
     @Test
-    fun propagatingRuntimeExceptionReturnsIt() {
+    fun `propagating runtime exception returns it`() {
         val exception = RuntimeException()
         assertEquals(exception, Throwables.propagate(exception))
     }
 
     @Test
-    fun propagatingCheckedExceptionWrapsItIntoRuntimeException() {
+    fun `propagating checked exception wraps it into runtime exception`() {
         val exception = Exception()
 
         val propagated = Throwables.propagate(exception)
@@ -48,7 +48,7 @@ class ThrowablesTest {
     }
 
     @Test
-    fun propagatingErrorThrowsIt() {
+    fun `propagating error throws it`() {
         val error = MyError()
 
         try {
@@ -60,13 +60,13 @@ class ThrowablesTest {
     }
 
     @Test
-    fun propagatingAllowedCheckedExceptionReturnsIt() {
+    fun `propagating allowed checked exception returns it`() {
         val exception = IOException()
         assertEquals(exception, Throwables.propagate(exception, IOException::class.java))
     }
 
     @Test
-    fun propagatingDisallowedExceptionThrowsItWrapped() {
+    fun `propagating disallowed exception throws it wrapped`() {
         val exception = SQLException()
 
         try {

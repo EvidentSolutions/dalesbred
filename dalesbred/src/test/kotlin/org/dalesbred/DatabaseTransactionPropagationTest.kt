@@ -22,24 +22,25 @@
 
 package org.dalesbred
 
+import org.dalesbred.testutils.DatabaseProvider.POSTGRESQL
+import org.dalesbred.testutils.DatabaseTest
 import org.dalesbred.transaction.Propagation.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class DatabaseTransactionPropagationTest {
-
-    private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
+@DatabaseTest(POSTGRESQL)
+class DatabaseTransactionPropagationTest(private val db: Database) {
 
     @Test
-    fun mandatoryPropagationWithoutExistingTransactionThrowsException() {
+    fun `mandatory propagation without existing transaction throws exception`() {
         assertFailsWith<DatabaseException> {
             db.withTransaction(MANDATORY) { }
         }
     }
 
     @Test
-    fun mandatoryPropagationWithExistingTransactionProceedsNormally() {
+    fun `mandatory propagation with existing transaction proceeds normally`() {
         val result = db.withTransaction(REQUIRED) {
             db.withTransaction(MANDATORY) {
                 "ok"
@@ -50,7 +51,7 @@ class DatabaseTransactionPropagationTest {
     }
 
     @Test
-    fun nestedTransactions() {
+    fun `nested transactions`() {
         db.update("drop table if exists test_table")
         db.update("create table test_table (text varchar(64))")
 
@@ -74,7 +75,7 @@ class DatabaseTransactionPropagationTest {
     }
 
     @Test
-    fun requiresNewSuspendsActiveTransaction() {
+    fun `requires_new suspends active transaction`() {
         db.update("drop table if exists test_table")
         db.update("create table test_table (text varchar(64))")
         db.update("insert into test_table (text) values ('foo')")

@@ -29,27 +29,27 @@ import kotlin.test.*
 class PropertyAccessorTest {
 
     @Test
-    fun findingSetters() {
+    fun `finding setters`() {
         assertNotEquals(Optional.empty(), PropertyAccessor.findAccessor(DepartmentWithSetters::class.java, "department_name"))
     }
 
     @Test
-    fun findingFields() {
+    fun `finding fields`() {
         assertNotEquals(Optional.empty(), PropertyAccessor.findAccessor(DepartmentWithFields::class.java, "department_name"))
     }
 
     @Test
-    fun ignoredSetters() {
+    fun `ignored setters`() {
         assertEquals(Optional.empty(), PropertyAccessor.findAccessor(IgnoredValues::class.java, "ignoredMethod"))
     }
 
     @Test
-    fun ignoredFields() {
+    fun `ignored fields`() {
         assertEquals(Optional.empty(), PropertyAccessor.findAccessor(IgnoredValues::class.java, "ignoredField"))
     }
 
     @Test
-    fun nestedPathsWithIntermediateFields() {
+    fun `nested paths with intermediate fields`() {
         val accessor = PropertyAccessor.findAccessor(NestedPaths::class.java, "namedField.name").orElse(null)
 
         assertNotNull(accessor)
@@ -61,7 +61,7 @@ class PropertyAccessorTest {
     }
 
     @Test
-    fun nestedPathsWithIntermediateGetters() {
+    fun `nested paths with intermediate getters`() {
         val accessor = PropertyAccessor.findAccessor(NestedPaths::class.java, "namedGetter.name").orElse(null)
 
         assertNotNull(accessor)
@@ -73,7 +73,7 @@ class PropertyAccessorTest {
     }
 
     @Test
-    fun nestedPathsWithNullFields() {
+    fun `nested paths with null fields`() {
         val accessor = PropertyAccessor.findAccessor(NestedPaths::class.java, "nullField.name").orElse(null)
 
         assertNotNull(accessor)
@@ -84,7 +84,7 @@ class PropertyAccessorTest {
     }
 
     @Test
-    fun nestedPathsWithNullGetters() {
+    fun `nested paths with null getters`() {
         val accessor = PropertyAccessor.findAccessor(NestedPaths::class.java, "nullGetter.name").orElse(null)
 
         assertNotNull(accessor)
@@ -95,7 +95,7 @@ class PropertyAccessorTest {
     }
 
     @Test
-    fun invalidPathElements() {
+    fun `invalid path elements`() {
         assertEquals(Optional.empty(), PropertyAccessor.findAccessor(Named::class.java, "foo.name"))
     }
 

@@ -22,6 +22,8 @@
 
 package org.dalesbred
 
+import org.dalesbred.testutils.DatabaseProvider.POSTGRESQL
+import org.dalesbred.testutils.DatabaseTest
 import org.dalesbred.testutils.transactionalTest
 import java.lang.reflect.Type
 import java.sql.Types
@@ -29,34 +31,33 @@ import java.time.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class DatabaseResultTableTest {
-
-    private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
+@DatabaseTest(POSTGRESQL)
+class DatabaseResultTableTest(private val db: Database) {
 
     @Test
-    fun fetchSimpleResultTable() = transactionalTest(db) {
+    fun `fetch simple result table`() = transactionalTest(db) {
         val table = db.findTable("SELECT 42 AS num, 'foo' AS str, TRUE AS bool FROM (VALUES (0)) v")
 
         assertEquals(3, table.columnCount)
-        assertEquals(listOf("NUM", "STR", "BOOL"), table.columnNames)
+        assertEquals(listOf("num", "str", "bool"), table.columnNames)
         assertEquals(types(Int::class.javaObjectType, String::class.java, Boolean::class.javaObjectType), table.columnTypes)
         assertEquals(types(Int::class.javaObjectType, String::class.java, Boolean::class.javaObjectType), table.rawColumnTypes)
-        assertEquals("[NUM: java.lang.Integer, STR: java.lang.String, BOOL: java.lang.Boolean]", table.columns.toString())
+        assertEquals("[num: java.lang.Integer, str: java.lang.String, bool: java.lang.Boolean]", table.columns.toString())
         assertEquals(1, table.columns[1].index)
 
         assertEquals(Types.INTEGER, table.columns[0].jdbcType, message = "jdbcType[0]")
-        assertEquals("INTEGER", table.columns[0].databaseType, message = "databaseType[0]")
+        assertEquals("int4", table.columns[0].databaseType, message = "databaseType[0]")
 
         assertEquals(1, table.rowCount)
         assertEquals(values(42, "foo", true), table.rows[0].asList())
         assertEquals("foo", table.get(0, 1))
         assertEquals("foo", table.get(0, "str"))
 
-        assertEquals("ResultTable [columns=[NUM: java.lang.Integer, STR: java.lang.String, BOOL: java.lang.Boolean], rows=1]", table.toString())
+        assertEquals("ResultTable [columns=[num: java.lang.Integer, str: java.lang.String, bool: java.lang.Boolean], rows=1]", table.toString())
     }
 
     @Test
-    fun testFormatTable() = transactionalTest(db) {
+    fun `test formatTable`() = transactionalTest(db) {
         db.update("DROP TABLE IF EXISTS result_table_formatter")
         db.update("CREATE TEMPORARY TABLE result_table_formatter (id INTEGER PRIMARY KEY, created DATE, text VARCHAR(512))")
 
@@ -67,7 +68,7 @@ class DatabaseResultTableTest {
         val rt = db.findTable("SELECT id, created, text FROM result_table_formatter")
 
         val expected = """
-               | ID | CREATED    | TEXT                                               |
+               | id | created    | text                                               |
                | -- | ---------- | -------------------------------------------------- |
                | 1  | 0100-01-01 | abc                                                |
                | 2  | 2000-05-01 | lorem ipsum dolor sit amet                         |

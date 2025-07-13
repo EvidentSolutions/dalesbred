@@ -32,11 +32,9 @@ class H2DialectTest {
     private val db = Database.forUrlAndCredentials("jdbc:h2:.", "sa", "")
 
     @Test
-    fun detectDialect() = transactionalTest(db) {
-        db.withVoidTransaction { tx ->
-            val dialect = Dialect.detect(tx.connection)
+    fun `detect dialect`() = transactionalTest(db) { tx ->
+        val dialect = Dialect.detect(tx.connection)
 
-            assertTrue { dialect is H2Dialect }
-        }
+        assertTrue { dialect is H2Dialect }
     }
 }

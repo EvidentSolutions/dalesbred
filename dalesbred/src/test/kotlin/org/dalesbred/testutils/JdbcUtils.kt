@@ -23,6 +23,8 @@
 package org.dalesbred.testutils
 
 import org.dalesbred.Database
+import org.dalesbred.TransactionSettingsTest
+import org.dalesbred.transaction.TransactionContext
 import java.sql.Connection
 import java.sql.ResultSet
 import javax.sql.DataSource
@@ -45,7 +47,7 @@ inline fun <T> ResultSet.mapRows(func: (ResultSet) -> T): List<T> {
     return result
 }
 
-fun <T> transactionalTest(db: Database, block: (Database) -> T) {
-    db.withTransaction { block(db) }
+fun <T> transactionalTest(db: Database, block: (TransactionContext) -> T) {
+    db.withVoidTransaction { tx -> block(tx) }
 }
 

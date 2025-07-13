@@ -29,7 +29,7 @@ import kotlin.test.assertFailsWith
 class VariableResolversTest {
 
     @Test
-    fun testProviderForMap() {
+    fun `test provider for map`() {
         val foo = Any()
         val bar = Any()
         val baz = Any()
@@ -45,7 +45,7 @@ class VariableResolversTest {
     }
 
     @Test
-    fun testProviderForBean() {
+    fun `test provider for bean`() {
         val bean = TestBean()
         val variableResolver = VariableResolver.forBean(bean)
 
@@ -55,7 +55,7 @@ class VariableResolversTest {
     }
 
     @Test
-    fun resolvingUnknownVariableThrowsException() {
+    fun `resolving unknown variable throws exception`() {
         val variableResolver = VariableResolver.forBean(TestBean())
 
         assertFailsWith<VariableResolutionException> {
@@ -64,7 +64,7 @@ class VariableResolversTest {
     }
 
     @Test
-    fun resolvingPrivateVariableThrowsException() {
+    fun `resolving private variable throws exception`() {
         val variableResolver = VariableResolver.forBean(TestBean())
 
         assertFailsWith<VariableResolutionException> {
@@ -73,7 +73,7 @@ class VariableResolversTest {
     }
 
     @Test
-    fun variableThrowingIsWrappedInVariableResolutionException() {
+    fun `variable throwing is wrapped in variable resolution exception`() {
         val variableResolver = VariableResolver.forBean(TestBean())
 
         assertFailsWith<VariableResolutionException> {
@@ -82,7 +82,7 @@ class VariableResolversTest {
     }
 
     @Test
-    fun mapResolverForUnknownMapKey() {
+    fun `map resolver for unknown map key`() {
         val variableResolver = VariableResolver.forMap(emptyMap<String, Any>())
 
         assertFailsWith<VariableResolutionException> {

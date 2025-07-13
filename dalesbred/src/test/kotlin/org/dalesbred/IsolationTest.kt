@@ -31,7 +31,7 @@ import kotlin.test.assertFailsWith
 class IsolationTest {
 
     @Test
-    fun levelsMatchJdbcLevels() {
+    fun `levels match JDBC levels`() {
         assertEquals(Connection.TRANSACTION_READ_UNCOMMITTED, READ_UNCOMMITTED.jdbcLevel)
         assertEquals(Connection.TRANSACTION_READ_COMMITTED, READ_COMMITTED.jdbcLevel)
         assertEquals(Connection.TRANSACTION_REPEATABLE_READ, REPEATABLE_READ.jdbcLevel)
@@ -39,13 +39,13 @@ class IsolationTest {
     }
 
     @Test
-    fun levelsAreSortedCorrectly() {
+    fun `levels are sorted correctly`() {
         assertEquals(listOf(READ_UNCOMMITTED, READ_COMMITTED, REPEATABLE_READ, SERIALIZABLE),
                 listOf(REPEATABLE_READ, SERIALIZABLE, READ_UNCOMMITTED, READ_COMMITTED).sorted())
     }
 
     @Test
-    fun fromJdbcIsolation() {
+    fun `from JDBC isolation`() {
         assertEquals(READ_UNCOMMITTED, forJdbcCode(Connection.TRANSACTION_READ_UNCOMMITTED))
         assertEquals(READ_COMMITTED, forJdbcCode(Connection.TRANSACTION_READ_COMMITTED))
         assertEquals(REPEATABLE_READ, forJdbcCode(Connection.TRANSACTION_REPEATABLE_READ))
@@ -53,7 +53,7 @@ class IsolationTest {
     }
 
     @Test
-    fun fromInvalidJdbcIsolation() {
+    fun `from invalid JDBC isolation`() {
         assertFailsWith<IllegalArgumentException> {
             forJdbcCode(525)
         }

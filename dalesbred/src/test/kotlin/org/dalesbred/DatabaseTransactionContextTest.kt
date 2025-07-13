@@ -22,15 +22,16 @@
 
 package org.dalesbred
 
+import org.dalesbred.testutils.DatabaseProvider.POSTGRESQL
+import org.dalesbred.testutils.DatabaseTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class DatabaseTransactionContextTest {
-
-    private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
+@DatabaseTest(POSTGRESQL)
+class DatabaseTransactionContextTest(private val db: Database) {
 
     @Test
-    fun rollbackOnly() {
+    fun `explicit rollback`() {
         db.update("drop table if exists test_table")
         db.update("create table test_table (text varchar(64))")
         db.update("insert into test_table (text) values ('foo')")
