@@ -35,9 +35,9 @@ public final class TypeUtils {
         return switch (type) {
             case Class<?> aClass -> aClass;
             case ParameterizedType parameterizedType -> rawType(parameterizedType.getRawType());
-            case TypeVariable<?> typeVariable ->
+            case TypeVariable<?> ignored ->
                 // We could return one of the bounds, but it won't work if there are multiple bounds.
-                // Therefore just return object.
+                // Therefore, just return object.
                 Object.class;
             case WildcardType wildcardType -> rawType(wildcardType.getUpperBounds()[0]);
             case GenericArrayType genericArrayType -> arrayType(rawType(genericArrayType.getGenericComponentType()));

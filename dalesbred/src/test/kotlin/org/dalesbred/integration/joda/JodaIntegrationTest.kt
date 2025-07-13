@@ -20,6 +20,8 @@
  * THE SOFTWARE.
  */
 
+@file:Suppress("SqlResolve")
+
 package org.dalesbred.integration.joda
 
 import org.dalesbred.TestDatabaseProvider

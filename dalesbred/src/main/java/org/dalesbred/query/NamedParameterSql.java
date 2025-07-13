@@ -30,17 +30,10 @@ import java.util.List;
 
 import static org.dalesbred.internal.utils.CollectionUtils.mapToList;
 
-final class NamedParameterSql {
-
-    @Language("SQL")
-    private final @NotNull String sql;
-
-    private final @NotNull List<String> parameterNames;
-
-    NamedParameterSql(@NotNull @Language("SQL") String sql, @NotNull List<String> parameterNames) {
-        this.sql = sql;
-        this.parameterNames = parameterNames;
-    }
+record NamedParameterSql(
+    @Language("SQL") @NotNull String sql,
+    @NotNull List<String> parameterNames
+) {
 
     public @NotNull SqlQuery toQuery(@NotNull VariableResolver variableResolver) {
         return SqlQuery.query(sql, resolveParameterValues(variableResolver));
@@ -50,15 +43,17 @@ final class NamedParameterSql {
         return mapToList(parameterNames, variableResolver::getValue);
     }
 
+    @Override
     @NotNull
     @Language("SQL")
     @TestOnly
-    String getSql() {
+    public String sql() {
         return sql;
     }
 
+    @Override
     @TestOnly
-    public @NotNull List<String> getParameterNames() {
+    public @NotNull List<String> parameterNames() {
         return parameterNames;
     }
 }

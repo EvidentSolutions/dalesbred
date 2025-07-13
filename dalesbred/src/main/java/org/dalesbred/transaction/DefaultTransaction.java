@@ -57,7 +57,7 @@ final class DefaultTransaction {
 
             } catch (Exception e) {
                 connection.rollback();
-                log.warn("rolled back transaction because of exception: {}", e.toString(), e);
+                log.warn("rolled back transaction because of exception: {}", e, e);
                 throw Throwables.propagate(e, SQLException.class);
             }
         } catch (SQLException e) {
@@ -79,7 +79,7 @@ final class DefaultTransaction {
 
             } catch (Exception e) {
                 connection.rollback(savepoint);
-                log.warn("rolled back nested transaction because of exception: {}", e.toString(), e);
+                log.warn("rolled back nested transaction because of exception: {}", e, e);
                 throw Throwables.propagate(e, SQLException.class);
             }
         } catch (SQLException e) {

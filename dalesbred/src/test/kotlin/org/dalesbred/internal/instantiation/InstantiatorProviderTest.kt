@@ -108,14 +108,19 @@ class InstantiatorProviderTest {
     @Test
     fun `dont use ignored constructor`() {
         assertFailsWith<InstantiationFailureException> {
-            instantiate(TestClass::class.java, createNamedTypeList(Int::class.javaPrimitiveType!!, Int::class.javaPrimitiveType!!), 0, 0)
+            instantiate(
+                TestClass::class.java,
+                createNamedTypeList(Int::class.javaPrimitiveType!!, Int::class.javaPrimitiveType!!),
+                0,
+                0
+            )
         }
     }
 
     @Test
     fun `explicit constructor is used instead of valid constructor`() {
         val types = NamedTypeList.builder(1)
-                .add("publicField", String::class.java).build()
+            .add("publicField", String::class.java).build()
 
         assertFailsWith<InstantiationFailureException> {
             instantiate(TestClassWithExplicitConstructor::class.java, types, "foo")
@@ -125,7 +130,7 @@ class InstantiatorProviderTest {
     @Test
     fun `explicit constructor is used instead of valid property accessor`() {
         val types = NamedTypeList.builder(1)
-                .add("propertyWithAccessors", String::class.java).build()
+            .add("propertyWithAccessors", String::class.java).build()
 
         assertFailsWith<InstantiationFailureException> {
             instantiate(TestClassWithExplicitConstructor::class.java, types, "bar")
@@ -135,7 +140,7 @@ class InstantiatorProviderTest {
     @Test
     fun `explicit private constructor`() {
         val types = NamedTypeList.builder(1)
-                .add("publicField", String::class.java).build()
+            .add("publicField", String::class.java).build()
 
         val result = assertNotNull(instantiate(TestClassWithExplicitPrivateConstructor::class.java, types, "foo"))
 
@@ -153,7 +158,7 @@ class InstantiatorProviderTest {
     @Test
     fun `private classes can be instantiated with explicit annotation`() {
         val types = NamedTypeList.builder(1)
-                .add("publicField", String::class.java).build()
+            .add("publicField", String::class.java).build()
         val result = assertNotNull(instantiate(PrivateTestClassWithExplicitInstantiator::class.java, types, "foo"))
 
         assertEquals("foo", result.publicField)
@@ -239,8 +244,10 @@ class InstantiatorProviderTest {
     }
 
     class TestClassWithMultipleExplicitConstructors {
-        @DalesbredInstantiator constructor()
-        @DalesbredInstantiator constructor(@Suppress("UNUSED_PARAMETER") foo: String)
+        @DalesbredInstantiator
+        constructor()
+        @DalesbredInstantiator
+        constructor(@Suppress("UNUSED_PARAMETER") foo: String)
     }
 
     private class PrivateTestClassWithExplicitInstantiator
@@ -252,16 +259,17 @@ class InstantiatorProviderTest {
 
     private fun <T> instantiate(cl: Class<T>, namedTypeList: NamedTypeList, vararg values: Any?): T? {
         val instantiator = instantiatorRegistry.findInstantiator(cl, namedTypeList)
+
         @Suppress("UNCHECKED_CAST")
         val arguments = InstantiatorArguments(namedTypeList, values as Array<Any>)
         return instantiator.instantiate(arguments)
     }
 
     private fun createNamedTypeList(vararg types: Class<*>): NamedTypeList =
-            NamedTypeList.builder(types.size).apply {
-                for (i in types.indices)
-                    add("name" + i, types[i])
-            }.build()
+        NamedTypeList.builder(types.size).apply {
+            for (i in types.indices)
+                add("name$i", types[i])
+        }.build()
 
     private fun assertAssignable(target: Class<*>, source: Class<*>) {
         assertTrue(TypeUtils.isAssignable(target, source))

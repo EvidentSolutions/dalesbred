@@ -58,7 +58,7 @@ public final class DefaultTransactionManager extends AbstractTransactionManager 
             activeTransaction.set(newTransaction);
             return newTransaction.execute(callback, dialect);
         } finally {
-            activeTransaction.set(null);
+            activeTransaction.remove();
             releaseConnection(connection, dialect);
         }
     }
@@ -69,7 +69,7 @@ public final class DefaultTransactionManager extends AbstractTransactionManager 
                                              @NotNull Dialect dialect) {
         DefaultTransaction suspended = getActiveTransaction().orElse(null);
         try {
-            activeTransaction.set(null);
+            activeTransaction.remove();
 
             TransactionSettings settings = new TransactionSettings();
             settings.setPropagation(Propagation.REQUIRED);

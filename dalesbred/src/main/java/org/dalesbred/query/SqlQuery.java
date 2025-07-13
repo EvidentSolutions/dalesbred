@@ -201,8 +201,7 @@ public final class SqlQuery implements Serializable {
     public boolean equals(Object obj) {
         if (obj == this) return true;
 
-        if (obj instanceof SqlQuery) {
-            SqlQuery rhs = (SqlQuery) obj;
+        if (obj instanceof SqlQuery rhs) {
             return sql.equals(rhs.sql) && args.equals(rhs.args);
         }
 

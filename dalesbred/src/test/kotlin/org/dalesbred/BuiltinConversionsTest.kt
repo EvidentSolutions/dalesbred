@@ -40,7 +40,7 @@ class BuiltinConversionsTest {
         db.update("drop table if exists url_and_uri")
         db.update("create temporary table url_and_uri (url varchar(64), uri varchar(64))")
 
-        val url = URL("http://example.org")
+        val url = URI("http://example.org").toURL()
         val uri = URI("http://example.net")
 
         db.update("insert into url_and_uri (url, uri) values (?, ?)", url, uri)
@@ -112,7 +112,7 @@ class BuiltinConversionsTest {
         val shortValue = Short.MAX_VALUE
         val intValue = Int.MAX_VALUE
         val longValue = Long.MAX_VALUE
-        val floatValue = 442.42042f
+        val floatValue = 442.4204f
         val doubleValue = 42422341233.2424
         val bigIntegerValue = BigInteger("2334593458934593485734985734958734958375984357349857943857")
         val bigDecimalValue = BigDecimal("234239472938472394823.23948723948723948723498237429387423948")

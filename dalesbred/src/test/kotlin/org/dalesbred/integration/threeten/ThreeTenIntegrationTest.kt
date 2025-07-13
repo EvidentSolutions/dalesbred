@@ -20,6 +20,8 @@
  * THE SOFTWARE.
  */
 
+@file:Suppress("SqlResolve")
+
 package org.dalesbred.integration.threeten
 
 import org.dalesbred.TestDatabaseProvider

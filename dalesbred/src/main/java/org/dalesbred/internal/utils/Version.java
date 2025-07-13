@@ -4,8 +4,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
-import static java.lang.Math.min;
-
 public final class Version implements Comparable<Version> {
 
     private final int[] numbers;

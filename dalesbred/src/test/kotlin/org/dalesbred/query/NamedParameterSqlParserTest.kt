@@ -78,12 +78,12 @@ class NamedParameterSqlParserTest {
 
     @Test
     fun quotedStrings() {
-        assertNamedParameters("select 'foo '' :bar'", "select 'foo '' :bar'", emptyList<String>())
+        assertNamedParameters("select 'foo '' :bar'", "select 'foo '' :bar'", emptyList())
     }
 
     @Test
     fun doubleQuotes() {
-        assertNamedParameters("select \" :bar  \"", "select \" :bar  \"", emptyList<String>())
+        assertNamedParameters("select \" :bar  \"", "select \" :bar  \"", emptyList())
     }
 
     private fun assertNamedParameters(@Language("SQL") sql: String,
@@ -91,7 +91,7 @@ class NamedParameterSqlParserTest {
                                       parameters: List<String>) {
         val result = NamedParameterSqlParser.parseSqlStatement(sql)
 
-        assertEquals(expected, result.sql)
-        assertEquals(parameters, result.parameterNames)
+        assertEquals(expected, result.sql())
+        assertEquals(parameters, result.parameterNames())
     }
 }

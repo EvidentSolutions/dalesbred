@@ -103,17 +103,12 @@ public final class SpringTransactionManager implements TransactionManager {
     }
 
     static int springPropagationCode(@NotNull Propagation propagation) {
-        switch (propagation) {
-            case REQUIRED:
-                return TransactionDefinition.PROPAGATION_REQUIRED;
-            case MANDATORY:
-                return TransactionDefinition.PROPAGATION_MANDATORY;
-            case NESTED:
-                return TransactionDefinition.PROPAGATION_NESTED;
-            case REQUIRES_NEW:
-                return TransactionDefinition.PROPAGATION_REQUIRES_NEW;
-        }
-        throw new IllegalArgumentException("unknown propagation: " + propagation);
+        return switch (propagation) {
+            case REQUIRED -> TransactionDefinition.PROPAGATION_REQUIRED;
+            case MANDATORY -> TransactionDefinition.PROPAGATION_MANDATORY;
+            case NESTED -> TransactionDefinition.PROPAGATION_NESTED;
+            case REQUIRES_NEW -> TransactionDefinition.PROPAGATION_REQUIRES_NEW;
+        };
     }
 
     private static @NotNull DefaultTransactionDefinition settingsToSpringDefinition(@NotNull TransactionSettings settings) {
