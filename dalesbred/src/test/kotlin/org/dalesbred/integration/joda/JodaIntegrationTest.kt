@@ -36,7 +36,7 @@ import kotlin.test.assertEquals
 
 class JodaIntegrationTest {
 
-    private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
+    private val db = TestDatabaseProvider.createPostgreSQLDatabase()
 
     @Test
     fun fetchJodaDateTimes() = transactionalTest(db) {
