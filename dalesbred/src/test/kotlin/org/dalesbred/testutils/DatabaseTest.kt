@@ -12,13 +12,11 @@ import org.testcontainers.containers.JdbcDatabaseContainer
 import org.testcontainers.containers.MariaDBContainer
 import org.testcontainers.containers.MySQLContainer
 import org.testcontainers.containers.PostgreSQLContainer
-import java.io.PrintWriter
 import java.sql.Connection
 import java.sql.DriverManager
-import java.sql.SQLFeatureNotSupportedException
 import javax.sql.DataSource
 
-@ExtendWith(DatabaseContextResolver::class)
+@ExtendWith(DatabaseResolver::class)
 annotation class DatabaseTest(val provider: DatabaseProvider)
 
 enum class DatabaseProvider {
@@ -28,7 +26,7 @@ enum class DatabaseProvider {
     HSQL,
 }
 
-class DatabaseContextResolver : ParameterResolver {
+private class DatabaseResolver : ParameterResolver {
 
     override fun supportsParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Boolean {
         val type = parameterContext.parameter.type
@@ -55,60 +53,39 @@ class DatabaseContextResolver : ParameterResolver {
 
 private object TestDatabaseProvider {
 
-    private val postgresqlContainer: PostgreSQLContainer<*> by lazy {
-        val container = PostgreSQLContainer("postgres:17")
-        container.start()
-        container
+    private val postgresqlContainer by lazy {
+        PostgreSQLContainer("postgres:17").also { it.start() }
     }
 
-    private val mariadbContainer: MariaDBContainer<*> by lazy {
-        val container = MariaDBContainer("mariadb:10.5.5")
-        container.start()
-        container
+    private val mariadbContainer by lazy {
+        MariaDBContainer("mariadb:10.5.5").also { it.start() }
     }
 
-    private val myqlContainer: MySQLContainer<*> by lazy {
-        val container = MySQLContainer("mysql:5.7.34")
-        container.start()
-        container
+    private val myqlContainer by lazy {
+        MySQLContainer("mysql:5.7.34").also { it.start() }
     }
 
     fun createDataSource(provider: DatabaseProvider): DataSource = when (provider) {
         POSTGRESQL -> dataSourceFor(postgresqlContainer)
         MYSQL -> dataSourceFor(myqlContainer)
         MARIADB -> dataSourceFor(mariadbContainer)
-        HSQL -> DriverManagerDataSource("jdbc:hsqldb:mem:test;hsqldb.tx=mvcc", "sa", "")
+        HSQL -> DriverManagerDataSource("jdbc:hsqldb:mem:test", "sa", "")
     }
 
     private fun dataSourceFor(container: JdbcDatabaseContainer<*>): DataSource =
         DriverManagerDataSource(container.jdbcUrl, container.username, container.password)
 
+    @Suppress("JavaDefaultMethodsNotOverriddenByDelegation")
     private class DriverManagerDataSource(
         private val url: String,
-        private val defaultUser: String?,
-        private val defaultPassword: String?
-    ) : DataSource {
+        private val defaultUser: String,
+        private val defaultPassword: String
+    ) : DataSource by unimplemented() {
 
-        override fun getConnection(): Connection {
-            return getConnection(defaultUser, defaultPassword)
-        }
+        override fun getConnection(): Connection =
+            getConnection(defaultUser, defaultPassword)
 
-        override fun getConnection(username: String?, password: String?): Connection {
-            return DriverManager.getConnection(url, username, password)
-        }
-
-        override fun getLogWriter() = throw SQLFeatureNotSupportedException()
-
-        override fun setLogWriter(out: PrintWriter) = throw SQLFeatureNotSupportedException()
-
-        override fun setLoginTimeout(seconds: Int) = throw SQLFeatureNotSupportedException()
-
-        override fun getLoginTimeout() = throw SQLFeatureNotSupportedException()
-
-        override fun getParentLogger() = throw SQLFeatureNotSupportedException()
-
-        override fun <T> unwrap(iface: Class<T>) = throw SQLFeatureNotSupportedException()
-
-        override fun isWrapperFor(iface: Class<*>) = throw SQLFeatureNotSupportedException()
+        override fun getConnection(username: String?, password: String?): Connection =
+            DriverManager.getConnection(url, username, password)
     }
 }
