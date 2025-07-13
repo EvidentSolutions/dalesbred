@@ -32,7 +32,7 @@ import kotlin.test.assertEquals
 
 class ThreeTenIntegrationTest {
 
-    private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
+    private val db = TestDatabaseProvider.createPostgreSQLDatabase()
 
     @Test
     fun fetchLocalDateTime() = transactionalTest(db) {

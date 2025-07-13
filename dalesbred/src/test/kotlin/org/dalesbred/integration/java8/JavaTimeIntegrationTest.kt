@@ -33,7 +33,7 @@ import kotlin.test.assertEquals
 
 class JavaTimeIntegrationTest {
 
-    private val db = TestDatabaseProvider.createInMemoryHSQLDatabase()
+    private val db = TestDatabaseProvider.createPostgreSQLDatabase()
 
     @Test
     fun fetchLocalDateTime() = transactionalTest(db) {

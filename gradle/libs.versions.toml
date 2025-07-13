@@ -1,33 +1,42 @@
 [versions]
-kotlin = "1.9.23"
-postgresqlJdbc = "42.2.24"
-junit = "5.12.2"
-spring = "5.3.10"
-logback = "1.2.6"
+kotlin = "2.2.0"
+junit = "5.13.3"
+spring = "6.2.8"
+log4j = "2.24.3"
 vanniktechMavenPublish = "0.32.0"
 asciidoctor = "3.3.2"
-testcontainers = "1.21.1"
+testcontainers = "1.21.3"
+slf4j = "2.0.17"
+jodaTime = "2.14.0"
+threeten = "1.7.1"
+jetbrainsAnnotations = "26.0.1"
+jdbc-postgresql = "42.7.7"
+jdbc-hsqldb = "2.7.4"
+jdbc-h2 = "2.3.232"
+jdbc-mysql = "9.3.0"
+jdbc-mariadb = "3.5.4"
+jdbc-oracle = "23.8.0.25.04"
 
 [libraries]
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-logback-core = { module = "ch.qos.logback:logback-core", version.ref = "logback" }
-logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+log4j-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
+log4j-slf4j = { module = "org.apache.logging.log4j:log4j-slf4j2-impl", version.ref = "log4j" }
 spring-context = { module = "org.springframework:spring-context", version.ref = "spring" }
 spring-jdbc = { module = "org.springframework:spring-jdbc", version.ref = "spring" }
-jdbc-postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresqlJdbc" }
-threeten = "org.threeten:threetenbp:1.5.1"
-jodaTime = "joda-time:joda-time:2.10.12"
-slf4j-api = { module = "org.slf4j:slf4j-api", version = "1.7.32" }
-jetbrains-annotations = { module = "org.jetbrains:annotations", version = "22.0.0" }
+threeten = { module = "org.threeten:threetenbp", version.ref = "threeten" }
+jodaTime = { module = "joda-time:joda-time", version.ref = "jodaTime" }
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrainsAnnotations" }
 testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 testcontainers-mariadb = { module = "org.testcontainers:mariadb", version.ref = "testcontainers" }
 testcontainers-mysql = { module = "org.testcontainers:mysql", version.ref = "testcontainers" }
-jdbc-hsqldb = { module = "org.hsqldb:hsqldb", version = "2.4.0" }
-jdbc-h2 = { module = "com.h2database:h2", version = "1.4.200" }
-jdbc-mysql = { module = "mysql:mysql-connector-java", version = "8.0.26" }
-jdbc-mariadb = { module = "org.mariadb.jdbc:mariadb-java-client", version = "3.4.1" }
-jdbc-oracle = { module = "com.oracle.database.jdbc:ojdbc8", version = "21.3.0.0" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+jdbc-hsqldb = { module = "org.hsqldb:hsqldb", version.ref = "jdbc-hsqldb" }
+jdbc-postgresql = { module = "org.postgresql:postgresql", version.ref = "jdbc-postgresql" }
+jdbc-h2 = { module = "com.h2database:h2", version.ref = "jdbc-h2" }
+jdbc-mysql = { module = "com.mysql:mysql-connector-j", version.ref = "jdbc-mysql" }
+jdbc-mariadb = { module = "org.mariadb.jdbc:mariadb-java-client", version.ref = "jdbc-mariadb" }
+jdbc-oracle = { module = "com.oracle.database.jdbc:ojdbc8", version.ref = "jdbc-oracle" }
 
 vanniktechMavenPublish-gradlePlugin = { module = "com.vanniktech.maven.publish:com.vanniktech.maven.publish.gradle.plugin", version.ref = "vanniktechMavenPublish" }
 asciidoctor-gradlePlugin = { module = "org.asciidoctor:asciidoctor-gradle-jvm", version.ref = "asciidoctor" }
