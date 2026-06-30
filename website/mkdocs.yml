@@ -1,0 +1,58 @@
+site_name: Dalesbred
+site_url: https://dalesbred.org
+site_description: A bold database library for the JVM
+repo_url: https://github.com/EvidentSolutions/dalesbred
+repo_name: EvidentSolutions/dalesbred
+
+docs_dir: docs
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - admonition
+  - pymdownx.details
+  - tables
+  - attr_list
+  - footnotes
+
+nav:
+  - Home: index.md
+  - Basic Usage: basic-usage.md
+  - Queries: queries.md
+  - Transactions: transactions.md
+  - Miscellaneous: miscellaneous.md
+  - Integrations: integrations.md
+  - More Examples: more-examples.md
+  - Downloading: downloading.md
+  - Migration from 0.x: migration.md

@@ -1,6 +1,5 @@
 rootProject.name = "dalesbred-root"
 include(":dalesbred")
-include(":website")
 
 plugins {
     id("com.gradle.enterprise") version("3.7.2")

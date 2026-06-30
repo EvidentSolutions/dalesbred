@@ -7,6 +7,7 @@ out
 *.iml
 /build
 /*/build
+/website/site
 .gradle
 dalesbred/src/test/resources/postgresql-connection.properties
 dalesbred/src/test/resources/mysql-connection.properties

@@ -8,6 +8,5 @@ repositories {
 
 dependencies {
     implementation(libs.kotlin.gradlePlugin)
-    implementation(libs.asciidoctor.gradlePlugin)
     implementation(libs.vanniktechMavenPublish.gradlePlugin)
 }

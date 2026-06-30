@@ -1,20 +1,19 @@
-== Miscellaneous features
+## Miscellaneous features
 
-=== Explicit instantiators
+### Explicit instantiators
 
 Normally Dalesbred will automatically detect the best way to instantiate your classes based on database results.
 This can sometimes lead to surprising results. If you wish to be more explicit, you can annotate your preferred
-constructor with {javadocBase}org/dalesbred/annotation/DalesbredInstantiator.html[DalesbredInstantiator]. This
+constructor with [DalesbredInstantiator](https://dalesbred.org/docs/api/?org/dalesbred/annotation/DalesbredInstantiator.html). This
 will cause Dalesbred to ignore all other constructors.
 
-=== Large objects
+### Large objects
 
-You can stream large objects (blobs and clobs) to database by just passing {jdkJavadocBase}java/io/InputStream.html[InputStream]
-or {jdkJavadocBase}java/io/Reader.html[Reader] to query. Similarly you can read them by asking back for InputStream
-or Reader.
+You can stream large objects (blobs and clobs) to the database by just passing [InputStream](https://download.java.net/jdk8/docs/api/?java/io/InputStream.html)
+or [Reader](https://download.java.net/jdk8/docs/api/?java/io/Reader.html) to a query. Similarly you can read them by asking back for `InputStream`
+or `Reader`.
 
-[source,java]
-----
+```java
 try (InputStream in = new FileInputStream(name)) {
     db.update("insert into my_file (name, contents) values (?,?)", name, in);
 }
@@ -23,17 +22,17 @@ try (InputStream in = db.findUnique(InputStream.class,
                         "select contents from my_file where name=?", name)) {
     ...
 }
-----
+```
 
-WARNING: Note that the returned InputStream or Reader is only valid for the duration of the active transaction.
+!!! warning
+    The returned `InputStream` or `Reader` is only valid for the duration of the active transaction.
 
-=== Custom type-conversions
+### Custom type-conversions
 
 Sometimes you need to convert database values to your own custom types and vice versa. To do that,
-you can register your functions to {javadocBase}org/dalesbred/conversion/TypeConversionRegistry.html[TypeConversionRegistry]:
+you can register your functions to [TypeConversionRegistry](https://dalesbred.org/docs/api/?org/dalesbred/conversion/TypeConversionRegistry.html):
 
-[source,java]
-----
+```java
 TypeConversionRegistry conversions = db.getTypeConversionRegistry();
 
 // register conversions from database and to database types separately
@@ -45,4 +44,4 @@ conversions.registerConversionToDatabase(
 // or register both conversions with one call
 conversions.registerConversions(
     String.class, EmailAddress.class, MyConversions::stringToEmail, MyConversions::emailToString);
-----
+```
