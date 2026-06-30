@@ -4,7 +4,7 @@ junit = "5.13.3"
 spring = "6.2.8"
 log4j = "2.24.3"
 vanniktechMavenPublish = "0.32.0"
-testcontainers = "1.21.3"
+testcontainers = "2.0.5"
 slf4j = "2.0.17"
 jodaTime = "2.14.0"
 threeten = "1.7.1"
@@ -26,9 +26,9 @@ threeten = { module = "org.threeten:threetenbp", version.ref = "threeten" }
 jodaTime = { module = "joda-time:joda-time", version.ref = "jodaTime" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrainsAnnotations" }
-testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
-testcontainers-mariadb = { module = "org.testcontainers:mariadb", version.ref = "testcontainers" }
-testcontainers-mysql = { module = "org.testcontainers:mysql", version.ref = "testcontainers" }
+testcontainers-postgresql = { module = "org.testcontainers:testcontainers-postgresql", version.ref = "testcontainers" }
+testcontainers-mariadb = { module = "org.testcontainers:testcontainers-mariadb", version.ref = "testcontainers" }
+testcontainers-mysql = { module = "org.testcontainers:testcontainers-mysql", version.ref = "testcontainers" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 jdbc-hsqldb = { module = "org.hsqldb:hsqldb", version.ref = "jdbc-hsqldb" }
 jdbc-postgresql = { module = "org.postgresql:postgresql", version.ref = "jdbc-postgresql" }

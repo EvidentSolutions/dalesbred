@@ -9,9 +9,9 @@ import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolver
 import org.testcontainers.containers.JdbcDatabaseContainer
-import org.testcontainers.containers.MariaDBContainer
-import org.testcontainers.containers.MySQLContainer
-import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.mariadb.MariaDBContainer
+import org.testcontainers.mysql.MySQLContainer
+import org.testcontainers.postgresql.PostgreSQLContainer
 import java.sql.Connection
 import java.sql.DriverManager
 import javax.sql.DataSource
