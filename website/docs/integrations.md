@@ -51,7 +51,7 @@ and [LocalTime](https://www.joda.org/joda-time/apidocs/?org/joda/time/LocalTime.
 
 Dalesbred has support for integration with [Spring Framework](https://spring.io/projects/spring-framework)
 and its transaction management. To integrate Dalesbred, create a configuration class inheriting from
-[DalesbredConfigurationSupport](https://dalesbred.org/docs/api/?org/dalesbred/integration/spring/DalesbredConfigurationSupport.html)
+[DalesbredConfigurationSupport](https://dalesbred.org/docs/api/org/dalesbred/integration/spring/DalesbredConfigurationSupport.html)
 and specify beans for [DataSource](https://download.java.net/jdk8/docs/api/?javax/sql/DataSource.html) and
 [PlatformTransactionManager](https://docs.spring.io/spring/docs/current/javadoc-api/?org/springframework/transaction/PlatformTransactionManager.html).
 A minimal configuration would therefore be something like the following:
@@ -73,4 +73,4 @@ public class MyDatabaseConfiguration extends DalesbredConfigurationSupport {
 }
 ```
 
-After this you can inject [Database](https://dalesbred.org/docs/api/?org/dalesbred/Database.html) normally in your beans.
+After this you can inject [Database](https://dalesbred.org/docs/api/org/dalesbred/Database.html) normally in your beans.

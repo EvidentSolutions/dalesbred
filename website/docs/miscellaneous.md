@@ -4,7 +4,7 @@
 
 Normally Dalesbred will automatically detect the best way to instantiate your classes based on database results.
 This can sometimes lead to surprising results. If you wish to be more explicit, you can annotate your preferred
-constructor with [DalesbredInstantiator](https://dalesbred.org/docs/api/?org/dalesbred/annotation/DalesbredInstantiator.html). This
+constructor with [DalesbredInstantiator](https://dalesbred.org/docs/api/org/dalesbred/annotation/DalesbredInstantiator.html). This
 will cause Dalesbred to ignore all other constructors.
 
 ### Large objects
@@ -30,7 +30,7 @@ try (InputStream in = db.findUnique(InputStream.class,
 ### Custom type-conversions
 
 Sometimes you need to convert database values to your own custom types and vice versa. To do that,
-you can register your functions to [TypeConversionRegistry](https://dalesbred.org/docs/api/?org/dalesbred/conversion/TypeConversionRegistry.html):
+you can register your functions to [TypeConversionRegistry](https://dalesbred.org/docs/api/org/dalesbred/conversion/TypeConversionRegistry.html):
 
 ```java
 TypeConversionRegistry conversions = db.getTypeConversionRegistry();

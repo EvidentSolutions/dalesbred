@@ -2,7 +2,7 @@
 
 ### Configuring the database connection
 
-Most things in Dalesbred happen through an instance of [Database](https://dalesbred.org/docs/api/?org/dalesbred/Database.html).
+Most things in Dalesbred happen through an instance of [Database](https://dalesbred.org/docs/api/org/dalesbred/Database.html).
 It takes care of managing JDBC connections, so in a typical application you should only configure a single instance --
 unless you need to connect multiple databases. The easiest way to get hold of one is to specify the settings manually:
 
@@ -19,7 +19,7 @@ Database db = Database.forJndiDataSource("java:comp/env/jdbc/ExampleDb");
 ```
 
 Alternatively, you might setup a [DataSource](https://download.java.net/jdk8/docs/api/?javax/sql/DataSource.html) yourself, in which case you can
-just create a [Database](https://dalesbred.org/docs/api/?org/dalesbred/Database.html) out of that:
+just create a [Database](https://dalesbred.org/docs/api/org/dalesbred/Database.html) out of that:
 
 ```java
 Database db = Database.forDataSource(myDataSource);
@@ -58,7 +58,7 @@ public final class Department {
 ```
 
 !!! note
-    The [DalesbredInstantiator](https://dalesbred.org/docs/api/?org/dalesbred/annotation/DalesbredInstantiator.html) annotation for
+    The [DalesbredInstantiator](https://dalesbred.org/docs/api/org/dalesbred/annotation/DalesbredInstantiator.html) annotation for
     constructor is optional, but helps Dalesbred to make an unambiguous decision when there are multiple constructors.
     It also serves as useful documentation. Finally, it can be configured as an entry-point for static analyzers so
     they don't complain about unused constructor.
@@ -116,15 +116,15 @@ Map<Integer, Department> departmentsByIds = db.findMap(
 ```
 
 If for some reason you don't want to map the results into your own class, you can ask for
-a [ResultTable](https://dalesbred.org/docs/api/?org/dalesbred/result/ResultTable.html), which is basically a detached
+a [ResultTable](https://dalesbred.org/docs/api/org/dalesbred/result/ResultTable.html), which is basically a detached
 representation of a [ResultSet](https://download.java.net/jdk8/docs/api/?java/sql/ResultSet.html):
 
 ```java
 ResultTable employees = db.findTable("select * from employee");
 ```
 
-Alternatively, you can supply your own [RowMapper](https://dalesbred.org/docs/api/?org/dalesbred/result/RowMapper.html) or
-[ResultSetProcessor](https://dalesbred.org/docs/api/?org/dalesbred/result/ResultSetProcessor.html)-implementation in place
+Alternatively, you can supply your own [RowMapper](https://dalesbred.org/docs/api/org/dalesbred/result/RowMapper.html) or
+[ResultSetProcessor](https://dalesbred.org/docs/api/org/dalesbred/result/ResultSetProcessor.html)-implementation in place
 of the class and handle the result sets manually, but usually this should be unnecessary.
 
 ### Updates
