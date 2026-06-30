@@ -54,7 +54,7 @@ public final class TransactionSettings {
     }
 
     /**
-     * Set the default isolation level to use.
+     * Sets the isolation level to use.
      */
     public void setIsolation(@NotNull Isolation isolation) {
         this.isolation = isolation;

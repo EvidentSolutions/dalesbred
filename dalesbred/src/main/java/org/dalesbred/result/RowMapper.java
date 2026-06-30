@@ -77,7 +77,7 @@ public interface RowMapper<T> {
     }
 
     /**
-     * Creates a {@link ResultSetProcessor} that no rows or single row from database.
+     * Creates a {@link ResultSetProcessor} that expects zero or one result row from the database.
      */
     default @NotNull ResultSetProcessor<Optional<T>> optional() {
         return resultSet -> {

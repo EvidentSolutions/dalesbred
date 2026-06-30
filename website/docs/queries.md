@@ -4,7 +4,7 @@
 
 All methods come in two variants: there's an implementation that takes
 an [SqlQuery](https://dalesbred.org/docs/api/org/dalesbred/query/SqlQuery.html) as a parameter and another
-implementation that takes a [String](https://download.java.net/jdk8/docs/api/?java/lang/String.html) and a variable number of parameters.
+implementation that takes a [String](https://docs.oracle.com/javase/8/docs/api/java/lang/String.html) and a variable number of parameters.
 The latter is just a convenience method for the former, meaning that the following code fragments are
 identical in functionality:
 
@@ -43,7 +43,7 @@ db.findAll(Department.class, namedQuery("select id from employee " +
                                         "   and last_name = :lastName", values));
 ```
 
-Instead of [Map](https://download.java.net/jdk8/docs/api/?java/util/Map.html)s, you can also pass just regular objects to `namedQuery` as
+Instead of [Map](https://docs.oracle.com/javase/8/docs/api/java/util/Map.html)s, you can also pass just regular objects to `namedQuery` as
 the source of values. The parameter names are mapped to properties or fields of the objects. Finally, if you want
 detailed control, you can pass your own implementation of
 [VariableResolver](https://dalesbred.org/docs/api/org/dalesbred/query/VariableResolver.html) to resolve the variables.
@@ -51,7 +51,7 @@ detailed control, you can pass your own implementation of
 ### Building queries dynamically
 
 There's no high-level API for building queries, but [QueryBuilder](https://dalesbred.org/docs/api/org/dalesbred/query/QueryBuilder.html)
-helps you constructing dynamic queries. It's basically just a [StringBuilder](https://download.java.net/jdk8/docs/api/?java/util/StringBuilder.html)
+helps you construct dynamic queries. It's basically just a [StringBuilder](https://docs.oracle.com/javase/8/docs/api/java/lang/StringBuilder.html)
 that also keeps track of parameters. Therefore you can write code like:
 
 ```java

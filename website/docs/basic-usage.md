@@ -12,13 +12,13 @@ Database db = Database.forUrlAndCredentials("jdbc:example-url", "login", "passwo
 
 Note that this performs no connection pooling and is therefore probably not
 your preferred way of configuring the system in production. In a container
-you'll probably want to lookup a named [DataSource](https://download.java.net/jdk8/docs/api/?javax/sql/DataSource.html) from JNDI:
+you'll probably want to lookup a named [DataSource](https://docs.oracle.com/javase/8/docs/api/javax/sql/DataSource.html) from JNDI:
 
 ```java
 Database db = Database.forJndiDataSource("java:comp/env/jdbc/ExampleDb");
 ```
 
-Alternatively, you might setup a [DataSource](https://download.java.net/jdk8/docs/api/?javax/sql/DataSource.html) yourself, in which case you can
+Alternatively, you might setup a [DataSource](https://docs.oracle.com/javase/8/docs/api/javax/sql/DataSource.html) yourself, in which case you can
 just create a [Database](https://dalesbred.org/docs/api/org/dalesbred/Database.html) out of that:
 
 ```java
@@ -30,7 +30,7 @@ If you are using [Spring Framework](https://spring.io/projects/spring-framework)
 
 ### Finding stuff
 
-Running queries resulting basic types is simple:
+Running queries that return basic types is straightforward:
 
 ```java
 List<Integer> newIds = db.findAll(Integer.class,
@@ -66,7 +66,7 @@ public final class Department {
 Instead of constructor, you can also use `@DalesbredInstantiator` on a static method that returns an instance of the
 class.
 
-Second option is to bind values using fields or setters. The following example uses the default constructor for
+The second option is to bind values using fields or setters. The following example uses the default constructor for
 instantiation, field-binding for `id` and setter for `name`:
 
 ```java
@@ -88,7 +88,7 @@ public final class Department {
 If you have nested objects, you can bind to them as well as long as all objects in the path are instantiated:
 
 ```java
-List<Employee> departments =
+List<Employee> employees =
     db.findAll(Employee.class, "select id, first_name as \"name.first\", last_name as \"name.last\" from employee");
 
 ...
@@ -117,7 +117,7 @@ Map<Integer, Department> departmentsByIds = db.findMap(
 
 If for some reason you don't want to map the results into your own class, you can ask for
 a [ResultTable](https://dalesbred.org/docs/api/org/dalesbred/result/ResultTable.html), which is basically a detached
-representation of a [ResultSet](https://download.java.net/jdk8/docs/api/?java/sql/ResultSet.html):
+representation of a [ResultSet](https://docs.oracle.com/javase/8/docs/api/java/sql/ResultSet.html):
 
 ```java
 ResultTable employees = db.findTable("select * from employee");

@@ -43,17 +43,17 @@ fun findEmployees() = db.findAll<Employee>("""
 
 If [Joda-Time](http://www.joda.org/joda-time/) is detected on the classpath, Dalesbred will automatically
 register [type-conversions](miscellaneous.md#custom-type-conversions) between Joda-Time's
-[DateTime](https://www.joda.org/joda-time/apidocs/?org/joda/time/DateTime.html), [LocalDate](https://www.joda.org/joda-time/apidocs/?org/joda/time/LocalDate.html)
-and [LocalTime](https://www.joda.org/joda-time/apidocs/?org/joda/time/LocalTime.html) to [java.sql.Timestamp](https://download.java.net/jdk8/docs/api/?java/sql/Timestamp.html),
-[java.sql.Date](https://download.java.net/jdk8/docs/api/?java/sql/Date.html) and [java.sql.Time](https://download.java.net/jdk8/docs/api/?java/sql/Time.html).
+[DateTime](https://www.joda.org/joda-time/apidocs/org/joda/time/DateTime.html), [LocalDate](https://www.joda.org/joda-time/apidocs/org/joda/time/LocalDate.html)
+and [LocalTime](https://www.joda.org/joda-time/apidocs/org/joda/time/LocalTime.html) to [java.sql.Timestamp](https://docs.oracle.com/javase/8/docs/api/java/sql/Timestamp.html),
+[java.sql.Date](https://docs.oracle.com/javase/8/docs/api/java/sql/Date.html) and [java.sql.Time](https://docs.oracle.com/javase/8/docs/api/java/sql/Time.html).
 
 ### Spring
 
 Dalesbred has support for integration with [Spring Framework](https://spring.io/projects/spring-framework)
 and its transaction management. To integrate Dalesbred, create a configuration class inheriting from
 [DalesbredConfigurationSupport](https://dalesbred.org/docs/api/org/dalesbred/integration/spring/DalesbredConfigurationSupport.html)
-and specify beans for [DataSource](https://download.java.net/jdk8/docs/api/?javax/sql/DataSource.html) and
-[PlatformTransactionManager](https://docs.spring.io/spring/docs/current/javadoc-api/?org/springframework/transaction/PlatformTransactionManager.html).
+and specify beans for [DataSource](https://docs.oracle.com/javase/8/docs/api/javax/sql/DataSource.html) and
+[PlatformTransactionManager](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/transaction/PlatformTransactionManager.html).
 A minimal configuration would therefore be something like the following:
 
 ```java

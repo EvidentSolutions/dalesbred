@@ -40,7 +40,7 @@ public enum FetchDirection {
         this.jdbcCode = jdbcCode;
     }
 
-    public int getJdcbCode() {
+    public int getJdbcCode() {
         return jdbcCode;
     }
 }

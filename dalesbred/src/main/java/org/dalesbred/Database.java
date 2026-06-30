@@ -764,7 +764,7 @@ public final class Database {
     private void bindQueryParameters(@NotNull PreparedStatement ps, @NotNull SqlQuery query) throws SQLException {
         FetchDirection direction = query.getFetchDirection();
         if (direction != null)
-            ps.setFetchDirection(direction.getJdcbCode());
+            ps.setFetchDirection(direction.getJdbcCode());
 
         Integer fetchSize = query.getFetchSize();
         if (fetchSize != null)
@@ -801,32 +801,32 @@ public final class Database {
     }
 
     /**
-     * If flag is set to true (by default it's false) queries without active transaction will
-     * not throw exception but will start a fresh transaction.
+     * Returns whether queries outside an active transaction will start a fresh transaction (true, the default)
+     * or throw {@link NoActiveTransactionException} (false).
      */
     public boolean isAllowImplicitTransactions() {
         return allowImplicitTransactions;
     }
 
     /**
-     * If flag is set to true (by default it's false) queries without active transaction will
-     * not throw exception but will start a fresh transaction.
+     * Controls whether queries outside an active transaction automatically start a fresh transaction.
+     * When set to {@code false}, calling query methods without an active transaction throws
+     * {@link NoActiveTransactionException}. Defaults to {@code true}.
      */
     public void setAllowImplicitTransactions(boolean allowImplicitTransactions) {
         this.allowImplicitTransactions = allowImplicitTransactions;
     }
 
     /**
-     * If default timeout is set to non null (by default it's null) all queries will have this timeout value as default,
-     * unless is specified directly on {@link SqlQuery} or is set directly on JDBC Connection parameters.
+     * Returns the default query timeout, or {@code null} if none is set.
      */
     public @Nullable Duration getDefaultTimeout() {
         return defaultTimeout;
     }
 
     /**
-     * If default timeout is set to non null (by default it's null) all queries will have this timeout value as default,
-     * unless is specified directly on {@link SqlQuery} or is set directly on JDBC Connection parameters.
+     * Sets a default timeout applied to all queries unless overridden on the {@link SqlQuery} itself
+     * or via JDBC connection parameters.
      *
      * @throws IllegalArgumentException if timeout is negative
      * @see Statement#setQueryTimeout(int)

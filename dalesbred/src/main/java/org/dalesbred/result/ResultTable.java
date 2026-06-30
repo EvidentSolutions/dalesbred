@@ -116,7 +116,7 @@ public final class ResultTable implements Iterable<ResultTable.ResultRow> {
      * Overly long columns are truncated and some effort is taken to make the result readable,
      * but you should not depend on the exact details of the layout, since it might change.
      *
-     * <p>Hint: the output format is rouhgly that of Markdown tables, so you can use the result in your
+     * <p>Hint: the output format is roughly that of Markdown tables, so you can use the result in your
      * Markdown-documents. However, data is not escaped, since it's primarily meant to be written
      * to console where escaping would hinder readability. Therefore, you might need to make manual
      * adjustments to output if interpreting it as Markdown.

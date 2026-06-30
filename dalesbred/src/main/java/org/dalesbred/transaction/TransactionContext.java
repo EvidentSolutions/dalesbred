@@ -42,5 +42,8 @@ public interface TransactionContext {
      */
     void setRollbackOnly();
 
+    /**
+     * Returns whether this transaction has been marked for rollback.
+     */
     boolean isRollbackOnly();
 }

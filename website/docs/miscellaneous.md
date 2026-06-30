@@ -9,8 +9,8 @@ will cause Dalesbred to ignore all other constructors.
 
 ### Large objects
 
-You can stream large objects (blobs and clobs) to the database by just passing [InputStream](https://download.java.net/jdk8/docs/api/?java/io/InputStream.html)
-or [Reader](https://download.java.net/jdk8/docs/api/?java/io/Reader.html) to a query. Similarly you can read them by asking back for `InputStream`
+You can stream large objects (blobs and clobs) to the database by just passing [InputStream](https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html)
+or [Reader](https://docs.oracle.com/javase/8/docs/api/java/io/Reader.html) to a query. Similarly you can read them by asking back for `InputStream`
 or `Reader`.
 
 ```java
