@@ -43,8 +43,16 @@ import java.util.*;
 import static org.dalesbred.internal.utils.OptionalUtils.unwrapOptionalAsNull;
 
 /**
- * Abstract base class implementing most of the functionality without making
- * any assumptions about the connection management.
+ * Abstract base class for database access, providing all query and update operations
+ * independently of how connections and transactions are managed.
+ *
+ * <p>The two concrete subclasses are:
+ * <ul>
+ *   <li>{@link Database} – the standard entry point; manages a connection pool or
+ *       data source and handles transactions automatically</li>
+ *   <li>{@link DatabaseConnection} – wraps a single caller-owned JDBC connection
+ *       obtained from {@link DatabaseSource#openConnection()}</li>
+ * </ul>
  */
 public abstract class DatabaseAccess {
 
