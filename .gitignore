@@ -3,6 +3,7 @@
 bin
 classes
 out
+/.kotlin/
 /.idea/
 *.iml
 /build
