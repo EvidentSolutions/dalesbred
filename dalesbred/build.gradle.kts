@@ -1,3 +1,5 @@
+import org.gradle.process.CommandLineArgumentProvider
+
 description = "Dalesbred - a database access library"
 
 plugins {
@@ -56,8 +58,11 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
-tasks.jar {
-    manifest {
-        attributes["Automatic-Module-Name"] = "org.dalesbred"
-    }
+tasks.compileJava {
+    // DatabaseExtensions.kt is compiled by kotlinc into a separate output directory, so javac
+    // doesn't see org.dalesbred.integration.kotlin as populated when compiling module-info.java.
+    // Patch the kotlin output in so the module compiler treats it as part of this module.
+    options.compilerArgumentProviders.add(CommandLineArgumentProvider {
+        listOf("--patch-module", "org.dalesbred=${tasks.compileKotlin.get().destinationDirectory.get().asFile}")
+    })
 }
