@@ -11,10 +11,6 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            - name: Extract version
-              id: version
-              run: echo "value=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
-
             - name: Set up JDK
               uses: actions/setup-java@v4
               with:
@@ -29,8 +25,9 @@ jobs:
               run: ./gradlew build
 
             - name: Publish to Maven Central
-              run: ./gradlew publishAllPublicationsToMavenCentralRepository --no-configuration-cache -PprojectVersion=${{ steps.version.outputs.value }}
+              run: ./gradlew publishAllPublicationsToMavenCentralRepository --no-configuration-cache -PprojectVersion="${RELEASE_TAG#v}"
               env:
+                  RELEASE_TAG: ${{ github.event.release.tag_name }}
                   ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.OSSRH_USERNAME }}
                   ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.OSSRH_PASSWORD }}
                   ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
