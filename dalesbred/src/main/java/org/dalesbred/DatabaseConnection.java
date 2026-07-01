@@ -100,6 +100,13 @@ public final class DatabaseConnection extends DatabaseAccess implements AutoClos
     }
 
     /**
+     * Returns the underlying JDBC connection.
+     */
+    public @NotNull Connection getConnection() {
+        return connection;
+    }
+
+    /**
      * Commits the pending transaction and closes the underlying JDBC connection.
      *
      * @throws DatabaseException if the commit, rollback, or close raises a SQL error
