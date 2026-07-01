@@ -37,12 +37,12 @@ tasks.withType<Javadoc> {
     opts.addStringOption("Xdoclint:html,syntax,reference", "-quiet")
 }
 
-val sourcesJar by tasks.registering(Jar::class) {
+tasks.register<Jar>("sourcesJar") {
     archiveClassifier.set("sources")
     from(sourceSets["main"].allSource)
 }
 
-val javadocJar by tasks.registering(Jar::class) {
+tasks.register<Jar>("javadocJar") {
     archiveClassifier.set("javadoc")
     from(tasks.javadoc)
 }
