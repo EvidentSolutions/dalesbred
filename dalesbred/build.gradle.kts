@@ -35,7 +35,7 @@ dependencies {
     "threetenImplementation"(libs.threeten)
     "springImplementation"(libs.spring.context)
     "springImplementation"(libs.spring.jdbc)
-    "kotlinImplementation"(kotlin("stdlib-jdk8"))
+    "kotlinImplementation"(kotlin("stdlib"))
     "annotationsImplementation"(libs.jetbrains.annotations)
 
     "postgresqlImplementation"(libs.jdbc.postgresql)
